@@ -2,6 +2,7 @@ import '@/styles/index.css'
 import '@/styles/theme.css'
 
 import { cn } from '@/lib/utils'
+import { AuthKitProvider } from '@workos-inc/authkit-nextjs/components'
 import { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
 import { Fira_Code, Inter } from 'next/font/google'
@@ -92,7 +93,7 @@ export default function Layout({ children }: PropsWithChildren) {
     <html lang="en" suppressHydrationWarning>
       <body className={cn('antialiased', inter.variable, firaCode.variable)}>
         <ThemeProvider attribute="class" enableSystem>
-          {children}
+          <AuthKitProvider>{children}</AuthKitProvider>
         </ThemeProvider>
       </body>
     </html>
