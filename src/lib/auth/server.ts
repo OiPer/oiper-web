@@ -1,4 +1,5 @@
 import { getAuthEnv } from '@/lib/auth/env'
+import { redirect } from 'next/navigation'
 
 type WorkosUserPayload = {
   id: string
@@ -20,9 +21,10 @@ export async function createDesktopExchangeCode(input: {
   const { OIPER_SERVER_BASE_URL } = getAuthEnv()
 
   const response = await fetch(
-    `${OIPER_SERVER_BASE_URL}/v1/auth/desktop/code`,
+    new URL('/v1/auth/desktop/code', OIPER_SERVER_BASE_URL),
     {
       method: 'POST',
+      cache: 'no-store',
       headers: {
         'content-type': 'application/json',
         authorization: `Bearer ${input.workosAccessToken}`,
@@ -31,26 +33,20 @@ export async function createDesktopExchangeCode(input: {
         state: input.state,
         workosUser: input.workosUser,
       }),
-      cache: 'no-store',
     }
   )
 
-  const data = (await response.json().catch(() => null)) as
-    | { code: string; expiresAt: string }
-    | { error?: { code?: string; message?: string } }
-    | null
+  if (!response.ok) {
+    const errorText = await response.text()
 
-  if (!response.ok || !data || !('code' in data)) {
-    const message =
-      data && 'error' in data && data.error?.message
-        ? data.error.message
-        : 'Failed to create desktop exchange code'
+    console.error('desktop bridge failed', {
+      status: response.status,
+      statusText: response.statusText,
+      body: errorText,
+    })
 
-    throw new Error(message)
+    redirect('/account?error=desktop-bridge-failed')
   }
 
-  return {
-    code: data.code,
-    expiresAt: data.expiresAt,
-  }
+  return await response.json()
 }
