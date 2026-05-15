@@ -1,7 +1,9 @@
 'use client'
 
 import { OiPerLogoText } from '@/components/logo/logo-text'
+import { getWebSession, isAbortError } from '@/lib/auth-api'
 import { Mic, Settings } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Wrapper } from '../../../components/wrapper'
 import {
   ANCHOR_FEATURES,
@@ -16,12 +18,47 @@ import {
 import { AnimatedWaveform } from './animated-waveform'
 import { LightningBase } from './lightning-base'
 
+type HeaderAuthState =
+  | { status: 'loading' }
+  | { status: 'unauthenticated' }
+  | { status: 'authenticated'; label: string }
+
 export function HeroSection() {
+  const [authState, setAuthState] = useState<HeaderAuthState>({
+    status: 'loading',
+  })
+
+  useEffect(() => {
+    const abortController = new AbortController()
+
+    getWebSession({ signal: abortController.signal })
+      .then((session) => {
+        if (!session.authenticated) {
+          return setAuthState({ status: 'unauthenticated' })
+        }
+
+        const fullName = [session.user.firstName, session.user.lastName]
+          .filter((name): name is string => Boolean(name))
+          .join(' ')
+
+        setAuthState({
+          status: 'authenticated',
+          label: fullName || session.user.email,
+        })
+      })
+      .catch((error) => {
+        if (isAbortError(error)) return
+        setAuthState({ status: 'unauthenticated' })
+      })
+
+    return abortController.abort
+  }, [])
+
   return (
-    <section className="relative overflow-hidden border-b border-white/[0.06] bg-[#0a0a0a]">
+    <section className="relative overflow-hidden border-b border-white/6 bg-[#0a0a0a]">
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_15%,rgba(255,255,255,0.03),transparent_40%),radial-gradient(ellipse_at_80%_20%,rgba(255,255,255,0.02),transparent_35%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:120px_120px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-size-[120px_120px]" />
         <LightningBase />
       </div>
 
@@ -55,12 +92,28 @@ export function HeroSection() {
             </a>
           </div>
 
-          <a
-            href={DOWNLOAD_URL}
-            className="inline-flex h-10 items-center justify-center rounded border border-white/20 bg-white/5 px-5 text-sm font-medium text-white hover:border-white/40 hover:bg-white/10"
-          >
-            Download
-          </a>
+          <div className="flex items-center gap-3">
+            {authState.status === 'authenticated' ? (
+              <div className="inline-flex h-10 max-w-[18rem] items-center gap-2 rounded border border-emerald-400/40 bg-emerald-500/10 px-4 text-sm font-medium text-emerald-100">
+                <span className="size-2 shrink-0 rounded-full bg-emerald-300" />
+                <span className="truncate">{authState.label}</span>
+              </div>
+            ) : (
+              <a
+                href="/auth/login"
+                className="inline-flex h-10 items-center justify-center rounded border border-white/20 bg-white/5 px-5 text-sm font-medium text-white hover:border-white/40 hover:bg-white/10"
+              >
+                Sign in
+              </a>
+            )}
+
+            <a
+              href={DOWNLOAD_URL}
+              className="inline-flex h-10 items-center justify-center rounded bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90"
+            >
+              Download
+            </a>
+          </div>
         </nav>
       </Wrapper>
 
@@ -93,8 +146,8 @@ export function HeroSection() {
           </div>
 
           <div className="relative">
-            <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111111]">
-              <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-4">
+            <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#111111]">
+              <div className="flex items-center justify-between border-b border-white/6 px-5 py-4">
                 <div className="flex gap-2">
                   <span className="size-3 rounded-full bg-[#ff5f57]" />
                   <span className="size-3 rounded-full bg-[#febc2e]" />
@@ -113,8 +166,8 @@ export function HeroSection() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 border-t border-white/[0.06] bg-[#0c0c0c] px-5 py-4">
-                <div className="grid size-11 shrink-0 place-items-center rounded-full bg-white/[0.06]">
+              <div className="flex items-center gap-4 border-t border-white/6 bg-[#0c0c0c] px-5 py-4">
+                <div className="grid size-11 shrink-0 place-items-center rounded-full bg-white/6">
                   <Mic className="size-5 text-white/80" />
                 </div>
                 <AnimatedWaveform />
