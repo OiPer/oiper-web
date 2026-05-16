@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { signInWithPassword } from '@/lib/auth-api'
+import { useAuth } from '@/features/auth/auth-context'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -44,6 +44,7 @@ export function SignInForm({ mode }: SignInFormProps) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { signIn } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const callbackPath = useMemo(
@@ -77,20 +78,17 @@ export function SignInForm({ mode }: SignInFormProps) {
   async function onSubmit(values: SignInSchema) {
     setErrorMessage(null)
 
-    try {
-      const session = await signInWithPassword(values)
+    const [session, error] = await signIn({
+      email: values.email,
+      password: values.password,
+    })
 
-      if (!session.authenticated) {
-        setErrorMessage('Something went wrong. Please try again.')
-        return
-      }
-
-      router.push(callbackPath)
-    } catch (error) {
+    if (error) {
       const verification = getEmailVerificationState(error)
 
       if (verification) {
         const verificationParams = new URLSearchParams(searchParams.toString())
+
         verificationParams.set('auth-page', 'verify-signin')
         verificationParams.set(
           'pendingToken',
@@ -105,12 +103,17 @@ export function SignInForm({ mode }: SignInFormProps) {
             ? `${pathname}?${query}`
             : `/auth/verify-signin?${query}`
 
-        router.push(verificationPath)
-        return
+        return router.push(verificationPath)
       }
 
-      setErrorMessage(getAuthErrorMessage(error))
+      return setErrorMessage(getAuthErrorMessage(error))
     }
+
+    if (!session || !session.authenticated) {
+      return setErrorMessage('Something went wrong. Please try again.')
+    }
+
+    router.push(callbackPath)
   }
 
   return (

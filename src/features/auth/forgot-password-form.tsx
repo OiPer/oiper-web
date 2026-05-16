@@ -85,9 +85,7 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
     setSuccessMessage(null)
 
     try {
-      await requestWebPasswordReset({
-        email: values.email,
-      })
+      await requestWebPasswordReset({ email: values.email })
       setSuccessMessage('Password reset email sent.')
     } catch (error) {
       setErrorMessage(getAuthErrorMessage(error))
@@ -97,10 +95,7 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
   async function submitPasswordReset(
     values: z.infer<typeof resetWithTokenSchema>
   ) {
-    if (!token) {
-      setErrorMessage('Missing reset token')
-      return
-    }
+    if (!token) return setErrorMessage('Missing reset token')
 
     setErrorMessage(null)
     setSuccessMessage(null)
@@ -123,6 +118,7 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
   return (
     <AuthCard
       mode={mode}
+      showOAuth={false}
       page="forgot-password"
       title={token ? 'Set new password' : 'Reset password'}
       description={
@@ -130,7 +126,6 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
           ? 'Create a new password for your account.'
           : 'We will send a reset link to your email address.'
       }
-      showOAuth={false}
     >
       {!token ? (
         <form

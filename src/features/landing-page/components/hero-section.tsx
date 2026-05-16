@@ -1,9 +1,9 @@
 'use client'
 
 import { OiPerLogoText } from '@/components/logo/logo-text'
-import { getWebSession, isAbortError } from '@/lib/auth-api'
+import { useAuth } from '@/features/auth/auth-context'
 import { Mic, Settings } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { Wrapper } from '../../../components/wrapper'
 import {
   ANCHOR_FEATURES,
@@ -18,41 +18,18 @@ import {
 import { AnimatedWaveform } from './animated-waveform'
 import { LightningBase } from './lightning-base'
 
-type HeaderAuthState =
-  | { status: 'loading' }
-  | { status: 'unauthenticated' }
-  | { status: 'authenticated'; label: string }
-
 export function HeroSection() {
-  const [authState, setAuthState] = useState<HeaderAuthState>({
-    status: 'loading',
-  })
+  const { currentUser, isLoading } = useAuth()
 
-  useEffect(() => {
-    const abortController = new AbortController()
+  const authLabel = useMemo(() => {
+    if (!currentUser) return null
 
-    getWebSession({ signal: abortController.signal })
-      .then((session) => {
-        if (!session.authenticated) {
-          return setAuthState({ status: 'unauthenticated' })
-        }
+    const fullName = [currentUser.firstName, currentUser.lastName]
+      .filter((name): name is string => Boolean(name))
+      .join(' ')
 
-        const fullName = [session.user.firstName, session.user.lastName]
-          .filter((name): name is string => Boolean(name))
-          .join(' ')
-
-        setAuthState({
-          status: 'authenticated',
-          label: fullName || session.user.email,
-        })
-      })
-      .catch((error) => {
-        if (isAbortError(error)) return
-        setAuthState({ status: 'unauthenticated' })
-      })
-
-    return abortController.abort
-  }, [])
+    return fullName || currentUser.email
+  }, [currentUser])
 
   return (
     <section className="relative overflow-hidden border-b border-white/6 bg-[#0a0a0a]">
@@ -93,10 +70,10 @@ export function HeroSection() {
           </div>
 
           <div className="flex items-center gap-3">
-            {authState.status === 'authenticated' ? (
+            {!isLoading && currentUser && authLabel ? (
               <div className="inline-flex h-10 max-w-[18rem] items-center gap-2 rounded border border-emerald-400/40 bg-emerald-500/10 px-4 text-sm font-medium text-emerald-100">
                 <span className="size-2 shrink-0 rounded-full bg-emerald-300" />
-                <span className="truncate">{authState.label}</span>
+                <span className="truncate">{authLabel}</span>
               </div>
             ) : (
               <a

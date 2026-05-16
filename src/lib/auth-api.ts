@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const webSessionSchema = z.union([
+export const webSessionSchema = z.union([
   z.object({
     authenticated: z.literal(false),
     reason: z.string().optional(),

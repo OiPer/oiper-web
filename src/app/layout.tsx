@@ -1,6 +1,7 @@
 import '@/styles/index.css'
 import '@/styles/theme.css'
 
+import { AuthProvider } from '@/features/auth/auth-context'
 import { PublicAuthModalClientNoSSR } from '@/features/auth/public-auth-modal-client'
 import { cn } from '@/lib/utils'
 import { Metadata } from 'next'
@@ -93,8 +94,10 @@ export default function Layout({ children }: PropsWithChildren) {
     <html lang="en" suppressHydrationWarning>
       <body className={cn('antialiased', inter.variable, firaCode.variable)}>
         <ThemeProvider attribute="class" enableSystem>
-          {children}
-          <PublicAuthModalClientNoSSR />
+          <AuthProvider>
+            {children}
+            <PublicAuthModalClientNoSSR />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

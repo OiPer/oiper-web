@@ -1,17 +1,12 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { verifyEmailForWebAuth } from '@/lib/auth-api'
+import { useAuth } from '@/features/auth/auth-context'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-import { z } from 'zod'
 import { AuthCard } from './auth-card'
 import { AuthInput } from './auth-form-input'
 import { getAuthErrorMessage } from './workos-auth-error'
-
-const verificationSchema = z.object({
-  code: z.string().min(4, 'Verification code must be at least 4 characters'),
-})
 
 type VerificationFormProps = {
   mode: 'modal' | 'page'
@@ -35,6 +30,7 @@ function resolveCallbackPath(searchParams: URLSearchParams): string {
 export function EmailVerificationForm({ mode, type }: VerificationFormProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { verifyEmail } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [verificationCode, setVerificationCode] = useState('')
   const [isVerifying, setIsVerifying] = useState(false)
@@ -55,23 +51,23 @@ export function EmailVerificationForm({ mode, type }: VerificationFormProps) {
     setErrorMessage(null)
     setIsVerifying(true)
 
-    try {
-      const session = await verifyEmailForWebAuth({
-        code: verificationCode.trim(),
-        pendingAuthenticationToken: pendingToken!,
-      })
+    const [session, error] = await verifyEmail({
+      code: verificationCode.trim(),
+      pendingAuthenticationToken: pendingToken!,
+    })
 
-      if (!session.authenticated) {
-        setErrorMessage('Something went wrong. Please try again.')
-        return
-      }
-
-      router.push(callbackPath)
-    } catch (error) {
+    if (error) {
       setErrorMessage(getAuthErrorMessage(error))
-    } finally {
-      setIsVerifying(false)
+      return setIsVerifying(false)
     }
+
+    if (!session || !session.authenticated) {
+      setErrorMessage('Something went wrong')
+      return setIsVerifying(false)
+    }
+
+    router.push(callbackPath)
+    setIsVerifying(false)
   }
 
   const title = 'Verify your email'

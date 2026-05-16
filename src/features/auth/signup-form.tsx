@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { signUpWithPassword } from '@/lib/auth-api'
+import { useAuth } from '@/features/auth/auth-context'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useMemo, useState } from 'react'
@@ -55,6 +55,7 @@ export function SignUpForm({ mode }: SignUpFormProps) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { signUp } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const callbackPath = useMemo(
@@ -75,24 +76,16 @@ export function SignUpForm({ mode }: SignUpFormProps) {
   async function onSubmit(values: SignUpSchema) {
     setErrorMessage(null)
 
-    try {
-      const session = await signUpWithPassword({
-        name: values.name,
-        email: values.email,
-        password: values.password,
-      })
+    const [session, error] = await signUp({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+    })
 
-      if (!session.authenticated) {
-        setErrorMessage('Something went wrong!')
-        return
-      }
-
-      router.push(callbackPath)
-    } catch (error) {
+    if (error) {
       const verification = getEmailVerificationState(error)
 
       if (verification) {
-        // Navigate to verification screen with pending token and email
         const verificationParams = new URLSearchParams(searchParams.toString())
         verificationParams.set('auth-page', 'verify-signup')
         verificationParams.set(
@@ -107,12 +100,17 @@ export function SignUpForm({ mode }: SignUpFormProps) {
             ? `${pathname}?${query}`
             : `/auth/verify-signup?${query}`
 
-        router.push(verificationPath)
-        return
+        return router.push(verificationPath)
       }
 
-      setErrorMessage(getAuthErrorMessage(error))
+      return setErrorMessage(getAuthErrorMessage(error))
     }
+
+    if (!session || !session.authenticated) {
+      return setErrorMessage('Something went wrong!')
+    }
+
+    router.push(callbackPath)
   }
 
   return (
