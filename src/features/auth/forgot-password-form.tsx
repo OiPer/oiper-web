@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
 import {
   confirmWebPasswordReset,
   requestWebPasswordReset,
@@ -23,10 +24,10 @@ const requestResetSchema = z.object({
 const resetWithTokenSchema = z
   .object({
     password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string().min(8),
+    confirmPassword: z.string().min(1, 'Confirm password is required'),
   })
   .superRefine((values, context) => {
-    if (values.password !== values.confirmPassword) {
+    if (values.confirmPassword && values.password !== values.confirmPassword) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Passwords do not match',
@@ -139,9 +140,11 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
             className="h-9 bg-white text-black hover:bg-white/90"
             disabled={requestResetForm.formState.isSubmitting}
           >
-            {requestResetForm.formState.isSubmitting
-              ? 'Sending...'
-              : 'Send reset email'}
+            {requestResetForm.formState.isSubmitting ? (
+              <Spinner />
+            ) : (
+              'Send reset email'
+            )}
           </Button>
         </form>
       ) : (
@@ -168,9 +171,11 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
             className="h-9 bg-white text-black hover:bg-white/90"
             disabled={resetWithTokenForm.formState.isSubmitting}
           >
-            {resetWithTokenForm.formState.isSubmitting
-              ? 'Updating...'
-              : 'Update password'}
+            {resetWithTokenForm.formState.isSubmitting ? (
+              <Spinner />
+            ) : (
+              'Update password'
+            )}
           </Button>
         </form>
       )}

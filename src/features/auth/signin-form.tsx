@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/features/auth/auth-context'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
@@ -51,6 +52,8 @@ export function SignInForm({ mode }: SignInFormProps) {
     },
   })
 
+  const email = form.watch('email')
+
   const forgotHref = useMemo(
     () =>
       buildAuthHref({
@@ -58,9 +61,9 @@ export function SignInForm({ mode }: SignInFormProps) {
         pathname,
         searchParams: new URLSearchParams(searchParams.toString()),
         authPage: 'forgot-password',
-        additionalParams: { email: form.getValues('email') },
+        additionalParams: { email },
       }),
-    [form, mode, pathname, searchParams]
+    [email, mode, pathname, searchParams]
   )
 
   async function onSubmit(values: SignInSchema) {
@@ -121,7 +124,7 @@ export function SignInForm({ mode }: SignInFormProps) {
             <p className="text-sm font-medium text-white">Password</p>
             <Link
               href={forgotHref}
-              className="text-xs text-white/65 underline underline-offset-4 hover:text-white"
+              className="text-xs text-white/65 underline underline-offset-[5px] hover:text-white"
               scroll={false}
             >
               Forgot password?
@@ -146,7 +149,7 @@ export function SignInForm({ mode }: SignInFormProps) {
           className="h-9 bg-white text-black hover:bg-white/90"
           disabled={form.formState.isSubmitting}
         >
-          {form.formState.isSubmitting ? 'Signing in...' : 'Sign in'}
+          {form.formState.isSubmitting ? <Spinner /> : 'Sign in'}
         </Button>
       </form>
     </AuthCard>

@@ -147,7 +147,7 @@ export function AuthCard({
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-white/15" />
               </div>
-              <div className="relative flex justify-center text-xs tracking-[0.2em] text-white/45 uppercase">
+              <div className="relative flex justify-center text-sm text-white/45">
                 <span className="bg-black px-3">Or continue with</span>
               </div>
             </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/features/auth/auth-context'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
@@ -100,7 +101,7 @@ export function EmailVerificationForm({ mode, type }: VerificationFormProps) {
           onClick={handleEmailVerification}
           disabled={verificationCode.trim().length < 4 || isVerifying}
         >
-          {isVerifying ? 'Verifying...' : 'Verify email'}
+          {isVerifying ? <Spinner /> : 'Verify email'}
         </Button>
 
         <p className="text-center text-xs text-white/60">

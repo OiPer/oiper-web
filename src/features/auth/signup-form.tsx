@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/features/auth/auth-context'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -20,10 +21,10 @@ const signUpSchema = z
     name: z.string().trim().min(1, 'Name is required'),
     email: z.string().trim().email('Enter a valid email address'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string().min(8),
+    confirmPassword: z.string().min(1, 'Confirm password is required'),
   })
   .superRefine((values, context) => {
-    if (values.password !== values.confirmPassword) {
+    if (values.confirmPassword && values.password !== values.confirmPassword) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Passwords do not match',
@@ -147,9 +148,7 @@ export function SignUpForm({ mode }: SignUpFormProps) {
           className="h-9 bg-white text-black hover:bg-white/90"
           disabled={form.formState.isSubmitting}
         >
-          {form.formState.isSubmitting
-            ? 'Creating account...'
-            : 'Create account'}
+          {form.formState.isSubmitting ? <Spinner /> : 'Sign up'}
         </Button>
       </form>
     </AuthCard>
