@@ -45,7 +45,6 @@ export type SignInFn = ReturnWrap<AuthSessionResult, SignInInput>
 export type SignUpFn = ReturnWrap<AuthSessionResult, SignUpInput>
 export type VerifyEmailFn = ReturnWrap<AuthSessionResult, VerifyEmailInput>
 export type SignOutFn = ReturnWrap<void>
-export type RefreshSessionFn = ReturnWrap<Session>
 
 export interface AuthContextValue {
   currentUser: User | null
@@ -57,7 +56,6 @@ export interface AuthContextValue {
   signUp: SignUpFn
   verifyEmail: VerifyEmailFn
   signOut: SignOutFn
-  refreshSession: RefreshSessionFn
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
@@ -141,19 +139,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     []
   )
 
-  const refreshSession: RefreshSessionFn = useCallback(
-    ({ onError = cb, onSuccess = cb }) => {
-      return wrap(getWebSession(), {
-        onError,
-        onSuccess: (newSession) => {
-          setSession(newSession)
-          onSuccess(newSession)
-        },
-      })
-    },
-    []
-  )
-
   const signOut: SignOutFn = useCallback(({ onError = cb, onSuccess = cb }) => {
     return wrap(Promise.resolve(), {
       onError,
@@ -175,7 +160,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         signUp,
         verifyEmail,
         signOut,
-        refreshSession,
       }}
     >
       {children}
