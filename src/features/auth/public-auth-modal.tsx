@@ -2,6 +2,7 @@
 
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { AuthPageShell } from './auth-page-shell'
+import { EmailVerificationForm } from './email-verification-form'
 import { ForgotPasswordForm } from './forgot-password-form'
 import { SignInForm } from './signin-form'
 import { SignUpForm } from './signup-form'
@@ -14,7 +15,14 @@ export function PublicAuthModal() {
   const isSignInOpen = authPage === 'signin'
   const isSignUpOpen = authPage === 'signup'
   const isForgotPasswordOpen = authPage === 'forgot-password'
-  const isOpen = isSignInOpen || isSignUpOpen || isForgotPasswordOpen
+  const isVerifySignInOpen = authPage === 'verify-signin'
+  const isVerifySignUpOpen = authPage === 'verify-signup'
+  const isOpen =
+    isSignInOpen ||
+    isSignUpOpen ||
+    isForgotPasswordOpen ||
+    isVerifySignInOpen ||
+    isVerifySignUpOpen
 
   function closeModal() {
     setSearchParams.remove('auth-page')
@@ -30,7 +38,7 @@ export function PublicAuthModal() {
       }}
     >
       <DialogContent
-        className="h-full !w-full !max-w-full overflow-auto rounded-none border-none !bg-transparent p-0 shadow-none ring-0 outline-none"
+        className="h-full w-full! max-w-full! overflow-auto rounded-none border-none bg-transparent! p-0 shadow-none ring-0 outline-none"
         showCloseButton={false}
       >
         <AuthPageShell
@@ -41,6 +49,12 @@ export function PublicAuthModal() {
           {isSignInOpen ? <SignInForm mode="modal" /> : null}
           {isSignUpOpen ? <SignUpForm mode="modal" /> : null}
           {isForgotPasswordOpen ? <ForgotPasswordForm mode="modal" /> : null}
+          {isVerifySignInOpen ? (
+            <EmailVerificationForm mode="modal" type="signin" />
+          ) : null}
+          {isVerifySignUpOpen ? (
+            <EmailVerificationForm mode="modal" type="signup" />
+          ) : null}
         </AuthPageShell>
       </DialogContent>
     </Dialog>

@@ -1,9 +1,9 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { signUpWithPassword, verifyEmailForWebAuth } from '@/lib/auth-api'
+import { signUpWithPassword } from '@/lib/auth-api'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -52,15 +52,10 @@ function resolveCallbackPath(searchParams: URLSearchParams): string {
 }
 
 export function SignUpForm({ mode }: SignUpFormProps) {
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const router = useRouter()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [verificationState, setVerificationState] = useState<{
-    pendingAuthenticationToken: string
-    email?: string
-  } | null>(null)
-  const [verificationCode, setVerificationCode] = useState('')
-  const [isVerifying, setIsVerifying] = useState(false)
 
   const callbackPath = useMemo(
     () => resolveCallbackPath(new URLSearchParams(searchParams.toString())),
@@ -79,7 +74,6 @@ export function SignUpForm({ mode }: SignUpFormProps) {
 
   async function onSubmit(values: SignUpSchema) {
     setErrorMessage(null)
-    setVerificationState(null)
 
     try {
       const session = await signUpWithPassword({
@@ -98,39 +92,26 @@ export function SignUpForm({ mode }: SignUpFormProps) {
       const verification = getEmailVerificationState(error)
 
       if (verification) {
-        setVerificationState(verification)
+        // Navigate to verification screen with pending token and email
+        const verificationParams = new URLSearchParams(searchParams.toString())
+        verificationParams.set('auth-page', 'verify-signup')
+        verificationParams.set(
+          'pendingToken',
+          verification.pendingAuthenticationToken
+        )
+        verificationParams.set('email', verification.email || values.email)
+
+        const query = verificationParams.toString()
+        const verificationPath =
+          mode === 'modal'
+            ? `${pathname}?${query}`
+            : `/auth/verify-signup?${query}`
+
+        router.push(verificationPath)
         return
       }
 
       setErrorMessage(getAuthErrorMessage(error))
-    }
-  }
-
-  async function handleEmailVerification() {
-    if (!verificationState) {
-      return
-    }
-
-    setErrorMessage(null)
-    setIsVerifying(true)
-
-    try {
-      const session = await verifyEmailForWebAuth({
-        code: verificationCode.trim(),
-        pendingAuthenticationToken:
-          verificationState.pendingAuthenticationToken,
-      })
-
-      if (!session.authenticated) {
-        setErrorMessage('Something went wrong!')
-        return
-      }
-
-      router.push(callbackPath)
-    } catch (error) {
-      setErrorMessage(getAuthErrorMessage(error))
-    } finally {
-      setIsVerifying(false)
     }
   }
 
@@ -191,35 +172,6 @@ export function SignUpForm({ mode }: SignUpFormProps) {
             : 'Create account'}
         </Button>
       </form>
-
-      {verificationState ? (
-        <div className="mt-5 space-y-3 rounded-lg border border-white/15 bg-white/5 p-3">
-          <p className="text-sm text-white/80">
-            Enter the verification code sent to{' '}
-            <span className="font-medium text-white">
-              {verificationState.email ?? form.getValues('email')}
-            </span>
-            .
-          </p>
-          <AuthInput
-            type="text"
-            inputMode="numeric"
-            maxLength={12}
-            value={verificationCode}
-            onChange={(event) => setVerificationCode(event.target.value)}
-            placeholder="Verification code"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            className="h-9 w-full border-white/20 bg-transparent text-white hover:bg-white/10"
-            onClick={handleEmailVerification}
-            disabled={verificationCode.trim().length < 4 || isVerifying}
-          >
-            {isVerifying ? 'Verifying...' : 'Verify email'}
-          </Button>
-        </div>
-      ) : null}
     </AuthCard>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { signInWithPassword, verifyEmailForWebAuth } from '@/lib/auth-api'
+import { signInWithPassword } from '@/lib/auth-api'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -45,12 +45,6 @@ export function SignInForm({ mode }: SignInFormProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [verificationState, setVerificationState] = useState<{
-    pendingAuthenticationToken: string
-    email?: string
-  } | null>(null)
-  const [verificationCode, setVerificationCode] = useState('')
-  const [isVerifying, setIsVerifying] = useState(false)
 
   const callbackPath = useMemo(
     () => resolveCallbackPath(new URLSearchParams(searchParams.toString())),
@@ -82,7 +76,6 @@ export function SignInForm({ mode }: SignInFormProps) {
 
   async function onSubmit(values: SignInSchema) {
     setErrorMessage(null)
-    setVerificationState(null)
 
     try {
       const session = await signInWithPassword(values)
@@ -97,39 +90,26 @@ export function SignInForm({ mode }: SignInFormProps) {
       const verification = getEmailVerificationState(error)
 
       if (verification) {
-        setVerificationState(verification)
+        const verificationParams = new URLSearchParams(searchParams.toString())
+        verificationParams.set('auth-page', 'verify-signin')
+        verificationParams.set(
+          'pendingToken',
+          verification.pendingAuthenticationToken
+        )
+
+        verificationParams.set('email', verification.email || values.email)
+
+        const query = verificationParams.toString()
+        const verificationPath =
+          mode === 'modal'
+            ? `${pathname}?${query}`
+            : `/auth/verify-signin?${query}`
+
+        router.push(verificationPath)
         return
       }
 
       setErrorMessage(getAuthErrorMessage(error))
-    }
-  }
-
-  async function handleEmailVerification() {
-    if (!verificationState) {
-      return
-    }
-
-    setErrorMessage(null)
-    setIsVerifying(true)
-
-    try {
-      const session = await verifyEmailForWebAuth({
-        code: verificationCode.trim(),
-        pendingAuthenticationToken:
-          verificationState.pendingAuthenticationToken,
-      })
-
-      if (!session.authenticated) {
-        setErrorMessage('Something went wrong. Please try again.')
-        return
-      }
-
-      router.push(callbackPath)
-    } catch (error) {
-      setErrorMessage(getAuthErrorMessage(error))
-    } finally {
-      setIsVerifying(false)
     }
   }
 
@@ -185,35 +165,6 @@ export function SignInForm({ mode }: SignInFormProps) {
           {form.formState.isSubmitting ? 'Signing in...' : 'Sign in'}
         </Button>
       </form>
-
-      {verificationState ? (
-        <div className="mt-5 space-y-3 rounded-lg border border-white/15 bg-white/5 p-3">
-          <p className="text-sm text-white/80">
-            Enter the verification code sent to{' '}
-            <span className="font-medium text-white">
-              {verificationState.email ?? form.getValues('email')}
-            </span>
-            .
-          </p>
-          <AuthInput
-            type="text"
-            inputMode="numeric"
-            maxLength={12}
-            value={verificationCode}
-            onChange={(event) => setVerificationCode(event.target.value)}
-            placeholder="Verification code"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            className="h-9 w-full border-white/20 bg-transparent text-white hover:bg-white/10"
-            onClick={handleEmailVerification}
-            disabled={verificationCode.trim().length < 4 || isVerifying}
-          >
-            {isVerifying ? 'Verifying...' : 'Verify email'}
-          </Button>
-        </div>
-      ) : null}
     </AuthCard>
   )
 }
