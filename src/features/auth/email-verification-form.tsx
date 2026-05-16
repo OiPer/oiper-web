@@ -6,25 +6,12 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { AuthCard } from './auth-card'
 import { AuthInput } from './auth-form-input'
+import { resolveCallbackPath } from './auth-form-utils'
 import { getAuthErrorMessage } from './workos-auth-error'
 
 type VerificationFormProps = {
   mode: 'modal' | 'page'
   type: 'signin' | 'signup'
-}
-
-function resolveCallbackPath(searchParams: URLSearchParams): string {
-  const callbackPath = searchParams.get('callbackPath')
-
-  if (!callbackPath || !callbackPath.startsWith('/')) {
-    return '/'
-  }
-
-  if (callbackPath.startsWith('//')) {
-    return '/'
-  }
-
-  return callbackPath
 }
 
 export function EmailVerificationForm({ mode, type }: VerificationFormProps) {

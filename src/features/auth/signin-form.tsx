@@ -11,6 +11,11 @@ import { z } from 'zod'
 import { AuthCard } from './auth-card'
 import { AuthInput, AuthPasswordInput } from './auth-form-input'
 import {
+  buildAuthHref,
+  buildVerificationUrl,
+  resolveCallbackPath,
+} from './auth-form-utils'
+import {
   getAuthErrorMessage,
   getEmailVerificationState,
 } from './workos-auth-error'
@@ -24,20 +29,6 @@ type SignInSchema = z.infer<typeof signInSchema>
 
 type SignInFormProps = {
   mode: 'modal' | 'page'
-}
-
-function resolveCallbackPath(searchParams: URLSearchParams): string {
-  const callbackPath = searchParams.get('callbackPath')
-
-  if (!callbackPath || !callbackPath.startsWith('/')) {
-    return '/'
-  }
-
-  if (callbackPath.startsWith('//')) {
-    return '/'
-  }
-
-  return callbackPath
 }
 
 export function SignInForm({ mode }: SignInFormProps) {
@@ -60,20 +51,17 @@ export function SignInForm({ mode }: SignInFormProps) {
     },
   })
 
-  const forgotHref = useMemo(() => {
-    const next = new URLSearchParams(searchParams.toString())
-    next.set('email', form.getValues('email'))
-
-    if (mode === 'modal') {
-      next.set('auth-page', 'forgot-password')
-      const query = next.toString()
-      return query ? `${pathname}?${query}` : pathname
-    }
-
-    next.delete('auth-page')
-    const query = next.toString()
-    return query ? `/auth/forgot-password?${query}` : '/auth/forgot-password'
-  }, [form, mode, pathname, searchParams])
+  const forgotHref = useMemo(
+    () =>
+      buildAuthHref({
+        mode,
+        pathname,
+        searchParams: new URLSearchParams(searchParams.toString()),
+        authPage: 'forgot-password',
+        additionalParams: { email: form.getValues('email') },
+      }),
+    [form, mode, pathname, searchParams]
+  )
 
   async function onSubmit(values: SignInSchema) {
     setErrorMessage(null)
@@ -87,21 +75,14 @@ export function SignInForm({ mode }: SignInFormProps) {
       const verification = getEmailVerificationState(error)
 
       if (verification) {
-        const verificationParams = new URLSearchParams(searchParams.toString())
-
-        verificationParams.set('auth-page', 'verify-signin')
-        verificationParams.set(
-          'pendingToken',
-          verification.pendingAuthenticationToken
-        )
-
-        verificationParams.set('email', verification.email || values.email)
-
-        const query = verificationParams.toString()
-        const verificationPath =
-          mode === 'modal'
-            ? `${pathname}?${query}`
-            : `/auth/verify-signin?${query}`
+        const verificationPath = buildVerificationUrl({
+          mode,
+          pathname,
+          searchParams: new URLSearchParams(searchParams.toString()),
+          verificationType: 'verify-signin',
+          pendingToken: verification.pendingAuthenticationToken,
+          email: verification.email || values.email,
+        })
 
         return router.push(verificationPath)
       }

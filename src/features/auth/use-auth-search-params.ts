@@ -22,6 +22,7 @@ export function useAuthSearchParams() {
 
         window.history.replaceState({}, '', url.toString())
       },
+
       remove(keys: string | string[]) {
         const url = new URL(window.location.href)
         const keysToRemove = Array.isArray(keys) ? keys : [keys]

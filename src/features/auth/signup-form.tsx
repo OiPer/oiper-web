@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
 import { AuthInput, AuthPasswordInput } from './auth-form-input'
+import { buildVerificationUrl, resolveCallbackPath } from './auth-form-utils'
 import {
   getAuthErrorMessage,
   getEmailVerificationState,
@@ -35,20 +36,6 @@ type SignUpSchema = z.infer<typeof signUpSchema>
 
 type SignUpFormProps = {
   mode: 'modal' | 'page'
-}
-
-function resolveCallbackPath(searchParams: URLSearchParams): string {
-  const callbackPath = searchParams.get('callbackPath')
-
-  if (!callbackPath || !callbackPath.startsWith('/')) {
-    return '/'
-  }
-
-  if (callbackPath.startsWith('//')) {
-    return '/'
-  }
-
-  return callbackPath
 }
 
 export function SignUpForm({ mode }: SignUpFormProps) {
@@ -86,19 +73,14 @@ export function SignUpForm({ mode }: SignUpFormProps) {
       const verification = getEmailVerificationState(error)
 
       if (verification) {
-        const verificationParams = new URLSearchParams(searchParams.toString())
-        verificationParams.set('auth-page', 'verify-signup')
-        verificationParams.set(
-          'pendingToken',
-          verification.pendingAuthenticationToken
-        )
-        verificationParams.set('email', verification.email || values.email)
-
-        const query = verificationParams.toString()
-        const verificationPath =
-          mode === 'modal'
-            ? `${pathname}?${query}`
-            : `/auth/verify-signup?${query}`
+        const verificationPath = buildVerificationUrl({
+          mode,
+          pathname,
+          searchParams: new URLSearchParams(searchParams.toString()),
+          verificationType: 'verify-signup',
+          pendingToken: verification.pendingAuthenticationToken,
+          email: verification.email || values.email,
+        })
 
         return router.push(verificationPath)
       }

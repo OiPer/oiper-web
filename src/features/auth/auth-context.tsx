@@ -81,16 +81,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const abortController = new AbortController()
 
     async function fetchSession() {
-      const [currentSession] = await wrap(
+      const [currentSession, sessionError] = await wrap(
         getWebSession({
           signal: abortController.signal,
         })
       )
 
-      if (currentSession) {
-        setSession(currentSession)
-      } else {
+      if (sessionError) {
+        console.error('Failed to fetch session:', sessionError)
         setSession(null)
+      } else {
+        setSession(currentSession)
       }
 
       setIsLoading(false)
@@ -98,7 +99,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     void fetchSession()
 
-    return abortController.abort
+    return () => abortController.abort()
   }, [])
 
   const signIn: SignInFn = useCallback(
@@ -190,7 +191,6 @@ export function useAuth() {
   return context
 }
 
-// Helper function to check if error is an AuthApiError
 export function isAuthApiError(error: Error): error is AuthApiError {
   return 'status' in error && 'code' in error
 }

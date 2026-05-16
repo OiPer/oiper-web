@@ -1,3 +1,4 @@
+import { wrap } from '@/utils/promise'
 import { z } from 'zod'
 
 export const webSessionSchema = z.union([
@@ -160,68 +161,84 @@ async function readJson<TSchema extends z.ZodTypeAny>(
   return schema.parse(responseBody)
 }
 
-export async function getWebSession(requestInit?: RequestInit) {
-  const response = await fetch(
-    `${SERVER_BASE_URL}/v1/auth/web/session`,
-    mergeRequestInit({ credentials: 'include', cache: 'no-store' }, requestInit)
+async function fetchApi<TSchema extends z.ZodTypeAny>(
+  path: string,
+  schema: TSchema,
+  options?: {
+    method?: 'GET' | 'POST'
+    body?: unknown
+    requestInit?: RequestInit
+    headers?: Record<string, string>
+  }
+): Promise<z.infer<TSchema>> {
+  const init = mergeRequestInit(
+    {
+      method: options?.method ?? 'GET',
+      credentials: 'include',
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers,
+      },
+      body: options?.body ? JSON.stringify(options.body) : undefined,
+    },
+    options?.requestInit
   )
 
-  return readJson(response, webSessionSchema)
+  const response = await fetch(`${SERVER_BASE_URL}${path}`, init)
+  return readJson(response, schema)
+}
+
+export async function getWebSession(requestInit?: RequestInit) {
+  return fetchApi('/v1/auth/web/session', webSessionSchema, {
+    method: 'GET',
+    requestInit: mergeRequestInit(
+      { credentials: 'include', cache: 'no-store' },
+      requestInit
+    ),
+  })
 }
 
 export async function getWebCsrfToken(requestInit?: RequestInit) {
-  const response = await fetch(
-    `${SERVER_BASE_URL}/v1/auth/web/csrf-token`,
-    mergeRequestInit({ credentials: 'include', cache: 'no-store' }, requestInit)
-  )
-
-  return readJson(response, csrfTokenSchema)
+  return fetchApi('/v1/auth/web/csrf-token', csrfTokenSchema, {
+    method: 'GET',
+    requestInit: mergeRequestInit(
+      { credentials: 'include', cache: 'no-store' },
+      requestInit
+    ),
+  })
 }
 
 export async function logoutWebSession(options?: {
   requestInit?: RequestInit
   csrfRequestInit?: RequestInit
 }) {
-  const csrf = await getWebCsrfToken(
-    options?.csrfRequestInit ?? options?.requestInit
+  const [csrf, csrfError] = await wrap(
+    getWebCsrfToken(options?.csrfRequestInit ?? options?.requestInit)
   )
 
-  const response = await fetch(
-    `${SERVER_BASE_URL}/v1/auth/web/logout`,
-    mergeRequestInit(
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': csrf.csrfToken,
-        },
-      },
-      options?.requestInit
-    )
-  )
+  if (csrfError) {
+    throw csrfError
+  }
 
-  return readJson(response, webLogoutSchema)
+  return fetchApi('/v1/auth/web/logout', webLogoutSchema, {
+    method: 'POST',
+    requestInit: options?.requestInit,
+    headers: {
+      'X-CSRF-Token': csrf.csrfToken,
+    },
+  })
 }
 
 export async function confirmDesktopAuthRequest(
   requestId: string,
   requestInit?: RequestInit
 ) {
-  const response = await fetch(
-    `${SERVER_BASE_URL}/v1/auth/desktop/confirm`,
-    mergeRequestInit(
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ requestId }),
-      },
-      requestInit
-    )
-  )
-
-  return readJson(response, desktopConfirmSchema)
+  return fetchApi('/v1/auth/desktop/confirm', desktopConfirmSchema, {
+    method: 'POST',
+    body: { requestId },
+    requestInit,
+  })
 }
 
 export async function signInWithPassword(
@@ -230,20 +247,11 @@ export async function signInWithPassword(
 ) {
   const body = passwordSignInBodySchema.parse(input)
 
-  const response = await fetch(
-    `${SERVER_BASE_URL}/v1/auth/web/sign-in/password`,
-    mergeRequestInit(
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      },
-      requestInit
-    )
-  )
-
-  return readJson(response, webSessionSchema)
+  return fetchApi('/v1/auth/web/sign-in/password', webSessionSchema, {
+    method: 'POST',
+    body,
+    requestInit,
+  })
 }
 
 export async function signUpWithPassword(
@@ -252,20 +260,11 @@ export async function signUpWithPassword(
 ) {
   const body = passwordSignUpBodySchema.parse(input)
 
-  const response = await fetch(
-    `${SERVER_BASE_URL}/v1/auth/web/sign-up/password`,
-    mergeRequestInit(
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      },
-      requestInit
-    )
-  )
-
-  return readJson(response, webSessionSchema)
+  return fetchApi('/v1/auth/web/sign-up/password', webSessionSchema, {
+    method: 'POST',
+    body,
+    requestInit,
+  })
 }
 
 export async function verifyEmailForWebAuth(
@@ -274,20 +273,11 @@ export async function verifyEmailForWebAuth(
 ) {
   const body = emailVerificationBodySchema.parse(input)
 
-  const response = await fetch(
-    `${SERVER_BASE_URL}/v1/auth/web/verify-email`,
-    mergeRequestInit(
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      },
-      requestInit
-    )
-  )
-
-  return readJson(response, webSessionSchema)
+  return fetchApi('/v1/auth/web/verify-email', webSessionSchema, {
+    method: 'POST',
+    body,
+    requestInit,
+  })
 }
 
 export async function requestWebPasswordReset(
@@ -296,20 +286,11 @@ export async function requestWebPasswordReset(
 ) {
   const body = passwordResetRequestBodySchema.parse(input)
 
-  const response = await fetch(
-    `${SERVER_BASE_URL}/v1/auth/web/password-reset/request`,
-    mergeRequestInit(
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      },
-      requestInit
-    )
-  )
-
-  return readJson(response, sentResponseSchema)
+  return fetchApi('/v1/auth/web/password-reset/request', sentResponseSchema, {
+    method: 'POST',
+    body,
+    requestInit,
+  })
 }
 
 export async function confirmWebPasswordReset(
@@ -318,18 +299,9 @@ export async function confirmWebPasswordReset(
 ) {
   const body = passwordResetConfirmBodySchema.parse(input)
 
-  const response = await fetch(
-    `${SERVER_BASE_URL}/v1/auth/web/password-reset/confirm`,
-    mergeRequestInit(
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      },
-      requestInit
-    )
-  )
-
-  return readJson(response, resetResponseSchema)
+  return fetchApi('/v1/auth/web/password-reset/confirm', resetResponseSchema, {
+    method: 'POST',
+    body,
+    requestInit,
+  })
 }
