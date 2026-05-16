@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  buildWebAuthStartUrl,
   confirmDesktopAuthRequest,
   getWebSession,
   isAbortError,
@@ -31,15 +30,11 @@ export default function DesktopAuthPage() {
   })
 
   const signInUrl = useMemo(() => {
-    const currentPath = queryString
+    const callbackPath = queryString
       ? `/auth/desktop?${queryString}`
       : '/auth/desktop'
-
-    return buildWebAuthStartUrl({
-      provider: 'authkit',
-      returnPath: currentPath,
-      screenHint: 'sign-in',
-    })
+    const encoded = encodeURIComponent(callbackPath)
+    return `/auth/signin?callbackPath=${encoded}`
   }, [queryString])
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import '@/styles/index.css'
 import '@/styles/theme.css'
 
+import { PublicAuthModalClientNoSSR } from '@/features/auth/public-auth-modal-client'
 import { cn } from '@/lib/utils'
 import { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
@@ -93,6 +94,7 @@ export default function Layout({ children }: PropsWithChildren) {
       <body className={cn('antialiased', inter.variable, firaCode.variable)}>
         <ThemeProvider attribute="class" enableSystem>
           {children}
+          <PublicAuthModalClientNoSSR />
         </ThemeProvider>
       </body>
     </html>

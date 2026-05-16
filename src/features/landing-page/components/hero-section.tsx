@@ -100,7 +100,7 @@ export function HeroSection() {
               </div>
             ) : (
               <a
-                href="/auth/login"
+                href="/?auth-page=signin"
                 className="inline-flex h-10 items-center justify-center rounded border border-white/20 bg-white/5 px-5 text-sm font-medium text-white hover:border-white/40 hover:bg-white/10"
               >
                 Sign in

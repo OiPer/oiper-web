@@ -1,0 +1,202 @@
+'use client'
+
+import { Button } from '@/components/ui/button'
+import {
+  confirmWebPasswordReset,
+  requestWebPasswordReset,
+} from '@/lib/auth-api'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useMemo, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { AuthCard } from './auth-card'
+import { AuthInput, AuthPasswordInput } from './auth-form-input'
+import { getAuthErrorMessage } from './workos-auth-error'
+
+const requestResetSchema = z.object({
+  email: z.string().trim().email('Enter a valid email address'),
+})
+
+const resetWithTokenSchema = z
+  .object({
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string().min(8),
+  })
+  .superRefine((values, context) => {
+    if (values.password !== values.confirmPassword) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Passwords do not match',
+        path: ['confirmPassword'],
+      })
+    }
+  })
+
+type ForgotPasswordFormProps = {
+  mode: 'modal' | 'page'
+}
+
+function resolveCallbackPath(searchParams: URLSearchParams): string {
+  const callbackPath = searchParams.get('callbackPath')
+
+  if (!callbackPath || !callbackPath.startsWith('/')) {
+    return '/auth/signin'
+  }
+
+  if (callbackPath.startsWith('//')) {
+    return '/auth/signin'
+  }
+
+  return callbackPath
+}
+
+export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+
+  const requestResetForm = useForm<z.infer<typeof requestResetSchema>>({
+    resolver: zodResolver(requestResetSchema),
+    defaultValues: {
+      email: searchParams.get('email') ?? '',
+    },
+  })
+
+  const resetWithTokenForm = useForm<z.infer<typeof resetWithTokenSchema>>({
+    resolver: zodResolver(resetWithTokenSchema),
+    defaultValues: {
+      password: '',
+      confirmPassword: '',
+    },
+  })
+
+  const token = searchParams.get('token')
+  const callbackPath = useMemo(
+    () => resolveCallbackPath(new URLSearchParams(searchParams.toString())),
+    [searchParams]
+  )
+
+  async function submitResetRequest(
+    values: z.infer<typeof requestResetSchema>
+  ) {
+    setErrorMessage(null)
+    setSuccessMessage(null)
+
+    try {
+      await requestWebPasswordReset({
+        email: values.email,
+      })
+      setSuccessMessage('Password reset email sent.')
+    } catch (error) {
+      setErrorMessage(getAuthErrorMessage(error))
+    }
+  }
+
+  async function submitPasswordReset(
+    values: z.infer<typeof resetWithTokenSchema>
+  ) {
+    if (!token) {
+      setErrorMessage('Missing reset token')
+      return
+    }
+
+    setErrorMessage(null)
+    setSuccessMessage(null)
+
+    try {
+      await confirmWebPasswordReset({
+        token,
+        newPassword: values.password,
+      })
+      setSuccessMessage('Password updated. Redirecting to sign in...')
+
+      window.setTimeout(() => {
+        router.push(callbackPath)
+      }, 600)
+    } catch (error) {
+      setErrorMessage(getAuthErrorMessage(error))
+    }
+  }
+
+  return (
+    <AuthCard
+      mode={mode}
+      page="forgot-password"
+      title={token ? 'Set new password' : 'Reset password'}
+      description={
+        token
+          ? 'Create a new password for your account.'
+          : 'We will send a reset link to your email address.'
+      }
+      showOAuth={false}
+    >
+      {!token ? (
+        <form
+          onSubmit={requestResetForm.handleSubmit(submitResetRequest)}
+          className="flex flex-col gap-4"
+        >
+          <AuthInput
+            type="email"
+            label="Email"
+            autoComplete="email"
+            {...requestResetForm.register('email')}
+            error={requestResetForm.formState.errors.email?.message}
+          />
+
+          <Button
+            type="submit"
+            className="h-9 bg-white text-black hover:bg-white/90"
+            disabled={requestResetForm.formState.isSubmitting}
+          >
+            {requestResetForm.formState.isSubmitting
+              ? 'Sending...'
+              : 'Send reset email'}
+          </Button>
+        </form>
+      ) : (
+        <form
+          onSubmit={resetWithTokenForm.handleSubmit(submitPasswordReset)}
+          className="flex flex-col gap-4"
+        >
+          <AuthPasswordInput
+            label="New password"
+            autoComplete="new-password"
+            {...resetWithTokenForm.register('password')}
+            error={resetWithTokenForm.formState.errors.password?.message}
+          />
+
+          <AuthPasswordInput
+            label="Confirm new password"
+            autoComplete="new-password"
+            {...resetWithTokenForm.register('confirmPassword')}
+            error={resetWithTokenForm.formState.errors.confirmPassword?.message}
+          />
+
+          <Button
+            type="submit"
+            className="h-9 bg-white text-black hover:bg-white/90"
+            disabled={resetWithTokenForm.formState.isSubmitting}
+          >
+            {resetWithTokenForm.formState.isSubmitting
+              ? 'Updating...'
+              : 'Update password'}
+          </Button>
+        </form>
+      )}
+
+      {successMessage ? (
+        <p className="mt-4 rounded-md border border-emerald-300/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
+          {successMessage}
+        </p>
+      ) : null}
+
+      {errorMessage ? (
+        <p className="mt-4 rounded-md border border-red-300/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+          {errorMessage}
+        </p>
+      ) : null}
+    </AuthCard>
+  )
+}
