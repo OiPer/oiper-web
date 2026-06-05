@@ -80,7 +80,7 @@ export const metadata: Metadata = {
     email: false,
     address: false,
     telephone: false,
-  }, 
+  },
   manifest: '/manifest.json',
 }
 
