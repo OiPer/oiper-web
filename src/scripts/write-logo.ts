@@ -69,7 +69,7 @@ void (async () => {
   )
 
   fs.writeFileSync(
-    path.join(__dirname, 'public/favicon.ico'),
+    path.join(__dirname, '../../public/favicon-main.ico'),
     ico.encode(faviconIcoBuffer)
   )
 
@@ -88,7 +88,7 @@ void (async () => {
   )
 
   fs.writeFileSync(
-    path.join(__dirname, 'public/favicon-black.ico'),
+    path.join(__dirname, '../../public/favicon-black.ico'),
     ico.encode(faviconDarkIcoBuffer)
   )
 
@@ -110,7 +110,7 @@ void (async () => {
   )
 
   fs.writeFileSync(
-    path.join(__dirname, 'public/favicon-white.ico'),
+    path.join(__dirname, '../../public/favicon-white.ico'),
     ico.encode(faviconLightIcoBuffer)
   )
 })()

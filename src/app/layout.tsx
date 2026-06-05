@@ -80,10 +80,7 @@ export const metadata: Metadata = {
     email: false,
     address: false,
     telephone: false,
-  },
-  icons: {
-    icon: '/favicon.ico',
-  },
+  }, 
   manifest: '/manifest.json',
 }
 
