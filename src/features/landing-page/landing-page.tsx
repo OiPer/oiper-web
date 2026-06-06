@@ -1,25 +1,7 @@
 'use client'
 
-import { FeaturesSection } from './components/features-section'
-import { FooterSection } from './components/footer-section'
-import { HeroSection } from './components/hero-section'
-import { LanguagesSection } from './components/languages-section'
-import { PerformanceSection } from './components/performance-section'
-import { PricingSection } from './components/pricing-section'
-import { PrivacySection } from './components/privacy-section'
-import { TestimonialsSection } from './components/testimonials-section'
-
 export function LandingPage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
-      <HeroSection />
-      <FeaturesSection /> {/* CENTER ALIGNED SECTION */}
-      <PerformanceSection /> {/* LEFT ALIGNED SECTION */}
-      <TestimonialsSection /> {/* CENTER ALIGNED SECTION */}
-      <LanguagesSection /> {/* LEFT ALIGNED SECTION */}
-      <PrivacySection /> {/* CENTER ALIGNED SECTION */}
-      <PricingSection /> {/* CENTER ALIGNED SECTION */}
-      <FooterSection />
-    </main>
+    <main className="min-h-screen overflow-hidden bg-[#0a0a0a] text-white"></main>
   )
 }
