@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { AuthCard } from './auth-card'
 import { AuthInput } from './auth-form-input'
-import { resolveCallbackPath } from './auth-form-utils'
+import { resolveCallbackUrl } from './auth-form-utils'
 import { getAuthErrorMessage } from './workos-auth-error'
 
 type VerificationFormProps = {
@@ -24,7 +24,7 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
   const [isVerifying, setIsVerifying] = useState(false)
   const [isResending, setIsResending] = useState(false)
 
-  const callbackPath = resolveCallbackPath(
+  const callbackUrl = resolveCallbackUrl(
     new URLSearchParams(searchParams.toString())
   )
 
@@ -55,7 +55,7 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
       return setIsVerifying(false)
     }
 
-    router.push(callbackPath)
+    router.push(callbackUrl)
     setIsVerifying(false)
   }
 

@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
 import { AuthInput, AuthPasswordInput } from './auth-form-input'
-import { buildAuthHref, resolveCallbackPath } from './auth-form-utils'
+import { buildAuthHref, resolveCallbackUrl } from './auth-form-utils'
 import { getAuthErrorMessage } from './workos-auth-error'
 
 const signInSchema = z.object({
@@ -32,8 +32,8 @@ export function SignInForm({ mode }: SignInFormProps) {
   const { signIn } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  const callbackPath = useMemo(
-    () => resolveCallbackPath(new URLSearchParams(searchParams.toString())),
+  const callbackUrl = useMemo(
+    () => resolveCallbackUrl(new URLSearchParams(searchParams.toString())),
     [searchParams]
   )
 
@@ -75,7 +75,7 @@ export function SignInForm({ mode }: SignInFormProps) {
       return setErrorMessage('Something went wrong. Please try again.')
     }
 
-    router.push(callbackPath)
+    router.push(callbackUrl)
   }
 
   return (

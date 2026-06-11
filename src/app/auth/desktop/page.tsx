@@ -30,11 +30,11 @@ export default function DesktopAuthPage() {
   })
 
   const signInUrl = useMemo(() => {
-    const callbackPath = queryString
+    const callbackUrl = queryString
       ? `/auth/desktop?${queryString}`
       : '/auth/desktop'
-    const encoded = encodeURIComponent(callbackPath)
-    return `/auth/signin?callbackPath=${encoded}`
+    const encoded = encodeURIComponent(callbackUrl)
+    return `/auth/signin?callbackUrl=${encoded}`
   }, [queryString])
 
   useEffect(() => {

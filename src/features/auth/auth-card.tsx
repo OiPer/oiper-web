@@ -92,20 +92,25 @@ export function AuthCard({
   modalSearch.set('auth-page', nextPage)
 
   const pageSearch = createQueryWithoutAuthPage(currentSearch)
-  const closeTargetPath = resolveSafePath(pageSearch.get('callbackPath'))
+  const closeTargetPath = resolveSafePath(pageSearch.get('callbackUrl'))
 
-  const switchHref =
-    mode === 'modal'
-      ? buildHrefWithSearchParams(pathname, modalSearch)
-      : buildHrefWithSearchParams(`/auth/${nextPage}`, pageSearch)
+  let switchHref: string
 
-  const callbackPath = buildHrefWithSearchParams(
+  if (mode === 'modal') {
+    switchHref = buildHrefWithSearchParams(pathname, modalSearch)
+  } else if (mode === 'page') {
+    switchHref = buildHrefWithSearchParams(`/auth/${nextPage}`, pageSearch)
+  } else {
+    throw new Error('Invalid auth mode')
+  }
+
+  const callbackUrl = buildHrefWithSearchParams(
     pathname,
     createQueryWithoutAuthPage(currentSearch)
   )
 
   const googleStartUrl = buildWebAuthStartUrl({
-    returnPath: callbackPath,
+    callbackUrl,
   })
 
   return (

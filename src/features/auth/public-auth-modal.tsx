@@ -35,12 +35,11 @@ export function PublicAuthModal() {
       <DialogContent
         className="h-full w-full! max-w-full! overflow-auto rounded-none border-none bg-transparent! p-0 shadow-none ring-0 outline-none"
         showCloseButton={false}
+        onPointerDownOutside={(event) => {
+          event.preventDefault()
+        }}
       >
-        <AuthPageShell
-          mode="modal"
-          includeBackground={false}
-          onOutsideClick={closeModal}
-        >
+        <AuthPageShell mode="modal" includeBackground={false}>
           {isSignInOpen ? <SignInForm mode="modal" /> : null}
           {isSignUpOpen ? <SignUpForm mode="modal" /> : null}
           {isForgotPasswordOpen ? <ForgotPasswordForm mode="modal" /> : null}

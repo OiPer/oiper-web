@@ -7,26 +7,15 @@ import type { PropsWithChildren } from 'react'
 type AuthPageShellProps = PropsWithChildren<{
   includeBackground?: boolean
   mode: 'modal' | 'page'
-  onOutsideClick?: () => void
 }>
 
 export function AuthPageShell({
   children,
   includeBackground = true,
   mode,
-  onOutsideClick,
 }: AuthPageShellProps) {
   return (
     <div
-      onClick={(event) => {
-        const target = event.target as HTMLElement
-        const insideContent = target.closest('#oiper-auth-content')
-        const insideFooter = target.closest('#oiper-auth-footer')
-
-        if (!insideContent && !insideFooter) {
-          onOutsideClick?.()
-        }
-      }}
       className={cn(
         'relative flex min-h-screen flex-col justify-between gap-8 px-4 text-white',
         includeBackground && 'bg-[#0a0a0a]'

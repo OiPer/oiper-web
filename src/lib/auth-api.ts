@@ -143,9 +143,9 @@ export function isAbortError(error: unknown): boolean {
   return error instanceof DOMException && error.name === 'AbortError'
 }
 
-export function buildWebAuthStartUrl(input: { returnPath: string }): string {
+export function buildWebAuthStartUrl(input: { callbackUrl: string }): string {
   const url = new URL('/v1/auth/web/start', SERVER_BASE_URL)
-  url.searchParams.set('returnPath', input.returnPath)
+  url.searchParams.set('callbackUrl', input.callbackUrl)
 
   return url.toString()
 }

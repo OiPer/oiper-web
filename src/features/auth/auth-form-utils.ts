@@ -1,15 +1,15 @@
-export function resolveCallbackPath(searchParams: URLSearchParams): string {
-  const callbackPath = searchParams.get('callbackPath')
+export function resolveCallbackUrl(searchParams: URLSearchParams): string {
+  const callbackUrl = searchParams.get('callbackUrl')
 
-  if (!callbackPath || !callbackPath.startsWith('/')) {
+  if (!callbackUrl || !callbackUrl.startsWith('/')) {
     return '/'
   }
 
-  if (callbackPath.startsWith('//')) {
+  if (callbackUrl.startsWith('//')) {
     return '/'
   }
 
-  return callbackPath
+  return callbackUrl
 }
 
 export function buildVerificationUrl(config: {
@@ -21,17 +21,29 @@ export function buildVerificationUrl(config: {
 }): string {
   const verificationParams = new URLSearchParams(config.searchParams.toString())
 
-  if (config.mode === 'modal')
+  if (config.mode === 'modal') {
     verificationParams.set('auth-page', 'verify-signup')
-  if (config.mode === 'page') verificationParams.delete('auth-page')
+  }
+
+  if (config.mode === 'page') {
+    verificationParams.delete('auth-page')
+  }
+
   verificationParams.set('code', config.code)
   verificationParams.set('email', config.email)
   verificationParams.delete('token')
 
   const query = verificationParams.toString()
 
-  if (config.mode === 'modal') return `${config.pathname}?${query}`
-  return `/auth/verify-signup?${query}`
+  if (config.mode === 'modal') {
+    return `${config.pathname}?${query}`
+  }
+
+  if (config.mode === 'page') {
+    return `/auth/verify-signup?${query}`
+  }
+
+  throw new Error('Invalid auth mode')
 }
 
 export function buildAuthHref(config: {
@@ -57,9 +69,13 @@ export function buildAuthHref(config: {
     return query ? `${config.pathname}?${query}` : config.pathname
   }
 
-  next.delete('auth-page')
-  const query = next.toString()
-  return query
-    ? `/auth/${config.authPage}?${query}`
-    : `/auth/${config.authPage}`
+  if (config.mode === 'page') {
+    next.delete('auth-page')
+    const query = next.toString()
+    return query
+      ? `/auth/${config.authPage}?${query}`
+      : `/auth/${config.authPage}`
+  }
+
+  throw new Error('Invalid auth mode')
 }
