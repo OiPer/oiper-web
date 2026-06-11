@@ -5,6 +5,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/features/auth/auth-context'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { AuthCard } from './auth-card'
 import { AuthInput } from './auth-form-input'
 import { resolveCallbackPath } from './auth-form-utils'
@@ -12,26 +13,26 @@ import { getAuthErrorMessage } from './workos-auth-error'
 
 type VerificationFormProps = {
   mode: 'modal' | 'page'
-  type: 'signin' | 'signup'
 }
 
-export function EmailVerificationForm({ mode, type }: VerificationFormProps) {
+export function EmailVerificationForm({ mode }: VerificationFormProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const { verifyEmail } = useAuth()
+  const { resendSignUpVerification, verifySignUpEmail } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [verificationCode, setVerificationCode] = useState('')
+  const [otp, setOtp] = useState('')
   const [isVerifying, setIsVerifying] = useState(false)
+  const [isResending, setIsResending] = useState(false)
 
   const callbackPath = resolveCallbackPath(
     new URLSearchParams(searchParams.toString())
   )
 
-  const pendingToken = searchParams.get('pendingToken')
+  const signUpCode = searchParams.get('code')
   const email = searchParams.get('email')
 
-  if (!pendingToken) {
-    router.push(type === 'signin' ? '/auth/signin' : '/auth/signup')
+  if (!signUpCode) {
+    router.push('/auth/signup')
     return null
   }
 
@@ -39,9 +40,9 @@ export function EmailVerificationForm({ mode, type }: VerificationFormProps) {
     setErrorMessage(null)
     setIsVerifying(true)
 
-    const [session, error] = await verifyEmail({
-      code: verificationCode.trim(),
-      pendingAuthenticationToken: pendingToken!,
+    const [session, error] = await verifySignUpEmail({
+      code: signUpCode!,
+      otp: otp.trim(),
     })
 
     if (error) {
@@ -58,13 +59,36 @@ export function EmailVerificationForm({ mode, type }: VerificationFormProps) {
     setIsVerifying(false)
   }
 
+  async function handleResend() {
+    setErrorMessage(null)
+    setIsResending(true)
+
+    const [response, error] = await resendSignUpVerification({
+      code: signUpCode!,
+    })
+
+    if (error) {
+      setErrorMessage(getAuthErrorMessage(error))
+      return setIsResending(false)
+    }
+
+    if (!response) {
+      setErrorMessage('Something went wrong!')
+      return setIsResending(false)
+    }
+
+    if (response.alreadyVerified) toast.info('Email already verified')
+    if (!response.alreadyVerified) toast.success('Verification code sent')
+    setIsResending(false)
+  }
+
   const title = 'Verify your email'
   const description = 'Enter the verification code sent to your email'
 
   return (
     <AuthCard
       mode={mode}
-      page={type}
+      page="signup"
       title={title}
       description={description}
       showOAuth={false}
@@ -84,8 +108,8 @@ export function EmailVerificationForm({ mode, type }: VerificationFormProps) {
           label="Verification code"
           inputMode="numeric"
           maxLength={12}
-          value={verificationCode}
-          onChange={(event) => setVerificationCode(event.target.value)}
+          value={otp}
+          onChange={(event) => setOtp(event.target.value)}
           placeholder="Enter your code"
         />
 
@@ -99,14 +123,20 @@ export function EmailVerificationForm({ mode, type }: VerificationFormProps) {
           type="button"
           className="h-9 bg-white text-black hover:bg-white/90"
           onClick={handleEmailVerification}
-          disabled={verificationCode.trim().length < 4 || isVerifying}
+          disabled={otp.trim().length < 4 || isVerifying}
         >
           {isVerifying ? <Spinner /> : 'Verify email'}
         </Button>
 
-        <p className="text-center text-xs text-white/60">
-          Didn&lsquo;t receive the code? [Resend Code]
-        </p>
+        <Button
+          type="button"
+          variant="ghost"
+          className="h-8 text-white/70 hover:bg-white/10 hover:text-white"
+          onClick={handleResend}
+          disabled={isResending || isVerifying}
+        >
+          {isResending ? <Spinner /> : 'Resend code'}
+        </Button>
       </div>
     </AuthCard>
   )

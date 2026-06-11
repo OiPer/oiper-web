@@ -57,9 +57,24 @@ const passwordSignUpBodySchema = z.object({
   name: z.string().trim().min(1).max(160),
 })
 
-const emailVerificationBodySchema = z.object({
-  code: z.string().trim().min(4).max(12),
-  pendingAuthenticationToken: z.string().trim().min(1),
+export const signUpVerificationRequiredSchema = z.object({
+  verificationRequired: z.literal(true),
+  email: z.string().trim().email(),
+  code: z.string().trim().min(1),
+  expiresAt: z.string().datetime(),
+})
+
+export type SignUpVerificationRequired = z.infer<
+  typeof signUpVerificationRequiredSchema
+>
+
+const signUpEmailVerificationBodySchema = z.object({
+  code: z.string().trim().min(1),
+  otp: z.string().trim().min(4).max(12),
+})
+
+const signUpResendVerificationBodySchema = z.object({
+  code: z.string().trim().min(1),
 })
 
 const passwordResetRequestBodySchema = z.object({
@@ -73,6 +88,11 @@ const passwordResetConfirmBodySchema = z.object({
 
 const sentResponseSchema = z.object({
   sent: z.literal(true),
+})
+
+const resendSignUpVerificationResponseSchema = z.object({
+  sent: z.literal(true),
+  alreadyVerified: z.boolean(),
 })
 
 const resetResponseSchema = z.object({
@@ -260,24 +280,45 @@ export async function signUpWithPassword(
 ) {
   const body = passwordSignUpBodySchema.parse(input)
 
-  return fetchApi('/v1/auth/web/sign-up/password', webSessionSchema, {
+  return fetchApi(
+    '/v1/auth/web/sign-up/password',
+    signUpVerificationRequiredSchema,
+    {
+      method: 'POST',
+      body,
+      requestInit,
+    }
+  )
+}
+
+export async function verifySignUpEmailForWebAuth(
+  input: z.infer<typeof signUpEmailVerificationBodySchema>,
+  requestInit?: RequestInit
+) {
+  const body = signUpEmailVerificationBodySchema.parse(input)
+
+  return fetchApi('/v1/auth/web/sign-up/verify-email', webSessionSchema, {
     method: 'POST',
     body,
     requestInit,
   })
 }
 
-export async function verifyEmailForWebAuth(
-  input: z.infer<typeof emailVerificationBodySchema>,
+export async function resendSignUpVerificationEmailForWebAuth(
+  input: z.infer<typeof signUpResendVerificationBodySchema>,
   requestInit?: RequestInit
 ) {
-  const body = emailVerificationBodySchema.parse(input)
+  const body = signUpResendVerificationBodySchema.parse(input)
 
-  return fetchApi('/v1/auth/web/verify-email', webSessionSchema, {
-    method: 'POST',
-    body,
-    requestInit,
-  })
+  return fetchApi(
+    '/v1/auth/web/sign-up/resend-verification',
+    resendSignUpVerificationResponseSchema,
+    {
+      method: 'POST',
+      body,
+      requestInit,
+    }
+  )
 }
 
 export async function requestWebPasswordReset(

@@ -55,6 +55,8 @@ function createQueryWithoutAuthPage(
 ): URLSearchParams {
   const next = new URLSearchParams(searchParams.toString())
   next.delete('auth-page')
+  next.delete('code')
+  next.delete('token')
   return next
 }
 
@@ -86,7 +88,7 @@ export function AuthCard({
   const nextPage = PAGE_SWITCH[page]
 
   const currentSearch = new URLSearchParams(searchParams.toString())
-  const modalSearch = new URLSearchParams(searchParams.toString())
+  const modalSearch = createQueryWithoutAuthPage(searchParams)
   modalSearch.set('auth-page', nextPage)
 
   const pageSearch = createQueryWithoutAuthPage(currentSearch)

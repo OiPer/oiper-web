@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function VerifySignUpPage() {
   return (
     <AuthPageShell mode="page">
-      <EmailVerificationForm mode="page" type="signup" />
+      <EmailVerificationForm mode="page" />
     </AuthPageShell>
   )
 }

@@ -11,15 +11,8 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
 import { AuthInput, AuthPasswordInput } from './auth-form-input'
-import {
-  buildAuthHref,
-  buildVerificationUrl,
-  resolveCallbackPath,
-} from './auth-form-utils'
-import {
-  getAuthErrorMessage,
-  getEmailVerificationState,
-} from './workos-auth-error'
+import { buildAuthHref, resolveCallbackPath } from './auth-form-utils'
+import { getAuthErrorMessage } from './workos-auth-error'
 
 const signInSchema = z.object({
   email: z.string().trim().email('Enter a valid email address'),
@@ -75,21 +68,6 @@ export function SignInForm({ mode }: SignInFormProps) {
     })
 
     if (error) {
-      const verification = getEmailVerificationState(error)
-
-      if (verification) {
-        const verificationPath = buildVerificationUrl({
-          mode,
-          pathname,
-          searchParams: new URLSearchParams(searchParams.toString()),
-          verificationType: 'verify-signin',
-          pendingToken: verification.pendingAuthenticationToken,
-          email: verification.email || values.email,
-        })
-
-        return router.push(verificationPath)
-      }
-
       return setErrorMessage(getAuthErrorMessage(error))
     }
 

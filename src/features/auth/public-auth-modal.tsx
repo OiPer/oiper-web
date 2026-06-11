@@ -15,17 +15,12 @@ export function PublicAuthModal() {
   const isSignInOpen = authPage === 'signin'
   const isSignUpOpen = authPage === 'signup'
   const isForgotPasswordOpen = authPage === 'forgot-password'
-  const isVerifySignInOpen = authPage === 'verify-signin'
   const isVerifySignUpOpen = authPage === 'verify-signup'
   const isOpen =
-    isSignInOpen ||
-    isSignUpOpen ||
-    isForgotPasswordOpen ||
-    isVerifySignInOpen ||
-    isVerifySignUpOpen
+    isSignInOpen || isSignUpOpen || isForgotPasswordOpen || isVerifySignUpOpen
 
   function closeModal() {
-    setSearchParams.remove('auth-page')
+    setSearchParams.remove(['auth-page', 'code', 'token'])
   }
 
   return (
@@ -49,12 +44,7 @@ export function PublicAuthModal() {
           {isSignInOpen ? <SignInForm mode="modal" /> : null}
           {isSignUpOpen ? <SignUpForm mode="modal" /> : null}
           {isForgotPasswordOpen ? <ForgotPasswordForm mode="modal" /> : null}
-          {isVerifySignInOpen ? (
-            <EmailVerificationForm mode="modal" type="signin" />
-          ) : null}
-          {isVerifySignUpOpen ? (
-            <EmailVerificationForm mode="modal" type="signup" />
-          ) : null}
+          {isVerifySignUpOpen ? <EmailVerificationForm mode="modal" /> : null}
         </AuthPageShell>
       </DialogContent>
     </Dialog>

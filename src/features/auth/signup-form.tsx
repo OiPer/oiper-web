@@ -5,16 +5,13 @@ import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/features/auth/auth-context'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
 import { AuthInput, AuthPasswordInput } from './auth-form-input'
-import { buildVerificationUrl, resolveCallbackPath } from './auth-form-utils'
-import {
-  getAuthErrorMessage,
-  getEmailVerificationState,
-} from './workos-auth-error'
+import { buildVerificationUrl } from './auth-form-utils'
+import { getAuthErrorMessage } from './workos-auth-error'
 
 const signUpSchema = z
   .object({
@@ -46,11 +43,6 @@ export function SignUpForm({ mode }: SignUpFormProps) {
   const { signUp } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  const callbackPath = useMemo(
-    () => resolveCallbackPath(new URLSearchParams(searchParams.toString())),
-    [searchParams]
-  )
-
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -64,36 +56,29 @@ export function SignUpForm({ mode }: SignUpFormProps) {
   async function onSubmit(values: SignUpSchema) {
     setErrorMessage(null)
 
-    const [session, error] = await signUp({
+    const [signUpResponse, error] = await signUp({
       name: values.name,
       email: values.email,
       password: values.password,
     })
 
     if (error) {
-      const verification = getEmailVerificationState(error)
-
-      if (verification) {
-        const verificationPath = buildVerificationUrl({
-          mode,
-          pathname,
-          searchParams: new URLSearchParams(searchParams.toString()),
-          verificationType: 'verify-signup',
-          pendingToken: verification.pendingAuthenticationToken,
-          email: verification.email || values.email,
-        })
-
-        return router.push(verificationPath)
-      }
-
       return setErrorMessage(getAuthErrorMessage(error))
     }
 
-    if (!session || !session.authenticated) {
+    if (!signUpResponse || !signUpResponse.verificationRequired) {
       return setErrorMessage('Something went wrong!')
     }
 
-    router.push(callbackPath)
+    const verificationPath = buildVerificationUrl({
+      mode,
+      pathname,
+      searchParams: new URLSearchParams(searchParams.toString()),
+      code: signUpResponse.code,
+      email: signUpResponse.email,
+    })
+
+    router.push(verificationPath)
   }
 
   return (

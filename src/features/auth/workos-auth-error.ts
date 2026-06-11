@@ -1,45 +1,4 @@
 import { AuthApiError } from '@/lib/auth-api'
-import { z } from 'zod'
-
-const verificationRequiredDetailsSchema = z
-  .object({
-    email: z.string().trim().email().optional(),
-    pending_authentication_token: z.string().trim().min(1).optional(),
-    pendingAuthenticationToken: z.string().trim().min(1).optional(),
-  })
-  .passthrough()
-
-type VerificationRequiredDetails = z.infer<
-  typeof verificationRequiredDetailsSchema
->
-
-function extractVerificationDetails(
-  details: unknown
-): VerificationRequiredDetails | null {
-  const parsed = verificationRequiredDetailsSchema.safeParse(details)
-  if (!parsed.success) return null
-  return parsed.data
-}
-
-export function getEmailVerificationState(error: unknown): {
-  pendingAuthenticationToken: string
-  email?: string
-} | null {
-  if (!(error instanceof AuthApiError)) return null
-  if (error.code !== 'AUTH_EMAIL_VERIFICATION_REQUIRED') return null
-
-  const parsed = extractVerificationDetails(error.details)
-  if (!parsed) return null
-
-  const pendingAuthenticationToken =
-    parsed.pendingAuthenticationToken ?? parsed.pending_authentication_token
-  if (!pendingAuthenticationToken) return null
-
-  return {
-    pendingAuthenticationToken,
-    email: parsed.email,
-  }
-}
 
 function mapAuthErrorCodeToMessage(code: string): string {
   const messages: Record<string, string> = {
@@ -56,7 +15,20 @@ function mapAuthErrorCodeToMessage(code: string): string {
 }
 
 export function getAuthErrorMessage(error: unknown): string {
-  if (error instanceof AuthApiError && error.code) {
+  if (error instanceof AuthApiError) {
+    const details = error.details
+
+    if (
+      details &&
+      typeof details === 'object' &&
+      'code' in details &&
+      details.code === 'password_reset_token_not_found'
+    )
+      return 'Invalid or expired reset link'
+    if (error.message.toLowerCase().includes('signup verification code'))
+      return 'Invalid or expired verification code'
+    if (!error.code) return 'Something went wrong!'
+
     return mapAuthErrorCodeToMessage(error.code)
   }
 

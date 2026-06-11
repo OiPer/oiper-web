@@ -1,6 +1,7 @@
 import '@/styles/index.css'
 import '@/styles/theme.css'
 
+import { Toaster } from '@/components/ui/sonner'
 import { AuthProvider } from '@/features/auth/auth-context'
 import { PublicAuthModalClientNoSSR } from '@/features/auth/public-auth-modal-client'
 import { cn } from '@/lib/utils'
@@ -97,6 +98,7 @@ export default function Layout({ children }: PropsWithChildren) {
           <AuthProvider>
             {children}
             <PublicAuthModalClientNoSSR />
+            <Toaster richColors />
           </AuthProvider>
         </ThemeProvider>
       </body>

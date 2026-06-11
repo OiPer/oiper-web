@@ -8,13 +8,13 @@ import {
 } from '@/lib/auth-api'
 import { wrap } from '@/utils/promise'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
 import { AuthInput, AuthPasswordInput } from './auth-form-input'
-import { resolveCallbackPath } from './auth-form-utils'
 import { getAuthErrorMessage } from './workos-auth-error'
 
 const requestResetSchema = z.object({
@@ -41,10 +41,10 @@ type ForgotPasswordFormProps = {
 }
 
 export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const router = useRouter()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const requestResetForm = useForm<z.infer<typeof requestResetSchema>>({
     resolver: zodResolver(requestResetSchema),
@@ -62,16 +62,27 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
   })
 
   const token = searchParams.get('token')
-  const callbackPath = useMemo(
-    () => resolveCallbackPath(new URLSearchParams(searchParams.toString())),
-    [searchParams]
-  )
+
+  function goToSignIn() {
+    const next = new URLSearchParams(searchParams.toString())
+    next.delete('token')
+
+    if (mode === 'modal') {
+      next.set('auth-page', 'signin')
+      const query = next.toString()
+      router.push(query ? `${pathname}?${query}` : pathname)
+      return
+    }
+
+    next.delete('auth-page')
+    const query = next.toString()
+    router.push(query ? `/auth/signin?${query}` : '/auth/signin')
+  }
 
   async function submitResetRequest(
     values: z.infer<typeof requestResetSchema>
   ) {
     setErrorMessage(null)
-    setSuccessMessage(null)
 
     const [, error] = await wrap(
       requestWebPasswordReset({ email: values.email })
@@ -81,7 +92,7 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
       return setErrorMessage(getAuthErrorMessage(error))
     }
 
-    setSuccessMessage('Password reset email sent.')
+    toast.success('Password reset email sent')
   }
 
   async function submitPasswordReset(
@@ -90,7 +101,6 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
     if (!token) return setErrorMessage('Missing reset token')
 
     setErrorMessage(null)
-    setSuccessMessage(null)
 
     const [, error] = await wrap(
       confirmWebPasswordReset({
@@ -103,10 +113,10 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
       return setErrorMessage(getAuthErrorMessage(error))
     }
 
-    setSuccessMessage('Password updated. Redirecting to sign in...')
+    toast.success('Password updated, redirecting to sign in')
 
     window.setTimeout(() => {
-      router.push(callbackPath)
+      goToSignIn()
     }, 600)
   }
 
@@ -179,12 +189,6 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
           </Button>
         </form>
       )}
-
-      {successMessage ? (
-        <p className="mt-4 rounded-md border border-emerald-300/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
-          {successMessage}
-        </p>
-      ) : null}
 
       {errorMessage ? (
         <p className="mt-4 rounded-md border border-red-300/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
