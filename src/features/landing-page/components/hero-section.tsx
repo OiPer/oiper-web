@@ -1,36 +1,14 @@
 'use client'
 
 import { OiPerLogoText } from '@/components/logo/logo-text'
-import { useAuth } from '@/features/auth/auth-context'
 import { Mic, Settings } from 'lucide-react'
-import { useMemo } from 'react'
 import { Wrapper } from '../../../components/wrapper'
-import {
-  ANCHOR_FEATURES,
-  ANCHOR_LANGUAGES,
-  ANCHOR_PERFORMANCE,
-  ANCHOR_PRIVACY,
-  ANCHOR_TESTIMONIALS,
-  DOWNLOAD_URL,
-  GITHUB_REPO,
-  HOME,
-} from '../constants/links'
+import { ANCHOR_FEATURES, DOWNLOAD_URL, HOME } from '../constants/links'
 import { AnimatedWaveform } from './animated-waveform'
+import { AuthNavActions } from './auth-nav-actions'
 import { LightningBase } from './lightning-base'
 
 export function HeroSection() {
-  const { currentUser, isLoading } = useAuth()
-
-  const authLabel = useMemo(() => {
-    if (!currentUser) return null
-
-    const fullName = [currentUser.firstName, currentUser.lastName]
-      .filter((name): name is string => Boolean(name))
-      .join(' ')
-
-    return fullName || currentUser.email
-  }, [currentUser])
-
   return (
     <section className="relative overflow-hidden border-b border-white/6 bg-[#0a0a0a]">
       <div className="absolute inset-0">
@@ -45,52 +23,7 @@ export function HeroSection() {
             <OiPerLogoText className="text-[2rem]" />
           </a>
 
-          <div className="hidden items-center gap-10 text-sm text-white/60 md:flex">
-            <a href={ANCHOR_FEATURES} className="hover:text-white">
-              Features
-            </a>
-            <a href={ANCHOR_PERFORMANCE} className="hover:text-white">
-              Performance
-            </a>
-            <a href={ANCHOR_PRIVACY} className="hover:text-white">
-              Privacy
-            </a>
-            <a href={ANCHOR_LANGUAGES} className="hover:text-white">
-              Languages
-            </a>
-            <a href={ANCHOR_TESTIMONIALS} className="hover:text-white">
-              Testimonials
-            </a>
-            <a href={DOWNLOAD_URL} className="hover:text-white">
-              Downloads
-            </a>
-            <a href={GITHUB_REPO} className="hover:text-white">
-              Docs
-            </a>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {!isLoading && currentUser && authLabel ? (
-              <div className="inline-flex h-10 max-w-[18rem] items-center gap-2 rounded border border-emerald-400/40 bg-emerald-500/10 px-4 text-sm font-medium text-emerald-100">
-                <span className="size-2 shrink-0 rounded-full bg-emerald-300" />
-                <span className="truncate">{authLabel}</span>
-              </div>
-            ) : (
-              <a
-                href="/?auth-page=signin"
-                className="inline-flex h-10 items-center justify-center rounded border border-white/20 bg-white/5 px-5 text-sm font-medium text-white hover:border-white/40 hover:bg-white/10"
-              >
-                Sign in
-              </a>
-            )}
-
-            <a
-              href={DOWNLOAD_URL}
-              className="inline-flex h-10 items-center justify-center rounded bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90"
-            >
-              Download
-            </a>
-          </div>
+          <AuthNavActions />
         </nav>
       </Wrapper>
 
