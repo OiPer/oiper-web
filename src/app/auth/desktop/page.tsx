@@ -1,26 +1,21 @@
 'use client'
 
+import { Spinner } from '@/components/ui/spinner'
 import {
-  confirmDesktopAuthRequest,
+  buildDesktopAuthContinueUrl,
   getWebSession,
   isAbortError,
 } from '@/lib/auth-api'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 
 type DesktopAuthPageState = {
-  status:
-    | 'loading'
-    | 'requires_login'
-    | 'ready_to_confirm'
-    | 'confirming'
-    | 'confirmed'
-    | 'error'
+  status: 'loading' | 'redirecting_sign_in' | 'continuing' | 'error'
   message?: string
-  deepLinkUrl?: string
 }
 
 export default function DesktopAuthPage() {
+  const router = useRouter()
   const params = useSearchParams()
   const requestId = params.get('request_id')
   const queryString = params.toString()
@@ -38,131 +33,88 @@ export default function DesktopAuthPage() {
   }, [queryString])
 
   useEffect(() => {
-    if (!requestId) {
-      setState({
-        status: 'error',
-        message: 'Missing request_id in desktop auth URL',
-      })
-      return
-    }
+    if (!requestId) return router.replace('/')
 
     const abortController = new AbortController()
-
     getWebSession({ signal: abortController.signal })
       .then((session) => {
         if (!session.authenticated) {
-          return setState({ status: 'requires_login' })
+          setState({ status: 'redirecting_sign_in' })
+          return window.location.replace(signInUrl)
         }
 
-        setState({ status: 'ready_to_confirm' })
+        setState({ status: 'continuing' })
+        return window.location.replace(
+          buildDesktopAuthContinueUrl({ requestId, callbackUrl: '/' })
+        )
       })
       .catch((error) => {
         if (isAbortError(error)) return
-
         setState({
           status: 'error',
           message: error?.message ?? 'Failed to verify web session',
         })
       })
 
-    return abortController.abort
-  }, [requestId])
+    return () => abortController.abort()
+  }, [requestId, router, signInUrl])
 
-  async function handleConfirmClick() {
-    if (!requestId) {
-      setState({
-        status: 'error',
-        message: 'Missing request_id',
-      })
-      return
-    }
+  if (!requestId) return null
 
-    setState({
-      status: 'confirming',
-    })
+  function renderStateContent() {
+    switch (state.status) {
+      case 'loading':
+        return (
+          <div className="flex flex-col items-center gap-4 text-center">
+            <Spinner className="size-8 text-white/80" />
+          </div>
+        )
 
-    try {
-      const result = await confirmDesktopAuthRequest(requestId)
-      setState({
-        status: 'confirmed',
-        deepLinkUrl: result.deepLinkUrl,
-      })
-      window.location.assign(result.deepLinkUrl)
-    } catch (error) {
-      setState({
-        status: 'error',
-        message:
-          error instanceof Error
-            ? error.message
-            : 'Failed to confirm desktop auth',
-      })
+      case 'continuing':
+        return (
+          <div className="flex flex-col items-center gap-4 text-center">
+            <Spinner className="size-10 text-white/80" />
+            <div className="space-y-1">
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Almost there
+              </h1>
+              <p className="text-sm text-white/50">Opening OiPer</p>
+            </div>
+          </div>
+        )
+
+      case 'redirecting_sign_in':
+        return (
+          <div className="flex flex-col items-center gap-4 text-center">
+            <Spinner className="size-10 text-white/80" />
+            <div className="space-y-1">
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Sign in required
+              </h1>
+              <p className="text-sm text-white/50">Taking you to the web</p>
+            </div>
+          </div>
+        )
+
+      case 'error':
+        return (
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div className="space-y-2">
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Couldn&apos;t continue
+              </h1>
+              <p className="text-sm text-white/55">
+                {state.message ?? 'Something went wrong!'}
+              </p>
+            </div>
+          </div>
+        )
     }
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#0a0a0a] px-4 text-white">
-      <section className="w-full max-w-md rounded-2xl border border-white/10 bg-black/40 p-8">
-        <h1 className="text-2xl font-semibold">Desktop Sign In</h1>
-        <p className="mt-2 text-sm text-white/60">
-          Confirm this login to continue in your OiPer desktop app.
-        </p>
-
-        <div className="mt-6 rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-white/80">
-          <p>Request ID</p>
-          <p className="mt-1 font-mono text-xs break-all text-white/70">
-            {requestId ?? 'missing'}
-          </p>
-        </div>
-
-        {state.status === 'requires_login' && (
-          <div className="mt-6 space-y-3">
-            <p className="text-sm text-white/70">
-              You must sign in on web before this desktop request can be
-              confirmed.
-            </p>
-
-            <a
-              href={signInUrl}
-              className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-white px-4 text-sm font-medium text-black hover:bg-white/90"
-            >
-              Sign in to Continue
-            </a>
-          </div>
-        )}
-
-        {state.status === 'ready_to_confirm' && (
-          <button
-            type="button"
-            onClick={handleConfirmClick}
-            className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-lg bg-white px-4 text-sm font-medium text-black hover:bg-white/90"
-          >
-            Continue in Desktop
-          </button>
-        )}
-
-        {state.status === 'confirming' && (
-          <p className="mt-6 text-sm text-white/70">
-            Confirming desktop request...
-          </p>
-        )}
-
-        {state.status === 'confirmed' && (
-          <div className="mt-6 rounded-lg border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm text-emerald-100">
-            Deep-link dispatched to desktop.
-            {state.deepLinkUrl ? (
-              <p className="mt-2 font-mono text-xs break-all text-emerald-200/90">
-                {state.deepLinkUrl}
-              </p>
-            ) : null}
-          </div>
-        )}
-
-        {state.status === 'error' && (
-          <div className="mt-6 rounded-lg border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200">
-            {state.message}
-          </div>
-        )}
-      </section>
+    <main className="flex min-h-screen items-center justify-center bg-[#0a0a0a] px-6 text-white">
+      <section className="w-full max-w-sm">{renderStateContent()}</section>
     </main>
   )
 }

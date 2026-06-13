@@ -150,6 +150,17 @@ export function buildWebAuthStartUrl(input: { callbackUrl: string }): string {
   return url.toString()
 }
 
+export function buildDesktopAuthContinueUrl(input: {
+  requestId: string
+  callbackUrl?: string
+}): string {
+  const url = new URL('/v1/auth/desktop/continue', SERVER_BASE_URL)
+  url.searchParams.set('requestId', input.requestId)
+  url.searchParams.set('callbackUrl', input.callbackUrl ?? '/')
+
+  return url.toString()
+}
+
 async function readJson<TSchema extends z.ZodTypeAny>(
   response: Response,
   schema: TSchema
