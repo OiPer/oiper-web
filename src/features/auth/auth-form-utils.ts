@@ -1,81 +1,71 @@
-export function resolveCallbackUrl(searchParams: URLSearchParams): string {
+export type AuthMode = 'modal' | 'page'
+
+export type AuthPage = 'signin' | 'signup' | 'forgot-password' | 'verify-signup'
+
+function buildUrl(pathname: string, searchParams: URLSearchParams): string {
+  const query = searchParams.toString()
+  return query ? `${pathname}?${query}` : pathname
+}
+
+function cloneSearchParams(searchParams: URLSearchParams): URLSearchParams {
+  return new URLSearchParams(searchParams.toString())
+}
+
+function stripTransientAuthParams(
+  searchParams: URLSearchParams
+): URLSearchParams {
+  const next = cloneSearchParams(searchParams)
+  next.delete('code')
+  next.delete('token')
+  return next
+}
+
+function applyAdditionalParams(
+  searchParams: URLSearchParams,
+  additionalParams?: Record<string, string>
+): void {
+  if (!additionalParams) return
+
+  Object.entries(additionalParams).forEach(([key, value]) => {
+    searchParams.set(key, value)
+  })
+}
+
+export function getCallbackUrl(searchParams: URLSearchParams): string {
   const callbackUrl = searchParams.get('callbackUrl')
-
-  if (!callbackUrl || !callbackUrl.startsWith('/')) {
-    return '/'
-  }
-
-  if (callbackUrl.startsWith('//')) {
-    return '/'
-  }
-
+  if (!callbackUrl || !callbackUrl.startsWith('/')) return '/'
+  if (callbackUrl.startsWith('//')) return '/'
   return callbackUrl
 }
 
-export function buildVerificationUrl(config: {
-  mode: 'modal' | 'page'
+export function buildAuthUrl(input: {
+  mode: AuthMode
   pathname: string
   searchParams: URLSearchParams
-  code: string
-  email: string
-}): string {
-  const verificationParams = new URLSearchParams(config.searchParams.toString())
-
-  if (config.mode === 'modal') {
-    verificationParams.set('auth-page', 'verify-signup')
-  }
-
-  if (config.mode === 'page') {
-    verificationParams.delete('auth-page')
-  }
-
-  verificationParams.set('code', config.code)
-  verificationParams.set('email', config.email)
-  verificationParams.delete('token')
-
-  const query = verificationParams.toString()
-
-  if (config.mode === 'modal') {
-    return `${config.pathname}?${query}`
-  }
-
-  if (config.mode === 'page') {
-    return `/auth/verify-signup?${query}`
-  }
-
-  throw new Error('Invalid auth mode')
-}
-
-export function buildAuthHref(config: {
-  mode: 'modal' | 'page'
-  pathname: string
-  searchParams: URLSearchParams
-  authPage: string
+  page: AuthPage
   additionalParams?: Record<string, string>
 }): string {
-  const next = new URLSearchParams(config.searchParams.toString())
-  next.delete('code')
-  next.delete('token')
+  const next = stripTransientAuthParams(input.searchParams)
+  applyAdditionalParams(next, input.additionalParams)
 
-  if (config.additionalParams) {
-    Object.entries(config.additionalParams).forEach(([key, value]) => {
-      next.set(key, value)
-    })
+  if (input.mode === 'modal') {
+    next.set('auth-page', input.page)
+    return buildUrl(input.pathname, next)
   }
 
-  if (config.mode === 'modal') {
-    next.set('auth-page', config.authPage)
-    const query = next.toString()
-    return query ? `${config.pathname}?${query}` : config.pathname
-  }
+  next.delete('auth-page')
+  return buildUrl(`/auth/${input.page}`, next)
+}
 
-  if (config.mode === 'page') {
-    next.delete('auth-page')
-    const query = next.toString()
-    return query
-      ? `/auth/${config.authPage}?${query}`
-      : `/auth/${config.authPage}`
-  }
+export function buildAuthReturnUrl(input: {
+  mode: AuthMode
+  pathname: string
+  searchParams: URLSearchParams
+}): string {
+  if (input.mode === 'page') return getCallbackUrl(input.searchParams)
 
-  throw new Error('Invalid auth mode')
+  const next = stripTransientAuthParams(input.searchParams)
+
+  next.delete('auth-page')
+  return buildUrl(input.pathname, next)
 }

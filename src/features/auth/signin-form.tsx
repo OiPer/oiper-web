@@ -6,12 +6,12 @@ import { useAuth } from '@/features/auth/auth-context'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
 import { AuthInput, AuthPasswordInput } from './auth-form-input'
-import { buildAuthHref, resolveCallbackUrl } from './auth-form-utils'
+import { buildAuthUrl, getCallbackUrl } from './auth-form-utils'
 import { getAuthErrorMessage } from './workos-auth-error'
 
 const signInSchema = z.object({
@@ -31,11 +31,8 @@ export function SignInForm({ mode }: SignInFormProps) {
   const router = useRouter()
   const { signIn } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  const callbackUrl = useMemo(
-    () => resolveCallbackUrl(new URLSearchParams(searchParams.toString())),
-    [searchParams]
-  )
+  const currentSearch = new URLSearchParams(searchParams.toString())
+  const callbackUrl = getCallbackUrl(currentSearch)
 
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
@@ -46,36 +43,29 @@ export function SignInForm({ mode }: SignInFormProps) {
   })
 
   const email = form.watch('email')
-
-  const forgotHref = useMemo(
-    () =>
-      buildAuthHref({
-        mode,
-        pathname,
-        searchParams: new URLSearchParams(searchParams.toString()),
-        authPage: 'forgot-password',
-        additionalParams: { email },
-      }),
-    [email, mode, pathname, searchParams]
-  )
+  const forgotHref = buildAuthUrl({
+    mode,
+    pathname,
+    searchParams: currentSearch,
+    page: 'forgot-password',
+    additionalParams: { email },
+  })
 
   async function onSubmit(values: SignInSchema) {
     setErrorMessage(null)
 
-    const [session, error] = await signIn({
+    await signIn({
       email: values.email,
       password: values.password,
+      onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
+      onSuccess: (session) => {
+        if (!session.authenticated) {
+          return setErrorMessage('Something went wrong!')
+        }
+
+        router.push(callbackUrl)
+      },
     })
-
-    if (error) {
-      return setErrorMessage(getAuthErrorMessage(error))
-    }
-
-    if (!session || !session.authenticated) {
-      return setErrorMessage('Something went wrong. Please try again.')
-    }
-
-    router.push(callbackUrl)
   }
 
   return (

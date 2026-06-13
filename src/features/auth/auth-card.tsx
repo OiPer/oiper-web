@@ -14,6 +14,7 @@ import { X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import type { PropsWithChildren } from 'react'
+import { buildAuthReturnUrl, buildAuthUrl } from './auth-form-utils'
 
 const PAGE_SWITCH = {
   signin: 'signup',
@@ -37,41 +38,6 @@ type AuthCardProps = PropsWithChildren<{
   showOAuth?: boolean
 }>
 
-function buildHrefWithSearchParams(
-  pathname: string,
-  params: URLSearchParams
-): string {
-  const query = params.toString()
-
-  if (!query) {
-    return pathname
-  }
-
-  return `${pathname}?${query}`
-}
-
-function createQueryWithoutAuthPage(
-  searchParams: URLSearchParams
-): URLSearchParams {
-  const next = new URLSearchParams(searchParams.toString())
-  next.delete('auth-page')
-  next.delete('code')
-  next.delete('token')
-  return next
-}
-
-function resolveSafePath(path: string | null): string {
-  if (!path || !path.startsWith('/')) {
-    return '/'
-  }
-
-  if (path.startsWith('//')) {
-    return '/'
-  }
-
-  return path
-}
-
 export function AuthCard({
   page,
   mode,
@@ -86,31 +52,19 @@ export function AuthCard({
 
   const footer = PAGE_FOOTER[page]
   const nextPage = PAGE_SWITCH[page]
-
   const currentSearch = new URLSearchParams(searchParams.toString())
-  const modalSearch = createQueryWithoutAuthPage(searchParams)
-  modalSearch.set('auth-page', nextPage)
 
-  const pageSearch = createQueryWithoutAuthPage(currentSearch)
-  const closeTargetPath = resolveSafePath(pageSearch.get('callbackUrl'))
-
-  let switchHref: string
-
-  if (mode === 'modal') {
-    switchHref = buildHrefWithSearchParams(pathname, modalSearch)
-  } else if (mode === 'page') {
-    switchHref = buildHrefWithSearchParams(`/auth/${nextPage}`, pageSearch)
-  } else {
-    throw new Error('Invalid auth mode')
-  }
-
-  const callbackUrl = buildHrefWithSearchParams(
+  const switchHref = buildAuthUrl({
+    mode,
     pathname,
-    createQueryWithoutAuthPage(currentSearch)
-  )
+    searchParams: currentSearch,
+    page: nextPage,
+  })
 
-  const googleStartUrl = buildWebAuthStartUrl({
-    callbackUrl,
+  const returnHref = buildAuthReturnUrl({
+    mode,
+    pathname,
+    searchParams: currentSearch,
   })
 
   return (
@@ -131,14 +85,11 @@ export function AuthCard({
         className="absolute top-3 right-3 text-white/60 hover:bg-white/10 hover:text-white"
         onClick={() => {
           if (mode === 'modal') {
-            const params = createQueryWithoutAuthPage(currentSearch)
-            router.replace(buildHrefWithSearchParams(pathname, params), {
-              scroll: false,
-            })
+            router.replace(returnHref, { scroll: false })
             return
           }
 
-          router.push(closeTargetPath)
+          router.push(returnHref)
         }}
       >
         <X className="size-4" />
@@ -160,7 +111,7 @@ export function AuthCard({
             </div>
 
             <a
-              href={googleStartUrl}
+              href={buildWebAuthStartUrl({ callbackUrl: returnHref })}
               className="inline-flex h-9 w-full items-center justify-center rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:border-white/40 hover:bg-white/10"
             >
               Continue with Google

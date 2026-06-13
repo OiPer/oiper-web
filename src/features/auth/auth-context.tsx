@@ -46,6 +46,7 @@ export interface ResendSignUpVerificationInput {
 }
 
 type AuthSessionResult = Session
+type SignOutResult = Awaited<ReturnType<typeof logoutWebSession>>
 
 export type SignInFn = ReturnWrap<AuthSessionResult, SignInInput>
 export type SignUpFn = ReturnWrap<SignUpVerificationRequired, SignUpInput>
@@ -57,7 +58,7 @@ export type ResendSignUpVerificationFn = ReturnWrap<
   { sent: true; alreadyVerified: boolean },
   ResendSignUpVerificationInput
 >
-export type SignOutFn = ReturnWrap<void>
+export type SignOutFn = ReturnWrap<SignOutResult>
 
 export interface AuthContextValue {
   currentUser: User | null
@@ -159,16 +160,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   )
 
   const signOut: SignOutFn = useCallback(({ onError = cb, onSuccess = cb }) => {
-    return wrap(
-      logoutWebSession().then(() => undefined),
-      {
-        onError,
-        onSuccess: () => {
-          setSession(null)
-          onSuccess()
-        },
-      }
-    )
+    return wrap(logoutWebSession(), {
+      onError,
+      onSuccess: (result) => {
+        setSession(null)
+        onSuccess(result)
+        window.location.assign(result.logoutUrl)
+      },
+    })
   }, [])
 
   return (

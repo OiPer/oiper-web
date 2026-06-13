@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
 import { AuthInput, AuthPasswordInput } from './auth-form-input'
-import { buildVerificationUrl } from './auth-form-utils'
+import { buildAuthUrl } from './auth-form-utils'
 import { getAuthErrorMessage } from './workos-auth-error'
 
 const signUpSchema = z
@@ -42,6 +42,7 @@ export function SignUpForm({ mode }: SignUpFormProps) {
   const router = useRouter()
   const { signUp } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const currentSearch = new URLSearchParams(searchParams.toString())
 
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
@@ -56,29 +57,28 @@ export function SignUpForm({ mode }: SignUpFormProps) {
   async function onSubmit(values: SignUpSchema) {
     setErrorMessage(null)
 
-    const [signUpResponse, error] = await signUp({
+    await signUp({
       name: values.name,
       email: values.email,
       password: values.password,
+      onError: (error) => {
+        setErrorMessage(getAuthErrorMessage(error))
+      },
+      onSuccess: (signUpResponse) => {
+        const verificationPath = buildAuthUrl({
+          mode,
+          pathname,
+          searchParams: currentSearch,
+          page: 'verify-signup',
+          additionalParams: {
+            code: signUpResponse.code,
+            email: signUpResponse.email,
+          },
+        })
+
+        router.push(verificationPath)
+      },
     })
-
-    if (error) {
-      return setErrorMessage(getAuthErrorMessage(error))
-    }
-
-    if (!signUpResponse || !signUpResponse.verificationRequired) {
-      return setErrorMessage('Something went wrong!')
-    }
-
-    const verificationPath = buildVerificationUrl({
-      mode,
-      pathname,
-      searchParams: new URLSearchParams(searchParams.toString()),
-      code: signUpResponse.code,
-      email: signUpResponse.email,
-    })
-
-    router.push(verificationPath)
   }
 
   return (

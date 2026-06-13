@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { AuthCard } from './auth-card'
 import { AuthInput } from './auth-form-input'
-import { resolveCallbackUrl } from './auth-form-utils'
+import { getCallbackUrl } from './auth-form-utils'
 import { getAuthErrorMessage } from './workos-auth-error'
 
 type VerificationFormProps = {
@@ -23,74 +23,54 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
   const [otp, setOtp] = useState('')
   const [isVerifying, setIsVerifying] = useState(false)
   const [isResending, setIsResending] = useState(false)
-
-  const callbackUrl = resolveCallbackUrl(
-    new URLSearchParams(searchParams.toString())
-  )
+  const currentSearch = new URLSearchParams(searchParams.toString())
+  const callbackUrl = getCallbackUrl(currentSearch)
 
   const signUpCode = searchParams.get('code')
   const email = searchParams.get('email')
 
-  if (!signUpCode) {
-    router.push('/auth/signup')
-    return null
-  }
+  if (!signUpCode) return null
 
   async function handleEmailVerification() {
     setErrorMessage(null)
     setIsVerifying(true)
 
-    const [session, error] = await verifySignUpEmail({
+    await verifySignUpEmail({
       code: signUpCode!,
       otp: otp.trim(),
+      finally: () => setIsVerifying(false),
+      onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
+      onSuccess: (session) => {
+        if (!session.authenticated) {
+          return setErrorMessage('Something went wrong')
+        }
+
+        router.push(callbackUrl)
+      },
     })
-
-    if (error) {
-      setErrorMessage(getAuthErrorMessage(error))
-      return setIsVerifying(false)
-    }
-
-    if (!session || !session.authenticated) {
-      setErrorMessage('Something went wrong')
-      return setIsVerifying(false)
-    }
-
-    router.push(callbackUrl)
-    setIsVerifying(false)
   }
 
   async function handleResend() {
     setErrorMessage(null)
     setIsResending(true)
 
-    const [response, error] = await resendSignUpVerification({
+    await resendSignUpVerification({
       code: signUpCode!,
+      finally: () => setIsResending(false),
+      onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
+      onSuccess: (response) => {
+        if (response.alreadyVerified) toast.info('Email already verified')
+        if (!response.alreadyVerified) toast.success('Verification code sent')
+      },
     })
-
-    if (error) {
-      setErrorMessage(getAuthErrorMessage(error))
-      return setIsResending(false)
-    }
-
-    if (!response) {
-      setErrorMessage('Something went wrong!')
-      return setIsResending(false)
-    }
-
-    if (response.alreadyVerified) toast.info('Email already verified')
-    if (!response.alreadyVerified) toast.success('Verification code sent')
-    setIsResending(false)
   }
-
-  const title = 'Verify your email'
-  const description = 'Enter the verification code sent to your email'
 
   return (
     <AuthCard
       mode={mode}
       page="signup"
-      title={title}
-      description={description}
+      title="Verify your email"
+      description="Enter the verification code sent to your email"
       showOAuth={false}
     >
       <div className="flex flex-col gap-4">

@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
 import { AuthInput, AuthPasswordInput } from './auth-form-input'
+import { buildAuthUrl } from './auth-form-utils'
 import { getAuthErrorMessage } from './workos-auth-error'
 
 const requestResetSchema = z.object({
@@ -45,6 +46,7 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const currentSearch = new URLSearchParams(searchParams.toString())
 
   const requestResetForm = useForm<z.infer<typeof requestResetSchema>>({
     resolver: zodResolver(requestResetSchema),
@@ -64,19 +66,14 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
   const token = searchParams.get('token')
 
   function goToSignIn() {
-    const next = new URLSearchParams(searchParams.toString())
-    next.delete('token')
-
-    if (mode === 'modal') {
-      next.set('auth-page', 'signin')
-      const query = next.toString()
-      router.push(query ? `${pathname}?${query}` : pathname)
-      return
-    }
-
-    next.delete('auth-page')
-    const query = next.toString()
-    router.push(query ? `/auth/signin?${query}` : '/auth/signin')
+    router.push(
+      buildAuthUrl({
+        mode,
+        pathname,
+        searchParams: currentSearch,
+        page: 'signin',
+      })
+    )
   }
 
   async function submitResetRequest(
@@ -84,40 +81,31 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
   ) {
     setErrorMessage(null)
 
-    const [, error] = await wrap(
-      requestWebPasswordReset({ email: values.email })
-    )
-
-    if (error) {
-      return setErrorMessage(getAuthErrorMessage(error))
-    }
-
-    toast.success('Password reset email sent')
+    await wrap(requestWebPasswordReset({ email: values.email }), {
+      onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
+      onSuccess: () => toast.success('Password reset email sent'),
+    })
   }
 
   async function submitPasswordReset(
     values: z.infer<typeof resetWithTokenSchema>
   ) {
     if (!token) return setErrorMessage('Missing reset token')
-
     setErrorMessage(null)
 
-    const [, error] = await wrap(
+    await wrap(
       confirmWebPasswordReset({
         token,
         newPassword: values.password,
-      })
+      }),
+      {
+        onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
+        onSuccess: () => {
+          toast.success('Password updated, redirecting to sign in')
+          window.setTimeout(() => goToSignIn(), 600)
+        },
+      }
     )
-
-    if (error) {
-      return setErrorMessage(getAuthErrorMessage(error))
-    }
-
-    toast.success('Password updated, redirecting to sign in')
-
-    window.setTimeout(() => {
-      goToSignIn()
-    }, 600)
   }
 
   return (
