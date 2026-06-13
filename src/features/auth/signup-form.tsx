@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
 import { AuthInput, AuthPasswordInput } from './auth-form-input'
-import { buildAuthUrl } from './auth-form-utils'
+import { buildAuthUrl, getCallbackUrl } from './auth-form-utils'
 import { getAuthErrorMessage } from './workos-auth-error'
 
 const signUpSchema = z
@@ -43,6 +43,7 @@ export function SignUpForm({ mode }: SignUpFormProps) {
   const { signUp } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const currentSearch = new URLSearchParams(searchParams.toString())
+  const callbackUrl = getCallbackUrl(currentSearch)
 
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
@@ -64,19 +65,25 @@ export function SignUpForm({ mode }: SignUpFormProps) {
       onError: (error) => {
         setErrorMessage(getAuthErrorMessage(error))
       },
-      onSuccess: (signUpResponse) => {
-        const verificationPath = buildAuthUrl({
-          mode,
-          pathname,
-          searchParams: currentSearch,
-          page: 'verify-signup',
-          additionalParams: {
-            code: signUpResponse.code,
-            email: signUpResponse.email,
-          },
-        })
+      onSuccess: (result) => {
+        if ('verificationRequired' in result) {
+          return router.push(
+            buildAuthUrl({
+              mode,
+              pathname,
+              searchParams: currentSearch,
+              page: 'verify-email',
+              additionalParams: {
+                email: result.email,
+                token: result.token,
+              },
+            })
+          )
+        }
 
-        router.push(verificationPath)
+        if (!result.authenticated)
+          return setErrorMessage('Something went wrong!')
+        router.push(callbackUrl)
       },
     })
   }

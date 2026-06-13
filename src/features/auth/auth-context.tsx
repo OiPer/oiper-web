@@ -3,12 +3,12 @@
 import {
   getWebSession,
   logoutWebSession,
-  resendSignUpVerificationEmailForWebAuth,
+  resendVerificationEmailForWebAuth,
   signInWithPassword,
   signUpWithPassword,
-  verifySignUpEmailForWebAuth,
+  verifyEmailForWebAuth,
   webSessionSchema,
-  type SignUpVerificationRequired,
+  type PasswordAuthResult,
 } from '@/lib/auth-api'
 import { wrap, type ReturnWrap } from '@/utils/promise'
 import {
@@ -36,27 +36,24 @@ export interface SignUpInput {
   password: string
 }
 
-export interface VerifySignUpEmailInput {
-  code: string
+export interface VerifyEmailInput {
+  token: string
   otp: string
 }
 
-export interface ResendSignUpVerificationInput {
-  code: string
+export interface ResendVerificationInput {
+  email: string
 }
 
 type AuthSessionResult = Session
 type SignOutResult = Awaited<ReturnType<typeof logoutWebSession>>
 
-export type SignInFn = ReturnWrap<AuthSessionResult, SignInInput>
-export type SignUpFn = ReturnWrap<SignUpVerificationRequired, SignUpInput>
-export type VerifySignUpEmailFn = ReturnWrap<
-  AuthSessionResult,
-  VerifySignUpEmailInput
->
-export type ResendSignUpVerificationFn = ReturnWrap<
+export type SignInFn = ReturnWrap<PasswordAuthResult, SignInInput>
+export type SignUpFn = ReturnWrap<PasswordAuthResult, SignUpInput>
+export type VerifyEmailFn = ReturnWrap<AuthSessionResult, VerifyEmailInput>
+export type ResendVerificationFn = ReturnWrap<
   { sent: true; alreadyVerified: boolean },
-  ResendSignUpVerificationInput
+  ResendVerificationInput
 >
 export type SignOutFn = ReturnWrap<SignOutResult>
 
@@ -68,8 +65,8 @@ export interface AuthContextValue {
 
   signIn: SignInFn
   signUp: SignUpFn
-  verifySignUpEmail: VerifySignUpEmailFn
-  resendSignUpVerification: ResendSignUpVerificationFn
+  verifyEmail: VerifyEmailFn
+  resendVerification: ResendVerificationFn
   signOut: SignOutFn
 }
 
@@ -117,9 +114,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     ({ onError = cb, onSuccess = cb, ...input }) => {
       return wrap(signInWithPassword(input), {
         onError,
-        onSuccess: (newSession) => {
-          if (newSession.authenticated) setSession(newSession)
-          onSuccess(newSession)
+        onSuccess: (result) => {
+          if ('authenticated' in result && result.authenticated)
+            setSession(result)
+          onSuccess(result)
         },
       })
     },
@@ -130,15 +128,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     ({ onError = cb, onSuccess = cb, ...input }) => {
       return wrap(signUpWithPassword(input), {
         onError,
-        onSuccess,
+        onSuccess: (result) => {
+          if ('authenticated' in result && result.authenticated)
+            setSession(result)
+          onSuccess(result)
+        },
       })
     },
     []
   )
 
-  const verifySignUpEmail: VerifySignUpEmailFn = useCallback(
+  const verifyEmail: VerifyEmailFn = useCallback(
     ({ onError = cb, onSuccess = cb, ...input }) => {
-      return wrap(verifySignUpEmailForWebAuth(input), {
+      return wrap(verifyEmailForWebAuth(input), {
         onError,
         onSuccess: (newSession) => {
           if (newSession.authenticated) setSession(newSession)
@@ -149,9 +151,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     []
   )
 
-  const resendSignUpVerification: ResendSignUpVerificationFn = useCallback(
+  const resendVerification: ResendVerificationFn = useCallback(
     ({ onError = cb, onSuccess = cb, ...input }) => {
-      return wrap(resendSignUpVerificationEmailForWebAuth(input), {
+      return wrap(resendVerificationEmailForWebAuth(input), {
         onError,
         onSuccess,
       })
@@ -179,8 +181,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         isLoading,
         signIn,
         signUp,
-        verifySignUpEmail,
-        resendSignUpVerification,
+        verifyEmail,
+        resendVerification,
         signOut,
       }}
     >

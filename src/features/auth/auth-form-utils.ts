@@ -1,6 +1,6 @@
 export type AuthMode = 'modal' | 'page'
 
-export type AuthPage = 'signin' | 'signup' | 'forgot-password' | 'verify-signup'
+export type AuthPage = 'signin' | 'signup' | 'forgot-password' | 'verify-email'
 
 function buildUrl(pathname: string, searchParams: URLSearchParams): string {
   const query = searchParams.toString()
