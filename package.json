@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "dotenv -e .env.local -- next dev",
     "start": "next start",
     "build": "tsx ./src/scripts/write-logo.ts && next build",
     "prepare": "husky",
@@ -48,6 +48,7 @@
     "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "^16",
     "eslint-config-prettier": "^10",
@@ -75,5 +76,8 @@
   "overrides": {
     "react": "*",
     "react-dom": "*"
+  },
+  "volta": {
+    "node": "24.15.0"
   }
 }

@@ -3,25 +3,17 @@
 import { OiPerLogoText } from '@/components/logo/logo-text'
 import { Mic, Settings } from 'lucide-react'
 import { Wrapper } from '../../../components/wrapper'
-import {
-  ANCHOR_FEATURES,
-  ANCHOR_LANGUAGES,
-  ANCHOR_PERFORMANCE,
-  ANCHOR_PRIVACY,
-  ANCHOR_TESTIMONIALS,
-  DOWNLOAD_URL,
-  GITHUB_REPO,
-  HOME,
-} from '../constants/links'
+import { ANCHOR_FEATURES, DOWNLOAD_URL, HOME } from '../constants/links'
 import { AnimatedWaveform } from './animated-waveform'
+import { AuthNavActions } from './auth-nav-actions'
 import { LightningBase } from './lightning-base'
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden border-b border-white/[0.06] bg-[#0a0a0a]">
+    <section className="relative overflow-hidden border-b border-white/6 bg-[#0a0a0a]">
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_15%,rgba(255,255,255,0.03),transparent_40%),radial-gradient(ellipse_at_80%_20%,rgba(255,255,255,0.02),transparent_35%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:120px_120px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-size-[120px_120px]" />
         <LightningBase />
       </div>
 
@@ -31,36 +23,7 @@ export function HeroSection() {
             <OiPerLogoText className="text-[2rem]" />
           </a>
 
-          <div className="hidden items-center gap-10 text-sm text-white/60 md:flex">
-            <a href={ANCHOR_FEATURES} className="hover:text-white">
-              Features
-            </a>
-            <a href={ANCHOR_PERFORMANCE} className="hover:text-white">
-              Performance
-            </a>
-            <a href={ANCHOR_PRIVACY} className="hover:text-white">
-              Privacy
-            </a>
-            <a href={ANCHOR_LANGUAGES} className="hover:text-white">
-              Languages
-            </a>
-            <a href={ANCHOR_TESTIMONIALS} className="hover:text-white">
-              Testimonials
-            </a>
-            <a href={DOWNLOAD_URL} className="hover:text-white">
-              Downloads
-            </a>
-            <a href={GITHUB_REPO} className="hover:text-white">
-              Docs
-            </a>
-          </div>
-
-          <a
-            href={DOWNLOAD_URL}
-            className="inline-flex h-10 items-center justify-center rounded border border-white/20 bg-white/5 px-5 text-sm font-medium text-white hover:border-white/40 hover:bg-white/10"
-          >
-            Download
-          </a>
+          <AuthNavActions />
         </nav>
       </Wrapper>
 
@@ -93,8 +56,8 @@ export function HeroSection() {
           </div>
 
           <div className="relative">
-            <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111111]">
-              <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-4">
+            <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#111111]">
+              <div className="flex items-center justify-between border-b border-white/6 px-5 py-4">
                 <div className="flex gap-2">
                   <span className="size-3 rounded-full bg-[#ff5f57]" />
                   <span className="size-3 rounded-full bg-[#febc2e]" />
@@ -113,8 +76,8 @@ export function HeroSection() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 border-t border-white/[0.06] bg-[#0c0c0c] px-5 py-4">
-                <div className="grid size-11 shrink-0 place-items-center rounded-full bg-white/[0.06]">
+              <div className="flex items-center gap-4 border-t border-white/6 bg-[#0c0c0c] px-5 py-4">
+                <div className="grid size-11 shrink-0 place-items-center rounded-full bg-white/6">
                   <Mic className="size-5 text-white/80" />
                 </div>
                 <AnimatedWaveform />
