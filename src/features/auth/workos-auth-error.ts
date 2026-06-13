@@ -25,8 +25,6 @@ export function getAuthErrorMessage(error: unknown): string {
       details.code === 'password_reset_token_not_found'
     )
       return 'Invalid or expired reset link'
-    if (error.message.toLowerCase().includes('signup verification code'))
-      return 'Invalid or expired verification code'
     if (!error.code) return 'Something went wrong!'
 
     return mapAuthErrorCodeToMessage(error.code)

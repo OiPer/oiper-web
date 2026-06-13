@@ -18,7 +18,7 @@ type VerificationFormProps = {
 export function EmailVerificationForm({ mode }: VerificationFormProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const { resendSignUpVerification, verifySignUpEmail } = useAuth()
+  const { resendVerification, verifyEmail } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [otp, setOtp] = useState('')
   const [isVerifying, setIsVerifying] = useState(false)
@@ -26,17 +26,17 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
   const currentSearch = new URLSearchParams(searchParams.toString())
   const callbackUrl = getCallbackUrl(currentSearch)
 
-  const signUpCode = searchParams.get('code')
+  const token = searchParams.get('token')
   const email = searchParams.get('email')
 
-  if (!signUpCode) return null
+  if (!token || !email) return null
 
   async function handleEmailVerification() {
     setErrorMessage(null)
     setIsVerifying(true)
 
-    await verifySignUpEmail({
-      code: signUpCode!,
+    await verifyEmail({
+      token: token!,
       otp: otp.trim(),
       finally: () => setIsVerifying(false),
       onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
@@ -54,8 +54,8 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
     setErrorMessage(null)
     setIsResending(true)
 
-    await resendSignUpVerification({
-      code: signUpCode!,
+    await resendVerification({
+      email: email!,
       finally: () => setIsResending(false),
       onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
       onSuccess: (response) => {
