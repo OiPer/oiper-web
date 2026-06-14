@@ -27,12 +27,6 @@ const csrfTokenSchema = z.object({
   csrfToken: z.string().min(20),
 })
 
-const desktopConfirmSchema = z.object({
-  requestId: z.string().min(1),
-  deepLinkUrl: z.string().url(),
-  handoffExpiresAt: z.string().datetime(),
-})
-
 const webLogoutSchema = z.object({
   logoutUrl: z.string().url(),
 })
@@ -260,17 +254,6 @@ export async function logoutWebSession(options?: {
     headers: {
       'X-CSRF-Token': csrf.csrfToken,
     },
-  })
-}
-
-export async function confirmDesktopAuthRequest(
-  requestId: string,
-  requestInit?: RequestInit
-) {
-  return fetchApi('/v1/auth/desktop/confirm', desktopConfirmSchema, {
-    method: 'POST',
-    body: { requestId },
-    requestInit,
   })
 }
 
