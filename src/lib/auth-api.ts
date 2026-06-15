@@ -27,12 +27,6 @@ const csrfTokenSchema = z.object({
   csrfToken: z.string().min(20),
 })
 
-const desktopConfirmSchema = z.object({
-  requestId: z.string().min(1),
-  deepLinkUrl: z.string().url(),
-  handoffExpiresAt: z.string().datetime(),
-})
-
 const webLogoutSchema = z.object({
   logoutUrl: z.string().url(),
 })
@@ -57,24 +51,26 @@ const passwordSignUpBodySchema = z.object({
   name: z.string().trim().min(1).max(160),
 })
 
-export const signUpVerificationRequiredSchema = z.object({
+export const verificationRequiredSchema = z.object({
   verificationRequired: z.literal(true),
   email: z.string().trim().email(),
-  code: z.string().trim().min(1),
-  expiresAt: z.string().datetime(),
+  token: z.string().trim().min(1),
 })
 
-export type SignUpVerificationRequired = z.infer<
-  typeof signUpVerificationRequiredSchema
->
+const passwordAuthResponseSchema = z.union([
+  webSessionSchema,
+  verificationRequiredSchema,
+])
 
-const signUpEmailVerificationBodySchema = z.object({
-  code: z.string().trim().min(1),
+export type PasswordAuthResult = z.infer<typeof passwordAuthResponseSchema>
+
+const emailVerificationBodySchema = z.object({
+  token: z.string().trim().min(1),
   otp: z.string().trim().min(4).max(12),
 })
 
-const signUpResendVerificationBodySchema = z.object({
-  code: z.string().trim().min(1),
+const resendVerificationBodySchema = z.object({
+  email: z.string().trim().email(),
 })
 
 const passwordResetRequestBodySchema = z.object({
@@ -90,7 +86,7 @@ const sentResponseSchema = z.object({
   sent: z.literal(true),
 })
 
-const resendSignUpVerificationResponseSchema = z.object({
+const resendVerificationResponseSchema = z.object({
   sent: z.literal(true),
   alreadyVerified: z.boolean(),
 })
@@ -261,24 +257,13 @@ export async function logoutWebSession(options?: {
   })
 }
 
-export async function confirmDesktopAuthRequest(
-  requestId: string,
-  requestInit?: RequestInit
-) {
-  return fetchApi('/v1/auth/desktop/confirm', desktopConfirmSchema, {
-    method: 'POST',
-    body: { requestId },
-    requestInit,
-  })
-}
-
 export async function signInWithPassword(
   input: z.infer<typeof passwordSignInBodySchema>,
   requestInit?: RequestInit
 ) {
   const body = passwordSignInBodySchema.parse(input)
 
-  return fetchApi('/v1/auth/web/sign-in/password', webSessionSchema, {
+  return fetchApi('/v1/auth/web/sign-in/password', passwordAuthResponseSchema, {
     method: 'POST',
     body,
     requestInit,
@@ -291,39 +276,35 @@ export async function signUpWithPassword(
 ) {
   const body = passwordSignUpBodySchema.parse(input)
 
-  return fetchApi(
-    '/v1/auth/web/sign-up/password',
-    signUpVerificationRequiredSchema,
-    {
-      method: 'POST',
-      body,
-      requestInit,
-    }
-  )
-}
-
-export async function verifySignUpEmailForWebAuth(
-  input: z.infer<typeof signUpEmailVerificationBodySchema>,
-  requestInit?: RequestInit
-) {
-  const body = signUpEmailVerificationBodySchema.parse(input)
-
-  return fetchApi('/v1/auth/web/sign-up/verify-email', webSessionSchema, {
+  return fetchApi('/v1/auth/web/sign-up/password', passwordAuthResponseSchema, {
     method: 'POST',
     body,
     requestInit,
   })
 }
 
-export async function resendSignUpVerificationEmailForWebAuth(
-  input: z.infer<typeof signUpResendVerificationBodySchema>,
+export async function verifyEmailForWebAuth(
+  input: z.infer<typeof emailVerificationBodySchema>,
   requestInit?: RequestInit
 ) {
-  const body = signUpResendVerificationBodySchema.parse(input)
+  const body = emailVerificationBodySchema.parse(input)
+
+  return fetchApi('/v1/auth/web/verify-email', webSessionSchema, {
+    method: 'POST',
+    body,
+    requestInit,
+  })
+}
+
+export async function resendVerificationEmailForWebAuth(
+  input: z.infer<typeof resendVerificationBodySchema>,
+  requestInit?: RequestInit
+) {
+  const body = resendVerificationBodySchema.parse(input)
 
   return fetchApi(
-    '/v1/auth/web/sign-up/resend-verification',
-    resendSignUpVerificationResponseSchema,
+    '/v1/auth/web/resend-verification',
+    resendVerificationResponseSchema,
     {
       method: 'POST',
       body,

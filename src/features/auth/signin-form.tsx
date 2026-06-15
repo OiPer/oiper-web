@@ -58,8 +58,23 @@ export function SignInForm({ mode }: SignInFormProps) {
       email: values.email,
       password: values.password,
       onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
-      onSuccess: (session) => {
-        if (!session.authenticated) {
+      onSuccess: (result) => {
+        if ('verificationRequired' in result) {
+          return router.push(
+            buildAuthUrl({
+              mode,
+              pathname,
+              searchParams: currentSearch,
+              page: 'verify-email',
+              additionalParams: {
+                email: result.email,
+                token: result.token,
+              },
+            })
+          )
+        }
+
+        if (!result.authenticated) {
           return setErrorMessage('Something went wrong!')
         }
 

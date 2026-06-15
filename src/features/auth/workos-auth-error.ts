@@ -14,19 +14,28 @@ function mapAuthErrorCodeToMessage(code: string): string {
   return messages[code] ?? 'Something went wrong!'
 }
 
+function readErrorDetailsCode(details: unknown): string | null {
+  if (!details || typeof details !== 'object' || !('code' in details)) {
+    return null
+  }
+
+  const code = details.code
+  return typeof code === 'string' && code.trim() ? code : null
+}
+
 export function getAuthErrorMessage(error: unknown): string {
   if (error instanceof AuthApiError) {
     const details = error.details
+    const detailsCode = readErrorDetailsCode(details)
 
-    if (
-      details &&
-      typeof details === 'object' &&
-      'code' in details &&
-      details.code === 'password_reset_token_not_found'
-    )
+    if (detailsCode === 'password_reset_token_not_found') {
       return 'Invalid or expired reset link'
-    if (error.message.toLowerCase().includes('signup verification code'))
-      return 'Invalid or expired verification code'
+    }
+
+    if (detailsCode === 'invalid_one_time_code') {
+      return 'Invalid verification code'
+    }
+
     if (!error.code) return 'Something went wrong!'
 
     return mapAuthErrorCodeToMessage(error.code)

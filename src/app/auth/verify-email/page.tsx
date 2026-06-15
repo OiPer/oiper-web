@@ -5,20 +5,20 @@ import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Verify your email',
-  description: 'Verify your email to complete account creation.',
+  description: 'Verify your email to continue.',
 }
 
-type VerifySignUpPageProps = {
-  searchParams: Promise<{ code?: string }>
+type VerifyEmailPageProps = {
+  searchParams: Promise<{ token?: string; email?: string }>
 }
 
-export default async function VerifySignUpPage({
+export default async function VerifyEmailPage({
   searchParams,
-}: VerifySignUpPageProps) {
+}: VerifyEmailPageProps) {
   const resolvedSearchParams = await searchParams
 
-  if (!resolvedSearchParams?.code) {
-    redirect('/auth/signup')
+  if (!resolvedSearchParams?.token || !resolvedSearchParams.email) {
+    redirect('/auth/signin')
   }
 
   return (
