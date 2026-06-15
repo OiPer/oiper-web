@@ -50,7 +50,7 @@ function LoadingAvatar() {
   return (
     <div className="flex items-center gap-3">
       <div className="flex h-10 items-center">
-        <div className="h-10 w-28 animate-pulse rounded-md border border-0 bg-white/7" />
+        <div className="h-10 w-28 animate-pulse rounded-md border bg-white/7" />
       </div>
       <a
         href={DOWNLOAD_URL}
@@ -146,7 +146,7 @@ function SignedInActions() {
         href={DOWNLOAD_URL}
         className={cn(
           buttonVariants({ size: 'lg' }),
-          'h-10 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90'
+          'h-9 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90'
         )}
       >
         Download

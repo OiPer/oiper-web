@@ -111,9 +111,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [])
 
   const signIn: SignInFn = useCallback(
-    ({ onError = cb, onSuccess = cb, ...input }) => {
+    ({ onError = cb, onSuccess = cb, finally: onFinally, ...input }) => {
       return wrap(signInWithPassword(input), {
         onError,
+        finally: onFinally,
         onSuccess: (result) => {
           if ('authenticated' in result && result.authenticated)
             setSession(result)
@@ -125,9 +126,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   )
 
   const signUp: SignUpFn = useCallback(
-    ({ onError = cb, onSuccess = cb, ...input }) => {
+    ({ onError = cb, onSuccess = cb, finally: onFinally, ...input }) => {
       return wrap(signUpWithPassword(input), {
         onError,
+        finally: onFinally,
         onSuccess: (result) => {
           if ('authenticated' in result && result.authenticated)
             setSession(result)
@@ -139,9 +141,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   )
 
   const verifyEmail: VerifyEmailFn = useCallback(
-    ({ onError = cb, onSuccess = cb, ...input }) => {
+    ({ onError = cb, onSuccess = cb, finally: onFinally, ...input }) => {
       return wrap(verifyEmailForWebAuth(input), {
         onError,
+        finally: onFinally,
         onSuccess: (newSession) => {
           if (newSession.authenticated) setSession(newSession)
           onSuccess(newSession)
@@ -152,25 +155,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
   )
 
   const resendVerification: ResendVerificationFn = useCallback(
-    ({ onError = cb, onSuccess = cb, ...input }) => {
+    ({ onError = cb, onSuccess = cb, finally: onFinally, ...input }) => {
       return wrap(resendVerificationEmailForWebAuth(input), {
         onError,
+        finally: onFinally,
         onSuccess,
       })
     },
     []
   )
 
-  const signOut: SignOutFn = useCallback(({ onError = cb, onSuccess = cb }) => {
-    return wrap(logoutWebSession(), {
-      onError,
-      onSuccess: (result) => {
-        setSession(null)
-        onSuccess(result)
-        window.location.assign(result.logoutUrl)
-      },
-    })
-  }, [])
+  const signOut: SignOutFn = useCallback(
+    ({ onError = cb, onSuccess = cb, finally: onFinally }) => {
+      return wrap(logoutWebSession(), {
+        onError,
+        finally: onFinally,
+        onSuccess: (result) => {
+          setSession(null)
+          onSuccess(result)
+          window.location.assign(result.logoutUrl)
+        },
+      })
+    },
+    []
+  )
 
   return (
     <AuthContext.Provider

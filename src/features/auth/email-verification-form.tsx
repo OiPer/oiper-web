@@ -42,7 +42,7 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
       onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
       onSuccess: (session) => {
         if (!session.authenticated) {
-          return setErrorMessage('Something went wrong')
+          return setErrorMessage('Unable to verify email')
         }
 
         router.push(callbackUrl)
