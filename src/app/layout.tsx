@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
 import { Fira_Code, Inter } from 'next/font/google'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, Suspense } from 'react'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -93,7 +93,8 @@ export default function Layout({ children }: PropsWithChildren) {
       <body className={cn('antialiased', inter.variable, firaCode.variable)}>
         <ThemeProvider attribute="class" enableSystem>
           <AuthProvider>
-            {children}
+            <Suspense fallback={null}>{children}</Suspense>
+
             <PublicAuthModalClientNoSSR />
             <Toaster richColors />
           </AuthProvider>
