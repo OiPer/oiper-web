@@ -69,7 +69,7 @@ export function HeroSection() {
         </div>
       </Wrapper>
 
-      <Wrapper className="relative z-10 pb-24">
+      <Wrapper className="relative z-10">
         <div className="relative mx-auto max-w-[1000px]">
           <Image
             src="/hero.png"
