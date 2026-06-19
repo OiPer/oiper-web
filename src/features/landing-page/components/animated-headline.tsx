@@ -111,7 +111,7 @@ export function AnimatedHeadline() {
   const phrase = phrases[index]
 
   return (
-    <h1 className="text-[3.25rem] leading-[1.05] font-semibold tracking-[-0.04em] text-white sm:text-[5.25rem]">
+    <h1 className="text-[clamp(1.85rem,9vw,5.25rem)] leading-[1.05] font-semibold tracking-[-0.04em] text-white">
       <ScrambleText
         text={phrase.top}
         accent={phrase.topAccent}

@@ -1,9 +1,10 @@
 'use client'
 
 import { OiPerLogoText } from '@/components/logo/logo-text'
+import { Download } from 'lucide-react'
 import Image from 'next/image'
 import { Wrapper } from '../../../components/wrapper'
-import { ANCHOR_FEATURES, DOWNLOAD_URL, HOME } from '../constants/links'
+import { DOWNLOAD_URL, HOME } from '../constants/links'
 import { AnimatedHeadline } from './animated-headline'
 import { AuthNavActions } from './auth-nav-actions'
 
@@ -51,23 +52,18 @@ export function HeroSection() {
         <div className="mx-auto flex max-w-[760px] flex-col items-center justify-center pt-20 pb-16 text-center">
           <AnimatedHeadline />
 
-          <p className="mt-7 max-w-[480px] text-lg leading-relaxed text-white/50">
+          <p className="mt-7 max-w-[480px] text-[clamp(0.95rem,4vw,1.25rem)] leading-relaxed text-white/50">
             Hold a key, speak, and your words appear in any app. Instantly,
             privately, and fully offline.
           </p>
 
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+          <div className="mt-10">
             <a
               href={DOWNLOAD_URL}
-              className="inline-flex h-[52px] items-center justify-center rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+              className="inline-flex h-[52px] items-center justify-center gap-2.5 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
             >
+              <Download className="size-5" />
               Download OiPer
-            </a>
-            <a
-              href={ANCHOR_FEATURES}
-              className="inline-flex h-[52px] items-center justify-center rounded border border-white/15 px-8 text-base font-medium text-white hover:border-white/30 hover:bg-white/5"
-            >
-              See how it works
             </a>
           </div>
         </div>
