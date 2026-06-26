@@ -1,6 +1,6 @@
 'use client'
 
-import { OiPerLogoText } from '@/components/logo/logo-text'
+import { OiPerLogoText } from '@/components/logo-text'
 import { Download } from 'lucide-react'
 import Image from 'next/image'
 import { Wrapper } from '../../../components/wrapper'
