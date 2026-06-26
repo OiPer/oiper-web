@@ -3,6 +3,8 @@ allowBuilds:
   msw: true
   sharp: true
   unrs-resolver: true
+minimumReleaseAgeExclude:
+  - '@oiper/*'
 onlyBuiltDependencies:
   - msw
   - sharp
