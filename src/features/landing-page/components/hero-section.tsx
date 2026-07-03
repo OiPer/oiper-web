@@ -3,10 +3,48 @@
 import { OiPerLogoText } from '@/components/logo-text'
 import { Download } from 'lucide-react'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import { Wrapper } from '../../../components/wrapper'
 import { DOWNLOAD_URL, HOME } from '../constants/links'
 import { AnimatedHeadline } from './animated-headline'
 import { AuthNavActions } from './auth-nav-actions'
+
+const HERO_IMAGES = [
+  '/hero-1.png',
+  '/hero-2.png',
+  '/hero-3.png',
+  '/hero-4.png',
+  '/hero-5.png',
+]
+
+function HeroCarousel() {
+  const [active, setActive] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActive((current) => (current + 1) % HERO_IMAGES.length)
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div className="relative aspect-[2544/1504] w-full">
+      {HERO_IMAGES.map((src, index) => (
+        <Image
+          key={src}
+          src={src}
+          alt="OiPer in action"
+          fill
+          sizes="(max-width: 1000px) 100vw, 1000px"
+          priority={index === 0}
+          className={`object-contain transition-opacity duration-1000 ease-in-out ${
+            index === active ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      ))}
+    </div>
+  )
+}
 
 export function HeroSection() {
   return (
@@ -71,14 +109,9 @@ export function HeroSection() {
 
       <Wrapper className="relative z-10">
         <div className="relative mx-auto max-w-[1000px]">
-          <Image
-            src="/og.png"
-            alt="OiPer in action"
-            className="-my-[5%] h-auto w-full"
-            height={1200}
-            width={1200}
-            priority
-          />
+          <div className="-my-[5%]">
+            <HeroCarousel />
+          </div>
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
         </div>
       </Wrapper>
