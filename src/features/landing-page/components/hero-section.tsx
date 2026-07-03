@@ -72,7 +72,7 @@ export function HeroSection() {
       <Wrapper className="relative z-10">
         <div className="relative mx-auto max-w-[1000px]">
           <Image
-            src="/hero.png"
+            src="/og.png"
             alt="OiPer in action"
             width={2272}
             height={1504}
