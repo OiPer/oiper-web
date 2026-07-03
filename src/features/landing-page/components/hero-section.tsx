@@ -74,10 +74,10 @@ export function HeroSection() {
           <Image
             src="/og.png"
             alt="OiPer in action"
-            width={2272}
-            height={1504}
-            priority
             className="-my-[5%] h-auto w-full"
+            height={1200}
+            width={1200}
+            priority
           />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
         </div>
