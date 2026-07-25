@@ -58,34 +58,36 @@ export function SignUpForm({ mode }: SignUpFormProps) {
   async function onSubmit(values: SignUpSchema) {
     setErrorMessage(null)
 
-    await signUp({
-      name: values.name,
-      email: values.email,
-      password: values.password,
-      onError: (error) => {
-        setErrorMessage(getAuthErrorMessage(error))
-      },
-      onSuccess: (result) => {
-        if ('verificationRequired' in result) {
-          return router.push(
-            buildAuthUrl({
-              mode,
-              pathname,
-              searchParams: currentSearch,
-              page: 'verify-email',
-              additionalParams: {
-                email: result.email,
-                token: result.token,
-              },
-            })
-          )
-        }
+    try {
+      const result = await signUp({
+        name: values.name,
+        email: values.email,
+        password: values.password,
+      })
 
-        if (!result.authenticated)
-          return setErrorMessage('Something went wrong!')
-        router.push(callbackUrl)
-      },
-    })
+      if ('verificationRequired' in result) {
+        return router.push(
+          buildAuthUrl({
+            mode,
+            pathname,
+            searchParams: currentSearch,
+            page: 'verify-email',
+            additionalParams: {
+              email: result.email,
+              token: result.token,
+            },
+          })
+        )
+      }
+
+      if (!result.authenticated) {
+        return setErrorMessage('Something went wrong!')
+      }
+
+      router.push(callbackUrl)
+    } catch (error) {
+      setErrorMessage(getAuthErrorMessage(error))
+    }
   }
 
   return (

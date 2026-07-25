@@ -1,11 +1,8 @@
 'use client'
 
 import { Spinner } from '@/components/ui/spinner'
-import {
-  buildDesktopAuthContinueUrl,
-  getWebSession,
-  isAbortError,
-} from '@/lib/auth-api'
+import { $api } from '@/lib/api/client'
+import { getAppErrorMessage } from '@/lib/api/error'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -31,33 +28,64 @@ export default function DesktopAuthPage() {
     const encoded = encodeURIComponent(callbackUrl)
     return `/auth/signin?callbackUrl=${encoded}`
   }, [queryString])
+  const sessionQuery = $api.useQuery(
+    'get',
+    '/v1/auth/web/session',
+    { cache: 'no-store' },
+    {
+      enabled: Boolean(requestId),
+      retry: false,
+    }
+  )
 
   useEffect(() => {
     if (!requestId) return router.replace('/')
 
-    const abortController = new AbortController()
-    getWebSession({ signal: abortController.signal })
-      .then((session) => {
-        if (!session.authenticated) {
-          setState({ status: 'redirecting_sign_in' })
-          return window.location.replace(signInUrl)
-        }
+    if (sessionQuery.isPending) {
+      setState({ status: 'loading' })
+      return
+    }
 
-        setState({ status: 'continuing' })
-        return window.location.replace(
-          buildDesktopAuthContinueUrl({ requestId, callbackUrl: '/' })
-        )
+    if (sessionQuery.error) {
+      setState({
+        status: 'error',
+        message: getAppErrorMessage(
+          sessionQuery.error,
+          'Failed to verify web session'
+        ),
       })
-      .catch((error) => {
-        if (isAbortError(error)) return
-        setState({
-          status: 'error',
-          message: error?.message ?? 'Failed to verify web session',
-        })
-      })
+      return
+    }
 
-    return () => abortController.abort()
-  }, [requestId, router, signInUrl])
+    if (!sessionQuery.data) {
+      setState({
+        status: 'error',
+        message: 'Failed to verify web session',
+      })
+      return
+    }
+
+    if (!sessionQuery.data.authenticated) {
+      setState({ status: 'redirecting_sign_in' })
+      window.location.replace(signInUrl)
+      return
+    }
+
+    setState({ status: 'continuing' })
+    window.location.replace(
+      `/v1/auth/desktop/continue?${new URLSearchParams({
+        requestId,
+        callbackUrl: '/',
+      }).toString()}`
+    )
+  }, [
+    requestId,
+    router,
+    sessionQuery.data,
+    sessionQuery.error,
+    sessionQuery.isPending,
+    signInUrl,
+  ])
 
   if (!requestId) return null
 

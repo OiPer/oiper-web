@@ -9,12 +9,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { buildWebAuthStartUrl } from '@/lib/auth-api'
+
 import { X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import type { PropsWithChildren } from 'react'
-import { buildAuthReturnUrl, buildAuthUrl } from './auth-form-utils'
+import {
+  buildAuthReturnUrl,
+  buildAuthUrl,
+  buildWebAuthStartUrl,
+} from './auth-form-utils'
 
 const PAGE_SWITCH = {
   signin: 'signup',
@@ -66,6 +70,7 @@ export function AuthCard({
     pathname,
     searchParams: currentSearch,
   })
+  const googleAuthHref = buildWebAuthStartUrl({ callbackUrl: returnHref })
 
   return (
     <Card className="relative w-full border-white/15 bg-black/45 text-white shadow-2xl shadow-black/30 backdrop-blur-xl">
@@ -111,7 +116,7 @@ export function AuthCard({
             </div>
 
             <a
-              href={buildWebAuthStartUrl({ callbackUrl: returnHref })}
+              href={googleAuthHref}
               className="inline-flex h-9 w-full items-center justify-center rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:border-white/40 hover:bg-white/10"
             >
               Continue with Google

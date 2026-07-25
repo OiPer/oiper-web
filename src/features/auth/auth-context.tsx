@@ -1,29 +1,24 @@
 'use client'
 
-import {
-  getWebSession,
-  logoutWebSession,
-  resendVerificationEmailForWebAuth,
-  signInWithPassword,
-  signUpWithPassword,
-  verifyEmailForWebAuth,
-  webSessionSchema,
-  type PasswordAuthResult,
-} from '@/lib/auth-api'
-import { wrap, type ReturnWrap } from '@/utils/promise'
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from 'react'
-import { type z } from 'zod'
+import { $api, api } from '@/lib/api/client'
+import type { components } from '@/lib/api/schema'
+import { useQueryClient } from '@tanstack/react-query'
+import { createContext, useContext, type ReactNode } from 'react'
 
-type Session = z.infer<typeof webSessionSchema>
-
+type Session = components['schemas']['WebSession']
+type PasswordAuthResult = components['schemas']['PasswordAuthResponse']
+type WebLogoutResponse = components['schemas']['WebLogoutResponse']
+type ResendVerificationResponse =
+  components['schemas']['ResendVerificationResponse']
 type User = Extract<Session, { authenticated: true }>['user']
+
+const webSessionRequest = { cache: 'no-store' } as const
+
+const webSessionQueryKey = $api.queryOptions(
+  'get',
+  '/v1/auth/web/session',
+  webSessionRequest
+).queryKey
 
 export interface SignInInput {
   email: string
@@ -45,29 +40,19 @@ export interface ResendVerificationInput {
   email: string
 }
 
-type AuthSessionResult = Session
-type SignOutResult = Awaited<ReturnType<typeof logoutWebSession>>
-
-export type SignInFn = ReturnWrap<PasswordAuthResult, SignInInput>
-export type SignUpFn = ReturnWrap<PasswordAuthResult, SignUpInput>
-export type VerifyEmailFn = ReturnWrap<AuthSessionResult, VerifyEmailInput>
-export type ResendVerificationFn = ReturnWrap<
-  { sent: true; alreadyVerified: boolean },
-  ResendVerificationInput
->
-export type SignOutFn = ReturnWrap<SignOutResult>
-
 export interface AuthContextValue {
   currentUser: User | null
   session: Session | null
   isAuthenticated: boolean
   isLoading: boolean
 
-  signIn: SignInFn
-  signUp: SignUpFn
-  verifyEmail: VerifyEmailFn
-  resendVerification: ResendVerificationFn
-  signOut: SignOutFn
+  signIn(input: SignInInput): Promise<PasswordAuthResult>
+  signUp(input: SignUpInput): Promise<PasswordAuthResult>
+  verifyEmail(input: VerifyEmailInput): Promise<Session>
+  resendVerification(
+    input: ResendVerificationInput
+  ): Promise<ResendVerificationResponse>
+  signOut(): Promise<WebLogoutResponse>
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
@@ -76,109 +61,98 @@ interface AuthProviderProps {
   children: ReactNode
 }
 
-function cb(..._: unknown[]) {
-  return _
-}
-
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [session, setSession] = useState<Session | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const queryClient = useQueryClient()
 
+  const sessionQuery = $api.useQuery(
+    'get',
+    '/v1/auth/web/session',
+    webSessionRequest,
+    { retry: false }
+  )
+
+  const session = sessionQuery.data ?? null
   const currentUser = session?.authenticated ? session.user : null
   const isAuthenticated = session?.authenticated ?? false
 
-  useEffect(() => {
-    const abortController = new AbortController()
+  async function signIn(input: SignInInput): Promise<PasswordAuthResult> {
+    const { data, error } = await api.POST('/v1/auth/web/sign-in/password', {
+      body: input,
+    })
 
-    async function fetchSession() {
-      const [currentSession, sessionError] = await wrap(
-        getWebSession({ signal: abortController.signal })
-      )
+    if (error) throw error
+    if (!data) throw new Error('Sign-in response body was empty')
 
-      if (sessionError) {
-        console.error('Failed to fetch session:', sessionError)
-        setSession(null)
-      } else {
-        setSession(currentSession)
-      }
-
-      setIsLoading(false)
+    if ('authenticated' in data && data.authenticated) {
+      queryClient.setQueryData(webSessionQueryKey, data)
     }
 
-    void fetchSession()
+    return data
+  }
 
-    return () => abortController.abort()
-  }, [])
+  async function signUp(input: SignUpInput): Promise<PasswordAuthResult> {
+    const { data, error } = await api.POST('/v1/auth/web/sign-up/password', {
+      body: input,
+    })
 
-  const signIn: SignInFn = useCallback(
-    ({ onError = cb, onSuccess = cb, finally: onFinally, ...input }) => {
-      return wrap(signInWithPassword(input), {
-        onError,
-        finally: onFinally,
-        onSuccess: (result) => {
-          if ('authenticated' in result && result.authenticated)
-            setSession(result)
-          onSuccess(result)
-        },
-      })
-    },
-    []
-  )
+    if (error) throw error
+    if (!data) throw new Error('Sign-up response body was empty')
 
-  const signUp: SignUpFn = useCallback(
-    ({ onError = cb, onSuccess = cb, finally: onFinally, ...input }) => {
-      return wrap(signUpWithPassword(input), {
-        onError,
-        finally: onFinally,
-        onSuccess: (result) => {
-          if ('authenticated' in result && result.authenticated)
-            setSession(result)
-          onSuccess(result)
-        },
-      })
-    },
-    []
-  )
+    if ('authenticated' in data && data.authenticated) {
+      queryClient.setQueryData(webSessionQueryKey, data)
+    }
 
-  const verifyEmail: VerifyEmailFn = useCallback(
-    ({ onError = cb, onSuccess = cb, finally: onFinally, ...input }) => {
-      return wrap(verifyEmailForWebAuth(input), {
-        onError,
-        finally: onFinally,
-        onSuccess: (newSession) => {
-          if (newSession.authenticated) setSession(newSession)
-          onSuccess(newSession)
-        },
-      })
-    },
-    []
-  )
+    return data
+  }
 
-  const resendVerification: ResendVerificationFn = useCallback(
-    ({ onError = cb, onSuccess = cb, finally: onFinally, ...input }) => {
-      return wrap(resendVerificationEmailForWebAuth(input), {
-        onError,
-        finally: onFinally,
-        onSuccess,
-      })
-    },
-    []
-  )
+  async function verifyEmail(input: VerifyEmailInput): Promise<Session> {
+    const { data, error } = await api.POST('/v1/auth/web/verify-email', {
+      body: input,
+    })
 
-  const signOut: SignOutFn = useCallback(
-    ({ onError = cb, onSuccess = cb, finally: onFinally }) => {
-      return wrap(logoutWebSession(), {
-        onError,
-        finally: onFinally,
-        onSuccess: (result) => {
-          setSession(null)
-          onSuccess(result)
-          window.location.assign(result.logoutUrl)
-        },
-      })
-    },
-    []
-  )
+    if (error) throw error
+    if (!data) throw new Error('Email verification response body was empty')
+
+    if (data.authenticated) {
+      queryClient.setQueryData(webSessionQueryKey, data)
+    }
+
+    return data
+  }
+
+  async function resendVerification(
+    input: ResendVerificationInput
+  ): Promise<ResendVerificationResponse> {
+    const { data, error } = await api.POST('/v1/auth/web/resend-verification', {
+      body: input,
+    })
+
+    if (error) throw error
+    if (!data) throw new Error('Resend verification response body was empty')
+
+    return data
+  }
+
+  async function signOut(): Promise<WebLogoutResponse> {
+    const csrf = await api.GET('/v1/auth/web/csrf-token', webSessionRequest)
+
+    if (csrf.error) throw csrf.error
+    if (!csrf.data) throw new Error('CSRF token response body was empty')
+
+    const logout = await api.POST('/v1/auth/web/logout', {
+      params: { header: { 'x-csrf-token': csrf.data.csrfToken } },
+    })
+
+    if (logout.error) throw logout.error
+    if (!logout.data) throw new Error('Logout response body was empty')
+
+    queryClient.setQueryData(webSessionQueryKey, {
+      authenticated: false,
+      reason: 'signed_out',
+    })
+
+    return logout.data
+  }
 
   return (
     <AuthContext.Provider
@@ -186,7 +160,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         currentUser,
         session,
         isAuthenticated,
-        isLoading,
+        isLoading: sessionQuery.isLoading,
         signIn,
         signUp,
         verifyEmail,

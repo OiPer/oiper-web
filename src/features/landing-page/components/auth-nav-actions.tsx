@@ -134,10 +134,14 @@ function SignedInActions() {
 
     setIsSigningOut(true)
 
-    await signOut({
-      onError: () => toast.error('Failed to Signout'),
-      finally: () => setIsSigningOut(false),
-    })
+    try {
+      const result = await signOut()
+      window.location.assign(result.logoutUrl)
+    } catch {
+      toast.error('Failed to Signout')
+    } finally {
+      setIsSigningOut(false)
+    }
   }
 
   return (

@@ -2,6 +2,13 @@ export type AuthMode = 'modal' | 'page'
 
 export type AuthPage = 'signin' | 'signup' | 'forgot-password' | 'verify-email'
 
+const NEXT_PUBLIC_OIPER_SERVER_URL =
+  process.env.NEXT_PUBLIC_OIPER_SERVER_URL?.trim().replace(/\/+$/u, '')
+
+if (!NEXT_PUBLIC_OIPER_SERVER_URL) {
+  throw new Error('NEXT_PUBLIC_OIPER_SERVER_URL is not configured')
+}
+
 function buildUrl(pathname: string, searchParams: URLSearchParams): string {
   const query = searchParams.toString()
   return query ? `${pathname}?${query}` : pathname
@@ -68,4 +75,10 @@ export function buildAuthReturnUrl(input: {
 
   next.delete('auth-page')
   return buildUrl(input.pathname, next)
+}
+
+export function buildWebAuthStartUrl(input: { callbackUrl: string }): string {
+  const url = new URL('/v1/auth/web/start', `${NEXT_PUBLIC_OIPER_SERVER_URL}/`)
+  url.searchParams.set('callbackUrl', input.callbackUrl)
+  return url.toString()
 }
