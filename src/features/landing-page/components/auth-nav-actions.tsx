@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/features/auth/auth-context'
 import { cn } from '@/lib/utils'
-import { ChevronDown, LogOut } from 'lucide-react'
+import { ChevronDown, LogOut, Settings2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { DOWNLOAD_URL } from '../constants/links'
@@ -182,6 +182,13 @@ function SignedInActions() {
               {currentUser.email}
             </div>
           </DropdownMenuLabel>
+          <DropdownMenuSeparator className="bg-white/8" />
+          <DropdownMenuItem asChild className="cursor-pointer gap-3 px-3 py-2">
+            <a href="/account">
+              <Settings2 className="size-4" />
+              Account
+            </a>
+          </DropdownMenuItem>
           <DropdownMenuSeparator className="bg-white/8" />
           <DropdownMenuItem
             className="cursor-pointer gap-3 px-3 py-2"

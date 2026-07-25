@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { cn } from '@/lib/utils'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -33,6 +34,10 @@ interface DataTableProps<TData, TValue> {
   isSelectable?: boolean
   initiallyHiddenColumns?: string[]
   loading?: boolean
+  toolbarClassName?: string
+  tableWrapperClassName?: string
+  paginationClassName?: string
+  searchInputClassName?: string
 }
 
 export function ClientDataTable<TData, TValue>({
@@ -41,6 +46,10 @@ export function ClientDataTable<TData, TValue>({
   isSelectable = false,
   loading = false,
   initiallyHiddenColumns = [],
+  toolbarClassName,
+  tableWrapperClassName,
+  paginationClassName,
+  searchInputClassName,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = React.useState('')
@@ -91,19 +100,24 @@ export function ClientDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className={cn('flex items-center py-4', toolbarClassName)}>
         <Input
           placeholder={`Search by ${new Intl.ListFormat().format(canFilterColumns)}`}
           value={globalFilter}
           onChange={(event) => setGlobalFilter(event.target.value)}
-          className="max-w-sm"
+          className={cn('max-w-sm', searchInputClassName)}
         />
 
         <DataTableViewOptions table={table} />
       </div>
 
       <GlowingEdge size="0.3rem" always={loading}>
-        <div className="bg-background rounded-md border">
+        <div
+          className={cn(
+            'bg-background rounded-md border',
+            tableWrapperClassName
+          )}
+        >
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -153,7 +167,7 @@ export function ClientDataTable<TData, TValue>({
         </div>
       </GlowingEdge>
 
-      <div className="py-4">
+      <div className={cn('py-4', paginationClassName)}>
         <ClientDataTablePagination table={table} isSelectable={isSelectable} />
       </div>
     </div>
