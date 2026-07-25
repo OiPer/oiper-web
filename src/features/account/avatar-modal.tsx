@@ -3,23 +3,57 @@
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
 import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
+import { Spinner } from '@/components/ui/spinner'
 import { Slot } from 'radix-ui'
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 interface AccountAvatarModalProps {
   children: React.ReactNode
+  isSaving?: boolean
   maxSize?: number
   allow?: string[]
+  onSave(imageUrl: string): Promise<void>
 }
 
 export function AccountAvatarModal({
   children,
+  isSaving = false,
   maxSize = 2,
   allow = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'],
+  onSave,
 }: AccountAvatarModalProps) {
   const [open, setOpen] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const previewUrl = useMemo(
+    () => (selectedFile ? URL.createObjectURL(selectedFile) : null),
+    [selectedFile]
+  )
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
+    }
+  }, [previewUrl])
+
+  async function readFileAsDataUrl(file: File) {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          return resolve(reader.result)
+        }
+
+        reject(new Error('Could not read avatar file'))
+      }
+
+      reader.onerror = () =>
+        reject(reader.error ?? new Error('Could not read avatar file'))
+      reader.readAsDataURL(file)
+    })
+  }
 
   function handleAvatarClick() {
     fileInputRef.current?.click()
@@ -28,16 +62,14 @@ export function AccountAvatarModal({
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
 
-    if (!file) {
-      return
-    }
+    if (!file) return
 
     if (!allow.includes(file.type)) {
-      return
+      return toast.error('Unsupported image format')
     }
 
     if (file.size > maxSize * 1024 * 1024) {
-      return
+      return toast.error(`Avatar must stay under ${maxSize}MB`)
     }
 
     setSelectedFile(file)
@@ -58,6 +90,16 @@ export function AccountAvatarModal({
     }
 
     setOpen(nextOpen)
+  }
+
+  async function handleSaveAvatar() {
+    if (!selectedFile) return
+
+    try {
+      const dataUrl = await readFileAsDataUrl(selectedFile)
+      await onSave(dataUrl)
+      handleOpenChange(false)
+    } catch {}
   }
 
   return (
@@ -86,7 +128,7 @@ export function AccountAvatarModal({
               <div className="bg-muted relative size-44 overflow-hidden rounded-2xl border">
                 {selectedFile ? (
                   <img
-                    src={URL.createObjectURL(selectedFile)}
+                    src={previewUrl ?? undefined}
                     alt="Avatar preview"
                     className="size-full object-cover object-center"
                   />
@@ -105,13 +147,17 @@ export function AccountAvatarModal({
 
             <DialogFooter className="gap-2">
               <ResponsiveDialog.Close asChild>
-                <Button variant="outline" type="button">
+                <Button variant="outline" type="button" disabled={isSaving}>
                   Cancel
                 </Button>
               </ResponsiveDialog.Close>
 
-              <Button type="button" onClick={() => setOpen(false)}>
-                Save Avatar
+              <Button
+                type="button"
+                onClick={() => void handleSaveAvatar()}
+                disabled={!selectedFile || isSaving}
+              >
+                {isSaving ? <Spinner /> : 'Save Avatar'}
               </Button>
             </DialogFooter>
           </div>

@@ -4,7 +4,7 @@
     "dev": "dotenv -e .env.local -- next dev",
     "start": "next start",
     "build": "tsx ./src/scripts/write-logo.tsx && next build",
-    "api:generate": "tsx ./src/scripts/generate-api-schema.ts",
+    "api:generate": "dotenv -e .env.local -- tsx ./src/scripts/generate-api-schema.ts",
     "prepare": "husky",
     "tc": "tsc --noEmit --watch",
     "lint": "tsc --noEmit && eslint .",
