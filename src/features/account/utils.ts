@@ -28,28 +28,6 @@ export function getUserInitials(user: AccountUser) {
   return user.email.slice(0, 2).toUpperCase()
 }
 
-export function getOptionalUserLabel(
-  user: AuthContextValue['currentUser'],
-  fallback = 'Oiper User'
-) {
-  if (!user) {
-    return fallback
-  }
-
-  return getUserLabel(user)
-}
-
-export function getOptionalUserInitials(
-  user: AuthContextValue['currentUser'],
-  fallback = 'OU'
-) {
-  if (!user) {
-    return fallback
-  }
-
-  return getUserInitials(user)
-}
-
 export function formatMemberSince(
   value: string | null | undefined,
   fallback = 'July 2026'

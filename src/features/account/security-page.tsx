@@ -14,7 +14,11 @@ function PasswordReset() {
     '/v1/auth/web/password-reset/request'
   )
 
-  const email = currentUser?.email ?? 'account@oiper.com'
+  if (!currentUser) {
+    throw new Error('Account security requires an authenticated user')
+  }
+
+  const { email } = currentUser
 
   async function handleSendResetEmail() {
     try {

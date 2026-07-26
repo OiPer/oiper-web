@@ -2,7 +2,6 @@
 
 import { OiPerLogoText } from '@/components/logo-text'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,47 +13,16 @@ import {
 import { Wrapper } from '@/components/wrapper'
 import { getUserInitials, getUserLabel } from '@/features/account/utils'
 import { useAuth } from '@/features/auth/auth-context'
-import { cn } from '@/lib/utils'
 import { CreditCard, LogOut, Settings2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
-function LoadingActions() {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="bg-muted/60 h-9 w-24 animate-pulse rounded-md border" />
-      <div className="bg-muted/60 h-10 w-10 animate-pulse rounded-full border" />
-    </div>
-  )
-}
-
-function SignedOutActions() {
-  return (
-    <div className="flex items-center gap-2">
-      <Link
-        href="/?auth-page=signin"
-        className={cn(
-          buttonVariants({ variant: 'ghost', size: 'sm' }),
-          'text-muted-foreground hover:text-foreground'
-        )}
-      >
-        Sign in
-      </Link>
-
-      <Link
-        href="/?auth-page=signup"
-        className={buttonVariants({ size: 'sm' })}
-      >
-        Create account
-      </Link>
-    </div>
-  )
-}
-
 function SignedInActions() {
   const { currentUser, signOut } = useAuth()
 
-  if (!currentUser) return null
+  if (!currentUser) {
+    throw new Error('Account header requires an authenticated user')
+  }
 
   const label = getUserLabel(currentUser)
   const initials = getUserInitials(currentUser)
@@ -138,17 +106,7 @@ function SignedInActions() {
 }
 
 function HeaderActions() {
-  const { currentUser, isLoading } = useAuth()
-
-  if (isLoading) {
-    return <LoadingActions />
-  }
-
-  if (currentUser) {
-    return <SignedInActions />
-  }
-
-  return <SignedOutActions />
+  return <SignedInActions />
 }
 
 export function Header() {

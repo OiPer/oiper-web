@@ -10,8 +10,8 @@ import { Separator } from '@/components/ui/separator'
 import { Spinner } from '@/components/ui/spinner'
 import {
   formatMemberSince,
-  getOptionalUserInitials,
-  getOptionalUserLabel,
+  getUserInitials,
+  getUserLabel,
 } from '@/features/account/utils'
 import { useAuth } from '@/features/auth/auth-context'
 import { $api } from '@/lib/api/client'
@@ -101,15 +101,17 @@ function ConfigureAccount() {
   const queryClient = useQueryClient()
   const updateProfileMutation = $api.useMutation('patch', '/v1/account/profile')
 
-  const profile = useMemo(() => {
-    const label = getOptionalUserLabel(currentUser)
+  if (!currentUser) {
+    throw new Error('Account settings require an authenticated user')
+  }
 
+  const profile = useMemo(() => {
     return {
-      label,
-      email: currentUser?.email ?? 'account@oiper.com',
-      initials: getOptionalUserInitials(currentUser),
-      image: currentUser?.profilePictureUrl ?? undefined,
-      memberSince: formatMemberSince(currentUser?.createdAt),
+      label: getUserLabel(currentUser),
+      email: currentUser.email,
+      initials: getUserInitials(currentUser),
+      image: currentUser.profilePictureUrl ?? undefined,
+      memberSince: formatMemberSince(currentUser.createdAt),
     }
   }, [currentUser])
 
@@ -264,7 +266,12 @@ function AccountDangerZone() {
   const { currentUser } = useAuth()
   const queryClient = useQueryClient()
   const deleteAccountMutation = $api.useMutation('delete', '/v1/account')
-  const confirmationText = `DELETE ${getOptionalUserLabel(currentUser)}`
+
+  if (!currentUser) {
+    throw new Error('Account danger zone requires an authenticated user')
+  }
+
+  const confirmationText = `DELETE ${getUserLabel(currentUser)}`
 
   async function handleDeleteAccount() {
     try {
