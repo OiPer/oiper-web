@@ -60,7 +60,7 @@ export function SignInForm({ mode }: SignInFormProps) {
         password: values.password,
       })
 
-      if ('verificationRequired' in result) {
+      if ('type' in result && result.type === 'email_verification') {
         return router.push(
           buildAuthUrl({
             mode,
@@ -69,13 +69,14 @@ export function SignInForm({ mode }: SignInFormProps) {
             page: 'verify-email',
             additionalParams: {
               email: result.email,
-              token: result.token,
+              pat: result.pat,
+              ...(result.evid ? { evid: result.evid } : {}),
             },
           })
         )
       }
 
-      if (!result.authenticated) {
+      if ('authenticated' in result && !result.authenticated) {
         return setErrorMessage('Something went wrong!')
       }
 

@@ -32,12 +32,12 @@ export interface SignUpInput {
 }
 
 export interface VerifyEmailInput {
-  token: string
+  pat: string
   otp: string
 }
 
 export interface ResendVerificationInput {
-  email: string
+  evid: string
 }
 
 export interface AuthContextValue {

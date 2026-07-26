@@ -37,8 +37,9 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
   const currentSearch = new URLSearchParams(searchParams.toString())
   const callbackUrl = getCallbackUrl(currentSearch)
 
-  const token = searchParams.get('token')
+  const pendingAuthenticationToken = searchParams.get('pat')
   const email = searchParams.get('email')
+  const emailVerificationId = searchParams.get('evid')
 
   const form = useForm<EmailVerificationForm>({
     resolver: zodResolver(emailVerificationSchema),
@@ -47,17 +48,17 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
     },
   })
 
-  if (!token || !email) return null
+  if (!pendingAuthenticationToken || !email) return null
 
-  const verificationToken = token
   const verificationEmail = email
+  const verificationToken = pendingAuthenticationToken
 
   async function handleEmailVerification(values: EmailVerificationForm) {
     setErrorMessage(null)
 
     try {
       const session = await verifyEmail({
-        token: verificationToken,
+        pat: verificationToken,
         otp: values.otp.trim(),
       })
 
@@ -76,11 +77,15 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
     setIsResending(true)
 
     try {
-      const response = await resendVerification({
-        email: verificationEmail,
-      })
+      if (!emailVerificationId) {
+        return toast.info('Restart sign-in to get a new code')
+      }
 
-      if (response.alreadyVerified) toast.info('Email already verified')
+      const response = await resendVerification({ evid: emailVerificationId })
+
+      if (response.alreadyVerified) {
+        toast.info('Email already verified. Sign in again to continue')
+      }
       if (!response.alreadyVerified) toast.success('Verification code sent')
     } catch (error) {
       setErrorMessage(getAuthErrorMessage(error))
@@ -94,7 +99,7 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
       mode={mode}
       page="signup"
       title="Verify your email"
-      description="Enter the verification code sent to your email"
+      description="Enter the code we emailed to finish signing you in."
       showOAuth={false}
     >
       <form

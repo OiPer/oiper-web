@@ -109,6 +109,8 @@ export interface paths {
             parameters: {
                 query?: {
                     callbackUrl?: string;
+                    mode?: components["schemas"]["WebAuthMode"];
+                    provider?: components["schemas"]["WebOAuthProvider"];
                 };
                 header?: never;
                 path?: never;
@@ -619,11 +621,11 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["WebResendVerificationBody"];
+                    "application/json": components["schemas"]["WebResendEmailVerificationBody"];
                 };
             };
             responses: {
-                /** @description Resends a verification email when needed */
+                /** @description Resends the current pending email verification challenge */
                 200: {
                     headers: {
                         [name: string]: unknown;
@@ -2041,6 +2043,16 @@ export interface components {
         /** @enum {string} */
         AppErrorCode: "BAD_REQUEST" | "UNAUTHORIZED" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT" | "AUTH_INVALID_CREDENTIALS" | "AUTH_EMAIL_VERIFICATION_REQUIRED" | "AUTH_EMAIL_ALREADY_EXISTS" | "AUTH_PASSWORD_POLICY_FAILED" | "AUTH_AUTH_METHOD_NOT_ALLOWED" | "AUTH_INVALID_VERIFICATION_CODE" | "ENV_INVALID" | "WORKOS_REQUEST_FAILED" | "INTERNAL_ERROR";
         RequestId: string;
+        /**
+         * @default page
+         * @enum {string}
+         */
+        WebAuthMode: "modal" | "page";
+        /**
+         * @default google
+         * @enum {string}
+         */
+        WebOAuthProvider: "google" | "github";
         PasswordAuthResponse: components["schemas"]["UnauthenticatedWebSession"] | components["schemas"]["AuthenticatedWebSession"] | components["schemas"]["VerificationRequiredResponse"];
         UnauthenticatedWebSession: {
             /** @enum {boolean} */
@@ -2071,11 +2083,12 @@ export interface components {
             updatedAt: string;
         };
         VerificationRequiredResponse: {
-            /** @enum {boolean} */
-            verificationRequired: true;
+            /** @enum {string} */
+            type: "email_verification";
             /** Format: email */
             email: string;
-            token: string;
+            pat: string;
+            evid?: string;
         };
         WebPasswordSignInBody: {
             /** Format: email */
@@ -2090,7 +2103,7 @@ export interface components {
         };
         WebSession: components["schemas"]["UnauthenticatedWebSession"] | components["schemas"]["AuthenticatedWebSession"];
         WebEmailVerificationBody: {
-            token: string;
+            pat: string;
             otp: string;
         };
         ResendVerificationResponse: {
@@ -2098,9 +2111,8 @@ export interface components {
             sent: true;
             alreadyVerified: boolean;
         };
-        WebResendVerificationBody: {
-            /** Format: email */
-            email: string;
+        WebResendEmailVerificationBody: {
+            evid: string;
         };
         SentResponse: {
             /** @enum {boolean} */
@@ -2144,7 +2156,7 @@ export interface components {
         };
         AccountProfileUpdateBody: {
             name?: string;
-            profilePictureUrl?: string | null;
+            profilePictureUrl?: string | unknown;
         };
         AccountDeletedResponse: {
             /** @enum {boolean} */

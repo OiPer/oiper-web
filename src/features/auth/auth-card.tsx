@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-import { X } from 'lucide-react'
+import { Github, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import type { PropsWithChildren } from 'react'
@@ -19,6 +19,29 @@ import {
   buildAuthUrl,
   buildWebAuthStartUrl,
 } from './auth-form-utils'
+
+function GoogleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="size-4">
+      <path
+        d="M21.805 10.023H12.24v3.955h5.484c-.236 1.273-.957 2.353-2.034 3.077v2.557h3.295c1.928-1.776 3.04-4.393 3.04-7.497 0-.689-.062-1.35-.22-2.092h0z"
+        fill="currentColor"
+      />
+      <path
+        d="M12.24 22c2.748 0 5.056-.904 6.741-2.448l-3.295-2.557c-.916.61-2.087.974-3.446.974-2.647 0-4.89-1.786-5.693-4.188H3.15v2.638A10.192 10.192 0 0 0 12.24 22z"
+        fill="currentColor"
+      />
+      <path
+        d="M6.547 13.78a6.123 6.123 0 0 1 0-3.561V7.58H3.15a10.185 10.185 0 0 0 0 9.84l3.397-2.639z"
+        fill="currentColor"
+      />
+      <path
+        d="M12.24 6.03c1.495 0 2.834.513 3.89 1.524l2.909-2.909C17.292 2.964 14.984 2 12.24 2A10.192 10.192 0 0 0 3.15 7.58l3.397 2.639c.804-2.407 3.047-4.189 5.693-4.189z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}
 
 const PAGE_SWITCH = {
   signin: 'signup',
@@ -70,7 +93,16 @@ export function AuthCard({
     pathname,
     searchParams: currentSearch,
   })
-  const googleAuthHref = buildWebAuthStartUrl({ callbackUrl: returnHref })
+  const googleAuthHref = buildWebAuthStartUrl({
+    callbackUrl: returnHref,
+    mode,
+    provider: 'google',
+  })
+  const githubAuthHref = buildWebAuthStartUrl({
+    callbackUrl: returnHref,
+    mode,
+    provider: 'github',
+  })
 
   return (
     <Card className="relative w-full border-white/15 bg-black/45 text-white shadow-2xl shadow-black/30 backdrop-blur-xl">
@@ -115,12 +147,23 @@ export function AuthCard({
               </div>
             </div>
 
-            <a
-              href={googleAuthHref}
-              className="inline-flex h-9 w-full items-center justify-center rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:border-white/40 hover:bg-white/10"
-            >
-              Continue with Google
-            </a>
+            <div className="grid grid-cols-2 gap-3">
+              <a
+                href={googleAuthHref}
+                className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:border-white/40 hover:bg-white/10"
+              >
+                <GoogleIcon />
+                Google
+              </a>
+
+              <a
+                href={githubAuthHref}
+                className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:border-white/40 hover:bg-white/10"
+              >
+                <Github className="size-4" />
+                GitHub
+              </a>
+            </div>
           </div>
         ) : null}
       </CardContent>

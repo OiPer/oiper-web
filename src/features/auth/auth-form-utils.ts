@@ -2,6 +2,8 @@ export type AuthMode = 'modal' | 'page'
 
 export type AuthPage = 'signin' | 'signup' | 'forgot-password' | 'verify-email'
 
+export type WebAuthProvider = 'google' | 'github'
+
 const NEXT_PUBLIC_OIPER_SERVER_URL =
   process.env.NEXT_PUBLIC_OIPER_SERVER_URL?.trim().replace(/\/+$/u, '')
 
@@ -23,7 +25,8 @@ function stripTransientAuthParams(
 ): URLSearchParams {
   const next = cloneSearchParams(searchParams)
   next.delete('code')
-  next.delete('token')
+  next.delete('pat')
+  next.delete('evid')
   return next
 }
 
@@ -77,8 +80,14 @@ export function buildAuthReturnUrl(input: {
   return buildUrl(input.pathname, next)
 }
 
-export function buildWebAuthStartUrl(input: { callbackUrl: string }): string {
+export function buildWebAuthStartUrl(input: {
+  callbackUrl: string
+  mode: AuthMode
+  provider: WebAuthProvider
+}): string {
   const url = new URL('/v1/auth/web/start', `${NEXT_PUBLIC_OIPER_SERVER_URL}/`)
   url.searchParams.set('callbackUrl', input.callbackUrl)
+  url.searchParams.set('mode', input.mode)
+  url.searchParams.set('provider', input.provider)
   return url.toString()
 }
