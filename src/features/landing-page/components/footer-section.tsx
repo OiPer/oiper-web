@@ -38,7 +38,7 @@ export function FooterSection() {
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
 
         <div className="flex flex-col gap-16 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-[400px]">
+          <div className="max-w-100">
             <h2 className="text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
               Ready to talk faster?
             </h2>
@@ -48,7 +48,7 @@ export function FooterSection() {
             </p>
             <a
               href={DOWNLOAD_URL}
-              className="mt-10 inline-flex h-[52px] items-center justify-center rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+              className="mt-10 inline-flex h-13 items-center justify-center rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
             >
               Download OiPer
             </a>

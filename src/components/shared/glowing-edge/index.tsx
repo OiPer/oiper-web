@@ -41,7 +41,7 @@ export function GlowingEdge({
         }}
       >
         <div
-          className={cn(styles.glow, 'blur-20 h-full w-full filter', {
+          className={cn(styles.glow, 'blur-20 size-full filter', {
             'before:!opacity-100': enabled,
             'group-hover:before:!opacity-100': onHover,
           })}

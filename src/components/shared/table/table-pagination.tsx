@@ -75,41 +75,41 @@ export function DataTablePagination<TData>({
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            className="h-8 w-8 bg-transparent p-0"
+            className="size-8 bg-transparent p-0"
             onClick={() => onPaginationChange(1, pageSize)}
             disabled={currentPage <= 1}
           >
             <span className="sr-only">Go to first page</span>
-            <ChevronsLeft className="h-4 w-4" />
+            <ChevronsLeft className="size-4" />
           </Button>
           <Button
             variant="outline"
-            className="h-8 w-8 bg-transparent p-0"
+            className="size-8 bg-transparent p-0"
             onClick={() => onPaginationChange(currentPage - 1, pageSize)}
             disabled={currentPage <= 1}
           >
             <span className="sr-only">Go to previous page</span>
-            <ChevronLeftIcon className="h-4 w-4" />
+            <ChevronLeftIcon className="size-4" />
           </Button>
           <Button
             variant="outline"
-            className="h-8 w-8 bg-transparent p-0"
+            className="size-8 bg-transparent p-0"
             onClick={() => onPaginationChange(currentPage + 1, pageSize)}
             disabled={currentPage >= Math.ceil(totalRows / pageSize)}
           >
             <span className="sr-only">Go to next page</span>
-            <ChevronRightIcon className="h-4 w-4" />
+            <ChevronRightIcon className="size-4" />
           </Button>
           <Button
             variant="outline"
-            className="h-8 w-8 bg-transparent p-0"
+            className="size-8 bg-transparent p-0"
             onClick={() =>
               onPaginationChange(Math.ceil(totalRows / pageSize), pageSize)
             }
             disabled={currentPage >= Math.ceil(totalRows / pageSize)}
           >
             <span className="sr-only">Go to last page</span>
-            <ChevronsRight className="h-4 w-4" />
+            <ChevronsRight className="size-4" />
           </Button>
         </div>
       </div>

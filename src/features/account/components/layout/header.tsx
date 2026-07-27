@@ -41,7 +41,7 @@ function SignedInActions() {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="ring-offset-background hover:border-foreground/15 hover:bg-accent border-border/70 bg-background inline-flex size-10 items-center justify-center rounded-full border p-1 text-sm transition-colors outline-none focus-visible:ring-2 sm:h-10 sm:w-auto sm:justify-start sm:gap-3 sm:pr-3"
+          className="border-border/70 bg-background ring-offset-background hover:border-foreground/15 hover:bg-accent inline-flex size-10 items-center justify-center rounded-full border p-1 text-sm transition-colors outline-none focus-visible:ring-2 sm:h-10 sm:w-auto sm:justify-start sm:gap-3 sm:pr-3"
           aria-label={`Open account menu for ${label}`}
         >
           <Avatar size="default" className="size-8">
@@ -111,7 +111,7 @@ function HeaderActions() {
 
 export function Header() {
   return (
-    <header className="bg-background/95 border-border/70 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-20 border-b backdrop-blur">
+    <header className="border-border/70 bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-20 border-b backdrop-blur">
       <Wrapper className="relative z-10 flex h-16 items-center gap-6">
         <div className="flex min-w-0 flex-1 items-center">
           <Link href="/" className="block w-fit">

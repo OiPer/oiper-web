@@ -24,7 +24,7 @@ export function DataTableViewOptions<TData>({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="ml-auto hidden gap-2 lg:flex">
-          <SlidersHorizontal className="h-4 w-4" />
+          <SlidersHorizontal className="size-4" />
           View
         </Button>
       </DropdownMenuTrigger>

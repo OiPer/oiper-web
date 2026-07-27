@@ -155,6 +155,9 @@ importers:
       eslint-plugin-react-hooks:
         specifier: ^7
         version: 7.0.1(eslint@9.39.3(jiti@2.6.1))
+      eslint-plugin-tailwindcss:
+        specifier: ^4.2.0
+        version: 4.2.0(eslint@9.39.3(jiti@2.6.1))(tailwindcss@4.2.1)(typescript@5.9.3)
       husky:
         specifier: ^9
         version: 9.1.7
@@ -3585,6 +3588,18 @@ packages:
         integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==,
       }
 
+  confbox@0.1.8:
+    resolution:
+      {
+        integrity: sha512-RMtmw0iFkeR4YV+fUOSucriAQNb9g8zFR52MWCtl+cCZOFRNL6zeB395vPzFhEjjn4fMxXudmELnl/KF/WrK6w==,
+      }
+
+  confbox@0.2.4:
+    resolution:
+      {
+        integrity: sha512-ysOGlgTFbN2/Y6Cg3Iye8YKulHw+R2fNXHrgSmXISQdMnomY6eNDprVdW9R5xBguEqI954+S6709UyiO7B+6OQ==,
+      }
+
   content-disposition@1.0.1:
     resolution:
       {
@@ -4504,6 +4519,20 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
 
+  eslint-plugin-tailwindcss@4.2.0:
+    resolution:
+      {
+        integrity: sha512-TSygSjEL54Iks7K29FjvM9Lp03cpsYtbh3LJHnj/84FxCOYfLFuvQ+GioHOxgq19WGN5NbHPuvFDz/igIOEtbg==,
+      }
+    engines: { node: '>=20.19.0' }
+    peerDependencies:
+      eslint: ^9.0.0 || ^10.0.0
+      tailwindcss: ^4.0.0
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   eslint-scope@8.4.0:
     resolution:
       {
@@ -4650,6 +4679,12 @@ packages:
         integrity: sha512-hIS4idWWai69NezIdRt2xFVofaF4j+6INOpJlVOLDO8zXGpUVEVzIYk12UUi2JzjEzWL3IOAxcTubgz9Po0yXw==,
       }
     engines: { node: '>= 18' }
+
+  exsolve@1.1.0:
+    resolution:
+      {
+        integrity: sha512-D+42+T12DdIlJM3uepa55qGiL3sYdLBOxIl2ifQCzCHz4c7eiolaHsi3BIqEr7JxBzxv2pYZQX9kw16ziMcEmw==,
+      }
 
   fast-deep-equal@3.1.3:
     resolution:
@@ -5851,6 +5886,13 @@ packages:
       }
     engines: { node: '>=20.0.0' }
 
+  local-pkg@1.2.1:
+    resolution:
+      {
+        integrity: sha512-++gUqRDEvcnN6Zhqrr+y/CkVEHhlrR96vZn3nZZPYzMcBUyBtTKzB9NadClFIsIVSsu+3i9tfk/erqy9kAmt7Q==,
+      }
+    engines: { node: '>=14' }
+
   locate-path@6.0.0:
     resolution:
       {
@@ -6010,6 +6052,12 @@ packages:
     resolution:
       {
         integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==,
+      }
+
+  mlly@1.8.2:
+    resolution:
+      {
+        integrity: sha512-d+ObxMQFmbt10sretNDytwt85VrbkhhUA/JBGm1MPaWJ65Cl4wOgLaB1NYvJSZ0Ef03MMEU/0xpPMXUIQ29UfA==,
       }
 
   motion-dom@12.35.0:
@@ -6427,6 +6475,12 @@ packages:
         integrity: sha512-7jdwVIRtsP8MYpdXSwOS0YdD0Du+qOoF/AEPIt88PcCFrZCzx41oxku1jD88hZBwbNUIEfpqvuhjFaMAqMTWnA==,
       }
 
+  pathe@2.0.3:
+    resolution:
+      {
+        integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==,
+      }
+
   pdfmake@0.2.23:
     resolution:
       {
@@ -6461,6 +6515,18 @@ packages:
       }
     engines: { node: '>=16.20.0' }
 
+  pkg-types@1.3.1:
+    resolution:
+      {
+        integrity: sha512-/Jm5M4RvtBFVkKWRu2BLUTNP8/M2a+UwuAX+ae4770q1qVGtfjG+WTCupoZixokjmHiry8uI+dlY8KXYV5HVVQ==,
+      }
+
+  pkg-types@2.3.1:
+    resolution:
+      {
+        integrity: sha512-y+ichcgc2LrADuhLNAx8DFjVfgz91pRxfZdI3UDhxHvcVEZsenLO+7XaU5vOp0u/7V/wZ+plyuQxtrDlZJ+yeg==,
+      }
+
   pluralize@8.0.0:
     resolution:
       {
@@ -6486,6 +6552,15 @@ packages:
         integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==,
       }
     engines: { node: '>= 0.4' }
+
+  postcss-nested@7.0.2:
+    resolution:
+      {
+        integrity: sha512-5osppouFc0VR9/VYzYxO03VaDa3e8F23Kfd6/9qcZTUI8P58GIYlArOET2Wq0ywSl2o2PjELhYOFI4W7l5QHKw==,
+      }
+    engines: { node: '>=18.0' }
+    peerDependencies:
+      postcss: ^8.2.14
 
   postcss-selector-parser@7.1.1:
     resolution:
@@ -6648,6 +6723,12 @@ packages:
         integrity: sha512-mAZTtNCeetKMH+pSjrb76NAM8V9a05I9aBZOHztWy/UqcJdQYNsf59vrRKWnojAT9Y+GbIvoTBC++CPHqpDBhQ==,
       }
     engines: { node: '>=0.6' }
+
+  quansync@0.2.11:
+    resolution:
+      {
+        integrity: sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA==,
+      }
 
   queue-microtask@1.2.3:
     resolution:
@@ -7375,6 +7456,14 @@ packages:
       }
     engines: { node: '>=20' }
 
+  tailwind-api-utils@1.0.3:
+    resolution:
+      {
+        integrity: sha512-KpzUHkH1ug1sq4394SLJX38ZtpeTiqQ1RVyFTTSY2XuHsNSTWUkRo108KmyyrMWdDbQrLYkSHaNKj/a3bmA4sQ==,
+      }
+    peerDependencies:
+      tailwindcss: ^3.3.0 || ^4.0.0 || ^4.0.0-beta
+
   tailwind-merge@3.5.0:
     resolution:
       {
@@ -7587,6 +7676,12 @@ packages:
       }
     engines: { node: '>=14.17' }
     hasBin: true
+
+  ufo@1.6.4:
+    resolution:
+      {
+        integrity: sha512-JFNbkD1Svwe0KvGi8GOeLcP4kAWQ609twvCdcHxq1oSL8svv39ZuSvajcD8B+5D0eL4+s1Is2D/O6KN3qcTeRA==,
+      }
 
   unbox-primitive@1.1.0:
     resolution:
@@ -10152,6 +10247,10 @@ snapshots:
 
   concat-map@0.0.1: {}
 
+  confbox@0.1.8: {}
+
+  confbox@0.2.4: {}
+
   content-disposition@1.0.1: {}
 
   content-type@1.0.5: {}
@@ -10842,6 +10941,20 @@ snapshots:
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
 
+  eslint-plugin-tailwindcss@4.2.0(eslint@9.39.3(jiti@2.6.1))(tailwindcss@4.2.1)(typescript@5.9.3):
+    dependencies:
+      '@typescript-eslint/utils': 8.56.1(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
+      eslint: 9.39.3(jiti@2.6.1)
+      postcss: 8.5.8
+      postcss-nested: 7.0.2(postcss@8.5.8)
+      synckit: 0.11.12
+      tailwind-api-utils: 1.0.3(tailwindcss@4.2.1)
+      tailwindcss: 4.2.1
+    optionalDependencies:
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
+
   eslint-scope@8.4.0:
     dependencies:
       esrecurse: 4.3.0
@@ -10990,6 +11103,8 @@ snapshots:
       vary: 1.1.2
     transitivePeerDependencies:
       - supports-color
+
+  exsolve@1.1.0: {}
 
   fast-deep-equal@3.1.3: {}
 
@@ -11596,6 +11711,12 @@ snapshots:
       rfdc: 1.4.1
       wrap-ansi: 9.0.2
 
+  local-pkg@1.2.1:
+    dependencies:
+      mlly: 1.8.2
+      pkg-types: 2.3.1
+      quansync: 0.2.11
+
   locate-path@6.0.0:
     dependencies:
       p-locate: 5.0.0
@@ -11673,6 +11794,13 @@ snapshots:
       brace-expansion: 2.1.2
 
   minimist@1.2.8: {}
+
+  mlly@1.8.2:
+    dependencies:
+      acorn: 8.16.0
+      pathe: 2.0.3
+      pkg-types: 1.3.1
+      ufo: 1.6.4
 
   motion-dom@12.35.0:
     dependencies:
@@ -11946,6 +12074,8 @@ snapshots:
 
   path-to-regexp@8.3.0: {}
 
+  pathe@2.0.3: {}
+
   pdfmake@0.2.23:
     dependencies:
       '@foliojs-fork/linebreak': 1.1.2
@@ -11961,6 +12091,18 @@ snapshots:
 
   pkce-challenge@5.0.1: {}
 
+  pkg-types@1.3.1:
+    dependencies:
+      confbox: 0.1.8
+      mlly: 1.8.2
+      pathe: 2.0.3
+
+  pkg-types@2.3.1:
+    dependencies:
+      confbox: 0.2.4
+      exsolve: 1.1.0
+      pathe: 2.0.3
+
   pluralize@8.0.0: {}
 
   png-js@1.1.0:
@@ -11972,6 +12114,11 @@ snapshots:
       tinyqueue: 2.0.3
 
   possible-typed-array-names@1.1.0: {}
+
+  postcss-nested@7.0.2(postcss@8.5.8):
+    dependencies:
+      postcss: 8.5.8
+      postcss-selector-parser: 7.1.1
 
   postcss-selector-parser@7.1.1:
     dependencies:
@@ -12036,6 +12183,8 @@ snapshots:
   qs@6.15.0:
     dependencies:
       side-channel: 1.1.0
+
+  quansync@0.2.11: {}
 
   queue-microtask@1.2.3: {}
 
@@ -12633,6 +12782,13 @@ snapshots:
 
   tagged-tag@1.0.0: {}
 
+  tailwind-api-utils@1.0.3(tailwindcss@4.2.1):
+    dependencies:
+      enhanced-resolve: 5.20.0
+      jiti: 2.6.1
+      local-pkg: 1.2.1
+      tailwindcss: 4.2.1
+
   tailwind-merge@3.5.0: {}
 
   tailwindcss@4.2.1: {}
@@ -12764,6 +12920,8 @@ snapshots:
       - supports-color
 
   typescript@5.9.3: {}
+
+  ufo@1.6.4: {}
 
   unbox-primitive@1.1.0:
     dependencies:

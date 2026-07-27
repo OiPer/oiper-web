@@ -24,11 +24,11 @@ export function DataTableColumnHeader<TData, TValue>({
   function getSortIcon() {
     switch (column.getIsSorted()) {
       case 'desc':
-        return <ArrowDownIcon className="ml-2 h-4 w-4" />
+        return <ArrowDownIcon className="ml-2 size-4" />
       case 'asc':
-        return <ArrowUpIcon className="ml-2 h-4 w-4" />
+        return <ArrowUpIcon className="ml-2 size-4" />
       default:
-        return <ArrowUpDownIcon className="ml-2 h-4 w-4" />
+        return <ArrowUpDownIcon className="ml-2 size-4" />
     }
   }
 
