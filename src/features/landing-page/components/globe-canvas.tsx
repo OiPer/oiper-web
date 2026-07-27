@@ -95,5 +95,5 @@ export function GlobeCanvas({ onReady }: GlobeCanvasProps) {
     }
   }, [onReady])
 
-  return <div ref={chartDivRef} className="h-full w-full" />
+  return <div ref={chartDivRef} className="size-full" />
 }

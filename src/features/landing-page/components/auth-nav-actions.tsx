@@ -11,11 +11,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/features/auth/auth-context'
+import { DOWNLOAD_URL } from '@/features/landing-page/constants/links'
 import { cn } from '@/lib/utils'
-import { ChevronDown, LogOut } from 'lucide-react'
+import { ChevronDown, LogOut, Settings2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { DOWNLOAD_URL } from '../constants/links'
 
 const SIGN_IN_URL = '/?auth-page=signin'
 const SIGN_UP_URL = '/?auth-page=signup'
@@ -134,10 +134,14 @@ function SignedInActions() {
 
     setIsSigningOut(true)
 
-    await signOut({
-      onError: () => toast.error('Failed to Signout'),
-      finally: () => setIsSigningOut(false),
-    })
+    try {
+      const result = await signOut()
+      window.location.assign(result.logoutUrl)
+    } catch {
+      toast.error('Failed to Signout')
+    } finally {
+      setIsSigningOut(false)
+    }
   }
 
   return (
@@ -178,6 +182,13 @@ function SignedInActions() {
               {currentUser.email}
             </div>
           </DropdownMenuLabel>
+          <DropdownMenuSeparator className="bg-white/8" />
+          <DropdownMenuItem asChild className="cursor-pointer gap-3 px-3 py-2">
+            <a href="/account">
+              <Settings2 className="size-4" />
+              Account
+            </a>
+          </DropdownMenuItem>
           <DropdownMenuSeparator className="bg-white/8" />
           <DropdownMenuItem
             className="cursor-pointer gap-3 px-3 py-2"

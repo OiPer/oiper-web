@@ -35,11 +35,11 @@ export function TestimonialsSection() {
     >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(255,255,255,0.03),transparent_50%)]" />
-        <div className="absolute top-1/2 left-1/2 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/3 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.02),transparent_70%)]" />
+        <div className="absolute top-1/2 left-1/2 h-150 w-225 -translate-x-1/2 -translate-y-1/3 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.02),transparent_70%)]" />
       </div>
 
       <Wrapper className="relative">
-        <div className="mx-auto max-w-[560px] text-center">
+        <div className="mx-auto max-w-140 text-center">
           <h2 className="text-4xl font-semibold tracking-[-0.03em] text-white sm:text-5xl">
             Loved by users.
           </h2>
@@ -67,7 +67,7 @@ export function TestimonialsSection() {
               <div className="relative mt-8 h-px bg-gradient-to-r from-white/[0.08] to-transparent" />
 
               <div className="relative mt-6 flex items-center gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.04] text-xs font-medium text-white/50">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.04] text-xs font-medium text-white/50">
                   {testimonial.initials}
                 </div>
                 <div>

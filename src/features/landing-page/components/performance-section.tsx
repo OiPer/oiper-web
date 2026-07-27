@@ -32,7 +32,7 @@ export function PerformanceSection() {
             <h2 className="text-4xl font-semibold tracking-[-0.03em] text-white sm:text-[3.25rem]">
               Speed that feels instant.
             </h2>
-            <p className="mt-5 max-w-[440px] text-base leading-relaxed text-white/40">
+            <p className="mt-5 max-w-110 text-base leading-relaxed text-white/40">
               Local processing means no network round-trips. OiPer transcribes
               up to 3.5x faster than cloud APIs, entirely on your device.
             </p>

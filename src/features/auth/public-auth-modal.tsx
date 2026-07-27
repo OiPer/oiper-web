@@ -20,7 +20,7 @@ export function PublicAuthModal() {
     isSignInOpen || isSignUpOpen || isForgotPasswordOpen || isVerifyEmailOpen
 
   function closeModal() {
-    setSearchParams.remove(['auth-page', 'code', 'token'])
+    setSearchParams.remove(['auth-page', 'code', 'pat', 'evid'])
   }
 
   return (

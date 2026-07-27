@@ -339,7 +339,7 @@ export function PerformanceCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="pointer-events-none absolute inset-0 h-full w-full opacity-25"
+      className="pointer-events-none absolute inset-0 size-full opacity-25"
     />
   )
 }
