@@ -174,7 +174,7 @@ function ConfigureAccount() {
         <div className="flex max-h-max flex-col justify-between gap-5">
           <Label className="text-base select-auto">Avatar</Label>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col space-y-0.5">
             <p className="text-sm font-medium">
               Upload a profile photo for your Oiper account
             </p>
@@ -235,7 +235,7 @@ function ConfigureAccount() {
 
           <div className="bg-muted/35 rounded-lg border px-4 py-3 text-sm">
             <div className="font-medium">{profile.email}</div>
-            <div className="text-muted-foreground mt-1">
+            <div className="text-muted-foreground">
               Primary email for login, receipts, and subscription updates.
             </div>
           </div>

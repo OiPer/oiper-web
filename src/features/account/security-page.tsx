@@ -49,7 +49,7 @@ function PasswordReset() {
       <div className="max-w-lg space-y-4 px-[var(--x-padding)]">
         <div className="bg-muted/35 rounded-lg border px-4 py-3 text-sm">
           <div className="font-medium">{email}</div>
-          <div className="text-muted-foreground mt-1">
+          <div className="text-muted-foreground">
             We will send a password reset link to this email address.
           </div>
         </div>

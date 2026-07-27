@@ -11,11 +11,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/features/auth/auth-context'
+import { DOWNLOAD_URL } from '@/features/landing-page/constants/links'
 import { cn } from '@/lib/utils'
 import { ChevronDown, LogOut, Settings2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { DOWNLOAD_URL } from '../constants/links'
 
 const SIGN_IN_URL = '/?auth-page=signin'
 const SIGN_UP_URL = '/?auth-page=signup'
