@@ -108,7 +108,7 @@ function ManageBillingButton() {
 
   return (
     <Button variant="outline" onClick={() => void openBillingPortal()}>
-      <Loading loading={isOpeningPortal}>Manage billing</Loading>
+      <Loading loading={isOpeningPortal}>Manage subscription</Loading>
     </Button>
   )
 }

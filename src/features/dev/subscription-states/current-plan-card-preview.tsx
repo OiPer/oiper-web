@@ -112,7 +112,7 @@ export function CurrentPlanCardPreview(props: {
         )}
         {card.buttons?.includes('manage') && (
           <Button type="button" variant="outline">
-            Manage billing
+            Manage subscription
           </Button>
         )}
         {card.buttons?.includes('change') && (
