@@ -6,8 +6,6 @@ import { useAuth } from '@/features/auth/auth-context'
 import { buildAuthUrl } from '@/features/auth/auth-form-utils'
 import { ChangePlanDialog } from '@/features/billing/change-plan-dialog'
 import {
-  describePlanChangeCta,
-  planChangeButtonVariant,
   STRIPE_CHECKOUT_ENABLED,
   useAutoOpenCheckoutFromQueryParam,
   usePollUntilPlanChangeLands,
@@ -190,17 +188,9 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
       }
     }
 
-    const currentTarget: PlanChangeTarget = {
-      plan: sub.plan as 'PRO' | 'MAX',
-      interval: sub.billingInterval ?? 'MONTHLY',
-    }
-    const targetPlan: PlanChangeTarget = { plan: cardPlan, interval }
-    const cta = describePlanChangeCta(currentTarget, targetPlan)
-    const ctaVariant = planChangeButtonVariant(currentTarget, targetPlan)
-
     return {
-      cta,
-      ctaVariant,
+      cta: 'Switch',
+      ctaVariant: 'outline',
       disabled: !!pendingTarget,
       action: {
         type: 'button',

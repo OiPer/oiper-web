@@ -4,7 +4,6 @@ import { $api } from '@/lib/api/client'
 import { getAppErrorCode } from '@/lib/api/error'
 import type { components } from '@/lib/api/schema'
 import { env } from '@/lib/env'
-import { intervalDisplayName, planDisplayName } from '@/lib/format'
 import { openPaddleCheckout } from '@/lib/paddle'
 import { redirectToStripeCheckout } from '@/lib/stripe-checkout'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -30,43 +29,6 @@ export type ActiveSubscription = PlanChangeTarget &
   >
 
 export const STRIPE_CHECKOUT_ENABLED = env.ENABLE_STRIPE_CHECKOUT
-
-export function describePlanChangeCta(
-  current: PlanChangeTarget,
-  target: PlanChangeTarget
-) {
-  const tierChanges = current.plan !== target.plan
-  const intervalChanges = current.interval !== target.interval
-
-  if (tierChanges && intervalChanges) {
-    return `Switch to ${planDisplayName(target.plan)} ${intervalDisplayName(target.interval)}`
-  }
-  if (tierChanges) {
-    return target.plan === 'MAX' ? 'Upgrade to Max' : 'Downgrade to Pro'
-  }
-  return `Switch to ${intervalDisplayName(target.interval)} Billing`
-}
-
-// Mirrors the server's PAID_STATE_RANK (billing.plan-change.ts) so a
-// cross-cycle change (e.g. Pro Yearly -> Max Monthly, a real upgrade that
-// bills immediately) doesn't render as the "outline" downgrade style just
-// because the interval alone dropped.
-const PAID_STATE_RANK: Record<
-  'PRO' | 'MAX',
-  Record<'MONTHLY' | 'YEARLY', number>
-> = {
-  PRO: { MONTHLY: 0, YEARLY: 1 },
-  MAX: { MONTHLY: 2, YEARLY: 3 },
-}
-
-export function planChangeButtonVariant(
-  current: PlanChangeTarget,
-  target: PlanChangeTarget
-): 'default' | 'outline' {
-  const targetRank = PAID_STATE_RANK[target.plan][target.interval]
-  const currentRank = PAID_STATE_RANK[current.plan][current.interval]
-  return targetRank > currentRank ? 'default' : 'outline'
-}
 
 export type PlanCatalogEntry = PricingPlan & {
   plan: 'PRO' | 'MAX'

@@ -11,7 +11,7 @@ import {
   describeTodayCharge,
   getConfirmLabel,
   getRegularPriceDetail,
-} from '@/features/billing/plan-change-copy'
+} from '@/features/billing/change-plan-pricing'
 import {
   findCatalogEntry,
   useResumeSubscription,
