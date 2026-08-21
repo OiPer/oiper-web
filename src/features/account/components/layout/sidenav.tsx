@@ -44,15 +44,12 @@ export const sidebarItems = [
         label: 'Current Plan',
         href: '/account/billing#current-plan',
       },
-      {
-        label: 'Payment Method',
-        href: '/account/billing#payment-method',
-      },
-      {
-        label: 'Invoices',
-        href: '/account/billing#invoice-history',
-      },
     ],
+  },
+  {
+    label: 'Usage',
+    href: '/account/usage',
+    items: [],
   },
 ] as const
 

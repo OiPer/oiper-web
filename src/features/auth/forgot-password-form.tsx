@@ -1,8 +1,7 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Spinner } from '@/components/ui/spinner'
 import { $api } from '@/lib/api/client'
+import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
@@ -10,9 +9,13 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
-import { AuthInput, AuthPasswordInput } from './auth-form-input'
+import {
+  AuthFormError,
+  AuthInput,
+  AuthPasswordInput,
+  AuthSubmitButton,
+} from './auth-form-input'
 import { buildAuthUrl } from './auth-form-utils'
-import { getAuthErrorMessage } from './workos-auth-error'
 
 const requestResetSchema = z.object({
   email: z.string().trim().email('Enter a valid email address'),
@@ -80,7 +83,7 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
     )
   }
 
-  async function submitResetRequest(
+  async function handlePasswordResetRequest(
     values: z.infer<typeof requestResetSchema>
   ) {
     setErrorMessage(null)
@@ -93,12 +96,12 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
       })
 
       toast.success('Password reset email sent')
-    } catch (error) {
-      setErrorMessage(getAuthErrorMessage(error))
+    } catch {
+      setErrorMessage("Couldn't send the reset email")
     }
   }
 
-  async function submitPasswordReset(
+  async function handlePasswordReset(
     values: z.infer<typeof resetWithTokenSchema>
   ) {
     if (!token) return setErrorMessage('Missing reset token')
@@ -115,7 +118,16 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
       toast.success('Password updated, redirecting to sign in')
       window.setTimeout(() => goToSignIn(), 600)
     } catch (error) {
-      setErrorMessage(getAuthErrorMessage(error))
+      const code = getAppErrorCode<
+        'post',
+        '/v1/auth/web/password-reset/confirm'
+      >(error)
+      switch (code) {
+        case 'AUTH_REQUEST_REJECTED':
+          return setErrorMessage('Invalid or expired reset link')
+        default:
+          return setErrorMessage('Something went wrong')
+      }
     }
   }
 
@@ -133,7 +145,7 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
     >
       {!token ? (
         <form
-          onSubmit={requestResetForm.handleSubmit(submitResetRequest)}
+          onSubmit={requestResetForm.handleSubmit(handlePasswordResetRequest)}
           className="flex flex-col gap-4"
         >
           <AuthInput
@@ -144,25 +156,18 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
             error={requestResetForm.formState.errors.email?.message}
           />
 
-          <Button
-            type="submit"
-            className="h-9 bg-white text-black hover:bg-white/90"
-            disabled={
+          <AuthSubmitButton
+            loading={
               requestResetForm.formState.isSubmitting ||
               requestResetMutation.isPending
             }
           >
-            {requestResetForm.formState.isSubmitting ||
-            requestResetMutation.isPending ? (
-              <Spinner />
-            ) : (
-              'Send reset email'
-            )}
-          </Button>
+            Send reset email
+          </AuthSubmitButton>
         </form>
       ) : (
         <form
-          onSubmit={resetWithTokenForm.handleSubmit(submitPasswordReset)}
+          onSubmit={resetWithTokenForm.handleSubmit(handlePasswordReset)}
           className="flex flex-col gap-4"
         >
           <AuthPasswordInput
@@ -179,29 +184,18 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
             error={resetWithTokenForm.formState.errors.confirmPassword?.message}
           />
 
-          <Button
-            type="submit"
-            className="h-9 bg-white text-black hover:bg-white/90"
-            disabled={
+          <AuthSubmitButton
+            loading={
               resetWithTokenForm.formState.isSubmitting ||
               confirmResetMutation.isPending
             }
           >
-            {resetWithTokenForm.formState.isSubmitting ||
-            confirmResetMutation.isPending ? (
-              <Spinner />
-            ) : (
-              'Update password'
-            )}
-          </Button>
+            Update password
+          </AuthSubmitButton>
         </form>
       )}
 
-      {errorMessage ? (
-        <p className="mt-4 rounded-md border border-red-300/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
-          {errorMessage}
-        </p>
-      ) : null}
+      <AuthFormError message={errorMessage} className="mt-4" />
     </AuthCard>
   )
 }

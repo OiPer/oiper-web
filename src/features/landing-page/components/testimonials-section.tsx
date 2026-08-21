@@ -31,7 +31,7 @@ export function TestimonialsSection() {
   return (
     <section
       id="testimonials"
-      className="relative border-b border-white/[0.06] bg-[#0c0c0c] py-32 sm:py-40"
+      className="relative border-b border-white/6 bg-[#0c0c0c] py-32 sm:py-40"
     >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(255,255,255,0.03),transparent_50%)]" />
@@ -52,11 +52,11 @@ export function TestimonialsSection() {
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.author}
-              className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 sm:p-10"
+              className="relative overflow-hidden rounded-2xl border border-white/6 bg-white/2 p-8 sm:p-10"
             >
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
+              <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
               <Quote
-                className="absolute top-6 right-6 size-24 text-white/[0.03]"
+                className="absolute top-6 right-6 size-24 text-white/3"
                 strokeWidth={1}
               />
 
@@ -64,10 +64,10 @@ export function TestimonialsSection() {
                 &ldquo;{testimonial.quote}&rdquo;
               </p>
 
-              <div className="relative mt-8 h-px bg-gradient-to-r from-white/[0.08] to-transparent" />
+              <div className="relative mt-8 h-px bg-linear-to-r from-white/8 to-transparent" />
 
               <div className="relative mt-6 flex items-center gap-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.04] text-xs font-medium text-white/50">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/8 bg-white/4 text-xs font-medium text-white/50">
                   {testimonial.initials}
                 </div>
                 <div>

@@ -29,13 +29,13 @@ const resourceLinks = [
 
 export function FooterSection() {
   return (
-    <footer className="relative overflow-hidden border-t border-white/[0.06] bg-[#0a0a0a]">
+    <footer className="relative overflow-hidden border-t border-white/6 bg-[#0a0a0a]">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(255,255,255,0.03),transparent_50%)]" />
       </div>
 
       <Wrapper className="relative pt-24 pb-12 sm:pt-32">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/8 to-transparent" />
 
         <div className="flex flex-col gap-16 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-100">
@@ -89,7 +89,7 @@ export function FooterSection() {
           </div>
         </div>
 
-        <div className="mt-24 flex flex-col items-start justify-between gap-6 border-t border-white/[0.06] pt-8 sm:flex-row sm:items-center">
+        <div className="mt-24 flex flex-col items-start justify-between gap-6 border-t border-white/6 pt-8 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <img
               src="https://github.com/oiper.png"

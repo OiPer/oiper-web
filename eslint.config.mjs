@@ -46,7 +46,6 @@ export default defineConfig([
       'no-useless-return': 2,
       'no-empty-static-block': 2,
 
-      // 'max-lines': [2, { max: 500, skipComments: true, skipBlankLines: true }],
       '@typescript-eslint/max-params': [2, { max: 5, countVoidThis: false }],
 
       'arrow-body-style': 0,

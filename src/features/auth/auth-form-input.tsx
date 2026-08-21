@@ -1,11 +1,45 @@
 'use client'
 
+import { Button, Loading } from '@/components/ui/button'
 import { Input as BaseInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { Eye, EyeOff } from 'lucide-react'
-import type { ComponentProps } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { useState } from 'react'
+
+export function AuthFormError(props: {
+  message: string | null
+  className?: string
+}) {
+  if (!props.message) return null
+
+  return (
+    <p
+      className={cn(
+        'rounded-md border border-red-300/30 bg-red-500/10 px-3 py-2 text-sm text-red-200',
+        props.className
+      )}
+    >
+      {props.message}
+    </p>
+  )
+}
+
+export function AuthSubmitButton(props: {
+  loading: boolean
+  children: ReactNode
+}) {
+  return (
+    <Button
+      type="submit"
+      className="h-9 bg-white text-black hover:bg-white/90"
+      disabled={props.loading}
+    >
+      <Loading loading={props.loading}>{props.children}</Loading>
+    </Button>
+  )
+}
 
 type AuthInputProps = ComponentProps<'input'> & {
   label?: string

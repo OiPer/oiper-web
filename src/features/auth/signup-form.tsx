@@ -1,17 +1,20 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/features/auth/auth-context'
+import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
-import { AuthInput, AuthPasswordInput } from './auth-form-input'
+import {
+  AuthFormError,
+  AuthInput,
+  AuthPasswordInput,
+  AuthSubmitButton,
+} from './auth-form-input'
 import { buildAuthUrl, getCallbackUrl } from './auth-form-utils'
-import { getAuthErrorMessage } from './workos-auth-error'
 
 const signUpSchema = z
   .object({
@@ -55,7 +58,7 @@ export function SignUpForm({ mode }: SignUpFormProps) {
     },
   })
 
-  async function onSubmit(values: SignUpSchema) {
+  async function handleSignUp(values: SignUpSchema) {
     setErrorMessage(null)
 
     try {
@@ -82,12 +85,22 @@ export function SignUpForm({ mode }: SignUpFormProps) {
       }
 
       if ('authenticated' in result && !result.authenticated) {
-        return setErrorMessage('Something went wrong!')
+        return setErrorMessage('Something went wrong')
       }
 
       router.push(callbackUrl)
     } catch (error) {
-      setErrorMessage(getAuthErrorMessage(error))
+      const code = getAppErrorCode<'post', '/v1/auth/web/sign-up/password'>(
+        error
+      )
+      switch (code) {
+        case 'AUTH_EMAIL_ALREADY_EXISTS':
+          return setErrorMessage('An account already exists with this email')
+        case 'AUTH_PASSWORD_POLICY_FAILED':
+          return setErrorMessage('Password does not meet requirements')
+        default:
+          return setErrorMessage('Something went wrong')
+      }
     }
   }
 
@@ -99,7 +112,7 @@ export function SignUpForm({ mode }: SignUpFormProps) {
       description="Sign up to start using OiPer."
     >
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSignUp)}
         className="flex flex-col gap-4"
       >
         <AuthInput
@@ -132,19 +145,11 @@ export function SignUpForm({ mode }: SignUpFormProps) {
           error={form.formState.errors.confirmPassword?.message}
         />
 
-        {errorMessage ? (
-          <p className="rounded-md border border-red-300/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
-            {errorMessage}
-          </p>
-        ) : null}
+        <AuthFormError message={errorMessage} />
 
-        <Button
-          type="submit"
-          className="h-9 bg-white text-black hover:bg-white/90"
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? <Spinner /> : 'Sign up'}
-        </Button>
+        <AuthSubmitButton loading={form.formState.isSubmitting}>
+          Sign up
+        </AuthSubmitButton>
       </form>
     </AuthCard>
   )

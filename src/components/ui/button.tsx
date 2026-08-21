@@ -2,6 +2,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { Slot } from 'radix-ui'
 import * as React from 'react'
 
+import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
@@ -55,10 +56,44 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(
+        'relative isolate',
+        buttonVariants({ variant, size, className })
+      )}
       {...props}
     />
   )
 }
 
-export { Button, buttonVariants }
+// Wrap a button's label in this instead of swapping it for a spinner —
+// swapping content changes the button's width (the label and a bare
+// spinner are rarely the same size), which shifts everything next to it.
+// This keeps the label rendered (so it keeps taking up its normal space)
+// but invisible, and overlays a centered spinner on top instead; the
+// button itself needs `relative` for the overlay to anchor to, which the
+// base Button above already sets unconditionally.
+function Loading({
+  asChild = false,
+  loading = true,
+  className,
+  ...props
+}: React.ComponentProps<'span'> & { asChild?: boolean; loading?: boolean }) {
+  const Comp = asChild ? Slot.Root : 'span'
+
+  return (
+    <>
+      <Comp
+        data-slot="button-loading-label"
+        className={cn(className, loading && 'opacity-0')}
+        {...props}
+      />
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Spinner />
+        </div>
+      )}
+    </>
+  )
+}
+
+export { Button, buttonVariants, Loading }

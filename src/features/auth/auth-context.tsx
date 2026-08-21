@@ -4,21 +4,18 @@ import { $api, api } from '@/lib/api/client'
 import type { components } from '@/lib/api/schema'
 import { useQueryClient } from '@tanstack/react-query'
 import { createContext, useContext, type ReactNode } from 'react'
+import {
+  getAccountMutationHeaders,
+  webSessionQueryKey,
+  webSessionRequest,
+} from './web-session'
 
 type Session = components['schemas']['WebSession']
 type PasswordAuthResult = components['schemas']['PasswordAuthResponse']
 type WebLogoutResponse = components['schemas']['WebLogoutResponse']
 type ResendVerificationResponse =
   components['schemas']['ResendVerificationResponse']
-type User = Extract<Session, { authenticated: true }>['user']
-
-const webSessionRequest = { cache: 'no-store' } as const
-
-const webSessionQueryKey = $api.queryOptions(
-  'get',
-  '/v1/auth/web/session',
-  webSessionRequest
-).queryKey
+export type User = Extract<Session, { authenticated: true }>['user']
 
 export interface SignInInput {
   email: string
@@ -134,13 +131,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   async function signOut(): Promise<WebLogoutResponse> {
-    const csrf = await api.GET('/v1/auth/web/csrf-token', webSessionRequest)
-
-    if (csrf.error) throw csrf.error
-    if (!csrf.data) throw new Error('CSRF token response body was empty')
+    const headers = await getAccountMutationHeaders()
 
     const logout = await api.POST('/v1/auth/web/logout', {
-      params: { header: { 'x-csrf-token': csrf.data.csrfToken } },
+      params: { header: headers },
     })
 
     if (logout.error) throw logout.error
@@ -177,4 +171,12 @@ export function useAuth() {
   const context = useContext(AuthContext)
   if (!context) throw new Error('useAuth must be used within an AuthProvider')
   return context
+}
+
+export function useRequiredUser(context: string): User {
+  const { currentUser } = useAuth()
+  if (!currentUser) {
+    throw new Error(`${context} requires an authenticated user`)
+  }
+  return currentUser
 }

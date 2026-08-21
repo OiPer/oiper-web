@@ -6,20 +6,38 @@ const compactNumberFormatter = new Intl.NumberFormat('en-US', {
 const integerFormatter = new Intl.NumberFormat('en-US')
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
+  month: 'long',
   day: 'numeric',
   year: 'numeric',
 })
 
 const dateTimeFormatter = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
+  month: 'long',
   day: 'numeric',
   year: 'numeric',
   hour: 'numeric',
   minute: '2-digit',
 })
 
-function normalizeLabel(value: string) {
+export function planDisplayName(plan: 'PRO' | 'MAX') {
+  return plan === 'PRO' ? 'Pro' : 'Max'
+}
+
+export function intervalDisplayName(interval: 'MONTHLY' | 'YEARLY') {
+  return interval === 'MONTHLY' ? 'Monthly' : 'Yearly'
+}
+
+export function subscriptionPlanLabel(
+  plan: 'FREE' | 'PRO' | 'MAX',
+  interval: 'MONTHLY' | 'YEARLY' | null
+) {
+  if (plan === 'FREE') return 'Free'
+  return interval
+    ? `${planDisplayName(plan)} · ${intervalDisplayName(interval)}`
+    : planDisplayName(plan)
+}
+
+export function formatLabel(value: string) {
   return value
     .replace(/[_-]+/g, ' ')
     .replace(/\s+/g, ' ')
@@ -48,11 +66,11 @@ export function formatCurrencyFromCents(cents: number, currency = 'USD') {
 }
 
 export function formatDate(value: string | number | Date) {
-  return dateFormatter.format(new Date(value))
+  return dateFormatter.format(new Date(value)).replace(/,/g, '')
 }
 
 export function formatDateTime(value: string | number | Date) {
-  return dateTimeFormatter.format(new Date(value))
+  return dateTimeFormatter.format(new Date(value)).replace(/,/g, '')
 }
 
 export function formatMinutes(value: number, digits = 0) {
@@ -78,10 +96,10 @@ export function formatPercentage(value: number, digits = 0) {
   }).format(value)}%`
 }
 
-export function formatStatusLabel(value: string) {
-  return normalizeLabel(value)
-}
-
-export function formatPlanLabel(value: string) {
-  return normalizeLabel(value)
+// Rounds a savings percent down to the nearest 5 and marks it with a "+"
+// whenever that rounding actually drops precision (22% -> "20%+"), so we
+// never advertise a bigger discount than the plan really has.
+export function formatSavePercent(percent: number) {
+  const rounded = Math.floor(percent / 5) * 5
+  return rounded === percent ? `${percent}%` : `${rounded}%+`
 }

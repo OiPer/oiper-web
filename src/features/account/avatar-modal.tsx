@@ -1,9 +1,8 @@
 'use client'
 
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
-import { Button } from '@/components/ui/button'
+import { Button, Loading } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
-import { Spinner } from '@/components/ui/spinner'
 import { Slot } from 'radix-ui'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -157,7 +156,7 @@ export function AccountAvatarModal({
                 onClick={() => void handleSaveAvatar()}
                 disabled={!selectedFile || isSaving}
               >
-                {isSaving ? <Spinner /> : 'Save Avatar'}
+                <Loading loading={isSaving}>Save Avatar</Loading>
               </Button>
             </DialogFooter>
           </div>

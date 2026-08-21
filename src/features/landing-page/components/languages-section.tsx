@@ -29,10 +29,10 @@ export function LanguagesSection() {
   return (
     <section
       id="languages"
-      className="relative overflow-hidden border-b border-white/[0.06] bg-[#0a0a0a] py-32 sm:py-40"
+      className="relative overflow-hidden border-b border-white/6 bg-[#0a0a0a] py-32 sm:py-40"
     >
       <div
-        className={`pointer-events-none absolute top-1/2 right-0 hidden size-[520px] translate-x-1/4 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_0_80px_rgba(255,255,255,0.04),inset_0_0_40px_rgba(0,0,0,0.8)] transition-opacity duration-700 ease-out select-none lg:block ${
+        className={`pointer-events-none absolute top-1/2 right-0 hidden size-130 translate-x-1/4 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_0_80px_rgba(255,255,255,0.04),inset_0_0_40px_rgba(0,0,0,0.8)] transition-opacity duration-700 ease-out select-none lg:block ${
           globeReady ? 'opacity-100' : 'opacity-0'
         }`}
       >
@@ -50,7 +50,7 @@ export function LanguagesSection() {
           </p>
         </div>
 
-        <div className="mt-16 h-px w-full bg-gradient-to-r from-white/[0.1] via-white/[0.04] to-transparent sm:mt-20" />
+        <div className="mt-16 h-px w-full bg-linear-to-r from-white/10 via-white/4 to-transparent sm:mt-20" />
 
         <div className="mt-12 grid grid-cols-2 gap-8 sm:grid-cols-3 lg:mt-16 lg:grid-cols-4">
           {languages.map((language) => (

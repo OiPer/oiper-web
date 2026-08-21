@@ -1,15 +1,15 @@
 'use client'
 
 import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { useUrlSearchParams } from '@/hooks/use-search-params'
 import { AuthPageShell } from './auth-page-shell'
 import { EmailVerificationForm } from './email-verification-form'
 import { ForgotPasswordForm } from './forgot-password-form'
 import { SignInForm } from './signin-form'
 import { SignUpForm } from './signup-form'
-import { useAuthSearchParams } from './use-auth-search-params'
 
 export function PublicAuthModal() {
-  const [searchParams, setSearchParams] = useAuthSearchParams()
+  const [searchParams, setSearchParams] = useUrlSearchParams()
 
   const authPage = searchParams.get('auth-page')
   const isSignInOpen = authPage === 'signin'

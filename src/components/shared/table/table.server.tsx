@@ -1,7 +1,7 @@
 'use client'
 
 import { useDebouncedState } from '@/hooks/use-debounced-state'
-import { useSearchParams } from '@/hooks/use-search-params'
+import { useUrlSearchParams } from '@/hooks/use-search-params'
 import { ColumnDef } from '@tanstack/react-table'
 import { useCallback, useEffect } from 'react'
 import z from 'zod'
@@ -34,7 +34,7 @@ export function ServerTable<Row extends Record<string, unknown>>({
   initiallyHiddenColumns = [],
   loading = false,
 }: ServerTableProps<Row>) {
-  const [searchQueryParams, updateSearchParams] = useSearchParams()
+  const [searchQueryParams, updateSearchParams] = useUrlSearchParams()
   const searchParams = SearchParamSchema.parse(
     Object.fromEntries(searchQueryParams.entries())
   )

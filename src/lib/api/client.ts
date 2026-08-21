@@ -2,7 +2,7 @@ import type { paths } from '@/lib/api/schema'
 import createClient from 'openapi-fetch'
 import createQueryClient from 'openapi-react-query'
 
-const NEXT_PUBLIC_OIPER_SERVER_URL =
+export const NEXT_PUBLIC_OIPER_SERVER_URL =
   process.env.NEXT_PUBLIC_OIPER_SERVER_URL?.trim().replace(/\/$/, '')
 
 if (!NEXT_PUBLIC_OIPER_SERVER_URL) {

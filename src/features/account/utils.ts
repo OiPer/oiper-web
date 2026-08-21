@@ -28,16 +28,11 @@ export function getUserInitials(user: AccountUser) {
   return user.email.slice(0, 2).toUpperCase()
 }
 
-export function formatMemberSince(
-  value: string | null | undefined,
-  fallback = 'July 2026'
-) {
-  if (!value) {
-    return fallback
-  }
+export function formatMemberSince(value: string | null | undefined) {
+  const date = value ? new Date(value) : new Date()
 
   return new Intl.DateTimeFormat('en-US', {
     month: 'long',
     year: 'numeric',
-  }).format(new Date(value))
+  }).format(date)
 }

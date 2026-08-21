@@ -28,7 +28,7 @@ function HeroCarousel() {
   }, [])
 
   return (
-    <div className="relative aspect-[2544/1504] w-full">
+    <div className="relative aspect-2544/1504 w-full">
       {HERO_IMAGES.map((src, index) => (
         <Image
           key={src}
@@ -51,15 +51,15 @@ export function HeroSection() {
     <section className="relative overflow-hidden border-b border-white/6 bg-[#0a0a0a]">
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,rgba(255,255,255,0.05),transparent_45%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.015)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_50%_30%,black,transparent_70%)] bg-size-[120px_120px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.015)_1px,transparent_1px)] mask-[radial-gradient(ellipse_at_50%_30%,black,transparent_70%)] bg-size-[120px_120px]" />
 
-        <div className="absolute top-1/2 left-0 hidden size-[520px] -translate-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.045),transparent_60%)] blur-3xl lg:block" />
-        <div className="absolute top-1/2 right-0 hidden size-[520px] translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.045),transparent_60%)] blur-3xl lg:block" />
+        <div className="absolute top-1/2 left-0 hidden size-130 -translate-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.045),transparent_60%)] blur-3xl lg:block" />
+        <div className="absolute top-1/2 right-0 hidden size-130 translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.045),transparent_60%)] blur-3xl lg:block" />
       </div>
 
       <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-[min(64rem,calc(100%-(4%*2)))] -translate-x-1/2 md:block">
-        <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-white/8 to-transparent" />
-        <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-white/8 to-transparent" />
+        <div className="absolute inset-y-0 left-0 w-px bg-linear-to-b from-transparent via-white/8 to-transparent" />
+        <div className="absolute inset-y-0 right-0 w-px bg-linear-to-b from-transparent via-white/8 to-transparent" />
         {[
           'left-0 top-[28%]',
           'right-0 top-[28%]',
@@ -109,10 +109,10 @@ export function HeroSection() {
 
       <Wrapper className="relative z-10">
         <div className="relative mx-auto max-w-250">
-          <div className="-my-[5%]">
+          <div className="my-[-5%]">
             <HeroCarousel />
           </div>
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-[#0a0a0a] to-transparent" />
         </div>
       </Wrapper>
     </section>
