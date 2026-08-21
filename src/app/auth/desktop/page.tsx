@@ -1,7 +1,9 @@
 'use client'
 
 import { Spinner } from '@/components/ui/spinner'
-import { $api, NEXT_PUBLIC_OIPER_SERVER_URL } from '@/lib/api/client'
+import { $api } from '@/lib/api/client'
+import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -66,13 +68,15 @@ export default function DesktopAuthPage() {
 
     hasNavigatedRef.current = true
     setState({ status: 'continuing' })
-    const continueUrl = new URL(
+    const continueUrl = joinUrl(
+      env.OIPER_SERVER_URL,
       '/v1/auth/desktop/continue',
-      NEXT_PUBLIC_OIPER_SERVER_URL
+      {
+        requestId,
+        callbackUrl: '/',
+      }
     )
-    continueUrl.searchParams.set('requestId', requestId)
-    continueUrl.searchParams.set('callbackUrl', '/')
-    window.location.replace(continueUrl.toString())
+    window.location.replace(continueUrl)
   }, [
     requestId,
     router,

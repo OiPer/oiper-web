@@ -1,3 +1,4 @@
+import '@/lib/env'
 import '@/styles/index.css'
 import '@/styles/theme.css'
 

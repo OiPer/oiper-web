@@ -3,6 +3,7 @@ import { getAccountMutationHeaders } from '@/features/auth/web-session'
 import { $api } from '@/lib/api/client'
 import { getAppErrorCode } from '@/lib/api/error'
 import type { components } from '@/lib/api/schema'
+import { env } from '@/lib/env'
 import { intervalDisplayName, planDisplayName } from '@/lib/format'
 import { openPaddleCheckout } from '@/lib/paddle'
 import { redirectToStripeCheckout } from '@/lib/stripe-checkout'
@@ -17,14 +18,18 @@ export type PlanChangeTarget = {
   interval: 'MONTHLY' | 'YEARLY'
 }
 
+export type PaidSubscriptionView = Extract<
+  components['schemas']['SubscriptionAccountView'],
+  { plan: 'PRO' | 'MAX' }
+>
+
 export type ActiveSubscription = PlanChangeTarget &
   Pick<
-    components['schemas']['SubscriptionAccountView'],
+    PaidSubscriptionView,
     'status' | 'currentPeriodEnd' | 'cancelAtPeriodEnd'
   >
 
-export const STRIPE_CHECKOUT_ENABLED =
-  process.env.NEXT_PUBLIC_ENABLE_STRIPE_CHECKOUT === 'true'
+export const STRIPE_CHECKOUT_ENABLED = env.ENABLE_STRIPE_CHECKOUT
 
 export function describePlanChangeCta(
   current: PlanChangeTarget,
@@ -172,7 +177,7 @@ export function useAutoOpenCheckoutFromQueryParam(
 
 export function usePollUntilPlanChangeLands(
   refetch: () => Promise<{
-    data?: { plan: string; billingInterval: string | null } | undefined
+    data?: { plan: string; billingInterval?: string | null } | undefined
   }>
 ) {
   const [pendingTarget, setPendingTarget] = useState<{
