@@ -155,7 +155,7 @@ interface ChangePlanDialogProps {
   initialTarget?: PlanChangeTarget | null
   onChangeSubmitted: (target: PlanChangeTarget) => void
   onResumed: () => Promise<{
-    data?: { cancelAtPeriodEnd: boolean } | undefined
+    data?: components['schemas']['SubscriptionAccountView'] | undefined
   }>
 }
 
@@ -291,7 +291,8 @@ export function ChangePlanDialog({
       setIsWaitingForResume(true)
       for (let attempt = 0; attempt < 8; attempt++) {
         const result = await onResumed()
-        if (result.data?.cancelAtPeriodEnd === false) break
+        const stillPaid = result.data?.plan !== 'FREE' ? result.data : undefined
+        if (stillPaid?.cancelAtPeriodEnd === false) break
         await new Promise((resolve) => setTimeout(resolve, 1500))
       }
     } catch {
@@ -346,11 +347,7 @@ export function ChangePlanDialog({
             <div className="divide-y rounded-lg border">
               <SummaryRow
                 label="Status"
-                value={
-                  currentSubscription.status === 'NONE'
-                    ? '-'
-                    : formatLabel(currentSubscription.status)
-                }
+                value={formatLabel(currentSubscription.status)}
               />
               <SummaryRow
                 label={

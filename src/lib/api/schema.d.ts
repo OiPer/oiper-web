@@ -7541,28 +7541,33 @@ export interface components {
         };
         SubscriptionAccountView: {
             /** @enum {string} */
-            plan: "FREE" | "PRO" | "MAX";
-            /** @enum {string|null} */
-            billingInterval: "MONTHLY" | "YEARLY" | null;
+            plan: "FREE";
+        } | {
             /** @enum {string} */
-            status: "ACTIVE" | "PAST_DUE" | "CANCELLED" | "EXPIRED" | "NONE";
+            plan: "PRO" | "MAX";
+            /** @enum {string} */
+            billingInterval: "MONTHLY" | "YEARLY";
+            /** @enum {string} */
+            provider: "PADDLE" | "STRIPE";
+            /** @enum {string} */
+            status: "ACTIVE" | "PAST_DUE" | "PAUSED" | "CANCELLED" | "EXPIRED";
             /** Format: date-time */
             currentPeriodEnd: string | null;
             cancelAtPeriodEnd: boolean;
-            /** @enum {string|null} */
-            provider: "PADDLE" | "STRIPE" | null;
             currencyCode: string | null;
             nextPayment: {
                 amount: string;
                 dueAt: string;
             } | null;
             regularAmount: string | null;
-            /** @enum {string|null} */
-            scheduledPlan: "FREE" | "PRO" | "MAX" | null;
-            /** @enum {string|null} */
-            scheduledBillingInterval: "MONTHLY" | "YEARLY" | null;
-            /** Format: date-time */
-            scheduledChangeAt: string | null;
+            scheduledChange: {
+                /** @enum {string} */
+                plan: "PRO" | "MAX";
+                /** @enum {string} */
+                billingInterval: "MONTHLY" | "YEARLY";
+                /** Format: date-time */
+                changeAt: string;
+            } | null;
         };
         PortalSessionResponse: {
             /** Format: uri */

@@ -10,6 +10,7 @@ import {
   useOpenBillingPortal,
   usePollUntilPlanChangeLands,
   type ActiveSubscription,
+  type PaidSubscriptionView,
   type PlanChangeTarget,
 } from '@/features/billing/use-checkout'
 import { ANCHOR_PRICING, HOME } from '@/features/landing-page/constants/links'
@@ -25,10 +26,8 @@ import Link from 'next/link'
 import { useState, type ReactNode } from 'react'
 
 type PricingPlan = components['schemas']['PricingPlan']
-type SubscriptionStatus =
-  components['schemas']['SubscriptionAccountView']['status']
-type NextPayment =
-  components['schemas']['SubscriptionAccountView']['nextPayment']
+type SubscriptionStatus = PaidSubscriptionView['status']
+type NextPayment = PaidSubscriptionView['nextPayment']
 
 const subscriptionRequest = { cache: 'no-store' } as const
 
@@ -101,7 +100,7 @@ function RowSkeleton() {
 }
 
 function StatusValue(props: { status: SubscriptionStatus }) {
-  return props.status === 'NONE' ? <>-</> : <>{formatLabel(props.status)}</>
+  return <>{formatLabel(props.status)}</>
 }
 
 function ManageBillingButton() {
@@ -120,7 +119,7 @@ function ChangePlanButton(props: {
   isBusy: boolean
   onChangeSubmitted: (target: PlanChangeTarget) => void
   onResumed: () => Promise<{
-    data?: { cancelAtPeriodEnd: boolean } | undefined
+    data?: components['schemas']['SubscriptionAccountView'] | undefined
   }>
 }) {
   const [open, setOpen] = useState(false)
@@ -167,35 +166,26 @@ function CurrentPlan() {
   )
 
   const subscription = subscriptionQuery.data
-  const paidPlan =
-    subscription && (subscription.plan === 'PRO' || subscription.plan === 'MAX')
-      ? subscription.plan
-      : null
+  const paidSubscription =
+    subscription && subscription.plan !== 'FREE' ? subscription : undefined
 
-  const catalogEntry =
-    paidPlan && subscription?.billingInterval
-      ? findCatalogEntry(
-          pricingQuery.data?.plans,
-          paidPlan,
-          subscription.billingInterval
-        )
-      : undefined
+  const catalogEntry = paidSubscription
+    ? findCatalogEntry(
+        pricingQuery.data?.plans,
+        paidSubscription.plan,
+        paidSubscription.billingInterval
+      )
+    : undefined
 
-  const nextPayment = subscription?.nextPayment ?? null
-  const currencyCode = subscription?.currencyCode ?? undefined
-
-  const scheduledChange =
-    subscription?.scheduledPlan &&
-    subscription.scheduledBillingInterval &&
-    subscription.scheduledChangeAt
-      ? {
-          date: formatDate(subscription.scheduledChangeAt),
-          planLabel: subscriptionPlanLabel(
-            subscription.scheduledPlan,
-            subscription.scheduledBillingInterval
-          ),
-        }
-      : null
+  const scheduledChange = paidSubscription?.scheduledChange
+    ? {
+        date: formatDate(paidSubscription.scheduledChange.changeAt),
+        planLabel: subscriptionPlanLabel(
+          paidSubscription.scheduledChange.plan,
+          paidSubscription.scheduledChange.billingInterval
+        ),
+      }
+    : null
 
   return (
     <SectionCard id="current-plan" className="gap-4">
@@ -222,44 +212,48 @@ function CurrentPlan() {
         {subscription && (
           <div className="divide-y">
             <Row
-              label="Status"
-              value={<StatusValue status={subscription.status} />}
-            />
-            <Row
               label="Plan"
               value={subscriptionPlanLabel(
                 subscription.plan,
-                subscription.billingInterval
+                paidSubscription?.billingInterval ?? null
               )}
             />
-            {scheduledChange && (
-              <DateValueRow
-                label="Scheduled to change"
-                value={scheduledChange.planLabel}
-                date={scheduledChange.date}
-              />
-            )}
-            {subscription.cancelAtPeriodEnd ? (
-              <Row
-                label="Access ends"
-                value={formatNextPaymentDue(
-                  nextPayment,
-                  subscription.currentPeriodEnd
+            {paidSubscription && (
+              <>
+                <Row
+                  label="Status"
+                  value={<StatusValue status={paidSubscription.status} />}
+                />
+                {scheduledChange && (
+                  <DateValueRow
+                    label="Scheduled to change"
+                    value={scheduledChange.planLabel}
+                    date={scheduledChange.date}
+                  />
                 )}
-              />
-            ) : (
-              <DateValueRow
-                label="Next payment"
-                value={formatNextPaymentAmount(
-                  nextPayment,
-                  catalogEntry,
-                  currencyCode
+                {paidSubscription.cancelAtPeriodEnd ? (
+                  <Row
+                    label="Access ends"
+                    value={formatNextPaymentDue(
+                      paidSubscription.nextPayment,
+                      paidSubscription.currentPeriodEnd
+                    )}
+                  />
+                ) : (
+                  <DateValueRow
+                    label="Next payment"
+                    value={formatNextPaymentAmount(
+                      paidSubscription.nextPayment,
+                      catalogEntry,
+                      paidSubscription.currencyCode ?? undefined
+                    )}
+                    date={formatNextPaymentDue(
+                      paidSubscription.nextPayment,
+                      paidSubscription.currentPeriodEnd
+                    )}
+                  />
                 )}
-                date={formatNextPaymentDue(
-                  nextPayment,
-                  subscription.currentPeriodEnd
-                )}
-              />
+              </>
             )}
           </div>
         )}
@@ -275,24 +269,22 @@ function CurrentPlan() {
 
         {subscription?.plan === 'FREE' && <SubscribeButton />}
 
-        {subscription && paidPlan && (
+        {paidSubscription && (
           <>
             <ManageBillingButton />
-            {subscription.billingInterval && (
-              <ChangePlanButton
-                plans={pricingQuery.data?.plans}
-                subscription={{
-                  plan: paidPlan,
-                  interval: subscription.billingInterval,
-                  status: subscription.status,
-                  currentPeriodEnd: subscription.currentPeriodEnd,
-                  cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
-                }}
-                isBusy={!!pendingTarget}
-                onChangeSubmitted={setPendingTarget}
-                onResumed={() => subscriptionQuery.refetch()}
-              />
-            )}
+            <ChangePlanButton
+              plans={pricingQuery.data?.plans}
+              subscription={{
+                plan: paidSubscription.plan,
+                interval: paidSubscription.billingInterval,
+                status: paidSubscription.status,
+                currentPeriodEnd: paidSubscription.currentPeriodEnd,
+                cancelAtPeriodEnd: paidSubscription.cancelAtPeriodEnd,
+              }}
+              isBusy={!!pendingTarget}
+              onChangeSubmitted={setPendingTarget}
+              onResumed={() => subscriptionQuery.refetch()}
+            />
           </>
         )}
       </div>

@@ -1,11 +1,10 @@
+import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import openapiTS, { astToString } from 'openapi-typescript'
 
-const NEXT_PUBLIC_OIPER_SERVER_URL =
-  process.env.NEXT_PUBLIC_OIPER_SERVER_URL?.trim().replace(/\/$/, '')
-
-const SERVER_BASE_URL = `${NEXT_PUBLIC_OIPER_SERVER_URL}/openapi.json`
+const SERVER_BASE_URL = joinUrl(env.OIPER_SERVER_URL, '/openapi.json')
 const outputPath = path.resolve('src/lib/api/schema.d.ts')
 
 async function main() {
