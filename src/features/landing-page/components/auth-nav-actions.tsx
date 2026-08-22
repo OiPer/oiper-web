@@ -175,7 +175,7 @@ function SignedInActions() {
             disabled={isSigningOut}
             onSelect={(event) => {
               event.preventDefault()
-              void handleSignOut()
+              handleSignOut()
             }}
           >
             <LogOut className="size-4" />
