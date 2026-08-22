@@ -17,9 +17,7 @@ export async function openPaddleCheckout(
   email?: string
 ): Promise<void> {
   const paddle = await getPaddleClient()
-  if (!paddle) {
-    throw new Error('Paddle failed to initialize')
-  }
+  if (!paddle) throw new Error('Paddle failed to initialize')
 
   paddle.Checkout.open({
     transactionId,

@@ -11,9 +11,7 @@ export function syncAccountProfileInSession(
   profile: AccountProfile
 ) {
   queryClient.setQueryData<Session | null>(webSessionQueryKey, (session) => {
-    if (!session?.authenticated) {
-      return session
-    }
+    if (!session?.authenticated) return session
 
     return {
       ...session,

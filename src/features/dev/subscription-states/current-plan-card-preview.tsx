@@ -12,15 +12,8 @@ function Row(props: { label: string; value: string }) {
   )
 }
 
-// Above phone width there's room to read "value on date" as one line;
-// below it, the two wrap onto separate lines (date first) instead of
-// truncating. Falls back to a plain single value when there's no date to
-// pair it with, instead of rendering "- on -". Mirrors DateValueRow in the
-// real billing-page.tsx.
 function DateValueRow(props: { label: string; value: string; date: string }) {
-  if (props.date === '-') {
-    return <Row label={props.label} value={props.value} />
-  }
+  if (props.date === '-') return <Row label={props.label} value={props.value} />
 
   return (
     <div className="flex items-center justify-between gap-4 py-3 text-sm">
@@ -45,9 +38,6 @@ function RowSkeleton() {
   )
 }
 
-// Standalone lookalike of the real "Subscription" card on Account → Billing
-// (features/account/billing-page.tsx). Not imported from there — buttons are
-// decorative, no network calls, so the real page can't be affected.
 export function CurrentPlanCardPreview(props: {
   card: CurrentPlanCardState['card']
 }) {

@@ -109,10 +109,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     if (error) throw error
     if (!data) throw new Error('Email verification response body was empty')
-
-    if (data.authenticated) {
-      queryClient.setQueryData(webSessionQueryKey, data)
-    }
+    if (data.authenticated) queryClient.setQueryData(webSessionQueryKey, data)
 
     return data
   }
@@ -167,16 +164,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
   )
 }
 
-export function useAuth() {
+export function useAuth(options: {
+  required: true
+}): AuthContextValue & { currentUser: User }
+export function useAuth(options?: { required?: boolean }): AuthContextValue
+export function useAuth(options?: { required?: boolean }): AuthContextValue {
   const context = useContext(AuthContext)
-  if (!context) throw new Error('useAuth must be used within an AuthProvider')
-  return context
-}
 
-export function useRequiredUser(context: string): User {
-  const { currentUser } = useAuth()
-  if (!currentUser) {
-    throw new Error(`${context} requires an authenticated user`)
+  if (!context) throw new Error('useAuth must be used within an AuthProvider')
+  if (options?.required && !context.currentUser) {
+    throw new Error('useAuth() requires an authenticated user')
   }
-  return currentUser
+
+  return context
 }

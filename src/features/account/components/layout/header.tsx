@@ -12,14 +12,13 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Wrapper } from '@/components/wrapper'
 import { getUserInitials, getUserLabel } from '@/features/account/utils'
-import { useAuth, useRequiredUser } from '@/features/auth/auth-context'
+import { useAuth } from '@/features/auth/auth-context'
 import { CreditCard, LogOut, Settings2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
 function SignedInActions() {
-  const { signOut } = useAuth()
-  const currentUser = useRequiredUser('Account header')
+  const { signOut, currentUser } = useAuth({ required: true })
 
   const label = getUserLabel(currentUser)
   const initials = getUserInitials(currentUser)

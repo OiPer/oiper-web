@@ -51,9 +51,11 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
   useAutoOpenCheckoutFromQueryParam(props.plans, !!currentUser, '/')
 
   const free = props.plans.find((plan) => plan.plan === 'FREE')
+
   const pro = props.plans.find(
     (plan) => plan.plan === 'PRO' && plan.interval === interval
   )
+
   const max = props.plans.find(
     (plan) => plan.plan === 'MAX' && plan.interval === interval
   )
@@ -61,24 +63,13 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
   const periodLabel = interval === 'MONTHLY' ? '/ month' : '/ year'
   const intervalParam = interval === 'MONTHLY' ? 'monthly' : 'yearly'
 
-  // Badge on the Yearly toggle always reflects the best yearly discount,
-  // regardless of which interval is currently selected.
-  const bestYearlyDiscount = Math.max(
-    0,
-    ...props.plans
-      .filter((plan) => plan.interval === 'YEARLY')
-      .map((plan) => plan.discountPercent)
-  )
+  const bestYearlyPlan = props.plans
+    .filter((plan) => plan.interval === 'YEARLY')
+    .sort((a, b) => b.discountPercentFloored - a.discountPercentFloored)[0]
 
   const isStatusUnknown =
     isAuthLoading || (!!currentUser && subscriptionQuery.isPending)
 
-  // Opens the sign-up modal in place (mode: 'modal' keeps the user on this
-  // page, adding ?auth-page=signup instead of navigating to /auth/signup)
-  // with the checkout intent carried as query params — once the modal
-  // closes on success those params are still on the URL, so
-  // useAutoOpenCheckoutFromQueryParam picks them up and starts checkout
-  // automatically, no separate callback round-trip needed.
   function signupCta(
     checkout: 'pro' | 'max',
     checkoutInterval: 'monthly' | 'yearly',
@@ -225,7 +216,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
               value={interval}
               onChange={setInterval}
               variant="landing"
-              yearlySavePercent={bestYearlyDiscount}
+              yearlySavePercent={bestYearlyPlan?.discountPercentFloored}
             />
           </div>
         </div>
@@ -237,6 +228,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
               price={formatCurrencyFromCents(free.priceAmountCents)}
               period="Forever"
               discountPercent={0}
+              discountPercentFloored={0}
               description="Unlimited local transcription, no limits, no cost."
               features={free.features}
               featured={false}
@@ -253,6 +245,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
               price={formatCurrencyFromCents(pro.priceAmountCents)}
               period={periodLabel}
               discountPercent={pro.discountPercent}
+              discountPercentFloored={pro.discountPercentFloored}
               description="Managed cloud transcription with a daily allowance."
               features={pro.features}
               featured={true}
@@ -266,6 +259,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
               price={formatCurrencyFromCents(max.priceAmountCents)}
               period={periodLabel}
               discountPercent={max.discountPercent}
+              discountPercentFloored={max.discountPercentFloored}
               description="Unlimited managed cloud transcription, subject to abuse protection."
               features={max.features}
               featured={false}

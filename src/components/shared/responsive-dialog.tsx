@@ -31,9 +31,7 @@ const ResponsiveDialogContext = React.createContext<
 export function useResponsiveDialog() {
   const context = React.useContext(ResponsiveDialogContext)
 
-  if (context) {
-    return context
-  }
+  if (context) return context
 
   throw new Error('useResponsiveDialog must be used within ResponsiveDialog')
 }
