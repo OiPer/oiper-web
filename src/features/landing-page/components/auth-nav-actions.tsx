@@ -46,9 +46,7 @@ function SignedOutActions() {
   const [menuWidth, setMenuWidth] = useState<string>()
 
   useEffect(() => {
-    if (!ref.current) {
-      return
-    }
+    if (!ref.current) return
 
     setMenuWidth(`${ref.current.clientWidth / 16 + 0.1}rem`)
   }, [])
@@ -190,13 +188,9 @@ function SignedInActions() {
 export function AuthNavActions() {
   const { currentUser, isLoading } = useAuth()
 
-  if (isLoading) {
-    return <LoadingAvatar />
-  }
+  if (isLoading) return <LoadingAvatar />
 
-  if (currentUser) {
-    return <SignedInActions />
-  }
+  if (currentUser) return <SignedInActions />
 
   return <SignedOutActions />
 }

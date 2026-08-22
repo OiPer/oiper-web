@@ -102,6 +102,7 @@ export function PlanCard(props: {
   price: string
   period: string
   discountPercent: number
+  discountPercentFloored: number
   description: string
   features: PricingPlan['features']
   featured: boolean
@@ -143,7 +144,11 @@ export function PlanCard(props: {
           <div className="flex flex-col items-start gap-1">
             {props.discountPercent > 0 && (
               <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-white/70">
-                Save {formatSavePercent(props.discountPercent)}
+                Save{' '}
+                {formatSavePercent(
+                  props.discountPercent,
+                  props.discountPercentFloored
+                )}
               </span>
             )}
             <p className="text-sm whitespace-nowrap text-white/30">

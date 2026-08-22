@@ -8,10 +8,6 @@ import {
 import { PricingCardPreview } from './pricing-card-preview'
 import { StateSection, StateTile } from './state-tile'
 
-// Internal QA/review page: every subscription-card and change-plan-dialog
-// state a user can encounter, laid out with dummy data so it can be
-// reviewed and given feedback on without touching the real, API-connected
-// components.
 export function SubscriptionStatesPage() {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-10 md:px-6">

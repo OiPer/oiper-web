@@ -58,9 +58,7 @@ export function ServerTable<Row extends Record<string, unknown>>({
   )
 
   useEffect(() => {
-    if (!debouncedSearchQuery) {
-      return updateSearchParams.remove('query')
-    }
+    if (!debouncedSearchQuery) return updateSearchParams.remove('query')
 
     updateSearchParams.set({ query: debouncedSearchQuery })
   }, [debouncedSearchQuery, updateSearchParams])

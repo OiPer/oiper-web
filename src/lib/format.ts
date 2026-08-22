@@ -81,9 +81,7 @@ export function formatMinutes(value: number, digits = 0) {
 }
 
 export function formatDurationFromSeconds(seconds: number) {
-  if (seconds < 60) {
-    return `${Math.max(1, Math.round(seconds))} sec`
-  }
+  if (seconds < 60) return `${Math.max(1, Math.round(seconds))} sec`
 
   const minutes = seconds / 60
   return formatMinutes(minutes, minutes >= 10 ? 0 : 1)
@@ -96,10 +94,6 @@ export function formatPercentage(value: number, digits = 0) {
   }).format(value)}%`
 }
 
-// Rounds a savings percent down to the nearest 5 and marks it with a "+"
-// whenever that rounding actually drops precision (22% -> "20%+"), so we
-// never advertise a bigger discount than the plan really has.
-export function formatSavePercent(percent: number) {
-  const rounded = Math.floor(percent / 5) * 5
-  return rounded === percent ? `${percent}%` : `${rounded}%+`
+export function formatSavePercent(exact: number, floored: number) {
+  return exact === floored ? `${floored}%` : `${floored}%+`
 }

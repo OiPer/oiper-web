@@ -1,3 +1,4 @@
+import { formatPercentage } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
 
@@ -19,13 +20,11 @@ export function IntervalToggle(props: {
       isLanding
         ? 'px-4 py-1.5 text-sm transition-colors'
         : 'px-3 py-1 text-xs transition-colors',
-      isActive
-        ? isLanding
-          ? 'text-[#0a0a0a]'
-          : 'text-primary-foreground'
-        : isLanding
-          ? 'text-white/50'
-          : ''
+      {
+        'text-[#0a0a0a]': isActive && isLanding,
+        'text-primary-foreground': isActive && !isLanding,
+        'text-white/50': !isActive && isLanding,
+      }
     )
   }
 
@@ -71,7 +70,7 @@ export function IntervalToggle(props: {
         <span className="relative z-10">Yearly</span>
         {isLanding && !!props.yearlySavePercent && (
           <span className="relative z-10 rounded-md bg-white/10 py-0.5 pr-1 pl-1.5 text-[10px] font-semibold whitespace-nowrap text-sky-400">
-            -{Math.floor(props.yearlySavePercent / 5) * 5}%
+            -{formatPercentage(props.yearlySavePercent)}
           </span>
         )}
       </button>

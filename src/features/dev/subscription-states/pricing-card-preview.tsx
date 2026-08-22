@@ -1,10 +1,6 @@
 import { Check, Info } from 'lucide-react'
 import type { PricingCardState } from './dummy-data'
 
-// A standalone lookalike of the real pricing PlanCard — deliberately not
-// imported from features/landing-page/components/pricing-section.tsx, so
-// this QA page can never affect (or be broken by unrelated edits to) the
-// real component. Visuals are copied by hand; interactions are decorative.
 export function PricingCardPreview(props: { card: PricingCardState['card'] }) {
   const { card } = props
   const isPrimaryCta = card.ctaVariant === 'default'

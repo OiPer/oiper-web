@@ -41,9 +41,7 @@ export function AccountAvatarModal({
       const reader = new FileReader()
 
       reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          return resolve(reader.result)
-        }
+        if (typeof reader.result === 'string') return resolve(reader.result)
 
         reject(new Error('Could not read avatar file'))
       }
@@ -78,15 +76,11 @@ export function AccountAvatarModal({
   function clearSelection() {
     setSelectedFile(null)
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   function handleOpenChange(nextOpen: boolean) {
-    if (!nextOpen) {
-      clearSelection()
-    }
+    if (!nextOpen) clearSelection()
 
     setOpen(nextOpen)
   }

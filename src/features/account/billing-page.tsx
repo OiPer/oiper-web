@@ -63,18 +63,12 @@ function Row(props: { label: string; value: ReactNode }) {
   )
 }
 
-// Above phone width there's room to read "value on date" as one line;
-// below it, the two wrap onto separate lines (date first) instead of
-// truncating. Falls back to a plain single value when there's no date to
-// pair it with, instead of rendering "- on -".
 function DateValueRow(props: {
   label: string
   value: ReactNode
   date: ReactNode
 }) {
-  if (props.date === '-') {
-    return <Row label={props.label} value={props.value} />
-  }
+  if (props.date === '-') return <Row label={props.label} value={props.value} />
 
   return (
     <div className="flex items-center justify-between gap-4 py-3 text-sm">

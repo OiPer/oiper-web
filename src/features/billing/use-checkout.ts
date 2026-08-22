@@ -137,10 +137,6 @@ export function useAutoOpenCheckoutFromQueryParam(
   ])
 }
 
-// Both providers' webhooks land asynchronously, so right after a mutation the
-// backend can still report stale state for a moment. Poll a few times, a
-// couple seconds apart, giving up either once `isDone` says the new state has
-// landed or after `attempts` tries — whichever comes first.
 export async function pollUntil<T>(
   fetch: () => Promise<T>,
   isDone: (result: T) => boolean,

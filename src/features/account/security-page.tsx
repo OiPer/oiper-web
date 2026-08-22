@@ -3,12 +3,12 @@
 import { SectionCard, SectionHeading } from '@/components/shared/section-card'
 import { Button, Loading } from '@/components/ui/button'
 import { AccountPageHeader } from '@/features/account/components/account-page-header'
-import { useRequiredUser } from '@/features/auth/auth-context'
+import { useAuth } from '@/features/auth/auth-context'
 import { $api } from '@/lib/api/client'
 import { toast } from 'sonner'
 
 function PasswordReset() {
-  const currentUser = useRequiredUser('Account security')
+  const { currentUser } = useAuth({ required: true })
   const requestResetMutation = $api.useMutation(
     'post',
     '/v1/auth/web/password-reset/request'

@@ -45,11 +45,6 @@ function SummaryRowSkeleton(props: {
   )
 }
 
-// Standalone lookalike of the real ChangePlanDialog
-// (features/billing/change-plan-dialog.tsx), rendered inline as a static
-// framed card instead of an actual Dialog/Drawer — every state stays
-// visible at once for review instead of needing to be clicked open. Not
-// imported from the real dialog; all controls here are decorative.
 export function ChangePlanPreview(props: { state: ChangePlanState }) {
   const { state } = props
 

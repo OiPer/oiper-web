@@ -7446,7 +7446,6 @@ export interface components {
         WebSessionUser: {
             id: string;
             workosUserId: string;
-            oiperUserId: string;
             /** Format: email */
             email: string;
             emailVerified: boolean;
@@ -7458,6 +7457,7 @@ export interface components {
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
+            oiperUserId: string;
         };
         VerificationRequiredResponse: {
             /** @enum {string} */
@@ -7669,7 +7669,9 @@ export interface components {
             interval: "MONTHLY" | "YEARLY" | null;
             displayName: string;
             priceAmountCents: number;
+            effectiveMonthlyCents: number;
             discountPercent: number;
+            discountPercentFloored: number;
             features: components["schemas"]["PricingFeature"][];
         };
         PricingFeature: {
@@ -7773,7 +7775,7 @@ export interface components {
             /** @enum {string} */
             plan: "FREE" | "PRO" | "MAX";
             /** @enum {string} */
-            status: "ACTIVE" | "PAST_DUE" | "CANCELLED" | "EXPIRED" | "NONE";
+            status: "ACTIVE" | "PAST_DUE" | "PAUSED" | "CANCELLED" | "EXPIRED" | "NONE";
             dailyAllowanceSeconds: number | null;
             cloudTranscriptionAllowed: boolean;
             entitlementVersion: number;
@@ -7797,6 +7799,9 @@ export interface components {
             model?: string;
             /** @enum {string} */
             operationType: "transcription" | "enhancement" | "translation";
+            success: boolean;
+            /** Format: date-time */
+            requestedAt: string;
             billableSeconds?: number;
             audioDurationMs?: number;
             inputTokens?: number;
@@ -7808,7 +7813,6 @@ export interface components {
             totalResponseMs?: number;
             providerLatencyMs?: number;
             timeToFirstTokenMs?: number;
-            success: boolean;
             statusCode?: number;
             errorCategory?: string;
             requestedLanguage?: string;
@@ -7822,8 +7826,6 @@ export interface components {
             sentenceCount?: number;
             platform?: string;
             appVersion?: string;
-            /** Format: date-time */
-            requestedAt: string;
         };
     };
     responses: never;

@@ -14,7 +14,7 @@ import {
   getUserInitials,
   getUserLabel,
 } from '@/features/account/utils'
-import { useRequiredUser } from '@/features/auth/auth-context'
+import { useAuth } from '@/features/auth/auth-context'
 import { getAccountMutationHeaders } from '@/features/auth/web-session'
 import { $api } from '@/lib/api/client'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -95,7 +95,7 @@ function AccountDeleteModal({
 }
 
 function ConfigureAccount() {
-  const currentUser = useRequiredUser('Account settings')
+  const { currentUser } = useAuth({ required: true })
   const queryClient = useQueryClient()
   const updateProfileMutation = $api.useMutation('patch', '/v1/account/profile')
 
@@ -255,7 +255,7 @@ function ConfigureAccount() {
 }
 
 function AccountDangerZone() {
-  const currentUser = useRequiredUser('Account danger zone')
+  const { currentUser } = useAuth({ required: true })
   const queryClient = useQueryClient()
   const deleteAccountMutation = $api.useMutation('delete', '/v1/account')
 

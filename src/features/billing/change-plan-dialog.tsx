@@ -111,9 +111,6 @@ function SummaryRowSkeleton(props: {
 function PlanOption(props: { entry: PlanCatalogEntry; isCurrent: boolean }) {
   const key = optionKey(props.entry)
   const isYearly = props.entry.interval === 'YEARLY'
-  const monthlyCents = isYearly
-    ? Math.round(props.entry.priceAmountCents / 12)
-    : props.entry.priceAmountCents
 
   return (
     <label
@@ -136,7 +133,7 @@ function PlanOption(props: { entry: PlanCatalogEntry; isCurrent: boolean }) {
       </span>
       <span className="flex shrink-0 items-baseline gap-2">
         <span className="text-sm font-semibold tabular-nums">
-          {formatCurrencyFromCents(monthlyCents)} / month
+          {formatCurrencyFromCents(props.entry.effectiveMonthlyCents)} / month
         </span>
         {isYearly && (
           <span className="text-muted-foreground text-xs tabular-nums">
@@ -197,15 +194,13 @@ export function ChangePlanDialog({
   const [isWaitingForResume, setIsWaitingForResume] = useState(false)
   const isResuming = isSubmittingResume || isWaitingForResume
 
-  const selectedOption = options.find(
-    (entry) => optionKey(entry) === selectedKey
-  )
-  const selectedTarget: PlanChangeTarget | null = selectedOption ?? null
+  const selected =
+    options.find((entry) => optionKey(entry) === selectedKey) ?? null
   const isCurrentSelected =
-    !!selectedTarget &&
-    selectedTarget.plan === currentSubscription.plan &&
-    selectedTarget.interval === currentSubscription.interval
-  const targetForPreview = isCurrentSelected ? null : selectedTarget
+    !!selected &&
+    selected.plan === currentSubscription.plan &&
+    selected.interval === currentSubscription.interval
+  const previewTarget = isCurrentSelected ? null : selected
 
   useEffect(() => {
     if (open) setSelectedKey(defaultKey)
@@ -213,9 +208,9 @@ export function ChangePlanDialog({
   }, [open])
 
   useEffect(() => {
-    if (!open || !selectedTarget || isCurrentSelected) return
+    if (!open || !selected || isCurrentSelected) return
 
-    const target = selectedTarget
+    const target = selected
 
     async function runPreview() {
       try {
@@ -231,9 +226,6 @@ export function ChangePlanDialog({
     }
 
     runPreview()
-    // currentSubscription.cancelAtPeriodEnd isn't read above, but it's kept
-    // as a dep so resuming a scheduled cancellation re-runs this preview —
-    // otherwise a stale BLOCKED result would linger until selectedKey changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, selectedKey, currentSubscription.cancelAtPeriodEnd])
 
@@ -249,7 +241,7 @@ export function ChangePlanDialog({
   const preview = previewMutation.data
 
   async function handleConfirm() {
-    if (!selectedTarget || isCurrentSelected || preview?.kind === 'BLOCKED') {
+    if (!selected || isCurrentSelected || preview?.kind === 'BLOCKED') {
       return
     }
 
@@ -257,8 +249,8 @@ export function ChangePlanDialog({
       const headers = await getAccountMutationHeaders()
       await changeMutation.mutateAsync({
         body: {
-          targetPlan: selectedTarget.plan,
-          targetInterval: selectedTarget.interval,
+          targetPlan: selected.plan,
+          targetInterval: selected.interval,
         },
         params: { header: headers },
       })
@@ -266,7 +258,7 @@ export function ChangePlanDialog({
       toast.success(
         'Plan change requested — this can take a few seconds to show up'
       )
-      onChangeSubmitted(selectedTarget)
+      onChangeSubmitted(selected)
       handleOpenChange(false)
     } catch (error) {
       const code = getAppErrorCode<'post', '/v1/account/subscription/upgrade'>(
@@ -288,8 +280,8 @@ export function ChangePlanDialog({
   async function handleResume() {
     try {
       await resumeSubscription()
-
       setIsWaitingForResume(true)
+
       await pollUntil(onResumed, (result) => {
         const stillPaid = result.data?.plan !== 'FREE' ? result.data : undefined
         return stillPaid?.cancelAtPeriodEnd === false
@@ -375,7 +367,7 @@ export function ChangePlanDialog({
             </div>
           )}
 
-          {targetForPreview &&
+          {previewTarget &&
             !previewMutation.isPending &&
             preview?.kind === 'BLOCKED' && (
               <Alert className="border-warning/40 bg-warning/5">
@@ -399,7 +391,7 @@ export function ChangePlanDialog({
               </Alert>
             )}
 
-          {targetForPreview && previewMutation.isPending && (
+          {previewTarget && previewMutation.isPending && (
             <div className="divide-y rounded-lg border">
               <SummaryRowSkeleton labelWidth="w-20" />
               <SummaryRowSkeleton labelWidth="w-16" />
@@ -408,7 +400,7 @@ export function ChangePlanDialog({
             </div>
           )}
 
-          {targetForPreview &&
+          {previewTarget &&
             !previewMutation.isPending &&
             !!previewMutation.error && (
               <Alert
@@ -421,13 +413,13 @@ export function ChangePlanDialog({
               </Alert>
             )}
 
-          {targetForPreview && !previewMutation.isPending && previewRows && (
+          {previewTarget && !previewMutation.isPending && previewRows && (
             <div className="divide-y rounded-lg border">
               <SummaryRow
                 label="New plan"
                 value={subscriptionPlanLabel(
-                  targetForPreview.plan,
-                  targetForPreview.interval
+                  previewTarget.plan,
+                  previewTarget.interval
                 )}
               />
               <SummaryRow
@@ -459,7 +451,7 @@ export function ChangePlanDialog({
                 previewRows.regularAmount && (
                   <SummaryRow
                     label="Regular price"
-                    detail={getRegularPriceDetail(targetForPreview.interval)}
+                    detail={getRegularPriceDetail(previewTarget.interval)}
                     value={formatCurrencyFromCents(
                       Number(previewRows.regularAmount),
                       previewRows.currencyCode

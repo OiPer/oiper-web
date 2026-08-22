@@ -62,9 +62,7 @@ function searchSidebarItems(searchTerm: string) {
     ...(includeChildren ? (item.items ?? []) : []),
   ])
 
-  if (!trimmedSearchTerm) {
-    return flattenedItems
-  }
+  if (!trimmedSearchTerm) return flattenedItems
 
   return flattenedItems.filter((item) =>
     [item.label, item.href].some((value) =>

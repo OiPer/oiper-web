@@ -21,9 +21,7 @@ export function getUserInitials(user: AccountUser) {
     .join('')
     .slice(0, 2)
 
-  if (initials) {
-    return initials
-  }
+  if (initials) return initials
 
   return user.email.slice(0, 2).toUpperCase()
 }

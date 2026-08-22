@@ -27,9 +27,7 @@ export function PublicAuthModal() {
     <Dialog
       open={isOpen}
       onOpenChange={(open) => {
-        if (!open) {
-          closeModal()
-        }
+        if (!open) closeModal()
       }}
     >
       <DialogContent

@@ -65,13 +65,6 @@ function Button({
   )
 }
 
-// Wrap a button's label in this instead of swapping it for a spinner —
-// swapping content changes the button's width (the label and a bare
-// spinner are rarely the same size), which shifts everything next to it.
-// This keeps the label rendered (so it keeps taking up its normal space)
-// but invisible, and overlays a centered spinner on top instead; the
-// button itself needs `relative` for the overlay to anchor to, which the
-// base Button above already sets unconditionally.
 function Loading({
   asChild = false,
   loading = true,

@@ -1,9 +1,3 @@
-// Everything here is hand-written dummy data for the /dev/subscription-states
-// QA page. None of it is wired to the real subscription API, and none of the
-// preview components on this page import from the real billing/pricing
-// feature code — this file and its siblings are a deliberately separate,
-// disposable copy so nothing here can affect the real UI.
-
 export type PricingFeature = { label: string; detail: string | null }
 
 export const FREE_FEATURES: PricingFeature[] = [
