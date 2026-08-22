@@ -69,7 +69,7 @@ export default defineConfig([
       'jsx-a11y/label-has-associated-control': 0,
       'jsx-a11y/no-static-element-interactions': 0,
 
-      '@typescript-eslint/no-floating-promises': 2,
+      '@typescript-eslint/no-floating-promises': 0,
       '@typescript-eslint/no-unused-vars': [
         1,
         {

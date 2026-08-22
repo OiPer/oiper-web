@@ -124,7 +124,7 @@ export function useAutoOpenCheckoutFromQueryParam(
     const entry = findCatalogEntry(plans, plan, checkoutInterval)
     if (!entry) return
 
-    void startCheckout(checkoutProvider, plan, checkoutInterval)
+    startCheckout(checkoutProvider, plan, checkoutInterval)
     router.replace(redirectTo)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -135,6 +135,28 @@ export function useAutoOpenCheckoutFromQueryParam(
     checkoutProvider,
     router,
   ])
+}
+
+// Both providers' webhooks land asynchronously, so right after a mutation the
+// backend can still report stale state for a moment. Poll a few times, a
+// couple seconds apart, giving up either once `isDone` says the new state has
+// landed or after `attempts` tries — whichever comes first.
+export async function pollUntil<T>(
+  fetch: () => Promise<T>,
+  isDone: (result: T) => boolean,
+  options: { attempts?: number; delayMs?: number; signal?: AbortSignal } = {}
+): Promise<T> {
+  const { attempts = 8, delayMs = 1500, signal } = options
+
+  let result = await fetch()
+  for (let attempt = 1; attempt < attempts && !isDone(result); attempt++) {
+    if (signal?.aborted) break
+    await new Promise((resolve) => setTimeout(resolve, delayMs))
+    if (signal?.aborted) break
+    result = await fetch()
+  }
+
+  return result
 }
 
 export function usePollUntilPlanChangeLands(
@@ -150,22 +172,19 @@ export function usePollUntilPlanChangeLands(
   useEffect(() => {
     if (!pendingTarget) return
 
-    let attempts = 0
-    const intervalId = setInterval(() => {
-      attempts += 1
+    const controller = new AbortController()
 
-      void refetch().then((result) => {
-        const landed =
-          result.data?.plan === pendingTarget.plan &&
-          result.data?.billingInterval === pendingTarget.interval
+    pollUntil(
+      refetch,
+      (result) =>
+        result.data?.plan === pendingTarget.plan &&
+        result.data?.billingInterval === pendingTarget.interval,
+      { signal: controller.signal }
+    ).then(() => {
+      if (!controller.signal.aborted) setPendingTarget(null)
+    })
 
-        if (landed || attempts >= 8) {
-          setPendingTarget(null)
-        }
-      })
-    }, 1500)
-
-    return () => clearInterval(intervalId)
+    return () => controller.abort()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingTarget])
 

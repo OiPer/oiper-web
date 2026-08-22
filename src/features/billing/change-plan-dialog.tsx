@@ -14,6 +14,7 @@ import {
 } from '@/features/billing/change-plan-pricing'
 import {
   findCatalogEntry,
+  pollUntil,
   useResumeSubscription,
   type ActiveSubscription,
   type PlanCatalogEntry,
@@ -229,7 +230,7 @@ export function ChangePlanDialog({
       } catch {}
     }
 
-    void runPreview()
+    runPreview()
     // currentSubscription.cancelAtPeriodEnd isn't read above, but it's kept
     // as a dep so resuming a scheduled cancellation re-runs this preview —
     // otherwise a stale BLOCKED result would linger until selectedKey changes.
@@ -289,12 +290,10 @@ export function ChangePlanDialog({
       await resumeSubscription()
 
       setIsWaitingForResume(true)
-      for (let attempt = 0; attempt < 8; attempt++) {
-        const result = await onResumed()
+      await pollUntil(onResumed, (result) => {
         const stillPaid = result.data?.plan !== 'FREE' ? result.data : undefined
-        if (stillPaid?.cancelAtPeriodEnd === false) break
-        await new Promise((resolve) => setTimeout(resolve, 1500))
-      }
+        return stillPaid?.cancelAtPeriodEnd === false
+      })
     } catch {
       toast.error("Couldn't reverse the cancellation")
     } finally {

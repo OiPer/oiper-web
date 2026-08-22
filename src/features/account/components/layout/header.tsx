@@ -91,7 +91,7 @@ function SignedInActions() {
           variant="destructive"
           onSelect={(event) => {
             event.preventDefault()
-            void handleSignOut()
+            handleSignOut()
           }}
         >
           <LogOut className="size-4" />

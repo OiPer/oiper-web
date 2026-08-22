@@ -20,4 +20,4 @@ async function main() {
   console.log(`Generated ${outputPath} from ${SERVER_BASE_URL}`)
 }
 
-void main()
+main()
