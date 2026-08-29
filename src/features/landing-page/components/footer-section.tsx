@@ -1,6 +1,6 @@
 'use client'
 
-import { BookOpen, Github, LifeBuoy, ShieldCheck } from 'lucide-react'
+import { BookOpen, Github, Library, LifeBuoy, ShieldCheck } from 'lucide-react'
 import { Wrapper } from '../../../components/wrapper'
 import {
   ANCHOR_FEATURES,
@@ -11,6 +11,7 @@ import {
   DOCS_URL,
   DOWNLOAD_URL,
   GITHUB_REPO,
+  RESOURCES_URL,
 } from '../constants/links'
 
 const productLinks = [
@@ -23,6 +24,7 @@ const productLinks = [
 
 const resourceLinks = [
   { icon: BookOpen, label: 'Documentation', href: DOCS_URL },
+  { icon: Library, label: 'Resources', href: RESOURCES_URL },
   { icon: Github, label: 'GitHub', href: GITHUB_REPO },
   { icon: LifeBuoy, label: 'Support', href: GITHUB_REPO },
   { icon: ShieldCheck, label: 'Privacy', href: GITHUB_REPO },
