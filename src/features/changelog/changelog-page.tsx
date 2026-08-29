@@ -82,7 +82,7 @@ export function ChangelogPage({
             key={release.version}
             className="border-border mt-10 border-t pt-10 first:mt-0 first:border-t-0 first:pt-0"
           >
-            <h2 id={release.anchor} className="mt-0! mb-1!">
+            <h2 id={release.anchor} className="mt-0! mb-1! scroll-mt-8">
               <a href={`#${release.anchor}`}>{release.version}</a>
             </h2>
             <p className="text-muted-foreground mt-0! text-sm">
