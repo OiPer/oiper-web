@@ -7,6 +7,7 @@ import {
   LifeBuoy,
   Scale,
   ShieldCheck,
+  Tag,
 } from 'lucide-react'
 import { Wrapper } from '../../../components/wrapper'
 import {
@@ -15,6 +16,7 @@ import {
   ANCHOR_PERFORMANCE,
   ANCHOR_PRICING,
   ANCHOR_PRIVACY,
+  CHANGELOG_URL,
   DOCS_URL,
   DOWNLOAD_URL,
   GITHUB_REPO,
@@ -34,6 +36,7 @@ const productLinks = [
 const resourceLinks = [
   { icon: BookOpen, label: 'Documentation', href: DOCS_URL },
   { icon: Library, label: 'Resources', href: RESOURCES_URL },
+  { icon: Tag, label: 'Changelog', href: CHANGELOG_URL },
   { icon: Github, label: 'GitHub', href: GITHUB_REPO },
   { icon: LifeBuoy, label: 'Support', href: GITHUB_REPO },
   { icon: ShieldCheck, label: 'Privacy', href: PRIVACY_POLICY_URL },
