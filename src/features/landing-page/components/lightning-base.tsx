@@ -4,16 +4,16 @@ import { motion } from 'framer-motion'
 
 export function LightningBase() {
   return (
-    <div className="pointer-events-none absolute right-0 bottom-0 left-0 h-[320px] overflow-hidden">
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-80 overflow-hidden">
       {/* Subtle warm radial glow from bottom center */}
-      <div className="absolute bottom-0 left-1/2 h-[280px] w-[800px] -translate-x-1/2 bg-[radial-gradient(ellipse_at_50%_100%,rgba(255,255,255,0.06),transparent_65%)]" />
-      <div className="absolute bottom-0 left-1/2 h-[120px] w-[400px] -translate-x-1/2 bg-[radial-gradient(ellipse_at_50%_100%,rgba(255,255,255,0.08),transparent_55%)]" />
+      <div className="absolute bottom-0 left-1/2 h-70 w-200 -translate-x-1/2 bg-[radial-gradient(ellipse_at_50%_100%,rgba(255,255,255,0.06),transparent_65%)]" />
+      <div className="absolute bottom-0 left-1/2 h-30 w-100 -translate-x-1/2 bg-[radial-gradient(ellipse_at_50%_100%,rgba(255,255,255,0.08),transparent_55%)]" />
 
       {/* Central energy pillar */}
-      <div className="absolute bottom-0 left-1/2 h-[280px] w-[60px] -translate-x-1/2 bg-[linear-gradient(180deg,transparent_0%,rgba(255,255,255,0.04)_40%,rgba(255,255,255,0.08)_70%,rgba(255,255,255,0.06)_100%)] blur-2xl" />
+      <div className="absolute bottom-0 left-1/2 h-70 w-15 -translate-x-1/2 bg-[linear-gradient(180deg,transparent_0%,rgba(255,255,255,0.04)_40%,rgba(255,255,255,0.08)_70%,rgba(255,255,255,0.06)_100%)] blur-2xl" />
 
       <svg
-        className="absolute bottom-0 left-1/2 h-full w-[900px] -translate-x-1/2"
+        className="absolute bottom-0 left-1/2 h-full w-225 -translate-x-1/2"
         viewBox="0 0 900 320"
         preserveAspectRatio="xMidYMax slice"
       >
@@ -176,12 +176,12 @@ export function LightningBase() {
       </svg>
 
       {/* Base line */}
-      <div className="absolute bottom-0 left-1/2 h-[2px] w-[600px] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.5),rgba(255,255,255,0.15),transparent_70%)]" />
-      <div className="absolute bottom-[1px] left-1/2 h-[60px] w-[400px] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.08),transparent_65%)] blur-2xl" />
+      <div className="absolute bottom-0 left-1/2 h-[2px] w-150 -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.5),rgba(255,255,255,0.15),transparent_70%)]" />
+      <div className="absolute bottom-px left-1/2 h-15 w-100 -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.08),transparent_65%)] blur-2xl" />
 
       {/* Subtle energy rings */}
       <motion.div
-        className="absolute bottom-[-20px] left-1/2 h-[50px] w-[500px] -translate-x-1/2 rounded-full border border-white/10"
+        className="absolute -bottom-5 left-1/2 h-[50px] w-125 -translate-x-1/2 rounded-full border border-white/10"
         animate={{
           scale: [1, 1.2, 1],
           opacity: [0.3, 0.1, 0.3],
@@ -189,7 +189,7 @@ export function LightningBase() {
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute bottom-[-10px] left-1/2 h-[30px] w-[300px] -translate-x-1/2 rounded-full border border-white/15"
+        className="absolute bottom-[-10px] left-1/2 h-[30px] w-75 -translate-x-1/2 rounded-full border border-white/15"
         animate={{
           scale: [1, 1.15, 1],
           opacity: [0.4, 0.15, 0.4],

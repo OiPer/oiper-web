@@ -47,12 +47,14 @@ type AuthPasswordInputProps = Omit<ComponentProps<'input'>, 'type'> & {
   label?: string
   error?: string
   wrapperClassName?: string
+  toggleClassName?: string
 }
 
 export function AuthPasswordInput({
   label,
   error,
   wrapperClassName,
+  toggleClassName,
   className,
   ...props
 }: AuthPasswordInputProps) {
@@ -81,7 +83,10 @@ export function AuthPasswordInput({
         <button
           type="button"
           onClick={() => setIsVisible((value) => !value)}
-          className="absolute top-1/2 right-3 -translate-y-1/2 text-white/60 hover:text-white"
+          className={cn(
+            'absolute top-1/2 right-3 -translate-y-1/2 text-white/60 hover:text-white',
+            toggleClassName
+          )}
         >
           {isVisible ? (
             <Eye className="size-4" />

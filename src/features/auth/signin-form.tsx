@@ -54,33 +54,36 @@ export function SignInForm({ mode }: SignInFormProps) {
   async function onSubmit(values: SignInSchema) {
     setErrorMessage(null)
 
-    await signIn({
-      email: values.email,
-      password: values.password,
-      onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
-      onSuccess: (result) => {
-        if ('verificationRequired' in result) {
-          return router.push(
-            buildAuthUrl({
-              mode,
-              pathname,
-              searchParams: currentSearch,
-              page: 'verify-email',
-              additionalParams: {
-                email: result.email,
-                token: result.token,
-              },
-            })
-          )
-        }
+    try {
+      const result = await signIn({
+        email: values.email,
+        password: values.password,
+      })
 
-        if (!result.authenticated) {
-          return setErrorMessage('Something went wrong!')
-        }
+      if ('type' in result && result.type === 'email_verification') {
+        return router.push(
+          buildAuthUrl({
+            mode,
+            pathname,
+            searchParams: currentSearch,
+            page: 'verify-email',
+            additionalParams: {
+              email: result.email,
+              pat: result.pat,
+              ...(result.evid ? { evid: result.evid } : {}),
+            },
+          })
+        )
+      }
 
-        router.push(callbackUrl)
-      },
-    })
+      if ('authenticated' in result && !result.authenticated) {
+        return setErrorMessage('Something went wrong!')
+      }
+
+      router.push(callbackUrl)
+    } catch (error) {
+      setErrorMessage(getAuthErrorMessage(error))
+    }
   }
 
   return (

@@ -9,7 +9,10 @@ export const metadata: Metadata = {
 }
 
 type VerifyEmailPageProps = {
-  searchParams: Promise<{ token?: string; email?: string }>
+  searchParams: Promise<{
+    pat?: string
+    email?: string
+  }>
 }
 
 export default async function VerifyEmailPage({
@@ -17,7 +20,7 @@ export default async function VerifyEmailPage({
 }: VerifyEmailPageProps) {
   const resolvedSearchParams = await searchParams
 
-  if (!resolvedSearchParams?.token || !resolvedSearchParams.email) {
+  if (!resolvedSearchParams?.pat || !resolvedSearchParams.email) {
     redirect('/auth/signin')
   }
 

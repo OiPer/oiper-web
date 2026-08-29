@@ -14,7 +14,7 @@ export function OiPerLogoText({ className, ...props }: ComponentProps<'span'>) {
     <span className={cn('flex items-center gap-2', className)} {...props}>
       <OiPerLogo className="block size-[1em]" />
       <span
-        className="block overflow-hidden text-[.85em] !leading-[1]"
+        className="block overflow-hidden text-[.85em] leading-none!"
         style={{ fontFamily: FONT_LEMONADA.style.fontFamily }}
       >
         OiPer

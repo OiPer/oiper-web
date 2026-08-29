@@ -1,0 +1,118 @@
+'use client'
+
+import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { cn } from '@/lib/utils'
+import { Table } from '@tanstack/react-table'
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react'
+
+interface DataTablePaginationProps<TData> {
+  table: Table<TData>
+  totalRows: number
+  pageSize: number
+  currentPage: number
+  onPaginationChange: (page: number, pageSize: number) => void
+  isSelectable?: boolean
+}
+
+export function DataTablePagination<TData>({
+  table,
+  totalRows,
+  pageSize,
+  currentPage,
+  onPaginationChange,
+  isSelectable,
+}: DataTablePaginationProps<TData>) {
+  return (
+    <div
+      className={cn('flex items-center', {
+        'justify-end': !isSelectable,
+      })}
+    >
+      {isSelectable && (
+        <div className="flex-1 text-sm font-medium">
+          {table.getFilteredSelectedRowModel().rows.length} of{' '}
+          {table.getFilteredRowModel().rows.length} row(s) selected
+        </div>
+      )}
+
+      <div className="ml-auto flex items-center gap-6 lg:gap-8">
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-medium max-md:hidden">Page Size</p>
+
+          <Select
+            value={`${pageSize}`}
+            onValueChange={(value) => {
+              onPaginationChange(1, Number(value))
+            }}
+          >
+            <SelectTrigger className="h-8 w-[70px]" size="sm">
+              <SelectValue placeholder={pageSize} />
+            </SelectTrigger>
+            <SelectContent side="top">
+              {[10, 20, 30, 40, 50].map((pageSize) => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex items-center justify-center text-sm font-medium max-md:hidden">
+          Page {currentPage} of {Math.ceil(totalRows / pageSize)}
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="size-8 bg-transparent p-0"
+            onClick={() => onPaginationChange(1, pageSize)}
+            disabled={currentPage <= 1}
+          >
+            <span className="sr-only">Go to first page</span>
+            <ChevronsLeft className="size-4" />
+          </Button>
+          <Button
+            variant="outline"
+            className="size-8 bg-transparent p-0"
+            onClick={() => onPaginationChange(currentPage - 1, pageSize)}
+            disabled={currentPage <= 1}
+          >
+            <span className="sr-only">Go to previous page</span>
+            <ChevronLeftIcon className="size-4" />
+          </Button>
+          <Button
+            variant="outline"
+            className="size-8 bg-transparent p-0"
+            onClick={() => onPaginationChange(currentPage + 1, pageSize)}
+            disabled={currentPage >= Math.ceil(totalRows / pageSize)}
+          >
+            <span className="sr-only">Go to next page</span>
+            <ChevronRightIcon className="size-4" />
+          </Button>
+          <Button
+            variant="outline"
+            className="size-8 bg-transparent p-0"
+            onClick={() =>
+              onPaginationChange(Math.ceil(totalRows / pageSize), pageSize)
+            }
+            disabled={currentPage >= Math.ceil(totalRows / pageSize)}
+          >
+            <span className="sr-only">Go to last page</span>
+            <ChevronsRight className="size-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}

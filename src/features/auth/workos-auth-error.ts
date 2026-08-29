@@ -1,4 +1,4 @@
-import { AuthApiError } from '@/lib/auth-api'
+import { getAppErrorCode, getAppErrorDetailsCode } from '@/lib/api/error'
 
 function mapAuthErrorCodeToMessage(code: string): string {
   const messages: Record<string, string> = {
@@ -14,31 +14,21 @@ function mapAuthErrorCodeToMessage(code: string): string {
   return messages[code] ?? 'Something went wrong!'
 }
 
-function readErrorDetailsCode(details: unknown): string | null {
-  if (!details || typeof details !== 'object' || !('code' in details)) {
-    return null
+export function getAuthErrorMessage(error: unknown): string {
+  const detailsCode = getAppErrorDetailsCode(error)
+
+  if (detailsCode === 'password_reset_token_not_found') {
+    return 'Invalid or expired reset link'
   }
 
-  const code = details.code
-  return typeof code === 'string' && code.trim() ? code : null
-}
+  if (detailsCode === 'invalid_one_time_code') {
+    return 'Invalid verification code'
+  }
 
-export function getAuthErrorMessage(error: unknown): string {
-  if (error instanceof AuthApiError) {
-    const details = error.details
-    const detailsCode = readErrorDetailsCode(details)
+  const code = getAppErrorCode(error)
 
-    if (detailsCode === 'password_reset_token_not_found') {
-      return 'Invalid or expired reset link'
-    }
-
-    if (detailsCode === 'invalid_one_time_code') {
-      return 'Invalid verification code'
-    }
-
-    if (!error.code) return 'Something went wrong!'
-
-    return mapAuthErrorCodeToMessage(error.code)
+  if (code) {
+    return mapAuthErrorCodeToMessage(code)
   }
 
   return 'Something went wrong!'

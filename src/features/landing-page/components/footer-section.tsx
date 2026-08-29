@@ -1,6 +1,14 @@
 'use client'
 
-import { BookOpen, Github, LifeBuoy, ShieldCheck } from 'lucide-react'
+import {
+  BookOpen,
+  Github,
+  Library,
+  LifeBuoy,
+  Scale,
+  ShieldCheck,
+  Tag,
+} from 'lucide-react'
 import { Wrapper } from '../../../components/wrapper'
 import {
   ANCHOR_FEATURES,
@@ -8,8 +16,13 @@ import {
   ANCHOR_PERFORMANCE,
   ANCHOR_PRICING,
   ANCHOR_PRIVACY,
+  CHANGELOG_URL,
+  DOCS_URL,
   DOWNLOAD_URL,
   GITHUB_REPO,
+  PRIVACY_POLICY_URL,
+  RESOURCES_URL,
+  TERMS_OF_SERVICE_URL,
 } from '../constants/links'
 
 const productLinks = [
@@ -21,10 +34,13 @@ const productLinks = [
 ]
 
 const resourceLinks = [
-  { icon: BookOpen, label: 'Documentation', href: GITHUB_REPO },
+  { icon: BookOpen, label: 'Documentation', href: DOCS_URL },
+  { icon: Library, label: 'Resources', href: RESOURCES_URL },
+  { icon: Tag, label: 'Changelog', href: CHANGELOG_URL },
   { icon: Github, label: 'GitHub', href: GITHUB_REPO },
   { icon: LifeBuoy, label: 'Support', href: GITHUB_REPO },
-  { icon: ShieldCheck, label: 'Privacy', href: GITHUB_REPO },
+  { icon: ShieldCheck, label: 'Privacy', href: PRIVACY_POLICY_URL },
+  { icon: Scale, label: 'Terms', href: TERMS_OF_SERVICE_URL },
 ]
 
 export function FooterSection() {
@@ -38,7 +54,7 @@ export function FooterSection() {
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
 
         <div className="flex flex-col gap-16 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-[400px]">
+          <div className="max-w-100">
             <h2 className="text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
               Ready to talk faster?
             </h2>
@@ -48,7 +64,7 @@ export function FooterSection() {
             </p>
             <a
               href={DOWNLOAD_URL}
-              className="mt-10 inline-flex h-[52px] items-center justify-center rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+              className="mt-10 inline-flex h-13 items-center justify-center rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
             >
               Download OiPer
             </a>

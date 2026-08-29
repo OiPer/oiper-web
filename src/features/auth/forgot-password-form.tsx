@@ -2,11 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
-import {
-  confirmWebPasswordReset,
-  requestWebPasswordReset,
-} from '@/lib/auth-api'
-import { wrap } from '@/utils/promise'
+import { $api } from '@/lib/api/client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
@@ -46,6 +42,14 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const requestResetMutation = $api.useMutation(
+    'post',
+    '/v1/auth/web/password-reset/request'
+  )
+  const confirmResetMutation = $api.useMutation(
+    'post',
+    '/v1/auth/web/password-reset/confirm'
+  )
   const currentSearch = new URLSearchParams(searchParams.toString())
 
   const requestResetForm = useForm<z.infer<typeof requestResetSchema>>({
@@ -81,10 +85,17 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
   ) {
     setErrorMessage(null)
 
-    await wrap(requestWebPasswordReset({ email: values.email }), {
-      onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
-      onSuccess: () => toast.success('Password reset email sent'),
-    })
+    try {
+      await requestResetMutation.mutateAsync({
+        body: {
+          email: values.email,
+        },
+      })
+
+      toast.success('Password reset email sent')
+    } catch (error) {
+      setErrorMessage(getAuthErrorMessage(error))
+    }
   }
 
   async function submitPasswordReset(
@@ -93,19 +104,19 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
     if (!token) return setErrorMessage('Missing reset token')
     setErrorMessage(null)
 
-    await wrap(
-      confirmWebPasswordReset({
-        token,
-        newPassword: values.password,
-      }),
-      {
-        onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
-        onSuccess: () => {
-          toast.success('Password updated, redirecting to sign in')
-          window.setTimeout(() => goToSignIn(), 600)
+    try {
+      await confirmResetMutation.mutateAsync({
+        body: {
+          token,
+          newPassword: values.password,
         },
-      }
-    )
+      })
+
+      toast.success('Password updated, redirecting to sign in')
+      window.setTimeout(() => goToSignIn(), 600)
+    } catch (error) {
+      setErrorMessage(getAuthErrorMessage(error))
+    }
   }
 
   return (
@@ -136,9 +147,13 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
           <Button
             type="submit"
             className="h-9 bg-white text-black hover:bg-white/90"
-            disabled={requestResetForm.formState.isSubmitting}
+            disabled={
+              requestResetForm.formState.isSubmitting ||
+              requestResetMutation.isPending
+            }
           >
-            {requestResetForm.formState.isSubmitting ? (
+            {requestResetForm.formState.isSubmitting ||
+            requestResetMutation.isPending ? (
               <Spinner />
             ) : (
               'Send reset email'
@@ -167,9 +182,13 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
           <Button
             type="submit"
             className="h-9 bg-white text-black hover:bg-white/90"
-            disabled={resetWithTokenForm.formState.isSubmitting}
+            disabled={
+              resetWithTokenForm.formState.isSubmitting ||
+              confirmResetMutation.isPending
+            }
           >
-            {resetWithTokenForm.formState.isSubmitting ? (
+            {resetWithTokenForm.formState.isSubmitting ||
+            confirmResetMutation.isPending ? (
               <Spinner />
             ) : (
               'Update password'

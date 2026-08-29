@@ -53,8 +53,8 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,rgba(255,255,255,0.05),transparent_45%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.015)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_50%_30%,black,transparent_70%)] bg-size-[120px_120px]" />
 
-        <div className="absolute top-1/2 left-0 hidden h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.045),transparent_60%)] blur-3xl lg:block" />
-        <div className="absolute top-1/2 right-0 hidden h-[520px] w-[520px] translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.045),transparent_60%)] blur-3xl lg:block" />
+        <div className="absolute top-1/2 left-0 hidden size-[520px] -translate-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.045),transparent_60%)] blur-3xl lg:block" />
+        <div className="absolute top-1/2 right-0 hidden size-[520px] translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.045),transparent_60%)] blur-3xl lg:block" />
       </div>
 
       <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-[min(64rem,calc(100%-(4%*2)))] -translate-x-1/2 md:block">
@@ -68,7 +68,7 @@ export function HeroSection() {
         ].map((position) => (
           <div
             key={position}
-            className={`absolute size-3 -translate-x-1/2 -translate-y-1/2 ${position}`}
+            className={`absolute size-3 -translate-1/2 ${position}`}
           >
             <div className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-white/20" />
             <div className="absolute top-0 left-1/2 h-full w-px -translate-x-1/2 bg-white/20" />
@@ -77,7 +77,7 @@ export function HeroSection() {
       </div>
 
       <Wrapper className="relative z-10">
-        <nav className="flex h-[80px] items-center justify-between">
+        <nav className="flex h-20 items-center justify-between">
           <a href={HOME} className="flex items-center gap-3">
             <OiPerLogoText className="text-[2rem]" />
           </a>
@@ -87,10 +87,10 @@ export function HeroSection() {
       </Wrapper>
 
       <Wrapper className="relative z-10">
-        <div className="mx-auto flex max-w-[760px] flex-col items-center justify-center pt-20 pb-16 text-center">
+        <div className="mx-auto flex max-w-190 flex-col items-center justify-center pt-20 pb-16 text-center">
           <AnimatedHeadline />
 
-          <p className="mt-7 max-w-[480px] text-[clamp(0.95rem,4vw,1.25rem)] leading-relaxed text-white/50">
+          <p className="mt-7 max-w-120 text-[clamp(0.95rem,4vw,1.25rem)] leading-relaxed text-white/50">
             Hold a key, speak, and your words appear in any app. Instantly,
             privately, and fully offline.
           </p>
@@ -98,7 +98,7 @@ export function HeroSection() {
           <div className="mt-10">
             <a
               href={DOWNLOAD_URL}
-              className="inline-flex h-[52px] items-center justify-center gap-2.5 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+              className="inline-flex h-13 items-center justify-center gap-2.5 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
             >
               <Download className="size-5" />
               Download OiPer
@@ -108,7 +108,7 @@ export function HeroSection() {
       </Wrapper>
 
       <Wrapper className="relative z-10">
-        <div className="relative mx-auto max-w-[1000px]">
+        <div className="relative mx-auto max-w-250">
           <div className="-my-[5%]">
             <HeroCarousel />
           </div>

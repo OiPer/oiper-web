@@ -1,6 +1,7 @@
 import '@/styles/index.css'
 import '@/styles/theme.css'
 
+import { QueryProvider } from '@/components/providers/query-provider'
 import { Toaster } from '@/components/ui/sonner'
 import { AuthProvider } from '@/features/auth/auth-context'
 import { PublicAuthModalClientNoSSR } from '@/features/auth/public-auth-modal-client'
@@ -92,12 +93,14 @@ export default function Layout({ children }: PropsWithChildren) {
     <html lang="en" suppressHydrationWarning>
       <body className={cn('antialiased', inter.variable, firaCode.variable)}>
         <ThemeProvider attribute="class" enableSystem>
-          <AuthProvider>
-            <Suspense fallback={null}>{children}</Suspense>
+          <QueryProvider>
+            <AuthProvider>
+              <Suspense fallback={null}>{children}</Suspense>
 
-            <PublicAuthModalClientNoSSR />
-            <Toaster richColors />
-          </AuthProvider>
+              <PublicAuthModalClientNoSSR />
+              <Toaster richColors />
+            </AuthProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

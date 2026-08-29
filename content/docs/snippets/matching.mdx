@@ -1,0 +1,79 @@
+---
+title: Matching
+description: How snippets are applied to input, and which matcher wins.
+---
+
+Snippet application is deterministic, left-to-right, and single-pass.
+
+At each position in the input:
+
+1. Test snippets in configuration order.
+2. Test each snippet's matchers in `when` order.
+3. Use the first matcher that succeeds at the current position.
+4. Append its snippet's `body` to the output and advance past the matched input.
+5. If nothing matches, append the next input character unchanged and advance one character.
+
+## First match wins, not longest match
+
+An earlier matcher always wins. The library never prefers the longer match.
+
+If a snippet matching `a` appears before a snippet matching `ab`, the input `ab` matches `a`
+first, and the output is that snippet's body followed by a literal `b`.
+
+Order your configuration accordingly: put more specific matchers before the ones they overlap
+with.
+
+## Literal matchers
+
+- Match case-insensitively, using ECMAScript Unicode semantics.
+- Match their complete value at the current position.
+- Treat regex metacharacters as ordinary characters.
+- Add no word boundaries, so they can match inside a word.
+
+## Regex matchers
+
+- Must match beginning at the current position; they never search ahead.
+- See the complete input as context, so anchors and lookaround assertions behave as expected.
+- Are case-sensitive unless the `i` flag is present.
+- Are ignored when they produce a zero-length result, and testing continues with the
+  remaining matchers.
+
+## Bodies
+
+The body is inserted verbatim. Regex captures such as `$1` are not expanded.
+
+Inserted bodies are never scanned again, so snippets cannot recurse or chain into each other.
+The cursor stays on the original input throughout.
+
+Input and output are neither trimmed nor Unicode-normalized.
+
+## Regex standard
+
+Regex syntax and behaviour follow
+[ECMAScript 2018 regular expressions](https://262.ecma-international.org/9.0/#sec-regexp-regular-expression-objects)
+in Unicode mode. Unicode mode is always enabled, whether or not you pass `u`.
+
+Supported flags:
+
+| Flag | Effect                                 |
+| ---- | -------------------------------------- |
+| `i`  | Case-insensitive matching.             |
+| `m`  | Multiline anchors.                     |
+| `s`  | Dot matches line terminators.          |
+| `u`  | Unicode mode. Accepted, but redundant. |
+
+The flags `d`, `g`, `v`, and `y` are rejected. The library controls global scanning and cursor
+positioning itself.
+
+The TypeScript library uses the platform's native `RegExp`. The Rust library uses
+[regress](https://docs.rs/regress/latest/regress/), a native Rust ECMAScript-compatible
+engine — it does not embed JavaScript, and the TypeScript library does not call into Rust
+through WebAssembly.
+
+## Cross-language parity
+
+A shared conformance suite runs the same cases against both implementations, covering
+configuration validation, ordering, literals, regexes, flags, single-pass behaviour,
+whitespace, and Unicode. Every case must produce the same validation result and the exact same
+output in both libraries, and regex engine or Unicode data upgrades must pass it before
+release.

@@ -61,11 +61,11 @@ export function PricingSection() {
       className="relative border-b border-white/[0.06] bg-[#0a0a0a] py-32 sm:py-40"
     >
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-1/2 left-1/2 h-[700px] w-[900px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.018),transparent_70%)]" />
+        <div className="absolute top-1/2 left-1/2 h-175 w-225 -translate-1/2 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.018),transparent_70%)]" />
       </div>
 
       <Wrapper className="relative" maxWidth="68rem">
-        <div className="mx-auto max-w-[560px] text-center">
+        <div className="mx-auto max-w-140 text-center">
           <h2 className="text-4xl font-semibold tracking-[-0.03em] text-white sm:text-5xl">
             Simple pricing.
           </h2>
