@@ -1,0 +1,77 @@
+---
+title: TypeScript API
+description: The @oiper/snippets API — parseConfig, applySnippets, and SnippetConfigError.
+---
+
+```bash
+npm install @oiper/snippets
+```
+
+The package ships both ESM and CommonJS builds with type definitions, and has no runtime
+dependencies.
+
+```ts
+import {
+  applySnippets,
+  parseConfig,
+  SnippetConfigError,
+  type Config,
+} from '@oiper/snippets'
+```
+
+## `parseConfig(raw: unknown): Config`
+
+Validates a raw configuration and returns a parsed `Config`. Parsing checks every rule in
+[Configuration](/docs/snippets/configuration) and compiles each matcher into a regex.
+
+`raw` is typed as `unknown` on purpose: pass the value straight from `JSON.parse`, a config
+file, or an API response, and let `parseConfig` do the validating.
+
+Parse once and reuse the result. Compiling regexes on every call is the main avoidable cost.
+
+```ts
+const config = parseConfig([
+  { when: [{ value: 'brb' }], body: 'be right back' },
+])
+```
+
+## `applySnippets(input: string, config: Config): string`
+
+Applies a parsed configuration to `input` and returns the resulting string. It accepts only a
+parsed `Config`, never a raw one, so it cannot fail on invalid configuration and returns the
+output directly.
+
+```ts
+applySnippets('brb, one moment', config)
+// 'be right back, one moment'
+```
+
+See [Matching](/docs/snippets/matching) for the exact substitution rules.
+
+## `SnippetConfigError`
+
+Thrown by `parseConfig` when validation fails. It extends `Error` with `name` set to
+`SnippetConfigError`, and its message names the position that failed:
+
+```text
+snippet 0, matcher 1: unsupported regex flag 'g'
+snippet 2: 'body' must not be empty
+configuration must be an array
+```
+
+```ts
+try {
+  const config = parseConfig(raw)
+} catch (error) {
+  if (error instanceof SnippetConfigError) {
+    // report the message to whoever wrote the configuration
+  }
+  throw error
+}
+```
+
+## `Config`
+
+An opaque, deeply frozen object holding the parsed snippets. Treat it as a handle to pass to
+`applySnippets`: its shape is an implementation detail and it cannot be modified after
+parsing.

@@ -1,12 +1,11 @@
 ## Project
 
 - DO NOT build the entire project by yourself.
-- CHECK linting errors and warnings (`nr lint` or `nr lint<file>`) in the code before submitting any changes; fix all issues to ensure a clean codebase.
 
 ## Styling
 
 - NEVER add pills or badges to the UI; eg: on top of a heading.
-- Use only Tailwind utility classes inside JSX; never create or modify any CSS files (`*.css`).
+- Use only Tailwind utility classes inside JSX; never create or modify any CSS files (`*.css`) unless explicitly instructed.
 
 ## Layout
 

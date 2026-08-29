@@ -1,0 +1,18 @@
+{
+  "title": "Desktop",
+  "description": "The voice-to-text app",
+  "root": true,
+  "pages": [
+    "index",
+    "installation",
+    "quickstart",
+    "profiles",
+    "models",
+    "formatting",
+    "snippets",
+    "dictionary",
+    "history",
+    "settings",
+    "troubleshooting"
+  ]
+}

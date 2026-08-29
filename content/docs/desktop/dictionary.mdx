@@ -1,0 +1,33 @@
+---
+title: Dictionary
+description: Teach OiPer names, jargon, and terms it keeps getting wrong.
+---
+
+The dictionary is a list of words you often say that speech models tend to mishear —
+personal and product names, company names, technical terms, and acronyms. The list is passed
+to the speech model as a hint, which makes it far more likely to spell them the way you
+intended.
+
+## Adding words
+
+On the **Dictionary** page, type a word and add it. Add the exact spelling you want in the
+output, including capitalisation, for example `PostgreSQL` rather than `postgresql`.
+
+Short multi-word phrases work too if that is how you say them.
+
+## Size limit
+
+The whole dictionary is limited to **896 characters**, counted as each word's length plus
+three characters of overhead. The page shows how much of the budget you have used, and
+stops you once it is full.
+
+Because the budget is small, spend it on words the model actually gets wrong. Ordinary
+vocabulary does not need to be listed.
+
+## Which modes use it
+
+The dictionary is applied in **cloud** and **oiper** modes.
+
+Local Whisper transcription does not currently use it. If you dictate in `local` mode and a
+name keeps coming out wrong, use a [snippet](/docs/desktop/snippets) to rewrite the common
+misspelling instead, or move that profile to a larger Whisper model.
