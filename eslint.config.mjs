@@ -14,7 +14,7 @@ const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url))
 
 export default defineConfig([
   includeIgnoreFile(gitignorePath),
-  { ignores: ['./src/components/ui/**'] },
+  { ignores: ['./src/components/ui/**', './src/lib/api/schema.d.ts'] },
 
   pluginJs.configs.recommended,
   typescriptESLint.configs.recommended,

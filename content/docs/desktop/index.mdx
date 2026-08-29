@@ -1,0 +1,37 @@
+---
+title: OiPer Desktop
+description: Voice-to-text that runs on your machine and types into any application.
+---
+
+OiPer Desktop turns speech into text without leaving the application you are working in.
+You hold a global hotkey, speak, and release. The recording is transcribed and the result is
+inserted at your cursor.
+
+## How a dictation works
+
+1. **Hold your hotkey.** Recording starts and an overlay shows the current state.
+2. **Speak.** Audio is captured from your selected input device.
+3. **Release the hotkey.** Recording stops and transcription begins.
+4. **Transcription runs.** Depending on the active profile this happens locally on your
+   machine, through a cloud provider you configured, or through OiPer's own service.
+5. **Optional formatting.** A language model can clean up, rewrite, or translate the
+   transcript before it is inserted.
+6. **The text is inserted** into the application that had focus, and the run is saved to
+   your local history.
+
+## Local by default
+
+A profile in `local` mode does everything on your machine using a Whisper model you
+downloaded. Audio, transcripts, history, and configuration stay in OiPer's application
+data directory. Nothing is sent anywhere.
+
+Cloud and OiPer modes exist for when you want a hosted model instead, and they only send
+data while a request is running. See [Security & Data Handling](/resources/security) for
+exactly what is stored and what leaves the device.
+
+## Where to go next
+
+- [Installation](/docs/desktop/installation) — download the app and grant permissions
+- [Quickstart](/docs/desktop/quickstart) — get through first-run setup
+- [Profiles](/docs/desktop/profiles) — hotkeys, languages, and transcription modes
+- [Models](/docs/desktop/models) — local Whisper models, cloud providers, OiPer models

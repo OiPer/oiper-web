@@ -3,9 +3,12 @@
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/features/auth/auth-context'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { z } from 'zod'
 import { AuthCard } from './auth-card'
 import { AuthInput } from './auth-form-input'
 import { getCallbackUrl } from './auth-form-utils'
@@ -15,54 +18,80 @@ type VerificationFormProps = {
   mode: 'modal' | 'page'
 }
 
+const emailVerificationSchema = z.object({
+  otp: z
+    .string()
+    .trim()
+    .min(4, 'Verification code must be at least 4 characters')
+    .max(12, 'Verification code is too long'),
+})
+
+type EmailVerificationForm = z.infer<typeof emailVerificationSchema>
+
 export function EmailVerificationForm({ mode }: VerificationFormProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { resendVerification, verifyEmail } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [otp, setOtp] = useState('')
-  const [isVerifying, setIsVerifying] = useState(false)
   const [isResending, setIsResending] = useState(false)
   const currentSearch = new URLSearchParams(searchParams.toString())
   const callbackUrl = getCallbackUrl(currentSearch)
 
-  const token = searchParams.get('token')
+  const pendingAuthenticationToken = searchParams.get('pat')
   const email = searchParams.get('email')
+  const emailVerificationId = searchParams.get('evid')
 
-  if (!token || !email) return null
+  const form = useForm<EmailVerificationForm>({
+    resolver: zodResolver(emailVerificationSchema),
+    defaultValues: {
+      otp: '',
+    },
+  })
 
-  async function handleEmailVerification() {
+  if (!pendingAuthenticationToken || !email) return null
+
+  const verificationEmail = email
+  const verificationToken = pendingAuthenticationToken
+
+  async function handleEmailVerification(values: EmailVerificationForm) {
     setErrorMessage(null)
-    setIsVerifying(true)
 
-    await verifyEmail({
-      token: token!,
-      otp: otp.trim(),
-      finally: () => setIsVerifying(false),
-      onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
-      onSuccess: (session) => {
-        if (!session.authenticated) {
-          return setErrorMessage('Unable to verify email')
-        }
+    try {
+      const session = await verifyEmail({
+        pat: verificationToken,
+        otp: values.otp.trim(),
+      })
 
-        router.push(callbackUrl)
-      },
-    })
+      if (!session.authenticated) {
+        return setErrorMessage('Unable to verify email')
+      }
+
+      router.push(callbackUrl)
+    } catch (error) {
+      setErrorMessage(getAuthErrorMessage(error))
+    }
   }
 
   async function handleResend() {
     setErrorMessage(null)
     setIsResending(true)
 
-    await resendVerification({
-      email: email!,
-      finally: () => setIsResending(false),
-      onError: (error) => setErrorMessage(getAuthErrorMessage(error)),
-      onSuccess: (response) => {
-        if (response.alreadyVerified) toast.info('Email already verified')
-        if (!response.alreadyVerified) toast.success('Verification code sent')
-      },
-    })
+    try {
+      if (!emailVerificationId) {
+        return toast.info('Restart sign-in to get a new code')
+      }
+
+      const response = await resendVerification({ evid: emailVerificationId })
+
+      if (response.alreadyVerified) {
+        toast.info('Email already verified. Sign in again to continue')
+      }
+      if (!response.alreadyVerified) toast.success('Verification code sent')
+    } catch (error) {
+      setErrorMessage(getAuthErrorMessage(error))
+    } finally {
+      setIsResending(false)
+    }
   }
 
   return (
@@ -70,16 +99,17 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
       mode={mode}
       page="signup"
       title="Verify your email"
-      description="Enter the verification code sent to your email"
+      description="Enter the code we emailed to finish signing you in."
       showOAuth={false}
     >
-      <div className="flex flex-col gap-4">
+      <form
+        onSubmit={form.handleSubmit(handleEmailVerification)}
+        className="flex flex-col gap-4"
+      >
         <div className="rounded-lg border border-white/15 bg-white/5 p-4">
           <p className="text-sm text-white/80">
             Code Sent to{' '}
-            <span className="font-medium text-white">
-              {email || 'Your email'}
-            </span>
+            <span className="font-medium text-white">{verificationEmail}</span>
           </p>
         </div>
 
@@ -88,9 +118,9 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
           label="Verification code"
           inputMode="numeric"
           maxLength={12}
-          value={otp}
-          onChange={(event) => setOtp(event.target.value)}
           placeholder="Enter your code"
+          {...form.register('otp')}
+          error={form.formState.errors.otp?.message}
         />
 
         {errorMessage ? (
@@ -100,12 +130,11 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
         ) : null}
 
         <Button
-          type="button"
+          type="submit"
           className="h-9 bg-white text-black hover:bg-white/90"
-          onClick={handleEmailVerification}
-          disabled={otp.trim().length < 4 || isVerifying}
+          disabled={form.formState.isSubmitting}
         >
-          {isVerifying ? <Spinner /> : 'Verify email'}
+          {form.formState.isSubmitting ? <Spinner /> : 'Verify email'}
         </Button>
 
         <Button
@@ -113,11 +142,11 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
           variant="ghost"
           className="h-8 text-white/70 hover:bg-white/10 hover:text-white"
           onClick={handleResend}
-          disabled={isResending || isVerifying}
+          disabled={isResending || form.formState.isSubmitting}
         >
           {isResending ? <Spinner /> : 'Resend code'}
         </Button>
-      </div>
+      </form>
     </AuthCard>
   )
 }

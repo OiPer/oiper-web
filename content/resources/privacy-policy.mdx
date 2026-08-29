@@ -1,0 +1,109 @@
+---
+title: Privacy Policy
+description: What data OiPer handles, where it stays, and when anything is sent elsewhere.
+---
+
+Effective August 29, 2026.
+
+OiPer is built so that the sensitive part of what we do — your voice and what you dictate —
+does not have to leave your computer. This policy describes what happens on your device, what
+happens when you deliberately use a service that is not on your device, and what we hold if
+you create an account on oiper.com.
+
+## OiPer Desktop
+
+### Local mode
+
+When a profile runs in `local` mode, transcription happens entirely on your machine using a
+speech model you downloaded. Your audio, transcripts, dictation history, configuration, and
+logs are written only to OiPer's application data directory on your computer.
+
+We do not receive them, and they are not sent to any third party. This works offline.
+
+### Cloud mode
+
+When a profile runs in `cloud` mode, the audio of that recording — and, when formatting is
+enabled, the transcript — is sent to the provider you configured, using the API key you
+supplied, for as long as that request takes.
+
+You choose the provider, the endpoint, and the model. That provider's own privacy policy and
+terms govern what it does with the data it receives. We are not a party to those requests
+and we do not receive their contents.
+
+Your API keys are stored on your own computer, kept out of OiPer's configuration file in a
+separate credentials file, or read from an environment variable if you configure it that way.
+They are sent only to the provider they belong to, and never to us. See
+[Security & Data Handling](/resources/security#credentials) for the details.
+
+### Oiper mode
+
+When a profile runs in `oiper` mode, the recording is sent to OiPer's hosted service, which
+transcribes it and, if formatting is enabled, rewrites it, and returns the text to your
+computer. This mode also sends contextual information about the application you are dictating
+into — its name, window title, and text read from that window — because that context measurably
+improves accuracy on names and technical terms.
+
+We process this data to produce your transcript and return it. We do not sell it, and we do
+not use it to train models.
+
+### Information about the app you dictate into
+
+Every dictation records the name, window title, and path of the application that was focused
+when you started recording, and stores it in your local history so you can tell your
+dictations apart. In `oiper` mode this information, along with text read from that window, is
+also sent as described above. In `local` and `cloud` modes it stays on your device.
+
+### Network connections the app makes
+
+Besides transcription requests in cloud and Oiper modes, OiPer Desktop contacts:
+
+- **Hugging Face**, to download a local speech model when you ask for one.
+- **GitHub**, to check for and download application updates.
+
+### Deleting your data
+
+Everything the desktop app stores is on your computer and under your control:
+
+- **Delete all history** on the History page removes every dictation record.
+- Deleting OiPer's application data directory removes your configuration, history, recorded
+  audio, downloaded models, and logs. See
+  [Security & Data Handling](/resources/security) for the exact locations.
+
+## Account and website
+
+If you create an OiPer account we hold the information needed to run it: your email address,
+your name if you provide one, and authentication records handled by our identity provider.
+Payments for paid features are handled by our payment processor, which holds the billing
+details; we do not store your card number.
+
+We use this information to give you access to your account and paid features, to bill you,
+and to contact you about your account.
+
+## What we do not do
+
+We do not sell your personal information, and we do not share it with third parties for their
+own advertising.
+
+## Your rights
+
+You can request access to the personal information we hold about you, ask us to correct it,
+or ask us to delete it and close your account. Write to
+[support@oiper.com](mailto:support@oiper.com) and we will respond.
+
+Depending on where you live you may have additional rights under laws such as the GDPR or the
+CCPA. This policy is intended to be compatible with them, and you can exercise those rights
+at the same address.
+
+## Children
+
+OiPer is not directed at children, and we do not knowingly collect personal information from
+anyone under 13.
+
+## Changes
+
+If we change this policy we will update the effective date above and, for changes that
+materially affect you, notify account holders.
+
+## Contact
+
+[support@oiper.com](mailto:support@oiper.com)

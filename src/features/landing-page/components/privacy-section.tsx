@@ -31,7 +31,7 @@ export function PrivacySection() {
       </div>
 
       <Wrapper className="relative" maxWidth="60rem">
-        <div className="mx-auto max-w-[560px] text-center">
+        <div className="mx-auto max-w-140 text-center">
           <h2 className="text-4xl font-semibold tracking-[-0.03em] text-white sm:text-5xl">
             Privacy by design.
           </h2>

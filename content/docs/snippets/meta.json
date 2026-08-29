@@ -1,0 +1,6 @@
+{
+  "title": "Snippets",
+  "description": "Snippet expansion library",
+  "root": true,
+  "pages": ["index", "configuration", "matching", "typescript", "rust"]
+}

@@ -1,0 +1,51 @@
+---
+title: Formatting
+description: Clean up, rewrite, or translate the transcript before it is inserted.
+---
+
+Formatting is an optional step that runs after transcription. The raw transcript is sent to
+a language model, and the rewritten text is what gets inserted.
+
+It is configured per [profile](/docs/desktop/profiles), so you can have one shortcut that
+inserts exactly what you said and another that turns the same speech into a polished email.
+
+## Presets
+
+| Preset   | What it does                                                                                                                                            |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Normal   | Fixes transcription errors — misheard words, homophones, wrong word boundaries — plus grammar, spelling, and punctuation, without changing the meaning. |
+| Prompt   | Restructures your speech into a clear, well-organised prompt for an AI assistant.                                                                       |
+| Email    | Expands the text into a complete email with a greeting, body, and closing, keeping every detail.                                                        |
+| Formal   | Rewrites in a formal, professional tone with full, polished sentences.                                                                                  |
+| Casual   | Rewrites in a conversational tone, like a chat message.                                                                                                 |
+| Romantic | Rewrites in a warm, affectionate tone.                                                                                                                  |
+
+Every preset is instructed to keep your information and intent intact, add no new facts, and
+return only the rewritten text.
+
+## Translate
+
+**Translate** rewrites the transcript into another language. Just under a hundred languages
+are available, so you can speak in one language and have the text arrive in another.
+
+This is separate from the profile's **language** setting, which describes the language you
+_speak_.
+
+## Custom formatting
+
+**Custom** lets you write the instruction yourself, in one of two ways:
+
+- **Task** (default) — describe what you want, for example `translate to French` or
+  `turn this into bullet points`. Your text is wrapped in OiPer's formatting template, which
+  supplies the surrounding rules about preserving meaning and returning plain text only.
+- **Advanced mode** — your text is used directly as the full system prompt, with no template
+  around it. Use this when you need complete control over the model's behaviour.
+
+## Which model runs it
+
+In `local` and `cloud` modes, formatting runs through an LLM you registered on the
+[Models](/docs/desktop/models) page; if none is set, formatting is skipped. In `oiper` mode
+it runs on OiPer's hosted models with nothing to configure.
+
+Formatting adds the model's response time to every dictation. A small, fast model keeps the
+delay short; a larger one gives better rewriting.

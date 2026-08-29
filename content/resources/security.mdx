@@ -1,0 +1,80 @@
+---
+title: Security & Data Handling
+description: Which files OiPer writes, where credentials are stored, and what leaves your device.
+---
+
+This page describes exactly how OiPer Desktop handles your data on disk and on the network,
+so you can verify the claims in the [Privacy Policy](/resources/privacy-policy) rather than
+take them on trust.
+
+## Where files are stored
+
+Everything the app writes lives in one application data directory:
+
+- macOS: `~/Library/Application Support/com.oiper.desktop`
+- Windows: `%APPDATA%\com.oiper.desktop`
+
+| File or folder | Contents                                                                                               |
+| -------------- | ------------------------------------------------------------------------------------------------------ |
+| `config.json`  | Your settings: profiles, hotkeys, snippets, dictionary, and cloud model entries. Contains no API keys. |
+| `auth.json`    | API keys for the cloud providers you configured, and session state for your OiPer account.             |
+| `oiper.db`     | The dictation history database — transcripts, timings, and the application each dictation went into.   |
+| `models/`      | Speech models you downloaded.                                                                          |
+| `audio/`       | Recorded audio for entries in your history.                                                            |
+| `cache/`       | Temporary working files.                                                                               |
+| `logs/`        | Application logs.                                                                                      |
+
+These are ordinary files owned by your user account, protected by your operating system's
+file permissions. Deleting the directory removes all of it and resets the app.
+
+## Credentials
+
+API keys for cloud providers are held separately from the rest of your settings. They are
+stripped out of `config.json` when it is written and stored in `auth.json` in the same
+directory, so your configuration file can be copied, shared, or synced without carrying your
+credentials with it.
+
+`auth.json` is a plain file protected by your user account's file permissions, not by the
+system keychain. If that is not strong enough for your threat model, configure the provider
+entry to read an **environment variable** instead — OiPer then never stores the key at all.
+
+Keys are sent only to the provider they belong to, as part of a transcription or formatting
+request you triggered. They are never transmitted to OiPer.
+
+## What leaves your device
+
+| Mode    | What is sent, and to whom                                                                                                              |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `local` | Nothing. Transcription runs on your machine and works offline.                                                                         |
+| `cloud` | The recording, and the transcript when formatting is on, go to the provider you configured, authenticated with your own key.           |
+| `oiper` | The recording goes to OiPer's hosted service, along with the focused application's name, window title, and text read from that window. |
+
+Independently of the mode, the app contacts Hugging Face when you download a speech model,
+and GitHub when it checks for or downloads an update.
+
+Nothing is transmitted in the background: a transcription request happens only in response to
+a dictation you started with your hotkey.
+
+## Window content
+
+The name, window title, and path of the focused application are recorded with every
+dictation and stored in your local history. Text is read from that window only in `oiper`
+mode, and only to be sent with that request for accuracy.
+
+## Updates
+
+Updates are distributed through GitHub Releases and verified against OiPer's signing key
+before installation, so a tampered or unsigned build will not be applied. Update checks are
+triggered from **Settings → About**.
+
+## Clearing your data
+
+- **Delete all history** on the History page clears the history database.
+- Deleting a model on the Models page removes it from `models/`.
+- Removing a cloud model entry, or clearing its key field, removes that key from `auth.json`.
+- Deleting the application data directory removes everything listed above.
+
+## Reporting a vulnerability
+
+Email [support@oiper.com](mailto:support@oiper.com) with the details. Please report privately
+first and give us a reasonable opportunity to fix the issue before disclosing it publicly.

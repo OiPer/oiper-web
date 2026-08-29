@@ -1,0 +1,50 @@
+---
+title: Quickstart
+description: Finish first-run setup and complete your first dictation.
+---
+
+The first time you open OiPer it walks you through three steps and creates your first
+[profile](/docs/desktop/profiles) from your answers.
+
+## 1. Choose how to transcribe
+
+Pick one of three modes:
+
+- **Oiper** — OiPer hosts and updates the models. Nothing to configure.
+- **Local** — a Whisper model runs on your machine, fully offline.
+- **Cloud** — your audio is sent to a provider such as OpenAI or Groq using your own API key.
+
+If you pick **Local**, choose a Whisper model here as well and select **Download & Continue**
+so the model is fetched while you finish setup. **Continue without downloading** also works;
+you can download it later from the Models page.
+
+If you pick **Cloud**, add an ASR model with its provider, base URL, model name, and API key.
+
+## 2. Choose text formatting
+
+Formatting sends the raw transcript through a language model to remove filler words and fix
+punctuation and capitalization, turning `um so i need the report by friday ok` into
+`I need the report by Friday.`
+
+Turn the switch on to enable it. In Oiper mode this needs no further setup. In local or
+cloud mode, formatting runs through an LLM, so add one now or skip and configure it later
+from the [Models](/docs/desktop/models) page.
+
+## 3. Set your shortcut
+
+Record the hotkey you will hold while speaking. The default is `Left Shift` + `Left Control`.
+Pick a combination you do not already use in other applications.
+
+Select **Let's be productive** to finish. Your profile is saved and the main window opens.
+
+## Your first dictation
+
+1. Click into any text field in any application.
+2. Hold your hotkey.
+3. Say a sentence.
+4. Release the hotkey.
+
+The transcript is inserted where your cursor was. Every run is recorded on the
+[History](/docs/desktop/history) page, so if nothing appears you can check there to see
+whether the problem was recording, transcription, or insertion. The
+[Troubleshooting](/docs/desktop/troubleshooting) page covers the common causes.

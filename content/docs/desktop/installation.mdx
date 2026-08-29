@@ -1,0 +1,48 @@
+---
+title: Installation
+description: Download OiPer Desktop, grant the permissions it needs, and keep it updated.
+---
+
+## Download
+
+Builds for macOS and Windows are published on GitHub:
+
+[github.com/oiper/desktop/releases/latest](https://github.com/oiper/desktop/releases/latest)
+
+macOS requires version 10.15 or later.
+
+Install the app, then launch it. On first launch you go through
+[first-run setup](/docs/desktop/quickstart).
+
+## Permissions
+
+On macOS, OiPer asks for four permissions before it can work. All of them are required, and
+the app shows a permission screen until each one is granted. Grant them from the screen, or
+later in **System Settings → Privacy & Security**.
+
+| Permission       | Why it is needed                                                                |
+| ---------------- | ------------------------------------------------------------------------------- |
+| Microphone       | Records the audio that gets transcribed.                                        |
+| Input Monitoring | Detects the global hotkey that starts recording.                                |
+| Accessibility    | Inserts the transcribed text into other applications.                           |
+| Screen Recording | Detects the active window's position so the overlay appears in the right place. |
+
+If you grant a permission while OiPer is running and the screen does not update, it
+re-checks every couple of seconds; quitting and relaunching also works.
+
+## Where OiPer stores its files
+
+Everything the app writes lives in one application data directory:
+
+- macOS: `~/Library/Application Support/com.oiper.desktop`
+- Windows: `%APPDATA%\com.oiper.desktop`
+
+That directory holds `config.json`, the `oiper.db` history database, downloaded models
+under `models/`, recorded audio under `audio/`, and logs under `logs/`. Deleting the
+directory resets the app completely.
+
+## Updates
+
+OiPer updates itself from the GitHub release feed. Open **Settings**, scroll to the
+**About** section, and choose **Check for Updates**. When an update has been downloaded the
+button becomes **Restart to Update**; the new version is applied on restart.
