@@ -8,6 +8,7 @@ import {
   ANCHOR_PERFORMANCE,
   ANCHOR_PRICING,
   ANCHOR_PRIVACY,
+  DOCS_URL,
   DOWNLOAD_URL,
   GITHUB_REPO,
 } from '../constants/links'
@@ -21,7 +22,7 @@ const productLinks = [
 ]
 
 const resourceLinks = [
-  { icon: BookOpen, label: 'Documentation', href: GITHUB_REPO },
+  { icon: BookOpen, label: 'Documentation', href: DOCS_URL },
   { icon: Github, label: 'GitHub', href: GITHUB_REPO },
   { icon: LifeBuoy, label: 'Support', href: GITHUB_REPO },
   { icon: ShieldCheck, label: 'Privacy', href: GITHUB_REPO },

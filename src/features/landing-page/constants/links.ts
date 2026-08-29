@@ -1,5 +1,6 @@
 export const DOWNLOAD_URL = 'https://github.com/oiper/desktop/releases/latest'
 export const GITHUB_REPO = 'https://github.com/oiper/desktop'
+export const DOCS_URL = '/docs'
 
 export const HOME = '/'
 
