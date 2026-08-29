@@ -1,0 +1,73 @@
+---
+title: Models
+description: Local Whisper models, your own cloud providers, and OiPer's hosted models.
+---
+
+The **Models** page is where you download local speech models and register the cloud models
+your profiles can use. Which of them a dictation actually uses depends on the
+[profile](/docs/desktop/profiles) you triggered.
+
+## Local Whisper models
+
+Local models are downloaded once and then run entirely on your machine. Larger models are
+more accurate and slower, and take more disk space and memory.
+
+| Model              | Size   | Notes                                                      |
+| ------------------ | ------ | ---------------------------------------------------------- |
+| Tiny               | 75 MB  | Fastest, least accurate. Fine for short, simple dictation. |
+| Base               | 142 MB | Good balance for general use. Recommended starting point.  |
+| Small              | 466 MB | Noticeably more accurate than Base.                        |
+| Medium             | 1.5 GB | High accuracy, slower.                                     |
+| Large v1 / v2 / v3 | 2.9 GB | Highest accuracy, slowest.                                 |
+| Large v3 Turbo     | 1.5 GB | Large-model accuracy at much lower cost. Recommended.      |
+
+Tiny, Base, Small, and Medium also come in **English-only** variants, which are more
+accurate than the multilingual model of the same size if you only ever dictate in English.
+
+Models are downloaded from Hugging Face into the `models/` folder of OiPer's application
+data directory. You can delete a downloaded model from the Models page to reclaim the space.
+
+### Hardware backend
+
+Local transcription can run on the CPU or on the GPU. The **Whisper Hardware** setting in
+[Settings](/docs/desktop/settings) offers:
+
+- **Auto** — use the GPU when one is usable, otherwise the CPU. The default.
+- **CPU** — always use the CPU. Slower, but avoids GPU driver problems.
+- **GPU** — always use the GPU.
+
+## Your own cloud models
+
+You can register cloud models for speech recognition (ASR) and for text formatting (LLM).
+Each entry stores a provider, a base URL, a model name, and your API key.
+
+Known providers are pre-filled with their base URL and the environment variable they
+normally use, including OpenAI, Anthropic, OpenRouter, Hugging Face, Groq, Cerebras,
+Fireworks, Kilo, and OpenCode. Any other OpenAI-compatible endpoint works by entering the
+base URL yourself.
+
+API keys are kept out of `config.json` and written to a separate `auth.json` file in OiPer's
+application data directory, so you can share or sync your configuration without leaking
+them. Alternatively, point an entry at an environment variable and keep the key outside
+OiPer entirely — see [Security & Data Handling](/resources/security#credentials).
+
+Some models accept audio directly. Marking an entry as accepting audio input lets you
+transcribe through a general-purpose language model instead of a dedicated speech model,
+which can help with technical vocabulary.
+
+## OiPer models
+
+In `oiper` mode the models are hosted and maintained for you, and there is no API key to
+manage.
+
+**Speech models**
+
+- **Pro** — the most accurate transcription, for dictation where every word matters.
+- **Flash** — near real-time speed, trading a little accuracy for the lowest latency.
+
+**Language models** for formatting, from lightest to most thorough: **Auto**, **Moon**,
+**Earth**, **Mars**, **Jupiter**, and **Pluto**. Auto adapts to your input and is the
+low-cost default; Jupiter and Pluto cost more and are meant for demanding rewriting.
+
+**Simple** mode picks a speech model and a language model for you through a template.
+**Advanced** mode lets you choose each one yourself.

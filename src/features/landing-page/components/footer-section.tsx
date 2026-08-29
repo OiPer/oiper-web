@@ -1,6 +1,13 @@
 'use client'
 
-import { BookOpen, Github, Library, LifeBuoy, ShieldCheck } from 'lucide-react'
+import {
+  BookOpen,
+  Github,
+  Library,
+  LifeBuoy,
+  Scale,
+  ShieldCheck,
+} from 'lucide-react'
 import { Wrapper } from '../../../components/wrapper'
 import {
   ANCHOR_FEATURES,
@@ -11,7 +18,9 @@ import {
   DOCS_URL,
   DOWNLOAD_URL,
   GITHUB_REPO,
+  PRIVACY_POLICY_URL,
   RESOURCES_URL,
+  TERMS_OF_SERVICE_URL,
 } from '../constants/links'
 
 const productLinks = [
@@ -27,7 +36,8 @@ const resourceLinks = [
   { icon: Library, label: 'Resources', href: RESOURCES_URL },
   { icon: Github, label: 'GitHub', href: GITHUB_REPO },
   { icon: LifeBuoy, label: 'Support', href: GITHUB_REPO },
-  { icon: ShieldCheck, label: 'Privacy', href: GITHUB_REPO },
+  { icon: ShieldCheck, label: 'Privacy', href: PRIVACY_POLICY_URL },
+  { icon: Scale, label: 'Terms', href: TERMS_OF_SERVICE_URL },
 ]
 
 export function FooterSection() {

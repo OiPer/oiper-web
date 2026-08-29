@@ -7,6 +7,7 @@ export default function Layout({ children }: PropsWithChildren) {
     <DocumentationLayout
       source={resourcesSource}
       searchApi="/api/resources/search"
+      tabs={false}
     >
       {children}
     </DocumentationLayout>

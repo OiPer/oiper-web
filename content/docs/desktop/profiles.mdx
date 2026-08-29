@@ -1,0 +1,69 @@
+---
+title: Profiles
+description: Set up hotkeys, languages, and transcription modes for different kinds of dictation.
+---
+
+A profile bundles everything that decides what happens when you dictate: which hotkey starts
+recording, which language you speak, which models run, and how the result is formatted and
+inserted.
+
+You can have several profiles. The hotkey you press decides which one runs, so a fast local
+profile and a high-accuracy cloud profile can sit side by side on different shortcuts.
+
+## Hotkeys
+
+Each profile has two independent shortcuts, either of which can be left unset:
+
+- **Push to talk** — recording runs while you hold the keys and stops when you release them.
+- **Press to start/stop** — one press starts recording, another press stops it. Useful for
+  long dictation where holding keys is uncomfortable.
+
+The two shortcuts of a profile cannot be the same combination. Give every profile a
+combination that no other profile and no application you use has already claimed.
+
+Hotkeys can be set per operating system, so the same configuration file works on a machine
+running macOS and one running Windows.
+
+## Language
+
+Set the language you speak in. Leaving it unset lets the model detect the language itself,
+which is fine for most cases but slightly less reliable than naming it.
+
+Language is what you _speak_. Translating into another language is a formatting step — see
+[Formatting](/docs/desktop/formatting).
+
+## Modes
+
+The mode decides where transcription runs.
+
+### Local
+
+A Whisper model runs on your machine. Nothing leaves the device, and it works offline. You
+choose which [Whisper model](/docs/desktop/models) to use; larger models are more accurate
+and slower.
+
+### Cloud
+
+Audio is sent to a provider you configured with your own API key — OpenAI, Groq, Fireworks,
+Cerebras, and others. You control the base URL, model name, and key.
+
+### Oiper
+
+Transcription and formatting run through OiPer's hosted models. There is nothing to
+configure and no API key to manage. In **simple** mode you pick a template; in **advanced**
+mode you choose the speech model and the language model separately.
+
+## Auto submit
+
+Auto submit presses a key combination for you right after the text is inserted, so a
+dictated message sends itself. The options are **Disabled** (the default), **Enter**,
+**Ctrl + Enter**, **Ctrl + Shift + Enter**, **Shift + Enter**, and **Alt + Enter**.
+
+Pick the one that matches the app you dictate into most — many chat applications send on
+`Enter`, while others use `Ctrl` + `Enter`. Like hotkeys, this can be set per operating
+system.
+
+## Name and icon
+
+Give each profile a name and an icon so it is recognisable in the app and in the recording
+overlay.

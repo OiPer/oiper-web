@@ -1,5 +1,5 @@
 import { OiPerLogoText } from '@/components/logo-text'
-import { DocsLayout } from 'fumadocs-ui/layouts/docs'
+import { DocsLayout, type DocsLayoutProps } from 'fumadocs-ui/layouts/docs'
 import { RootProvider } from 'fumadocs-ui/provider/next'
 import type { PropsWithChildren } from 'react'
 import type { DocumentationSource } from './docs-source'
@@ -7,11 +7,13 @@ import type { DocumentationSource } from './docs-source'
 interface DocumentationLayoutProps extends PropsWithChildren {
   source: DocumentationSource
   searchApi: string
+  tabs: DocsLayoutProps['tabs']
 }
 
 export function DocumentationLayout({
   source,
   searchApi,
+  tabs,
   children,
 }: DocumentationLayoutProps) {
   return (
@@ -24,7 +26,7 @@ export function DocumentationLayout({
         githubUrl="https://github.com/oiper/desktop"
         nav={{ title: <OiPerLogoText className="text-xl" />, url: '/' }}
         sidebar={{ defaultOpenLevel: 1 }}
-        tabs={false}
+        tabs={tabs}
       >
         {children}
       </DocsLayout>
