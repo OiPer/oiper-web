@@ -1,3 +1,4 @@
+import { OiPerLogoText } from '@/components/logo-text'
 import { DocsLayout } from 'fumadocs-ui/layouts/docs'
 import { RootProvider } from 'fumadocs-ui/provider/next'
 import type { PropsWithChildren } from 'react'
@@ -21,7 +22,7 @@ export function DocumentationLayout({
       <DocsLayout
         tree={source.getPageTree()}
         githubUrl="https://github.com/oiper/desktop"
-        nav={{ title: 'OiPer', url: '/' }}
+        nav={{ title: <OiPerLogoText className="text-xl" />, url: '/' }}
         sidebar={{ defaultOpenLevel: 1 }}
         tabs={false}
       >
