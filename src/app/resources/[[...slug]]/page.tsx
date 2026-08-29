@@ -3,24 +3,24 @@ import {
   getDocumentationMetadata,
   getDocumentationStaticParams,
 } from '@/features/docs/docs-page'
-import { docsSource } from '@/features/docs/docs-source'
+import { resourcesSource } from '@/features/docs/resources-source'
 
 interface PageProps {
   params: Promise<{ slug?: string[] }>
 }
 
 export function generateStaticParams() {
-  return getDocumentationStaticParams(docsSource)
+  return getDocumentationStaticParams(resourcesSource)
 }
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params
 
-  return getDocumentationMetadata(docsSource, slug)
+  return getDocumentationMetadata(resourcesSource, slug)
 }
 
 export default async function Page({ params }: PageProps) {
   const { slug } = await params
 
-  return <DocumentationPage source={docsSource} slug={slug} />
+  return <DocumentationPage source={resourcesSource} slug={slug} />
 }

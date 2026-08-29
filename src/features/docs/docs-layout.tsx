@@ -1,13 +1,25 @@
 import { DocsLayout } from 'fumadocs-ui/layouts/docs'
 import { RootProvider } from 'fumadocs-ui/provider/next'
 import type { PropsWithChildren } from 'react'
-import { docsSource } from './docs-source'
+import type { DocumentationSource } from './docs-source'
 
-export function DocumentationLayout({ children }: PropsWithChildren) {
+interface DocumentationLayoutProps extends PropsWithChildren {
+  source: DocumentationSource
+  searchApi: string
+}
+
+export function DocumentationLayout({
+  source,
+  searchApi,
+  children,
+}: DocumentationLayoutProps) {
   return (
-    <RootProvider theme={{ enabled: false }}>
+    <RootProvider
+      theme={{ enabled: false }}
+      search={{ options: { api: searchApi } }}
+    >
       <DocsLayout
-        tree={docsSource.getPageTree()}
+        tree={source.getPageTree()}
         githubUrl="https://github.com/oiper/desktop"
         nav={{ title: 'OiPer', url: '/' }}
         sidebar={{ defaultOpenLevel: 1 }}
