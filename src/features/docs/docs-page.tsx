@@ -7,15 +7,16 @@ import {
 import { createRelativeLink } from 'fumadocs-ui/mdx'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { docsSource } from './docs-source'
+import type { DocumentationSource } from './docs-source'
 import { getMdxComponents } from './mdx-components'
 
 interface DocumentationPageProps {
+  source: DocumentationSource
   slug?: string[]
 }
 
-export function DocumentationPage({ slug }: DocumentationPageProps) {
-  const page = docsSource.getPage(slug)
+export function DocumentationPage({ source, slug }: DocumentationPageProps) {
+  const page = source.getPage(slug)
 
   if (!page) notFound()
 
@@ -28,7 +29,7 @@ export function DocumentationPage({ slug }: DocumentationPageProps) {
       <DocsBody>
         <MdxContent
           components={getMdxComponents({
-            a: createRelativeLink(docsSource, page),
+            a: createRelativeLink(source, page),
           })}
         />
       </DocsBody>
@@ -36,8 +37,11 @@ export function DocumentationPage({ slug }: DocumentationPageProps) {
   )
 }
 
-export function getDocumentationMetadata(slug?: string[]): Metadata {
-  const page = docsSource.getPage(slug)
+export function getDocumentationMetadata(
+  source: DocumentationSource,
+  slug?: string[]
+): Metadata {
+  const page = source.getPage(slug)
 
   if (!page) notFound()
 
@@ -50,6 +54,6 @@ export function getDocumentationMetadata(slug?: string[]): Metadata {
   }
 }
 
-export function getDocumentationStaticParams() {
-  return docsSource.generateParams()
+export function getDocumentationStaticParams(source: DocumentationSource) {
+  return source.generateParams()
 }

@@ -9,3 +9,5 @@ export const docsSource = loader({
   baseUrl: '/docs',
   source: docs.toFumadocsSource(),
 })
+
+export type DocumentationSource = typeof docsSource
