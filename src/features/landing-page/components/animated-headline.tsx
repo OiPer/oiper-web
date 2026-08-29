@@ -69,7 +69,7 @@ function ScrambleText({
 
       if (complete === queue.length) return
 
-      frame += 1
+      frame += 0.75
       rafRef.current = requestAnimationFrame(update)
     }
 
