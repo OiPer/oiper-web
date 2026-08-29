@@ -1,0 +1,94 @@
+---
+title: Rust API
+description: The oiper-snippets API — parse_config, apply_snippets, Config, and ConfigError.
+---
+
+```bash
+cargo add oiper-snippets
+```
+
+The crate depends on `serde_json` for its input type and
+[regress](https://docs.rs/regress/latest/regress/) for regex matching.
+
+```rust
+use oiper_snippets::{apply_snippets, parse_config, Config, ConfigError, ConfigErrorKind};
+```
+
+## `parse_config(raw: &Value) -> Result<Config, ConfigError>`
+
+Validates a `serde_json::Value` and returns a parsed `Config`. Parsing checks every rule in
+[Configuration](/docs/snippets/configuration) and compiles each matcher into a regex.
+
+Parse once and reuse the result. Compiling regexes on every call is the main avoidable cost.
+
+```rust
+let raw = serde_json::json!([
+    { "when": [{ "value": "brb" }], "body": "be right back" }
+]);
+
+let config = parse_config(&raw)?;
+```
+
+## `apply_snippets(input: &str, config: &Config) -> String`
+
+Applies a parsed configuration to `input` and returns the resulting string. It takes only a
+parsed `Config`, so it cannot fail on invalid configuration and returns the output directly.
+
+```rust
+let output = apply_snippets("brb, one moment", &config);
+// "be right back, one moment"
+```
+
+See [Matching](/docs/snippets/matching) for the exact substitution rules.
+
+## `Config`
+
+An opaque handle to the parsed snippets, produced by `parse_config` and consumed by
+`apply_snippets`. Its fields are private and it cannot be modified after parsing.
+
+## `ConfigError`
+
+Returned by `parse_config` when validation fails. It implements `std::error::Error`, and its
+`Display` output names the position that failed:
+
+```text
+snippet 0, matcher 1: unsupported regex flag 'g'
+snippet 2: 'body' must not be empty
+configuration must be an array
+```
+
+Three accessors let you handle the failure programmatically instead of parsing that string:
+
+- `kind(&self) -> &ConfigErrorKind` — what went wrong.
+- `snippet(&self) -> Option<usize>` — the index of the offending snippet, when the error is
+  attributable to one.
+- `matcher(&self) -> Option<usize>` — the index of the offending matcher within that snippet.
+
+```rust
+match parse_config(&raw) {
+    Ok(config) => config,
+    Err(error) => {
+        eprintln!("{error}");
+        if let ConfigErrorKind::UnsupportedFlag(flag) = error.kind() {
+            eprintln!("flag '{flag}' is not supported");
+        }
+        return;
+    }
+}
+```
+
+## `ConfigErrorKind`
+
+A non-exhaustive summary of the variants, grouped by what they describe:
+
+| Area                | Variants                                                                             |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| Configuration shape | `NotAnArray`, `SnippetNotAnObject`                                                   |
+| Snippet fields      | `BodyNotAString`, `BodyEmpty`, `WhenNotAnArray`, `WhenEmpty`                         |
+| Matcher shape       | `MatcherNotAnObject`, `MatcherDefinesBothForms`, `MatcherDefinesNoForm`              |
+| Literal matchers    | `ValueNotAString`, `ValueEmpty`, `FlagsOnLiteralMatcher`, `DuplicateLiteral(String)` |
+| Regex matchers      | `RegexNotAString`, `RegexEmpty`, `InvalidRegex(String)`, `DuplicateRegex(String)`    |
+| Flags               | `FlagsNotAString`, `UnsupportedFlag(char)`, `DuplicateFlag(char)`                    |
+
+`ConfigErrorKind` derives `Debug`, `Clone`, `PartialEq`, and `Eq`, and implements `Display`
+with the message shown after the position prefix.

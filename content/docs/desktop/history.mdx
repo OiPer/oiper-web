@@ -1,0 +1,42 @@
+---
+title: History
+description: Review past dictations, play back the audio, and clear your records.
+---
+
+Every dictation is recorded on the **History** page: what you said, what was inserted, how
+long each stage took, and which application you were dictating into. It is the fastest way
+to find out why a dictation did not turn out the way you expected.
+
+## The list
+
+The table shows the transcript, the model used, the audio length, the total processing time,
+and when it ran. Columns can be sorted, and the search box filters by transcript text.
+
+## Details of a run
+
+Opening a record shows:
+
+- The raw transcript, the formatted output when [formatting](/docs/desktop/formatting) ran,
+  and any error the run produced.
+- A timeline of every stage — preparation, resampling, context, transcription, enhancement,
+  and injection — so a slow dictation can be traced to the stage responsible.
+- The application you dictated into, the profile, the language, the Whisper backend, the
+  models used, and the recording duration.
+- An audio player for the original recording.
+
+Transcripts can be copied to the clipboard from here.
+
+## Where it is stored
+
+History lives in the `oiper.db` database and the recorded audio in the `audio/` folder,
+both inside OiPer's application data directory on your machine. Neither is uploaded
+anywhere.
+
+Note that a record includes the name, title, and path of the application that was focused
+when you recorded. In `oiper` mode it also includes text read from that window, which is
+sent along with the audio to improve accuracy. If that matters for what you dictate into,
+clear your history regularly.
+
+## Clearing history
+
+**Delete all history** removes every record. It cannot be undone.

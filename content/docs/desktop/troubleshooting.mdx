@@ -1,0 +1,70 @@
+---
+title: Troubleshooting
+description: Fixes for hotkeys that do nothing, missing text, bad audio, and slow transcription.
+---
+
+Start on the [History](/docs/desktop/history) page. If there is no record for the dictation,
+recording never started. If there is a record with a transcript but nothing was inserted,
+the problem is insertion. That split narrows most issues immediately.
+
+## The hotkey does nothing
+
+- Check the profile actually has a hotkey set, and that no other profile uses the same
+  combination. OiPer warns about both in the app.
+- On macOS, **Input Monitoring** must be granted. See
+  [Installation](/docs/desktop/installation#permissions).
+- Another application may have claimed the combination first. Try a different one.
+- If the keys need to keep working in the app underneath, enable **Bypass hotkey** in
+  [Settings](/docs/desktop/settings#advanced).
+
+## Nothing is typed, but the transcript exists
+
+- On macOS, **Accessibility** must be granted.
+- Some applications reject synthetic paste events. Change the **Insert method** — `direct`
+  works in places where `Ctrl+V` does not, and the reverse is also true.
+- Enable **Write to clipboard** so you can paste the result manually while you narrow it
+  down.
+
+## Recording is silent or catches nothing
+
+- Confirm **Microphone** permission is granted.
+- Check the **Input Device** settings. If you are not using the system default, the device
+  at the top of your list may be unavailable.
+- If you hear the no-speech sound, the recording contained no detectable speech — usually a
+  muted microphone or the wrong input device.
+
+## The overlay appears in the wrong place
+
+On macOS this needs **Screen Recording** permission, which is how OiPer finds the active
+window's position.
+
+## Transcription is slow
+
+- Use a smaller local model. Large v3 Turbo gives close to large-model accuracy at
+  roughly half the size; Base or Small are much faster again.
+- Set **Whisper Hardware** to **GPU** if your machine has a usable one, or to **CPU** if
+  GPU transcription is failing or producing bad output.
+- [Formatting](/docs/desktop/formatting) adds a language model call to every dictation.
+  Turning it off, or using a faster model, removes that delay.
+
+## Local transcription fails or produces nothing
+
+The model may not be downloaded. Open the [Models](/docs/desktop/models) page and check the
+model your profile uses; OiPer also warns about this in the app.
+
+## Cloud dictation fails
+
+- The model needs an API key, or an environment variable holding one. A cloud model used by
+  a profile with no authentication is flagged in the app.
+- Confirm the base URL and model name match what your provider expects.
+- If a profile transcribes through a language model, that model must accept audio input.
+
+## Getting more detail
+
+Logs are written to the `logs/` folder in OiPer's application data directory:
+
+- macOS: `~/Library/Application Support/com.oiper.desktop/logs`
+- Windows: `%APPDATA%\com.oiper.desktop\logs`
+
+Your settings live in `config.json` in the same directory. Deleting that directory resets
+OiPer completely, including your profiles, history, and downloaded models.

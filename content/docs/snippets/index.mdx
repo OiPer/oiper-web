@@ -1,0 +1,73 @@
+---
+title: Snippets
+description: A general-purpose library for applying configured snippets to an input string, for TypeScript and Rust.
+---
+
+`@oiper/snippets` (TypeScript) and `oiper-snippets` (Rust) apply a configured set of snippets
+to an input string. A snippet is a set of matchers and the text to substitute when one of them
+matches.
+
+The library is independent of any application, input source, or output destination. It has no
+opinion about where the configuration comes from or what you do with the result — you hand it
+a parsed configuration and a string, and it returns a string.
+
+Given the same valid configuration and the same input, both libraries return the same output.
+
+## Install
+
+```bash
+npm install @oiper/snippets
+```
+
+```bash
+cargo add oiper-snippets
+```
+
+Both are MIT licensed, and the source for both lives in
+[github.com/OiPer/oiper-snippets](https://github.com/OiPer/oiper-snippets).
+
+## Example
+
+```ts
+import { applySnippets, parseConfig } from '@oiper/snippets'
+
+const config = parseConfig([
+  {
+    when: [{ value: 'brb' }, { regex: '\\bbr+b\\b', flags: 'i' }],
+    body: 'be right back',
+  },
+])
+
+applySnippets('brb, one moment', config)
+// 'be right back, one moment'
+```
+
+```rust
+use oiper_snippets::{apply_snippets, parse_config};
+
+let raw = serde_json::json!([
+    {
+        "when": [{ "value": "brb" }, { "regex": "\\bbr+b\\b", "flags": "i" }],
+        "body": "be right back"
+    }
+]);
+
+let config = parse_config(&raw)?;
+let output = apply_snippets("brb, one moment", &config);
+// "be right back, one moment"
+```
+
+Configuration is parsed once and reused. Parsing validates the configuration and compiles the
+regexes; applying is a cheap single pass over the input.
+
+## Where to go next
+
+- [Configuration](/docs/snippets/configuration) — the config format and its validation rules
+- [Matching](/docs/snippets/matching) — exactly how input is matched and replaced
+- [TypeScript API](/docs/snippets/typescript) and [Rust API](/docs/snippets/rust)
+
+## Non-goals
+
+The library deliberately does not provide configuration storage, JSON or JSONC file parsing,
+CRUD operations, UI behaviour, recursive expansion, capture interpolation, templates, or
+automatic word boundaries. Those belong to whatever is calling it.
