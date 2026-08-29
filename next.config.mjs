@@ -6,6 +6,7 @@ const withMDX = createMDX()
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   compiler: { removeConsole: process.env.NODE_ENV === 'production' },
+  devIndicators: false,
 }
 
 export default withMDX(nextConfig)
