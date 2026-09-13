@@ -72,12 +72,6 @@ We focus on three pillars:
 - Model name configuration
 - Text optimization: choose local or online processing
 
-### Advanced Options
-
-- Transcription through LLMs for extremely accurate results
-  - Examples: Gemini 2.5 Flash Lite, smaller specialized models
-  - Perfect for technical terminology or specialized content
-
 ---
 
 ## ⚡ Performance

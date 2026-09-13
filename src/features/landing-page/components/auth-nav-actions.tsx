@@ -56,7 +56,7 @@ function LoadingAvatar() {
         href={DOWNLOAD_URL}
         className={cn(
           buttonVariants({ size: 'lg' }),
-          'h-10 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90'
+          'hidden h-10 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90 sm:inline-flex'
         )}
       >
         Download
@@ -111,7 +111,7 @@ function SignedOutActions() {
         href={DOWNLOAD_URL}
         className={cn(
           buttonVariants({ size: 'lg' }),
-          'h-10 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90'
+          'hidden h-10 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90 sm:inline-flex'
         )}
       >
         Download
@@ -150,7 +150,7 @@ function SignedInActions() {
         href={DOWNLOAD_URL}
         className={cn(
           buttonVariants({ size: 'lg' }),
-          'h-9 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90'
+          'hidden h-9 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90 sm:inline-flex'
         )}
       >
         Download
