@@ -1,5 +1,5 @@
 const RELEASES_ENDPOINT = 'https://api.github.com/repos/oiper/desktop/releases'
-const RELEASES_PER_PAGE = 100
+const RELEASES_PER_PAGE = 50
 const MAX_PAGES = 10
 const REVALIDATE_SECONDS = 3600
 const NO_NOTES_PLACEHOLDER = '_No notable changes in this release._'
@@ -10,6 +10,7 @@ interface GitHubRelease {
   html_url: string
   published_at: string | null
   draft: boolean
+  assets: { name: string; browser_download_url: string }[]
 }
 
 export interface Release {
@@ -18,6 +19,7 @@ export interface Release {
   url: string
   publishedAt: string
   notes: string
+  assets: { name: string; url: string }[]
 }
 
 async function fetchReleasePage(page: number) {
@@ -73,6 +75,10 @@ export async function getReleases() {
         url: release.html_url,
         publishedAt: release.published_at,
         notes: toNotes(release.body),
+        assets: release.assets.map((asset) => ({
+          name: asset.name,
+          url: asset.browser_download_url,
+        })),
       })
     }
 
