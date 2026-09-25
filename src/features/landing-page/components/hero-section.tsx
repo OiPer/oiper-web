@@ -106,7 +106,7 @@ export function HeroSection() {
             />
             <OtherDownloads
               className="mt-4 justify-center text-sm text-white/40"
-              linkClassName="hover:text-white/70"
+              linkClassName="underline-offset-4 hover:text-white/70 hover:underline"
             />
           </div>
         </div>
