@@ -10,7 +10,7 @@ interface GitHubRelease {
   html_url: string
   published_at: string | null
   draft: boolean
-  assets: { name: string; browser_download_url: string }[]
+  assets: { name: string; browser_download_url: string; size: number }[]
 }
 
 export interface Release {
@@ -19,7 +19,7 @@ export interface Release {
   url: string
   publishedAt: string
   notes: string
-  assets: { name: string; url: string }[]
+  assets: { name: string; url: string; size: number }[]
 }
 
 async function fetchReleasePage(page: number) {
@@ -78,6 +78,7 @@ export async function getReleases() {
         assets: release.assets.map((asset) => ({
           name: asset.name,
           url: asset.browser_download_url,
+          size: asset.size,
         })),
       })
     }

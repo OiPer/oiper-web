@@ -6,6 +6,12 @@ export const OS_LABELS: Record<OS, string> = {
   linux: 'Linux',
 }
 
+export const OS_REQUIREMENTS: Record<OS, string> = {
+  windows: 'Windows 10 or later',
+  macos: 'macOS 10.15 or later',
+  linux: 'x64 desktop distributions',
+}
+
 export const PACKAGES = [
   {
     id: 'windows',

@@ -24,15 +24,19 @@ export function useOS() {
 export function DownloadButton({
   className,
   iconClassName = 'size-4',
+  compact = false,
 }: {
   className?: string
   iconClassName?: string
+  compact?: boolean
 }) {
   const os = useOS()
+  const label = os ? `Download for ${OS_LABELS[os]}` : 'Download OiPer'
 
   return (
     <a
       href={os ? `${DOWNLOAD_URL}/${os}` : DOWNLOAD_URL}
+      aria-label={compact ? label : undefined}
       className={cn(
         'inline-flex items-center justify-center gap-2.5',
         className
@@ -43,7 +47,7 @@ export function DownloadButton({
       ) : (
         <Download className={iconClassName} />
       )}
-      {os ? `Download for ${OS_LABELS[os]}` : 'Download OiPer'}
+      {compact ? 'Download' : label}
     </a>
   )
 }

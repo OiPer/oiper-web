@@ -53,6 +53,7 @@ function LoadingAvatar() {
         <div className="h-10 w-28 animate-pulse rounded-md border bg-white/7" />
       </div>
       <DownloadButton
+        compact
         className={cn(
           buttonVariants({ size: 'lg' }),
           'hidden h-10 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90 sm:inline-flex'
@@ -105,6 +106,7 @@ function SignedOutActions() {
       </div>
 
       <DownloadButton
+        compact
         className={cn(
           buttonVariants({ size: 'lg' }),
           'hidden h-10 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90 sm:inline-flex'
@@ -141,6 +143,7 @@ function SignedInActions() {
   return (
     <div className="flex items-center gap-3">
       <DownloadButton
+        compact
         className={cn(
           buttonVariants({ size: 'lg' }),
           'hidden h-9 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90 sm:inline-flex'

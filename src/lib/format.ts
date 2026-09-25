@@ -55,6 +55,14 @@ export function formatDateTime(value: string | number | Date) {
   return dateTimeFormatter.format(new Date(value))
 }
 
+export function formatFileSize(bytes: number) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'unit',
+    unit: 'megabyte',
+    maximumFractionDigits: 1,
+  }).format(bytes / 1_000_000)
+}
+
 export function formatMinutes(value: number, digits = 0) {
   return `${new Intl.NumberFormat('en-US', {
     minimumFractionDigits: digits,
