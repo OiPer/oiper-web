@@ -122,10 +122,15 @@ export function OtherDownloads({
   className?: string
   linkClassName?: string
 }) {
-  const dot = <span aria-hidden="true">·</span>
+  const separator = (
+    <span
+      aria-hidden="true"
+      className="h-2.5 rounded-full border-l-2 border-current/50"
+    />
+  )
 
   return (
-    <p className={cn('flex flex-wrap items-center gap-x-2', className)}>
+    <p className={cn('flex flex-wrap items-center gap-x-2.5', className)}>
       <span className="contents in-data-download:hidden">
         <Link href={DOWNLOAD_URL} className={linkClassName}>
           Other platforms and versions
@@ -139,7 +144,7 @@ export function OtherDownloads({
               <a href={`${DOWNLOAD_URL}/${other.id}`} className={linkClassName}>
                 {other.label}
               </a>
-              {dot}
+              {separator}
             </Fragment>
           ))}
           <Link href={DOWNLOAD_URL} className={linkClassName}>
