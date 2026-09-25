@@ -80,3 +80,25 @@ export function detectOS(userAgent: string): OS | null {
   if (/linux|x11/i.test(userAgent)) return 'linux'
   return null
 }
+
+export async function isIntelMac() {
+  const uaData = (
+    navigator as Navigator & {
+      userAgentData?: {
+        getHighEntropyValues(
+          hints: string[]
+        ): Promise<{ architecture?: string }>
+      }
+    }
+  ).userAgentData
+  if (uaData) {
+    const { architecture } = await uaData.getHighEntropyValues(['architecture'])
+    return architecture === 'x86'
+  }
+  const gl = document.createElement('canvas').getContext('webgl')
+  const info = gl && gl.getExtension('WEBGL_debug_renderer_info')
+  const renderer = info
+    ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL))
+    : ''
+  return /intel|amd|radeon|nvidia/i.test(renderer)
+}

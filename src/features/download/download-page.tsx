@@ -1,7 +1,7 @@
 import { OiPerLogoText } from '@/components/logo-text'
 import { buttonVariants } from '@/components/ui/button'
 import { Wrapper } from '@/components/wrapper'
-import type { Release } from '@/features/changelog/github-releases'
+import { findLatest, type Release } from '@/features/changelog/github-releases'
 import { AuthNavActions } from '@/features/landing-page/components/auth-nav-actions'
 import { FooterSection } from '@/features/landing-page/components/footer-section'
 import {
@@ -40,7 +40,7 @@ export function DownloadPage({
   releases: Release[]
   version?: string
 }) {
-  const latest = releases.at(0)
+  const latest = findLatest(releases)
   const selected = releases.find((release) => release.version === version)
   const ordered = selected
     ? [selected, ...releases.filter((release) => release !== selected)]
@@ -92,12 +92,12 @@ export function DownloadPage({
       <Wrapper className="pb-40">
         {latest ? (
           <div className="divide-border mx-auto max-w-3xl divide-y">
-            {ordered.slice(0, VISIBLE_VERSIONS).map((release, index) => (
+            {ordered.slice(0, VISIBLE_VERSIONS).map((release) => (
               <VersionRow
                 key={release.version}
                 release={release}
                 latest={release === latest}
-                open={index === 0}
+                open={release === (selected ?? latest)}
                 pinned={release === selected}
               />
             ))}
@@ -218,6 +218,12 @@ function VersionRow({
             <>
               <Separator />
               Latest
+            </>
+          )}
+          {release.prerelease && (
+            <>
+              <Separator />
+              Pre-release
             </>
           )}
         </span>

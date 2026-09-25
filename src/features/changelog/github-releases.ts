@@ -10,6 +10,7 @@ interface GitHubRelease {
   html_url: string
   published_at: string | null
   draft: boolean
+  prerelease: boolean
   assets: { name: string; browser_download_url: string; size: number }[]
 }
 
@@ -19,6 +20,7 @@ export interface Release {
   url: string
   publishedAt: string
   notes: string
+  prerelease: boolean
   assets: { name: string; url: string; size: number }[]
 }
 
@@ -57,6 +59,10 @@ function toAnchor(version: string) {
   return version.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-')
 }
 
+export function findLatest(releases: Release[]) {
+  return releases.find((release) => !release.prerelease) ?? releases.at(0)
+}
+
 export const RELEASES_PER_CHANGELOG_PAGE = 20
 
 export async function getReleases() {
@@ -75,6 +81,7 @@ export async function getReleases() {
         url: release.html_url,
         publishedAt: release.published_at,
         notes: toNotes(release.body),
+        prerelease: release.prerelease,
         assets: release.assets.map((asset) => ({
           name: asset.name,
           url: asset.browser_download_url,

@@ -2,23 +2,38 @@ import { DOWNLOAD_URL } from '@/features/landing-page/constants/links'
 import { cn } from '@/lib/utils'
 import { Download } from 'lucide-react'
 import { OSIcon } from './os-icons'
-import { detectOS, OS_LABELS, type OS } from './platforms'
+import {
+  detectOS,
+  isIntelMac,
+  OS_LABELS,
+  type OS,
+  type Package,
+} from './platforms'
 
 export function DetectOSScript() {
   return (
     <script
       dangerouslySetInnerHTML={{
-        __html: `try{var os=(${detectOS})(navigator.userAgent);if(os)document.documentElement.dataset.os=os}catch(e){}`,
+        __html: `try{var d=document.documentElement.dataset,os=(${detectOS})(navigator.userAgent);if(os)d.os=os;if(os==='macos')(${isIntelMac})().then(function(x){if(x)d.os='macos-intel'},function(){})}catch(e){}`,
       }}
     />
   )
 }
 
-const VISIBLE_WHEN: Record<OS, string> = {
-  windows: 'in-data-[os=windows]:contents',
-  macos: 'in-data-[os=macos]:contents',
-  linux: 'in-data-[os=linux]:contents',
-}
+const BUTTONS: { id: Package['id']; os: OS; visibleWhen: string }[] = [
+  {
+    id: 'windows',
+    os: 'windows',
+    visibleWhen: 'in-data-[os=windows]:contents',
+  },
+  { id: 'macos', os: 'macos', visibleWhen: 'in-data-[os=macos]:contents' },
+  {
+    id: 'macos-intel',
+    os: 'macos',
+    visibleWhen: 'in-data-[os=macos-intel]:contents',
+  },
+  { id: 'linux', os: 'linux', visibleWhen: 'in-data-[os=linux]:contents' },
+]
 
 export function DownloadButton({
   className,
@@ -47,12 +62,12 @@ export function DownloadButton({
         </a>
       </span>
 
-      {(Object.keys(OS_LABELS) as OS[]).map((os) => {
+      {BUTTONS.map(({ id, os, visibleWhen }) => {
         const label = `Download for ${OS_LABELS[os]}`
         return (
-          <span key={os} className={cn('hidden', VISIBLE_WHEN[os])}>
+          <span key={id} className={cn('hidden', visibleWhen)}>
             <a
-              href={`${DOWNLOAD_URL}/${os}`}
+              href={`${DOWNLOAD_URL}/${id}`}
               aria-label={compact ? label : undefined}
               className={buttonClassName}
             >
