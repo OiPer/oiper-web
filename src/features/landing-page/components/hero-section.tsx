@@ -101,7 +101,7 @@ export function HeroSection() {
 
           <div className="mt-10">
             <DownloadButton
-              className="h-13 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+              className="h-13 rounded-md bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
               iconClassName="size-5"
             />
             <OtherDownloads
