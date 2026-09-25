@@ -66,32 +66,23 @@ export function findAsset<T extends { name: string }>(
   return assets.find((asset) => asset.name.endsWith(pkg.suffix))
 }
 
-export function detectOS(userAgent: string): OS | null {
-  if (/android|iphone|ipad|ipod/i.test(userAgent)) return null
+export function detectPackage(
+  userAgent: string,
+  maxTouchPoints: number
+): Package['id'] | null {
+  if (/android|iphone|ipad|ipod|cros/i.test(userAgent)) return null
   if (/windows/i.test(userAgent)) return 'windows'
-  if (/mac os x|macintosh/i.test(userAgent)) return 'macos'
-  if (/linux|x11/i.test(userAgent)) return 'linux'
-  return null
-}
 
-export async function isIntelMac() {
-  const uaData = (
-    navigator as Navigator & {
-      userAgentData?: {
-        getHighEntropyValues(
-          hints: string[]
-        ): Promise<{ architecture?: string }>
-      }
-    }
-  ).userAgentData
-  if (uaData) {
-    const { architecture } = await uaData.getHighEntropyValues(['architecture'])
-    return architecture === 'x86'
+  if (/mac os x|macintosh/i.test(userAgent)) {
+    return maxTouchPoints > 1 ? null : 'macos'
   }
-  const gl = document.createElement('canvas').getContext('webgl')
-  const info = gl && gl.getExtension('WEBGL_debug_renderer_info')
-  const renderer = info
-    ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL))
-    : ''
-  return /intel|amd|radeon|nvidia/i.test(renderer)
+
+  if (/linux|x11/i.test(userAgent)) {
+    if (/aarch64|armv/i.test(userAgent)) return null
+    if (/ubuntu|debian/i.test(userAgent)) return 'linux-deb'
+    if (/fedora/i.test(userAgent)) return 'linux-rpm'
+    return 'linux'
+  }
+
+  return null
 }
