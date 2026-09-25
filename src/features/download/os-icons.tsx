@@ -3,7 +3,7 @@ import type { OS } from './platforms'
 const ICONS: Record<OS, { viewBox: string; path: string }> = {
   windows: {
     viewBox: '0 0 24 24',
-    path: 'M0 0h11.377v11.372H0Zm12.623 0H24v11.372H12.623ZM0 12.623h11.377V24H0Zm12.623 0H24V24H12.623',
+    path: 'M21 20.157a1.75 1.75 0 0 1-1.954 1.738L12 21.065V13h9zm-11-7.158v7.832l-6.233-.734A2 2 0 0 1 2 18.111v-5.112zm9.046-10.893A1.75 1.75 0 0 1 21 3.844V11h-9V2.933zM10 11H2V5.89a2 2 0 0 1 1.767-1.986L10 3.169z',
   },
   macos: {
     viewBox: '0 0 24 24',
