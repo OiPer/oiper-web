@@ -1,12 +1,15 @@
 'use client'
 
 import { OiPerLogoText } from '@/components/logo-text'
-import { DownloadButton } from '@/features/download/download-button'
+import {
+  DownloadButton,
+  OtherDownloads,
+} from '@/features/download/download-button'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Wrapper } from '../../../components/wrapper'
-import { DOWNLOAD_URL, HOME } from '../constants/links'
+import { HOME } from '../constants/links'
 import { AnimatedHeadline } from './animated-headline'
 import { AuthNavActions } from './auth-nav-actions'
 
@@ -98,15 +101,13 @@ export function HeroSection() {
 
           <div className="mt-10">
             <DownloadButton
-              className="h-13 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+              className="h-13 rounded-md bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
               iconClassName="size-5"
             />
-            <Link
-              href={DOWNLOAD_URL}
-              className="mt-4 block text-sm text-white/40 hover:text-white/70"
-            >
-              Other platforms and versions
-            </Link>
+            <OtherDownloads
+              className="mt-4 justify-center text-sm text-white/40"
+              linkClassName="underline-offset-4 hover:text-white/70 hover:underline"
+            />
           </div>
         </div>
       </Wrapper>
