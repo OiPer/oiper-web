@@ -6,67 +6,61 @@ export const OS_LABELS: Record<OS, string> = {
   linux: 'Linux',
 }
 
-export const OS_REQUIREMENTS: Record<OS, string> = {
-  windows: 'Windows 10 or later',
-  macos: 'macOS 10.15 or later',
-  linux: 'x64 desktop distributions',
-}
-
 export const PACKAGES = [
   {
     id: 'windows',
     os: 'windows',
     label: 'Installer',
-    detail: 'x64 · .exe',
+    details: ['x64'],
     suffix: '_x64-setup.exe',
   },
   {
     id: 'windows-msi',
     os: 'windows',
     label: 'MSI package',
-    detail: 'x64 · .msi',
+    details: ['x64'],
     suffix: '_x64_en-US.msi',
   },
   {
     id: 'macos',
     os: 'macos',
     label: 'Apple Silicon',
-    detail: 'M1 or later · .dmg',
+    details: ['M1 or later'],
     suffix: '_aarch64.dmg',
   },
   {
     id: 'macos-intel',
     os: 'macos',
     label: 'Intel',
-    detail: 'x64 · .dmg',
+    details: ['x64'],
     suffix: '_x64.dmg',
   },
   {
     id: 'linux',
     os: 'linux',
     label: 'AppImage',
-    detail: 'x64 · any distro',
+    details: ['x64', 'Any distro'],
     suffix: '_amd64.AppImage',
   },
   {
     id: 'linux-deb',
     os: 'linux',
     label: 'Debian / Ubuntu',
-    detail: 'x64 · .deb',
+    details: ['x64'],
     suffix: '_amd64.deb',
   },
   {
     id: 'linux-rpm',
     os: 'linux',
     label: 'Fedora / RHEL',
-    detail: 'x86_64 · .rpm',
+    details: ['x86_64'],
     suffix: '.x86_64.rpm',
   },
 ] as const satisfies {
   id: string
   os: OS
   label: string
-  detail: string
+  details: readonly string[]
   suffix: string
 }[]
 

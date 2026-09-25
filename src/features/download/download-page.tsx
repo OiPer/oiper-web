@@ -12,20 +12,19 @@ import {
 import { formatDate, formatFileSize } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { ArrowUpRight, ChevronDown, Download } from 'lucide-react'
+import { Fragment } from 'react'
 import { DownloadButton } from './download-button'
 import { OSIcon } from './os-icons'
 import {
   findAsset,
   OS_LABELS,
-  OS_REQUIREMENTS,
   PACKAGES,
   type OS,
   type Package,
 } from './platforms'
 import { ScrollIntoView } from './scroll-into-view'
 
-const VISIBLE_PREVIOUS_VERSIONS = 6
-const ALL_DOWNLOADS_ID = 'all-downloads'
+const VISIBLE_VERSIONS = 7
 const OSES = Object.keys(OS_LABELS) as OS[]
 
 function getBuilds(release: Release) {
@@ -42,15 +41,11 @@ export function DownloadPage({
   releases: Release[]
   selectedVersion?: string
 }) {
-  const [latest, ...previous] = releases
+  const latest = releases.at(0)
   const selected = releases.find(
     (release) => release.version === selectedVersion
   )
-  const selectedIndex = selected ? previous.indexOf(selected) : -1
-  let scrollTarget = null
-  if (selected) {
-    scrollTarget = selected === latest ? ALL_DOWNLOADS_ID : selected.anchor
-  }
+  const selectedIndex = selected ? releases.indexOf(selected) : -1
 
   return (
     <main className="dark bg-background text-foreground min-h-screen overflow-hidden">
@@ -94,24 +89,47 @@ export function DownloadPage({
         </div>
       </Wrapper>
 
-      <Wrapper className="pb-32">
-        <div
-          id={ALL_DOWNLOADS_ID}
-          className="border-border scroll-mt-8 border-t pt-16"
-        >
+      <Wrapper className="pb-40">
+        <div className="border-border border-t pt-16 text-center">
           <h2 className="text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">
-            All downloads
+            Versions
           </h2>
           <p className="text-muted-foreground mt-3">
-            Pick the build that matches your system.
+            Every release stays available if you need an older build.
           </p>
         </div>
 
         {latest ? (
-          <div className="mt-14 grid gap-x-8 gap-y-14 md:grid-cols-3">
-            {OSES.map((os) => (
-              <PlatformColumn key={os} os={os} release={latest} />
+          <div className="divide-border mx-auto mt-12 max-w-3xl divide-y">
+            {releases.slice(0, VISIBLE_VERSIONS).map((release) => (
+              <VersionRow
+                key={release.version}
+                release={release}
+                latest={release === latest}
+                open={release === (selected ?? latest)}
+              />
             ))}
+
+            {releases.length > VISIBLE_VERSIONS && (
+              <details
+                className="group/older"
+                open={selectedIndex >= VISIBLE_VERSIONS}
+              >
+                <summary className="text-muted-foreground hover:text-foreground flex cursor-pointer list-none justify-center pt-10 pb-2 text-sm group-open/older:hidden [&::-webkit-details-marker]:hidden">
+                  Show {releases.length - VISIBLE_VERSIONS} older versions
+                </summary>
+                <div className="divide-border divide-y">
+                  {releases.slice(VISIBLE_VERSIONS).map((release) => (
+                    <VersionRow
+                      key={release.version}
+                      release={release}
+                      latest={false}
+                      open={release === selected}
+                    />
+                  ))}
+                </div>
+              </details>
+            )}
           </div>
         ) : (
           <p className="text-muted-foreground mt-12">
@@ -127,78 +145,9 @@ export function DownloadPage({
         )}
       </Wrapper>
 
-      {previous.length > 0 && (
-        <Wrapper className="pb-40">
-          <div className="border-border border-t pt-16 text-center">
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">
-              Previous versions
-            </h2>
-            <p className="text-muted-foreground mt-3">
-              Every release stays available if you need an older build.
-            </p>
-          </div>
-
-          <div className="divide-border mx-auto mt-12 max-w-3xl divide-y">
-            {previous.slice(0, VISIBLE_PREVIOUS_VERSIONS).map((release) => (
-              <VersionRow
-                key={release.version}
-                release={release}
-                open={release === selected}
-              />
-            ))}
-
-            {previous.length > VISIBLE_PREVIOUS_VERSIONS && (
-              <details
-                className="group/older divide-border divide-y"
-                open={selectedIndex >= VISIBLE_PREVIOUS_VERSIONS}
-              >
-                <summary className="text-muted-foreground hover:text-foreground flex cursor-pointer list-none justify-center py-4 text-sm group-open/older:hidden [&::-webkit-details-marker]:hidden">
-                  Show {previous.length - VISIBLE_PREVIOUS_VERSIONS} older
-                  versions
-                </summary>
-                {previous.slice(VISIBLE_PREVIOUS_VERSIONS).map((release) => (
-                  <VersionRow
-                    key={release.version}
-                    release={release}
-                    open={release === selected}
-                  />
-                ))}
-              </details>
-            )}
-          </div>
-        </Wrapper>
-      )}
-
-      {scrollTarget && <ScrollIntoView id={scrollTarget} />}
+      {selected && <ScrollIntoView id={selected.anchor} />}
       <FooterSection />
     </main>
-  )
-}
-
-function PlatformColumn({ os, release }: { os: OS; release: Release }) {
-  const builds = getBuilds(release).filter(({ pkg }) => pkg.os === os)
-
-  return (
-    <div>
-      <div className="flex items-center gap-4 px-4 pb-6">
-        <OSIcon os={os} className="size-7 shrink-0" />
-        <div>
-          <h3 className="text-lg font-medium">{OS_LABELS[os]}</h3>
-          <p className="text-muted-foreground text-sm">{OS_REQUIREMENTS[os]}</p>
-        </div>
-      </div>
-
-      <ul className="divide-border divide-y">
-        {builds.map(({ pkg, asset }) => (
-          <li
-            key={pkg.id}
-            className="hover:bg-muted/50 rounded-2xl last:border-b"
-          >
-            <BuildLink pkg={pkg} url={asset.url} size={asset.size} />
-          </li>
-        ))}
-      </ul>
-    </div>
   )
 }
 
@@ -206,27 +155,26 @@ function BuildLink({
   pkg,
   url,
   size,
-  withOS = false,
 }: {
   pkg: Package
   url: string
   size: number
-  withOS?: boolean
 }) {
   return (
     <a href={url} className="group/build flex items-center gap-4 px-4 py-3.5">
-      {withOS && (
-        <OSIcon os={pkg.os} className="text-muted-foreground size-4 shrink-0" />
-      )}
-      <span className="min-w-0 flex-1">
-        <span className="block text-sm font-medium">
-          {withOS ? `${OS_LABELS[pkg.os]} ${pkg.label}` : pkg.label}
+      <OSIcon os={pkg.os} className="text-muted-foreground size-4 shrink-0" />
+      <span className="min-w-0 flex-1 text-sm font-medium">
+        {OS_LABELS[pkg.os]} {pkg.label}
+        <span className="text-muted-foreground ml-4 hidden items-center gap-3 font-normal group-hover/build:inline-flex">
+          {pkg.details.map((detail, index) => (
+            <Fragment key={detail}>
+              {index > 0 && (
+                <span className="via-muted-foreground/30 h-3.5 w-px bg-linear-to-b from-transparent to-transparent" />
+              )}
+              {detail}
+            </Fragment>
+          ))}
         </span>
-        {!withOS && (
-          <span className="text-muted-foreground block text-xs">
-            {pkg.detail}
-          </span>
-        )}
       </span>
       <span className="text-muted-foreground text-xs tabular-nums">
         {formatFileSize(size)}
@@ -236,7 +184,15 @@ function BuildLink({
   )
 }
 
-function VersionRow({ release, open }: { release: Release; open: boolean }) {
+function VersionRow({
+  release,
+  latest,
+  open,
+}: {
+  release: Release
+  latest: boolean
+  open: boolean
+}) {
   const builds = getBuilds(release)
   const platforms = OSES.filter((os) => builds.some(({ pkg }) => pkg.os === os))
 
@@ -250,6 +206,7 @@ function VersionRow({ release, open }: { release: Release; open: boolean }) {
         <span className="w-24 font-medium">{release.version}</span>
         <span className="text-muted-foreground flex-1 text-sm">
           {formatDate(release.publishedAt)}
+          {latest && ' · Latest'}
         </span>
         <span className="text-muted-foreground hidden items-center gap-2.5 sm:flex">
           {platforms.map((os) => (
@@ -267,7 +224,7 @@ function VersionRow({ release, open }: { release: Release; open: boolean }) {
                 key={pkg.id}
                 className="hover:bg-muted before:via-border relative rounded-xl before:absolute before:inset-x-4 before:top-0 before:h-px before:bg-linear-to-r before:from-transparent before:to-transparent first:before:hidden hover:before:opacity-0 [li:hover+&]:before:opacity-0"
               >
-                <BuildLink pkg={pkg} url={asset.url} size={asset.size} withOS />
+                <BuildLink pkg={pkg} url={asset.url} size={asset.size} />
               </li>
             ))}
           </ul>
