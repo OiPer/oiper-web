@@ -58,8 +58,8 @@ export function DownloadPage({
       </Wrapper>
 
       <Wrapper>
-        <div className="mx-auto flex max-w-190 flex-col items-center pt-24 pb-16 text-center">
-          <h1 className="text-[clamp(2.25rem,7vw,4rem)] font-semibold tracking-[-0.04em]">
+        <div className="mx-auto flex max-w-190 flex-col items-center pt-14 pb-16 text-center sm:pt-24">
+          <h1 className="text-[clamp(1.85rem,9vw,4rem)] font-semibold tracking-[-0.04em]">
             Download OiPer
           </h1>
           <p className="text-muted-foreground mt-3 text-[clamp(0.95rem,4vw,1.125rem)] leading-relaxed">
@@ -91,7 +91,7 @@ export function DownloadPage({
 
       <Wrapper className="pb-40">
         {latest ? (
-          <div className="divide-border mx-auto max-w-3xl divide-y">
+          <div className="mx-auto max-w-3xl">
             {ordered.slice(0, VISIBLE_VERSIONS).map((release) => (
               <VersionRow
                 key={release.version}
@@ -107,7 +107,7 @@ export function DownloadPage({
                 <summary className="text-muted-foreground hover:text-foreground flex cursor-pointer list-none justify-center pt-10 pb-2 text-sm group-open/older:hidden [&::-webkit-details-marker]:hidden">
                   Show {ordered.length - VISIBLE_VERSIONS} older versions
                 </summary>
-                <div className="divide-border divide-y">
+                <div>
                   {ordered.slice(VISIBLE_VERSIONS).map((release) => (
                     <VersionRow
                       key={release.version}
@@ -192,7 +192,7 @@ function VersionRow({
   return (
     <details
       open={open}
-      className="group/version hover:bg-muted/50 open:bg-muted/50 rounded-2xl"
+      className="group/version hover:bg-muted/50 open:bg-muted/50 border-border rounded-2xl border-b"
     >
       <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 [&::-webkit-details-marker]:hidden">
         <span className="w-24 font-medium">

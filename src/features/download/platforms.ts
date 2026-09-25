@@ -15,13 +15,6 @@ export const PACKAGES = [
     suffix: '_x64-setup.exe',
   },
   {
-    id: 'windows-msi',
-    os: 'windows',
-    label: 'MSI package',
-    details: ['x64'],
-    suffix: '_x64_en-US.msi',
-  },
-  {
     id: 'macos',
     os: 'macos',
     label: 'Apple Silicon',
