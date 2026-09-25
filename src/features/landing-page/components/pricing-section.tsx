@@ -41,7 +41,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     'get',
     '/v1/account/subscription',
     subscriptionRequest,
-    { enabled: !!currentUser, retry: false }
+    { enabled: !!currentUser, retry: false, staleTime: 30_000 }
   )
 
   const { pendingTarget, setPendingTarget } = usePollUntilPlanChangeLands(

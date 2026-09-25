@@ -1,7 +1,8 @@
 'use client'
 
+import { Loading } from '@/components/shared/loading'
 import { SectionCard } from '@/components/shared/section-card'
-import { Button, Loading } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AccountPageHeader } from '@/features/account/components/account-page-header'
 import { ChangePlanDialog } from '@/features/billing/change-plan-dialog'
@@ -152,7 +153,7 @@ function CurrentPlan() {
     'get',
     '/v1/account/subscription',
     subscriptionRequest,
-    { retry: false }
+    { retry: false, staleTime: 30_000 }
   )
   const pricingQuery = $api.useQuery('get', '/v1/pricing')
   const { pendingTarget, setPendingTarget } = usePollUntilPlanChangeLands(
@@ -197,9 +198,16 @@ function CurrentPlan() {
           </div>
         )}
 
-        {subscriptionQuery.error && (
+        {subscriptionQuery.error && !subscription && (
           <p className="text-destructive py-3 text-sm">
-            Couldn&apos;t load your subscription
+            Couldn&apos;t load your subscription. You can still manage billing
+            below.
+          </p>
+        )}
+
+        {subscriptionQuery.error && subscription && (
+          <p className="text-muted-foreground py-3 text-sm">
+            Couldn&apos;t refresh — showing your last known status.
           </p>
         )}
 
@@ -281,6 +289,8 @@ function CurrentPlan() {
             />
           </>
         )}
+
+        {subscriptionQuery.error && !subscription && <ManageBillingButton />}
       </div>
     </SectionCard>
   )

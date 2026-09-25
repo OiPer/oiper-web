@@ -1,6 +1,7 @@
 'use client'
 
-import { Button, Loading } from '@/components/ui/button'
+import { Loading } from '@/components/shared/loading'
+import { Button } from '@/components/ui/button'
 import { useAuth } from '@/features/auth/auth-context'
 import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'

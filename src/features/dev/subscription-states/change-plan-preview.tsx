@@ -1,5 +1,6 @@
+import { Loading } from '@/components/shared/loading'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button, Loading } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'

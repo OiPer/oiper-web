@@ -1,4 +1,4 @@
-import { Loading } from '@/components/ui/button'
+import { Loading } from '@/components/shared/loading'
 import {
   Tooltip,
   TooltipContent,

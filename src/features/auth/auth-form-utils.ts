@@ -37,10 +37,22 @@ function applyAdditionalParams(
   })
 }
 
+const CALLBACK_URL_BASE = 'http://internal.invalid'
+
+function isSafeRelativePath(candidate: string): boolean {
+  if (!candidate.startsWith('/') || candidate.startsWith('//')) return false
+  if (/[\\\t\r\n]/.test(candidate)) return false
+
+  try {
+    return new URL(candidate, CALLBACK_URL_BASE).origin === CALLBACK_URL_BASE
+  } catch {
+    return false
+  }
+}
+
 export function getCallbackUrl(searchParams: URLSearchParams): string {
   const callbackUrl = searchParams.get('callbackUrl')
-  if (!callbackUrl || !callbackUrl.startsWith('/')) return '/'
-  if (callbackUrl.startsWith('//')) return '/'
+  if (!callbackUrl || !isSafeRelativePath(callbackUrl)) return '/'
   return callbackUrl
 }
 

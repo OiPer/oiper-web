@@ -1,9 +1,10 @@
 'use client'
 
+import { Loading } from '@/components/shared/loading'
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
 import { SectionCard, SectionHeading } from '@/components/shared/section-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button, Loading } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -59,7 +60,10 @@ function AccountDeleteModal({
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2 rounded-lg border px-4 py-3 text-sm font-medium">
             <TriangleAlert className="size-4" />
-            <p>Subscription access and billing history will be removed</p>
+            <p>
+              Your subscription will be cancelled and access removed. Billing
+              history stays with our payment provider.
+            </p>
           </div>
 
           <div className="space-y-2">

@@ -169,15 +169,25 @@ export function usePollUntilPlanChangeLands(
     if (!pendingTarget) return
 
     const controller = new AbortController()
+    const target = pendingTarget
 
-    pollUntil(
-      refetch,
-      (result) =>
-        result.data?.plan === pendingTarget.plan &&
-        result.data?.billingInterval === pendingTarget.interval,
-      { signal: controller.signal }
-    ).then(() => {
-      if (!controller.signal.aborted) setPendingTarget(null)
+    function landed(result: {
+      data?: { plan: string; billingInterval?: string | null }
+    }) {
+      return (
+        result.data?.plan === target.plan &&
+        result.data?.billingInterval === target.interval
+      )
+    }
+
+    pollUntil(refetch, landed, { signal: controller.signal }).then((result) => {
+      if (controller.signal.aborted) return
+      if (!landed(result)) {
+        toast.info(
+          "Still processing — check back in a moment if your plan hasn't updated"
+        )
+      }
+      setPendingTarget(null)
     })
 
     return () => controller.abort()
