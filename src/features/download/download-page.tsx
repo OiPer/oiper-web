@@ -9,7 +9,7 @@ import {
   GITHUB_REPO,
   HOME,
 } from '@/features/landing-page/constants/links'
-import { formatDate, formatFileSize } from '@/lib/format'
+import { formatFileSize, formatPaddedDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { ArrowUpRight, ChevronDown, Download } from 'lucide-react'
 import { Fragment } from 'react'
@@ -33,8 +33,18 @@ function getBuilds(release: Release) {
   })
 }
 
-export function DownloadPage({ releases }: { releases: Release[] }) {
+export function DownloadPage({
+  releases,
+  version,
+}: {
+  releases: Release[]
+  version?: string
+}) {
   const latest = releases.at(0)
+  const selected = releases.find((release) => release.version === version)
+  const ordered = selected
+    ? [selected, ...releases.filter((release) => release !== selected)]
+    : releases
 
   return (
     <main className="dark bg-background text-foreground min-h-screen overflow-hidden">
@@ -66,7 +76,7 @@ export function DownloadPage({ releases }: { releases: Release[] }) {
             <p className="text-muted-foreground mt-6 flex items-center gap-3 text-sm">
               Version {latest.version.replace(/^v/, '')}
               <Separator />
-              {formatDate(latest.publishedAt)}
+              {formatPaddedDate(latest.publishedAt)}
               <Separator />
               <a
                 href={`${CHANGELOG_URL}#${latest.anchor}`}
@@ -82,22 +92,28 @@ export function DownloadPage({ releases }: { releases: Release[] }) {
       <Wrapper className="pb-40">
         {latest ? (
           <div className="divide-border mx-auto max-w-3xl divide-y">
-            {releases.slice(0, VISIBLE_VERSIONS).map((release) => (
+            {ordered.slice(0, VISIBLE_VERSIONS).map((release, index) => (
               <VersionRow
                 key={release.version}
                 release={release}
                 latest={release === latest}
+                open={index === 0}
+                pinned={release === selected}
               />
             ))}
 
-            {releases.length > VISIBLE_VERSIONS && (
+            {ordered.length > VISIBLE_VERSIONS && (
               <details className="group/older">
                 <summary className="text-muted-foreground hover:text-foreground flex cursor-pointer list-none justify-center pt-10 pb-2 text-sm group-open/older:hidden [&::-webkit-details-marker]:hidden">
-                  Show {releases.length - VISIBLE_VERSIONS} older versions
+                  Show {ordered.length - VISIBLE_VERSIONS} older versions
                 </summary>
                 <div className="divide-border divide-y">
-                  {releases.slice(VISIBLE_VERSIONS).map((release) => (
-                    <VersionRow key={release.version} release={release} />
+                  {ordered.slice(VISIBLE_VERSIONS).map((release) => (
+                    <VersionRow
+                      key={release.version}
+                      release={release}
+                      latest={release === latest}
+                    />
                   ))}
                 </div>
               </details>
@@ -161,23 +177,43 @@ function BuildLink({
 
 function VersionRow({
   release,
-  latest = false,
+  latest,
+  open = false,
+  pinned = false,
 }: {
   release: Release
-  latest?: boolean
+  latest: boolean
+  open?: boolean
+  pinned?: boolean
 }) {
   const builds = getBuilds(release)
   const platforms = OSES.filter((os) => builds.some(({ pkg }) => pkg.os === os))
 
   return (
     <details
-      open={latest}
+      open={open}
       className="group/version hover:bg-muted/50 open:bg-muted/50 rounded-2xl"
     >
       <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 [&::-webkit-details-marker]:hidden">
-        <span className="w-24 font-medium">{release.version}</span>
-        <span className="text-muted-foreground flex flex-1 items-center gap-3 text-sm">
-          {formatDate(release.publishedAt)}
+        <span className="w-24 font-medium">
+          <span className="relative">
+            {release.version}
+            {pinned && (
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                role="img"
+                aria-label="Pinned from link"
+                className="absolute -top-1 left-full ml-0.5 size-3.5"
+              >
+                <title>Pinned from link</title>
+                <path d="M16.432 4.079a1.25 1.25 0 0 0-2.033.391l-1.76 4.105a4.25 4.25 0 0 0-4.215 1.07L7.067 11a.75.75 0 0 0 0 1.06l2.142 2.143l-5.74 5.739a.75.75 0 1 0 1.061 1.06l5.74-5.739l2.141 2.142a.75.75 0 0 0 1.06 0l1.358-1.356a4.25 4.25 0 0 0 1.069-4.217l4.105-1.76a1.25 1.25 0 0 0 .392-2.032z" />
+              </svg>
+            )}
+          </span>
+        </span>
+        <span className="text-muted-foreground flex flex-1 items-center gap-3 text-sm tabular-nums">
+          {formatPaddedDate(release.publishedAt)}
           {latest && (
             <>
               <Separator />
@@ -193,7 +229,7 @@ function VersionRow({
         <ChevronDown className="text-muted-foreground size-4 group-open/version:rotate-180" />
       </summary>
 
-      <div id={release.anchor} className="scroll-mt-24 px-2 pb-3">
+      <div className="px-2 pb-3">
         {builds.length > 0 ? (
           <ul>
             {builds.map(({ pkg, asset }) => (

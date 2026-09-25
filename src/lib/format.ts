@@ -11,6 +11,12 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 })
 
+const paddedDateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: '2-digit',
+  year: 'numeric',
+})
+
 const dateTimeFormatter = new Intl.DateTimeFormat('en-US', {
   month: 'short',
   day: 'numeric',
@@ -49,6 +55,14 @@ export function formatCurrencyFromCents(cents: number, currency = 'USD') {
 
 export function formatDate(value: string | number | Date) {
   return dateFormatter.format(new Date(value))
+}
+
+export function formatPaddedDate(value: string | number | Date) {
+  return paddedDateFormatter
+    .formatToParts(new Date(value))
+    .filter((part) => part.type !== 'literal')
+    .map((part) => part.value)
+    .join(' ')
 }
 
 export function formatDateTime(value: string | number | Date) {
