@@ -1,8 +1,9 @@
 'use client'
 
+import { Loading } from '@/components/shared/loading'
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button, Loading } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -48,19 +49,26 @@ function optionKey(target: PlanChangeTarget) {
   return `${target.plan}-${target.interval}`
 }
 
-function describePreviewError(error: unknown) {
-  const code = getAppErrorCode<
-    'post',
-    '/v1/account/subscription/upgrade/preview'
-  >(error)
+function describePlanChangeError(
+  code: string | null | undefined,
+  fallback: string
+): string {
   switch (code) {
     case 'BILLING_PLAN_CHANGE_NOT_ALLOWED':
       return 'This plan change is not available right now'
     case 'BILLING_SUBSCRIPTION_NOT_FOUND':
       return "Couldn't find an active subscription for this account"
     default:
-      return "Couldn't preview this plan change"
+      return fallback
   }
+}
+
+function describePreviewError(error: unknown) {
+  const code = getAppErrorCode<
+    'post',
+    '/v1/account/subscription/upgrade/preview'
+  >(error)
+  return describePlanChangeError(code, "Couldn't preview this plan change")
 }
 
 function SummaryRow(props: {
@@ -183,6 +191,17 @@ export function ChangePlanDialog({
     'post',
     '/v1/account/subscription/upgrade/preview'
   )
+  type PreviewData = NonNullable<typeof previewMutation.data>
+  // The mutation hook's own data/isPending/error are shared across every
+  // call, so a fast plan switch can let an older preview's response land
+  // after a newer one and overwrite it. Tag each result with the plan key
+  // it was requested for and only trust it while that key is still selected.
+  const [previewState, setPreviewState] = useState<
+    | { key: string; status: 'pending' }
+    | { key: string; status: 'error'; error: unknown }
+    | { key: string; status: 'success'; data: PreviewData }
+    | null
+  >(null)
 
   const changeMutation = $api.useMutation(
     'post',
@@ -208,24 +227,38 @@ export function ChangePlanDialog({
   }, [open])
 
   useEffect(() => {
-    if (!open || !selected || isCurrentSelected) return
+    if (!open || !selected || isCurrentSelected) {
+      setPreviewState(null)
+      return
+    }
 
     const target = selected
+    const key = optionKey(target)
+    let cancelled = false
+    setPreviewState({ key, status: 'pending' })
 
     async function runPreview() {
       try {
         const headers = await getAccountMutationHeaders()
-        await previewMutation.mutateAsync({
+        const data = await previewMutation.mutateAsync({
           body: {
             targetPlan: target.plan,
             targetInterval: target.interval,
           },
           params: { header: headers },
         })
-      } catch {}
+        if (!cancelled) setPreviewState({ key, status: 'success', data })
+      } catch (error) {
+        // previewMutation.error is not consulted for rendering (see
+        // previewState above) so the tagged error is the only trace of this.
+        if (!cancelled) setPreviewState({ key, status: 'error', error })
+      }
     }
 
     runPreview()
+    return () => {
+      cancelled = true
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, selectedKey, currentSubscription.cancelAtPeriodEnd])
 
@@ -238,10 +271,24 @@ export function ChangePlanDialog({
     onOpenChange(nextOpen)
   }
 
-  const preview = previewMutation.data
+  // Only trust preview state tagged for the plan that's currently selected —
+  // this is what stops a slow, stale response from a previous selection
+  // rendering over the plan the user is about to confirm.
+  const currentPreview = previewState?.key === selectedKey ? previewState : null
+  const preview =
+    currentPreview?.status === 'success' ? currentPreview.data : undefined
+  const previewError =
+    currentPreview?.status === 'error' ? currentPreview.error : null
+  const isPreviewPending =
+    !!previewTarget && (!currentPreview || currentPreview.status === 'pending')
 
   async function handleConfirm() {
-    if (!selected || isCurrentSelected || preview?.kind === 'BLOCKED') {
+    if (
+      !selected ||
+      isCurrentSelected ||
+      isPreviewPending ||
+      preview?.kind === 'BLOCKED'
+    ) {
       return
     }
 
@@ -255,25 +302,22 @@ export function ChangePlanDialog({
         params: { header: headers },
       })
 
+      const isScheduled = preview?.kind === 'SCHEDULED'
       toast.success(
-        'Plan change requested — this can take a few seconds to show up'
+        isScheduled
+          ? 'Plan change scheduled — it takes effect at the end of your current billing period'
+          : 'Plan change requested — this can take a few seconds to show up'
       )
-      onChangeSubmitted(selected)
+      // A scheduled change doesn't flip `plan` until period end, so polling
+      // for it to land would just spin until it times out — only poll for
+      // changes that actually apply now.
+      if (!isScheduled) onChangeSubmitted(selected)
       handleOpenChange(false)
     } catch (error) {
       const code = getAppErrorCode<'post', '/v1/account/subscription/upgrade'>(
         error
       )
-      switch (code) {
-        case 'BILLING_PLAN_CHANGE_NOT_ALLOWED':
-          return toast.error('This plan change is not available right now')
-        case 'BILLING_SUBSCRIPTION_NOT_FOUND':
-          return toast.error(
-            "Couldn't find an active subscription for this account"
-          )
-        default:
-          return toast.error("Couldn't change your plan")
-      }
+      toast.error(describePlanChangeError(code, "Couldn't change your plan"))
     }
   }
 
@@ -282,10 +326,18 @@ export function ChangePlanDialog({
       await resumeSubscription()
       setIsWaitingForResume(true)
 
-      await pollUntil(onResumed, (result) => {
+      const finalResult = await pollUntil(onResumed, (result) => {
         const stillPaid = result.data?.plan !== 'FREE' ? result.data : undefined
         return stillPaid?.cancelAtPeriodEnd === false
       })
+
+      const stillPaid =
+        finalResult.data?.plan !== 'FREE' ? finalResult.data : undefined
+      if (stillPaid?.cancelAtPeriodEnd !== false) {
+        toast.info(
+          "Still processing — check back in a moment if this doesn't update"
+        )
+      }
     } catch {
       toast.error("Couldn't reverse the cancellation")
     } finally {
@@ -368,7 +420,7 @@ export function ChangePlanDialog({
           )}
 
           {previewTarget &&
-            !previewMutation.isPending &&
+            !isPreviewPending &&
             preview?.kind === 'BLOCKED' && (
               <Alert className="border-warning/40 bg-warning/5">
                 <AlertDescription className="space-y-3">
@@ -391,7 +443,7 @@ export function ChangePlanDialog({
               </Alert>
             )}
 
-          {previewTarget && previewMutation.isPending && (
+          {previewTarget && isPreviewPending && (
             <div className="divide-y rounded-lg border">
               <SummaryRowSkeleton labelWidth="w-20" />
               <SummaryRowSkeleton labelWidth="w-16" />
@@ -400,20 +452,18 @@ export function ChangePlanDialog({
             </div>
           )}
 
-          {previewTarget &&
-            !previewMutation.isPending &&
-            !!previewMutation.error && (
-              <Alert
-                variant="destructive"
-                className="border-destructive/40 bg-destructive/5"
-              >
-                <AlertDescription>
-                  {describePreviewError(previewMutation.error)}
-                </AlertDescription>
-              </Alert>
-            )}
+          {previewTarget && !isPreviewPending && !!previewError && (
+            <Alert
+              variant="destructive"
+              className="border-destructive/40 bg-destructive/5"
+            >
+              <AlertDescription>
+                {describePreviewError(previewError)}
+              </AlertDescription>
+            </Alert>
+          )}
 
-          {previewTarget && !previewMutation.isPending && previewRows && (
+          {previewTarget && !isPreviewPending && previewRows && (
             <div className="divide-y rounded-lg border">
               <SummaryRow
                 label="New plan"
@@ -479,8 +529,8 @@ export function ChangePlanDialog({
             disabled={
               isCurrentSelected ||
               preview?.kind === 'BLOCKED' ||
-              previewMutation.isPending ||
-              !!previewMutation.error ||
+              isPreviewPending ||
+              !!previewError ||
               changeMutation.isPending
             }
           >

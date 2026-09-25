@@ -1,7 +1,8 @@
 'use client'
 
+import { Loading } from '@/components/shared/loading'
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
-import { Button, Loading } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
 import { Slot } from 'radix-ui'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
@@ -92,7 +93,9 @@ export function AccountAvatarModal({
       const dataUrl = await readFileAsDataUrl(selectedFile)
       await onSave(dataUrl)
       handleOpenChange(false)
-    } catch {}
+    } catch {
+      toast.error("Couldn't save your avatar — try picking the file again")
+    }
   }
 
   return (

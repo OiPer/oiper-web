@@ -1,7 +1,8 @@
 'use client'
 
+import { Loading } from '@/components/shared/loading'
 import { SectionCard, SectionHeading } from '@/components/shared/section-card'
-import { Button, Loading } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { AccountPageHeader } from '@/features/account/components/account-page-header'
 import { useAuth } from '@/features/auth/auth-context'
 import { $api } from '@/lib/api/client'

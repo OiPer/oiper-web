@@ -1,6 +1,7 @@
 'use client'
 
-import { Button, Loading } from '@/components/ui/button'
+import { Loading } from '@/components/shared/loading'
+import { Button } from '@/components/ui/button'
 import { Input as BaseInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
