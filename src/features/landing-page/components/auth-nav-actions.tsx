@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/features/auth/auth-context'
 import { DownloadButton } from '@/features/download/download-button'
+import { useHydrated } from '@/hooks/use-hydrated'
 import { cn } from '@/lib/utils'
 import { ChevronDown, LogOut, Settings2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -204,8 +205,9 @@ function SignedInActions() {
 
 export function AuthNavActions() {
   const { currentUser, isLoading } = useAuth()
+  const hydrated = useHydrated()
 
-  if (isLoading) {
+  if (!hydrated || isLoading) {
     return <LoadingAvatar />
   }
 
