@@ -22,7 +22,6 @@ import {
   type OS,
   type Package,
 } from './platforms'
-import { ScrollIntoView } from './scroll-into-view'
 
 const VISIBLE_VERSIONS = 7
 const OSES = Object.keys(OS_LABELS) as OS[]
@@ -34,18 +33,8 @@ function getBuilds(release: Release) {
   })
 }
 
-export function DownloadPage({
-  releases,
-  selectedVersion,
-}: {
-  releases: Release[]
-  selectedVersion?: string
-}) {
+export function DownloadPage({ releases }: { releases: Release[] }) {
   const latest = releases.at(0)
-  const selected = releases.find(
-    (release) => release.version === selectedVersion
-  )
-  const selectedIndex = selected ? releases.indexOf(selected) : -1
 
   return (
     <main className="dark bg-background text-foreground min-h-screen overflow-hidden">
@@ -59,13 +48,13 @@ export function DownloadPage({
       </Wrapper>
 
       <Wrapper>
-        <div className="mx-auto flex max-w-190 flex-col items-center pt-24 pb-32 text-center">
+        <div className="mx-auto flex max-w-190 flex-col items-center pt-24 pb-16 text-center">
           <h1 className="text-[clamp(2.25rem,7vw,4rem)] font-semibold tracking-[-0.04em]">
             Download OiPer
           </h1>
           <p className="text-muted-foreground mt-6 text-[clamp(0.95rem,4vw,1.125rem)] leading-relaxed">
-            Free for Windows, macOS and Linux. Runs fully offline once
-            installed.
+            Private voice-to-text that runs fully offline. Free for Windows,
+            macOS and Linux.
           </p>
           <DownloadButton
             className={cn(
@@ -90,42 +79,24 @@ export function DownloadPage({
       </Wrapper>
 
       <Wrapper className="pb-40">
-        <div className="border-border border-t pt-16 text-center">
-          <h2 className="text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">
-            Versions
-          </h2>
-          <p className="text-muted-foreground mt-3">
-            Every release stays available if you need an older build.
-          </p>
-        </div>
-
         {latest ? (
-          <div className="divide-border mx-auto mt-12 max-w-3xl divide-y">
+          <div className="divide-border mx-auto max-w-3xl divide-y">
             {releases.slice(0, VISIBLE_VERSIONS).map((release) => (
               <VersionRow
                 key={release.version}
                 release={release}
                 latest={release === latest}
-                open={release === (selected ?? latest)}
               />
             ))}
 
             {releases.length > VISIBLE_VERSIONS && (
-              <details
-                className="group/older"
-                open={selectedIndex >= VISIBLE_VERSIONS}
-              >
+              <details className="group/older">
                 <summary className="text-muted-foreground hover:text-foreground flex cursor-pointer list-none justify-center pt-10 pb-2 text-sm group-open/older:hidden [&::-webkit-details-marker]:hidden">
                   Show {releases.length - VISIBLE_VERSIONS} older versions
                 </summary>
                 <div className="divide-border divide-y">
                   {releases.slice(VISIBLE_VERSIONS).map((release) => (
-                    <VersionRow
-                      key={release.version}
-                      release={release}
-                      latest={false}
-                      open={release === selected}
-                    />
+                    <VersionRow key={release.version} release={release} />
                   ))}
                 </div>
               </details>
@@ -145,7 +116,6 @@ export function DownloadPage({
         )}
       </Wrapper>
 
-      {selected && <ScrollIntoView id={selected.anchor} />}
       <FooterSection />
     </main>
   )
@@ -186,21 +156,18 @@ function BuildLink({
 
 function VersionRow({
   release,
-  latest,
-  open,
+  latest = false,
 }: {
   release: Release
-  latest: boolean
-  open: boolean
+  latest?: boolean
 }) {
   const builds = getBuilds(release)
   const platforms = OSES.filter((os) => builds.some(({ pkg }) => pkg.os === os))
 
   return (
     <details
-      id={release.anchor}
-      open={open}
-      className="group/version hover:bg-muted/50 open:bg-muted/50 scroll-mt-8 rounded-2xl"
+      open={latest}
+      className="group/version hover:bg-muted/50 open:bg-muted/50 rounded-2xl"
     >
       <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 [&::-webkit-details-marker]:hidden">
         <span className="w-24 font-medium">{release.version}</span>
@@ -216,7 +183,7 @@ function VersionRow({
         <ChevronDown className="text-muted-foreground size-4 group-open/version:rotate-180" />
       </summary>
 
-      <div className="px-2 pb-3">
+      <div id={release.anchor} className="scroll-mt-24 px-2 pb-3">
         {builds.length > 0 ? (
           <ul>
             {builds.map(({ pkg, asset }) => (

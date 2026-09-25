@@ -1,7 +1,7 @@
 const RELEASES_ENDPOINT = 'https://api.github.com/repos/oiper/desktop/releases'
 const RELEASES_PER_PAGE = 50
 const MAX_PAGES = 10
-const REVALIDATE_SECONDS = 3600
+const REVALIDATE_SECONDS = 1800
 const NO_NOTES_PLACEHOLDER = '_No notable changes in this release._'
 
 interface GitHubRelease {
