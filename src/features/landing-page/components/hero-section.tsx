@@ -1,7 +1,7 @@
 'use client'
 
 import { OiPerLogoText } from '@/components/logo-text'
-import { Download } from 'lucide-react'
+import { DownloadButton } from '@/features/download/download-button'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { Wrapper } from '../../../components/wrapper'
@@ -96,12 +96,15 @@ export function HeroSection() {
           </p>
 
           <div className="mt-10">
+            <DownloadButton
+              className="h-13 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+              iconClassName="size-5"
+            />
             <a
               href={DOWNLOAD_URL}
-              className="inline-flex h-13 items-center justify-center gap-2.5 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+              className="mt-4 block text-sm text-white/40 hover:text-white/70"
             >
-              <Download className="size-5" />
-              Download OiPer
+              Other platforms and versions
             </a>
           </div>
         </div>

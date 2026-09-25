@@ -1,4 +1,4 @@
-export const DOWNLOAD_URL = 'https://github.com/oiper/desktop/releases/latest'
+export const DOWNLOAD_URL = '/download'
 export const GITHUB_REPO = 'https://github.com/oiper/desktop'
 export const DOCS_URL = '/docs'
 export const RESOURCES_URL = '/resources'

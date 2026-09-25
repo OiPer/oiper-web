@@ -1,5 +1,6 @@
 'use client'
 
+import { DownloadButton } from '@/features/download/download-button'
 import {
   BookOpen,
   Github,
@@ -18,7 +19,6 @@ import {
   ANCHOR_PRIVACY,
   CHANGELOG_URL,
   DOCS_URL,
-  DOWNLOAD_URL,
   GITHUB_REPO,
   PRIVACY_POLICY_URL,
   RESOURCES_URL,
@@ -62,12 +62,10 @@ export function FooterSection() {
               Download OiPer and start transcribing privately in under a minute.
               No account required.
             </p>
-            <a
-              href={DOWNLOAD_URL}
-              className="mt-10 inline-flex h-13 items-center justify-center rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
-            >
-              Download OiPer
-            </a>
+            <DownloadButton
+              className="mt-10 h-13 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+              iconClassName="size-5"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-12 sm:gap-20">
