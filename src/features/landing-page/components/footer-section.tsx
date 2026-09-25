@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Tag,
 } from 'lucide-react'
+import Link from 'next/link'
 import { Wrapper } from '../../../components/wrapper'
 import {
   ANCHOR_FEATURES,
@@ -74,12 +75,12 @@ export function FooterSection() {
               <ul className="mt-6 space-y-3">
                 {productLinks.map((link) => (
                   <li key={link.label}>
-                    <a
+                    <Link
                       href={link.href}
                       className="text-sm text-white/35 hover:text-white/80"
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -89,13 +90,13 @@ export function FooterSection() {
               <ul className="mt-6 space-y-3">
                 {resourceLinks.map((link) => (
                   <li key={link.label}>
-                    <a
+                    <Link
                       href={link.href}
                       className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white/80"
                     >
                       <link.icon className="size-4" strokeWidth={1.5} />
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

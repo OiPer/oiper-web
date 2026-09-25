@@ -12,6 +12,7 @@ import {
 import { formatFileSize, formatPaddedDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { ArrowUpRight, ChevronDown, Download } from 'lucide-react'
+import Link from 'next/link'
 import { Fragment } from 'react'
 import { DownloadButton } from './download-button'
 import { OSIcon } from './os-icons'
@@ -50,9 +51,9 @@ export function DownloadPage({
     <main className="dark bg-background text-foreground min-h-screen overflow-hidden">
       <Wrapper>
         <nav className="flex h-20 items-center justify-between">
-          <a href={HOME} className="flex items-center gap-3">
+          <Link href={HOME} className="flex items-center gap-3">
             <OiPerLogoText className="text-[2rem]" />
-          </a>
+          </Link>
           <AuthNavActions />
         </nav>
       </Wrapper>
@@ -78,12 +79,12 @@ export function DownloadPage({
               <Separator />
               {formatPaddedDate(latest.publishedAt)}
               <Separator />
-              <a
+              <Link
                 href={`${CHANGELOG_URL}#${latest.anchor}`}
                 className="text-foreground underline-offset-4 hover:underline"
               >
                 What&apos;s new
-              </a>
+              </Link>
             </p>
           )}
         </div>

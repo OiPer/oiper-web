@@ -3,6 +3,7 @@
 import { OiPerLogoText } from '@/components/logo-text'
 import { DownloadButton } from '@/features/download/download-button'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Wrapper } from '../../../components/wrapper'
 import { DOWNLOAD_URL, HOME } from '../constants/links'
@@ -78,9 +79,9 @@ export function HeroSection() {
 
       <Wrapper className="relative z-10">
         <nav className="flex h-20 items-center justify-between">
-          <a href={HOME} className="flex items-center gap-3">
+          <Link href={HOME} className="flex items-center gap-3">
             <OiPerLogoText className="text-[2rem]" />
-          </a>
+          </Link>
 
           <AuthNavActions />
         </nav>
@@ -100,12 +101,12 @@ export function HeroSection() {
               className="h-13 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
               iconClassName="size-5"
             />
-            <a
+            <Link
               href={DOWNLOAD_URL}
               className="mt-4 block text-sm text-white/40 hover:text-white/70"
             >
               Other platforms and versions
-            </a>
+            </Link>
           </div>
         </div>
       </Wrapper>

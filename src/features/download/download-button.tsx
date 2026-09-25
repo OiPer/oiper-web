@@ -1,6 +1,7 @@
 import { DOWNLOAD_URL } from '@/features/landing-page/constants/links'
 import { cn } from '@/lib/utils'
 import { Download } from 'lucide-react'
+import Link from 'next/link'
 import { OSIcon } from './os-icons'
 import {
   detectOS,
@@ -52,14 +53,14 @@ export function DownloadButton({
   return (
     <>
       <span className="contents in-data-os:hidden">
-        <a
+        <Link
           href={DOWNLOAD_URL}
           aria-label={compact ? 'Download OiPer' : undefined}
           className={buttonClassName}
         >
           <Download className={iconClassName} aria-hidden="true" />
           {compact ? 'Download' : 'Download OiPer'}
-        </a>
+        </Link>
       </span>
 
       {BUTTONS.map(({ id, os, visibleWhen }) => {
