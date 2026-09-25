@@ -52,9 +52,8 @@ export function DownloadPage({ releases }: { releases: Release[] }) {
           <h1 className="text-[clamp(2.25rem,7vw,4rem)] font-semibold tracking-[-0.04em]">
             Download OiPer
           </h1>
-          <p className="text-muted-foreground mt-6 text-[clamp(0.95rem,4vw,1.125rem)] leading-relaxed">
-            Private voice-to-text that runs fully offline. Free for Windows,
-            macOS and Linux.
+          <p className="text-muted-foreground mt-3 text-[clamp(0.95rem,4vw,1.125rem)] leading-relaxed">
+            Get the right build for Windows, macOS, or Linux and start speaking
           </p>
           <DownloadButton
             className={cn(
@@ -64,9 +63,11 @@ export function DownloadPage({ releases }: { releases: Release[] }) {
             iconClassName="size-5"
           />
           {latest && (
-            <p className="text-muted-foreground mt-6 text-sm">
-              Version {latest.version.replace(/^v/, '')} ·{' '}
-              {formatDate(latest.publishedAt)} ·{' '}
+            <p className="text-muted-foreground mt-6 flex items-center gap-3 text-sm">
+              Version {latest.version.replace(/^v/, '')}
+              <Separator />
+              {formatDate(latest.publishedAt)}
+              <Separator />
               <a
                 href={`${CHANGELOG_URL}#${latest.anchor}`}
                 className="text-foreground underline-offset-4 hover:underline"
@@ -121,6 +122,12 @@ export function DownloadPage({ releases }: { releases: Release[] }) {
   )
 }
 
+function Separator() {
+  return (
+    <span aria-hidden="true" className="bg-muted-foreground/20 h-2.5 w-px" />
+  )
+}
+
 function BuildLink({
   pkg,
   url,
@@ -138,9 +145,7 @@ function BuildLink({
         <span className="text-muted-foreground ml-4 hidden items-center gap-3 font-normal group-hover/build:inline-flex">
           {pkg.details.map((detail, index) => (
             <Fragment key={detail}>
-              {index > 0 && (
-                <span className="via-muted-foreground/30 h-3.5 w-px bg-linear-to-b from-transparent to-transparent" />
-              )}
+              {index > 0 && <Separator />}
               {detail}
             </Fragment>
           ))}
@@ -171,9 +176,14 @@ function VersionRow({
     >
       <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 [&::-webkit-details-marker]:hidden">
         <span className="w-24 font-medium">{release.version}</span>
-        <span className="text-muted-foreground flex-1 text-sm">
+        <span className="text-muted-foreground flex flex-1 items-center gap-3 text-sm">
           {formatDate(release.publishedAt)}
-          {latest && ' · Latest'}
+          {latest && (
+            <>
+              <Separator />
+              Latest
+            </>
+          )}
         </span>
         <span className="text-muted-foreground hidden items-center gap-2.5 sm:flex">
           {platforms.map((os) => (
