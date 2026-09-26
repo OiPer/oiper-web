@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { AuthProvider } from '@/features/auth/auth-context'
 import { PublicAuthModalClientNoSSR } from '@/features/auth/public-auth-modal-client'
 import { DetectOSScript } from '@/features/download/download-button'
+import { MacDownloadDialog } from '@/features/download/mac-download-dialog'
 import { cn } from '@/lib/utils'
 import { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
@@ -102,6 +103,7 @@ export default function Layout({ children }: PropsWithChildren) {
               <Suspense fallback={null}>{children}</Suspense>
 
               <PublicAuthModalClientNoSSR />
+              <MacDownloadDialog />
               <Toaster richColors />
             </AuthProvider>
           </QueryProvider>
