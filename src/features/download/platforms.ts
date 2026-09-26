@@ -89,8 +89,6 @@ export function detectPackage(
   return null
 }
 
-// Opts a link into the unsigned-mac warning (see mac-download-dialog.tsx).
-// `altUrl` is the other mac build's URL; null when that build doesn't exist.
 export function macDownloadProps(id: Package['id'], altUrl?: string | null) {
   if (id !== 'macos' && id !== 'macos-intel') return {}
   const alt = id === 'macos' ? 'macos-intel' : 'macos'

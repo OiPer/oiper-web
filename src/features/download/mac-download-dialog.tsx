@@ -12,9 +12,6 @@ type MacBuild = keyof typeof MAC_BUILDS
 const BYPASS_GUIDE_URL =
   'https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac'
 
-// Mac download links opt in with `data-mac-build` (+ optional `data-mac-alt`,
-// the other build's URL). Clicks are intercepted here so server components
-// can stay plain anchors.
 export function MacDownloadDialog() {
   const [urls, setUrls] = useState<Partial<Record<MacBuild, string>>>({})
   const [build, setBuild] = useState<MacBuild>('macos')
