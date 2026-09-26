@@ -4,7 +4,13 @@ import { Download } from 'lucide-react'
 import Link from 'next/link'
 import { Fragment } from 'react'
 import { OSIcon } from './os-icons'
-import { detectPackage, OS_LABELS, type OS, type Package } from './platforms'
+import {
+  detectPackage,
+  macDownloadProps,
+  OS_LABELS,
+  type OS,
+  type Package,
+} from './platforms'
 
 export function DetectOSScript() {
   return (
@@ -102,6 +108,7 @@ export function DownloadButton({
           <span key={id} className={cn('hidden', visibleWhen)}>
             <a
               href={`${DOWNLOAD_URL}/${id}`}
+              {...macDownloadProps(id)}
               aria-label={compact ? label : undefined}
               className={buttonClassName}
             >
@@ -141,7 +148,11 @@ export function OtherDownloads({
         <span key={id} className={cn('hidden', visibleWhen)}>
           {others.map((other) => (
             <Fragment key={other.id}>
-              <a href={`${DOWNLOAD_URL}/${other.id}`} className={linkClassName}>
+              <a
+                href={`${DOWNLOAD_URL}/${other.id}`}
+                {...macDownloadProps(other.id)}
+                className={linkClassName}
+              >
                 {other.label}
               </a>
               {separator}

@@ -18,6 +18,7 @@ import { DownloadButton } from './download-button'
 import { OSIcon } from './os-icons'
 import {
   findAsset,
+  macDownloadProps,
   OS_LABELS,
   PACKAGES,
   type OS,
@@ -48,7 +49,7 @@ export function DownloadPage({
     : releases
 
   return (
-    <main className="dark bg-background text-foreground min-h-screen overflow-hidden">
+    <main className="bg-background text-foreground min-h-screen overflow-hidden">
       <Wrapper>
         <nav className="flex h-20 items-center justify-between">
           <Link href={HOME} className="flex items-center gap-3">
@@ -92,7 +93,7 @@ export function DownloadPage({
 
       <Wrapper className="pb-40">
         {latest ? (
-          <div className="mx-auto max-w-3xl">
+          <div className="mx-auto flex max-w-3xl flex-col gap-2">
             {ordered.slice(0, VISIBLE_VERSIONS).map((release) => (
               <VersionRow
                 key={release.version}
@@ -108,7 +109,7 @@ export function DownloadPage({
                 <summary className="text-muted-foreground hover:text-foreground flex cursor-pointer list-none justify-center pt-10 pb-2 text-sm group-open/older:hidden [&::-webkit-details-marker]:hidden">
                   Show {ordered.length - VISIBLE_VERSIONS} older versions
                 </summary>
-                <div>
+                <div className="flex flex-col gap-2 pt-2">
                   {ordered.slice(VISIBLE_VERSIONS).map((release) => (
                     <VersionRow
                       key={release.version}
@@ -148,14 +149,20 @@ function Separator() {
 function BuildLink({
   pkg,
   url,
+  macAltUrl,
   size,
 }: {
   pkg: Package
   url: string
+  macAltUrl: string | null
   size: number
 }) {
   return (
-    <a href={url} className="group/build flex items-center gap-4 px-4 py-3.5">
+    <a
+      href={url}
+      {...macDownloadProps(pkg.id, macAltUrl)}
+      className="group/build flex items-center gap-4 px-4 py-3.5"
+    >
       <OSIcon os={pkg.os} className="text-muted-foreground size-4 shrink-0" />
       <span className="min-w-0 flex-1 text-sm font-medium">
         {OS_LABELS[pkg.os]} {pkg.label}
@@ -244,7 +251,16 @@ function VersionRow({
                 key={pkg.id}
                 className="hover:bg-muted before:via-border relative rounded-xl before:absolute before:inset-x-4 before:top-0 before:h-px before:bg-linear-to-r before:from-transparent before:to-transparent first:before:hidden hover:before:opacity-0 [li:hover+&]:before:opacity-0"
               >
-                <BuildLink pkg={pkg} url={asset.url} size={asset.size} />
+                <BuildLink
+                  pkg={pkg}
+                  url={asset.url}
+                  macAltUrl={
+                    builds.find(
+                      (build) => build.pkg.os === 'macos' && build.pkg !== pkg
+                    )?.asset.url ?? null
+                  }
+                  size={asset.size}
+                />
               </li>
             ))}
           </ul>
