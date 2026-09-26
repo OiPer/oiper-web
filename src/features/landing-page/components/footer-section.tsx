@@ -6,6 +6,7 @@ import {
   Github,
   Library,
   LifeBuoy,
+  Newspaper,
   Scale,
   ShieldCheck,
   Tag,
@@ -18,6 +19,7 @@ import {
   ANCHOR_PERFORMANCE,
   ANCHOR_PRICING,
   ANCHOR_PRIVACY,
+  BLOGS_URL,
   CHANGELOG_URL,
   DOCS_URL,
   GITHUB_REPO,
@@ -37,6 +39,7 @@ const productLinks = [
 const resourceLinks = [
   { icon: BookOpen, label: 'Documentation', href: DOCS_URL },
   { icon: Library, label: 'Resources', href: RESOURCES_URL },
+  { icon: Newspaper, label: 'Blogs', href: BLOGS_URL },
   { icon: Tag, label: 'Changelog', href: CHANGELOG_URL },
   { icon: Github, label: 'GitHub', href: GITHUB_REPO },
   { icon: LifeBuoy, label: 'Support', href: GITHUB_REPO },
