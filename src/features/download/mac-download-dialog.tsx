@@ -45,7 +45,7 @@ export function MacDownloadDialog() {
   return (
     <ResponsiveDialog open={open} onOpenChange={setOpen}>
       <ResponsiveDialog.Content>
-        <DialogHeader>
+        <DialogHeader className="text-left">
           <ResponsiveDialog.Title>
             Mac build not signed by Apple
           </ResponsiveDialog.Title>
@@ -88,7 +88,7 @@ export function MacDownloadDialog() {
           </ResponsiveDialog.Description>
         </DialogHeader>
 
-        <DialogFooter className="flex-row gap-2 [&>*]:flex-1 sm:[&>*]:flex-none">
+        <DialogFooter className="group-data-[vaul-drawer-direction=bottom]/drawer-content:flex-col-reverse">
           <ResponsiveDialog.Close asChild>
             <Button variant="outline" type="button">
               Cancel
