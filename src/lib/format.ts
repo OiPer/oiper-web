@@ -11,6 +11,12 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 })
 
+const paddedDateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: '2-digit',
+  year: 'numeric',
+})
+
 const dateTimeFormatter = new Intl.DateTimeFormat('en-US', {
   month: 'short',
   day: 'numeric',
@@ -51,8 +57,24 @@ export function formatDate(value: string | number | Date) {
   return dateFormatter.format(new Date(value))
 }
 
+export function formatPaddedDate(value: string | number | Date) {
+  return paddedDateFormatter
+    .formatToParts(new Date(value))
+    .filter((part) => part.type !== 'literal')
+    .map((part) => part.value)
+    .join(' ')
+}
+
 export function formatDateTime(value: string | number | Date) {
   return dateTimeFormatter.format(new Date(value))
+}
+
+export function formatFileSize(bytes: number) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'unit',
+    unit: 'megabyte',
+    maximumFractionDigits: 1,
+  }).format(bytes / 1_000_000)
 }
 
 export function formatMinutes(value: number, digits = 0) {

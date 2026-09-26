@@ -11,7 +11,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/features/auth/auth-context'
-import { DOWNLOAD_URL } from '@/features/landing-page/constants/links'
+import { DownloadButton } from '@/features/download/download-button'
+import { useHydrated } from '@/hooks/use-hydrated'
 import { cn } from '@/lib/utils'
 import { ChevronDown, LogOut, Settings2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -52,15 +53,13 @@ function LoadingAvatar() {
       <div className="flex h-10 items-center">
         <div className="h-10 w-28 animate-pulse rounded-md border bg-white/7" />
       </div>
-      <a
-        href={DOWNLOAD_URL}
+      <DownloadButton
+        compact
         className={cn(
           buttonVariants({ size: 'lg' }),
           'hidden h-10 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90 sm:inline-flex'
         )}
-      >
-        Download
-      </a>
+      />
     </div>
   )
 }
@@ -107,15 +106,13 @@ function SignedOutActions() {
         </DropdownMenu>
       </div>
 
-      <a
-        href={DOWNLOAD_URL}
+      <DownloadButton
+        compact
         className={cn(
           buttonVariants({ size: 'lg' }),
           'hidden h-10 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90 sm:inline-flex'
         )}
-      >
-        Download
-      </a>
+      />
     </div>
   )
 }
@@ -146,15 +143,13 @@ function SignedInActions() {
 
   return (
     <div className="flex items-center gap-3">
-      <a
-        href={DOWNLOAD_URL}
+      <DownloadButton
+        compact
         className={cn(
           buttonVariants({ size: 'lg' }),
           'hidden h-9 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90 sm:inline-flex'
         )}
-      >
-        Download
-      </a>
+      />
 
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -210,8 +205,9 @@ function SignedInActions() {
 
 export function AuthNavActions() {
   const { currentUser, isLoading } = useAuth()
+  const hydrated = useHydrated()
 
-  if (isLoading) {
+  if (!hydrated || isLoading) {
     return <LoadingAvatar />
   }
 
