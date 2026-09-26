@@ -93,7 +93,7 @@ export function DownloadPage({
 
       <Wrapper className="pb-40">
         {latest ? (
-          <div className="mx-auto max-w-3xl">
+          <div className="mx-auto flex max-w-3xl flex-col gap-2">
             {ordered.slice(0, VISIBLE_VERSIONS).map((release) => (
               <VersionRow
                 key={release.version}
@@ -109,7 +109,7 @@ export function DownloadPage({
                 <summary className="text-muted-foreground hover:text-foreground flex cursor-pointer list-none justify-center pt-10 pb-2 text-sm group-open/older:hidden [&::-webkit-details-marker]:hidden">
                   Show {ordered.length - VISIBLE_VERSIONS} older versions
                 </summary>
-                <div>
+                <div className="flex flex-col gap-2 pt-2">
                   {ordered.slice(VISIBLE_VERSIONS).map((release) => (
                     <VersionRow
                       key={release.version}
