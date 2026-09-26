@@ -192,10 +192,6 @@ export function ChangePlanDialog({
     '/v1/account/subscription/upgrade/preview'
   )
   type PreviewData = NonNullable<typeof previewMutation.data>
-  // The mutation hook's own data/isPending/error are shared across every
-  // call, so a fast plan switch can let an older preview's response land
-  // after a newer one and overwrite it. Tag each result with the plan key
-  // it was requested for and only trust it while that key is still selected.
   const [previewState, setPreviewState] = useState<
     | { key: string; status: 'pending' }
     | { key: string; status: 'error'; error: unknown }
@@ -249,8 +245,6 @@ export function ChangePlanDialog({
         })
         if (!cancelled) setPreviewState({ key, status: 'success', data })
       } catch (error) {
-        // previewMutation.error is not consulted for rendering (see
-        // previewState above) so the tagged error is the only trace of this.
         if (!cancelled) setPreviewState({ key, status: 'error', error })
       }
     }
@@ -271,9 +265,6 @@ export function ChangePlanDialog({
     onOpenChange(nextOpen)
   }
 
-  // Only trust preview state tagged for the plan that's currently selected —
-  // this is what stops a slow, stale response from a previous selection
-  // rendering over the plan the user is about to confirm.
   const currentPreview = previewState?.key === selectedKey ? previewState : null
   const preview =
     currentPreview?.status === 'success' ? currentPreview.data : undefined
@@ -308,9 +299,6 @@ export function ChangePlanDialog({
           ? 'Plan change scheduled — it takes effect at the end of your current billing period'
           : 'Plan change requested — this can take a few seconds to show up'
       )
-      // A scheduled change doesn't flip `plan` until period end, so polling
-      // for it to land would just spin until it times out — only poll for
-      // changes that actually apply now.
       if (!isScheduled) onChangeSubmitted(selected)
       handleOpenChange(false)
     } catch (error) {

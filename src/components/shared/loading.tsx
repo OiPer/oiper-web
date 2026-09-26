@@ -3,8 +3,6 @@ import { cn } from '@/lib/utils'
 import { Slot } from 'radix-ui'
 import * as React from 'react'
 
-// Overlays a spinner on its parent while `loading`; the parent must be
-// `relative` (Button already is) so the absolute spinner positions correctly.
 export function Loading({
   asChild = false,
   loading = true,
