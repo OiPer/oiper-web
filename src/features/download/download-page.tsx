@@ -49,7 +49,7 @@ export function DownloadPage({
     : releases
 
   return (
-    <main className="dark bg-background text-foreground min-h-screen overflow-hidden">
+    <main className="bg-background text-foreground min-h-screen overflow-hidden">
       <Wrapper>
         <nav className="flex h-20 items-center justify-between">
           <Link href={HOME} className="flex items-center gap-3">

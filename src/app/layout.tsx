@@ -97,7 +97,12 @@ export default function Layout({ children }: PropsWithChildren) {
         <DetectOSScript />
       </head>
       <body className={cn('antialiased', inter.variable, firaCode.variable)}>
-        <ThemeProvider attribute="class" enableSystem>
+        <ThemeProvider
+          attribute="class"
+          enableSystem
+          defaultTheme="dark"
+          forcedTheme="dark"
+        >
           <QueryProvider>
             <AuthProvider>
               <Suspense fallback={null}>{children}</Suspense>
