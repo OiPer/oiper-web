@@ -1,0 +1,71 @@
+---
+title: Configuration
+description: The snippet configuration format and the rules parsing enforces.
+---
+
+A configuration is an ordered array of snippets:
+
+```json
+[
+  {
+    "when": [{ "value": "brb" }, { "regex": "\\bbr+b\\b", "flags": "i" }],
+    "body": "be right back"
+  }
+]
+```
+
+Each snippet has:
+
+- `when` — a non-empty ordered array of matchers.
+- `body` — the non-empty string inserted when any of those matchers succeeds.
+
+Order matters. Both the order of snippets in the array and the order of matchers inside
+`when` affect the result — see [Matching](/docs/snippets/matching).
+
+## Matchers
+
+A matcher has exactly one of these two forms:
+
+```text
+{ value: string }
+{ regex: string, flags?: string }
+```
+
+`value` is a case-insensitive literal: regex metacharacters in it are treated as ordinary
+characters.
+
+`regex` is an ECMAScript regular expression, case-sensitive unless the `i` flag is given.
+
+All matchers in one snippet share that snippet's single `body`.
+
+## Validation
+
+`parseConfig` / `parse_config` enforce the following. Anything else is a configuration error.
+
+**Structure**
+
+- The configuration must be an array. An empty array is valid.
+- Every snippet must have a non-empty `when` array and a `body` that is a non-empty string.
+- Every matcher must define either `value` or `regex`, and not both.
+- `flags` is not allowed on a literal matcher.
+
+**Literals**
+
+- Literal values are trimmed. A value that is empty after trimming is invalid.
+- Literal values must be unique across the entire configuration, compared after trimming and
+  case-insensitively.
+
+**Regexes**
+
+- Regex sources are not trimmed, and must be non-empty and valid.
+- Flags may only contain `i`, `m`, `s`, and `u`, with no duplicates.
+- Two regex matchers anywhere in the configuration may not share the same source and
+  normalized flags.
+
+Bodies are not trimmed, and a whitespace-only body is valid.
+
+## What validation does not do
+
+Validation does not attempt to detect equivalent regexes, overlapping matchers, or an overlap
+between a literal and a regex. Two matchers that can match the same text are perfectly legal;
+matcher order decides which one is used.

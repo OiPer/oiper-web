@@ -1,0 +1,59 @@
+---
+title: Settings
+description: Startup behaviour, audio input, text insertion, sounds, and updates.
+---
+
+## General
+
+**Launch on startup** starts OiPer when you log in, so the hotkey is available without
+opening the app first.
+
+**Theme** switches between light and dark.
+
+**Whisper Hardware** selects the backend for local transcription — **Auto**, **CPU**, or
+**GPU**. See [Models](/docs/desktop/models) for when to change it.
+
+**Write to clipboard** also copies the result to your clipboard, so you can paste it again
+yourself if the insertion goes somewhere unexpected.
+
+## Input Device
+
+**Use system default** always records from whatever your operating system currently treats
+as the default microphone. This is the simplest option and follows headsets as you connect
+and disconnect them.
+
+Turning it off reveals your input devices as an ordered list that you can drag to reorder.
+OiPer records from the highest device in the list that is currently available, so putting a
+headset above the built-in microphone gives you the headset whenever it is plugged in and
+the built-in microphone otherwise. Unavailable devices are dimmed.
+
+## Advanced
+
+**Insert method** decides how text is delivered to the focused application:
+
+| Method         | Behaviour                                                                                            |
+| -------------- | ---------------------------------------------------------------------------------------------------- |
+| `Ctrl+V`       | Puts the text on the clipboard and sends a paste shortcut. The default and the most reliable.        |
+| `Ctrl+Shift+V` | Paste without formatting; useful in editors that reformat pasted content.                            |
+| `Shift+Insert` | An alternative paste shortcut, on Windows only.                                                      |
+| `direct`       | Types the text key by key. No clipboard involved, but slower and less reliable in some applications. |
+
+**Sound effects** are four independent toggles: a sound when recording starts, when it stops,
+when a run fails, and when no speech was detected. The two failure sounds are on by default
+and the two recording sounds are off.
+
+**Bypass hotkey** stops OiPer from suppressing the keys in your hotkey, so they still reach
+the application underneath. Turn this on if your hotkey shadows a shortcut you need.
+Changing it restarts the app.
+
+## Warnings
+
+When something in your configuration would stop a dictation from working, OiPer shows a
+warning in the app — a profile whose Whisper model has not been downloaded, a hotkey used by
+two profiles, a cloud model with no API key, a profile with no hotkey at all, or custom
+formatting with no prompt written. Fixing the setting clears the warning.
+
+## About
+
+Shows the installed version and checks for updates. See
+[Installation](/docs/desktop/installation#updates).

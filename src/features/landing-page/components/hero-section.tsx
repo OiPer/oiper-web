@@ -1,11 +1,15 @@
 'use client'
 
 import { OiPerLogoText } from '@/components/logo-text'
-import { Download } from 'lucide-react'
+import {
+  DownloadButton,
+  OtherDownloads,
+} from '@/features/download/download-button'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Wrapper } from '../../../components/wrapper'
-import { DOWNLOAD_URL, HOME } from '../constants/links'
+import { HOME } from '../constants/links'
 import { AnimatedHeadline } from './animated-headline'
 import { AuthNavActions } from './auth-nav-actions'
 
@@ -78,9 +82,9 @@ export function HeroSection() {
 
       <Wrapper className="relative z-10">
         <nav className="flex h-20 items-center justify-between">
-          <a href={HOME} className="flex items-center gap-3">
+          <Link href={HOME} className="flex items-center gap-3">
             <OiPerLogoText className="text-[2rem]" />
-          </a>
+          </Link>
 
           <AuthNavActions />
         </nav>
@@ -96,13 +100,14 @@ export function HeroSection() {
           </p>
 
           <div className="mt-10">
-            <a
-              href={DOWNLOAD_URL}
-              className="inline-flex h-13 items-center justify-center gap-2.5 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
-            >
-              <Download className="size-5" />
-              Download OiPer
-            </a>
+            <DownloadButton
+              className="h-13 rounded-md bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+              iconClassName="size-5"
+            />
+            <OtherDownloads
+              className="mt-4 justify-center text-sm text-white/40"
+              linkClassName="underline-offset-4 hover:text-white/70 hover:underline"
+            />
           </div>
         </div>
       </Wrapper>
