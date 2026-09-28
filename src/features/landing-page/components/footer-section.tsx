@@ -1,6 +1,16 @@
 'use client'
 
-import { BookOpen, Github, LifeBuoy, ShieldCheck } from 'lucide-react'
+import { DownloadButton } from '@/features/download/download-button'
+import {
+  BookOpen,
+  Github,
+  Library,
+  LifeBuoy,
+  Scale,
+  ShieldCheck,
+  Tag,
+} from 'lucide-react'
+import Link from 'next/link'
 import { Wrapper } from '../../../components/wrapper'
 import {
   ANCHOR_FEATURES,
@@ -8,8 +18,12 @@ import {
   ANCHOR_PERFORMANCE,
   ANCHOR_PRICING,
   ANCHOR_PRIVACY,
-  DOWNLOAD_URL,
+  CHANGELOG_URL,
+  DOCS_URL,
   GITHUB_REPO,
+  PRIVACY_POLICY_URL,
+  RESOURCES_URL,
+  TERMS_OF_SERVICE_URL,
 } from '../constants/links'
 
 const productLinks = [
@@ -21,10 +35,13 @@ const productLinks = [
 ]
 
 const resourceLinks = [
-  { icon: BookOpen, label: 'Documentation', href: GITHUB_REPO },
+  { icon: BookOpen, label: 'Documentation', href: DOCS_URL },
+  { icon: Library, label: 'Resources', href: RESOURCES_URL },
+  { icon: Tag, label: 'Changelog', href: CHANGELOG_URL },
   { icon: Github, label: 'GitHub', href: GITHUB_REPO },
   { icon: LifeBuoy, label: 'Support', href: GITHUB_REPO },
-  { icon: ShieldCheck, label: 'Privacy', href: GITHUB_REPO },
+  { icon: ShieldCheck, label: 'Privacy', href: PRIVACY_POLICY_URL },
+  { icon: Scale, label: 'Terms', href: TERMS_OF_SERVICE_URL },
 ]
 
 export function FooterSection() {
@@ -46,12 +63,10 @@ export function FooterSection() {
               Download OiPer and start transcribing privately in under a minute.
               No account required.
             </p>
-            <a
-              href={DOWNLOAD_URL}
-              className="mt-10 inline-flex h-13 items-center justify-center rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
-            >
-              Download OiPer
-            </a>
+            <DownloadButton
+              className="mt-10 h-13 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+              iconClassName="size-5"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-12 sm:gap-20">
@@ -60,12 +75,12 @@ export function FooterSection() {
               <ul className="mt-6 space-y-3">
                 {productLinks.map((link) => (
                   <li key={link.label}>
-                    <a
+                    <Link
                       href={link.href}
                       className="text-sm text-white/35 hover:text-white/80"
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -75,13 +90,13 @@ export function FooterSection() {
               <ul className="mt-6 space-y-3">
                 {resourceLinks.map((link) => (
                   <li key={link.label}>
-                    <a
+                    <Link
                       href={link.href}
                       className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white/80"
                     >
                       <link.icon className="size-4" strokeWidth={1.5} />
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

@@ -1,0 +1,32 @@
+---
+title: Snippets
+description: Expand short spoken shortcuts into longer text.
+---
+
+A snippet replaces a short shortcut with longer text. Saying "brb" inserts
+"be right back"; saying your company shortcut inserts its full legal name.
+
+Snippets are applied last, after transcription and any [formatting](/docs/desktop/formatting),
+just before the text is inserted.
+
+## Creating a snippet
+
+On the **Snippets** page, choose **Add new** and fill in two fields:
+
+- **Shortcut** — the text to look for, such as `brb`.
+- **Expands to** — the text that replaces it, such as `be right back`.
+
+Snippets apply to every profile. Use the row actions to edit or delete one later.
+
+## How matching works
+
+- Shortcuts are **not case-sensitive**: `brb`, `Brb`, and `BRB` all match.
+- Two snippets cannot share the same shortcut, ignoring case and surrounding spaces. The
+  dialog blocks a duplicate before you can save it.
+- Replacement text is inserted exactly as you wrote it, and is never itself scanned for
+  snippets. A snippet cannot trigger another one.
+
+Matching is not limited to whole words, so a shortcut also matches inside a longer word.
+Keep shortcuts distinctive — `br` would also fire inside "brown". For the same reason, avoid
+shortcuts where one is the beginning of another, such as `cat` and `catalog`, since which
+one wins is not guaranteed.
