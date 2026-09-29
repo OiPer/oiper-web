@@ -66,31 +66,87 @@ export function GlobeCanvas({ onReady }: GlobeCanvasProps) {
       strokeOpacity: 0.04,
     })
 
-    let rafId: number
+    let rafId: number | undefined
+    let readyTimeoutId: number | undefined
+    let animationTimeoutId: number | undefined
     let isMounted = true
+    let isReady = false
+    let isVisible = false
+    let rotation = -20
 
-    polygonSeries.events.on('datavalidated', () => {
+    function stopAnimation() {
+      if (rafId === undefined) return
+      cancelAnimationFrame(rafId)
+      rafId = undefined
+    }
+
+    function startAnimation() {
+      if (
+        !isMounted ||
+        !isReady ||
+        !isVisible ||
+        document.hidden ||
+        rafId !== undefined
+      ) {
+        return
+      }
+      rafId = requestAnimationFrame(animate)
+    }
+
+    function animate() {
+      rafId = undefined
+      if (!isMounted || !isReady || !isVisible || document.hidden) return
+
+      rotation = (rotation - 0.06) % 360
+      chart.set('rotationX', rotation)
+      rafId = requestAnimationFrame(animate)
+    }
+
+    const intersectionObserver = new IntersectionObserver((entries) => {
+      const entry = entries[0]
+      if (!entry) return
+
+      isVisible = entry.isIntersecting
+      if (isVisible) {
+        startAnimation()
+      } else {
+        stopAnimation()
+      }
+    })
+    intersectionObserver.observe(chartDiv)
+
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        stopAnimation()
+      } else {
+        startAnimation()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    polygonSeries.events.once('datavalidated', () => {
       if (!isMounted) return
-      setTimeout(() => {
+      readyTimeoutId = window.setTimeout(() => {
         if (!isMounted) return
         onReady?.()
 
-        setTimeout(() => {
+        animationTimeoutId = window.setTimeout(() => {
           if (!isMounted) return
-          let rotation = -20
-          function animate() {
-            rotation -= 0.06
-            chart.set('rotationX', rotation)
-            rafId = requestAnimationFrame(animate)
-          }
-          rafId = requestAnimationFrame(animate)
+          isReady = true
+          startAnimation()
         }, 300)
       }, 50)
     })
 
     return () => {
       isMounted = false
-      cancelAnimationFrame(rafId)
+      stopAnimation()
+      if (readyTimeoutId !== undefined) window.clearTimeout(readyTimeoutId)
+      if (animationTimeoutId !== undefined) {
+        window.clearTimeout(animationTimeoutId)
+      }
+      intersectionObserver.disconnect()
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
       root.dispose()
     }
   }, [onReady])
