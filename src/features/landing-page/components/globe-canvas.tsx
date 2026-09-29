@@ -124,7 +124,7 @@ export function GlobeCanvas({ onReady }: GlobeCanvasProps) {
     }
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
-    polygonSeries.events.on('datavalidated', () => {
+    polygonSeries.events.once('datavalidated', () => {
       if (!isMounted) return
       readyTimeoutId = window.setTimeout(() => {
         if (!isMounted) return
