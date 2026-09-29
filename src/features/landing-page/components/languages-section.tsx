@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Wrapper } from '../../../components/wrapper'
 import { GlobeCanvas } from './globe-canvas'
 
@@ -25,6 +25,7 @@ const languages = [
 
 export function LanguagesSection() {
   const [globeReady, setGlobeReady] = useState(false)
+  const handleGlobeReady = useCallback(() => setGlobeReady(true), [])
 
   return (
     <section
@@ -36,7 +37,7 @@ export function LanguagesSection() {
           globeReady ? 'opacity-100' : 'opacity-0'
         }`}
       >
-        <GlobeCanvas onReady={() => setGlobeReady(true)} />
+        <GlobeCanvas onReady={handleGlobeReady} />
       </div>
 
       <Wrapper className="relative">
