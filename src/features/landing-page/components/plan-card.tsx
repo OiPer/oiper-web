@@ -5,6 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { DownloadButton } from '@/features/download/download-button'
 import type { components } from '@/lib/api/schema'
 import { formatSavePercent } from '@/lib/format'
 import { cn } from '@/lib/utils'
@@ -17,6 +18,7 @@ type PricingPlan = components['schemas']['PricingPlan']
 export type CtaAction =
   | { type: 'link'; href: string; scroll?: boolean }
   | { type: 'button'; onClick: () => void }
+  | { type: 'download' }
 
 export type PlanCardCta = {
   cta: ReactNode
@@ -75,6 +77,11 @@ function CtaLink(props: {
       </button>
     )
   }
+
+  if (props.action.type === 'download') {
+    return <DownloadButton className={props.className} compact />
+  }
+
   if (props.action.type === 'link') {
     return (
       <Link

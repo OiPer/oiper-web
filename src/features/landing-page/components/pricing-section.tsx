@@ -17,7 +17,6 @@ import {
   type CtaAction,
   type PlanCardCta,
 } from '@/features/landing-page/components/plan-card'
-import { DOWNLOAD_URL } from '@/features/landing-page/constants/links'
 import { $api } from '@/lib/api/client'
 import type { components } from '@/lib/api/schema'
 import { formatCurrencyFromCents, planDisplayName } from '@/lib/format'
@@ -238,8 +237,8 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
               features={free.features}
               featured={false}
               cta={{
-                cta: 'Download',
-                action: { type: 'link', href: DOWNLOAD_URL },
+                cta: null,
+                action: { type: 'download' },
               }}
             />
           )}
