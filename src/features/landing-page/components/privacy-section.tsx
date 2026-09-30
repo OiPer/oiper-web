@@ -24,7 +24,7 @@ export function PrivacySection() {
   return (
     <section
       id="privacy"
-      className="relative overflow-hidden border-b border-white/[0.06] bg-[#0c0c0c] py-32 sm:py-40"
+      className="relative overflow-hidden border-b border-white/6 bg-[#0c0c0c] py-32 sm:py-40"
     >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(255,255,255,0.03),transparent_50%)]" />
@@ -47,7 +47,7 @@ export function PrivacySection() {
             return (
               <div
                 key={item.title}
-                className="grid grid-cols-[auto_1fr] items-baseline gap-x-6 border-t border-white/[0.06] py-10 sm:py-14 lg:grid-cols-[5rem_minmax(0,1fr)_minmax(0,26rem)] lg:gap-x-12"
+                className="grid grid-cols-[auto_1fr] items-baseline gap-x-6 border-t border-white/6 py-10 sm:py-14 lg:grid-cols-[5rem_minmax(0,1fr)_minmax(0,26rem)] lg:gap-x-12"
               >
                 <span className="font-mono text-sm text-white/25 tabular-nums">
                   {item.index}
@@ -67,7 +67,7 @@ export function PrivacySection() {
               </div>
             )
           })}
-          <div className="border-t border-white/[0.06]" />
+          <div className="border-t border-white/6" />
         </div>
       </Wrapper>
     </section>

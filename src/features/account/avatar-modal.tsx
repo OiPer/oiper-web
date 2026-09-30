@@ -1,9 +1,9 @@
 'use client'
 
+import { Loading } from '@/components/shared/loading'
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
 import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
-import { Spinner } from '@/components/ui/spinner'
 import { Slot } from 'radix-ui'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -42,9 +42,7 @@ export function AccountAvatarModal({
       const reader = new FileReader()
 
       reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          return resolve(reader.result)
-        }
+        if (typeof reader.result === 'string') return resolve(reader.result)
 
         reject(new Error('Could not read avatar file'))
       }
@@ -79,15 +77,11 @@ export function AccountAvatarModal({
   function clearSelection() {
     setSelectedFile(null)
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   function handleOpenChange(nextOpen: boolean) {
-    if (!nextOpen) {
-      clearSelection()
-    }
+    if (!nextOpen) clearSelection()
 
     setOpen(nextOpen)
   }
@@ -99,7 +93,9 @@ export function AccountAvatarModal({
       const dataUrl = await readFileAsDataUrl(selectedFile)
       await onSave(dataUrl)
       handleOpenChange(false)
-    } catch {}
+    } catch {
+      toast.error("Couldn't save your avatar — try picking the file again")
+    }
   }
 
   return (
@@ -157,7 +153,7 @@ export function AccountAvatarModal({
                 onClick={() => void handleSaveAvatar()}
                 disabled={!selectedFile || isSaving}
               >
-                {isSaving ? <Spinner /> : 'Save Avatar'}
+                <Loading loading={isSaving}>Save Avatar</Loading>
               </Button>
             </DialogFooter>
           </div>

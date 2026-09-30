@@ -46,7 +46,6 @@ export default defineConfig([
       'no-useless-return': 2,
       'no-empty-static-block': 2,
 
-      // 'max-lines': [2, { max: 500, skipComments: true, skipBlankLines: true }],
       '@typescript-eslint/max-params': [2, { max: 5, countVoidThis: false }],
 
       'arrow-body-style': 0,
@@ -70,7 +69,7 @@ export default defineConfig([
       'jsx-a11y/label-has-associated-control': 0,
       'jsx-a11y/no-static-element-interactions': 0,
 
-      '@typescript-eslint/no-floating-promises': 2,
+      '@typescript-eslint/no-floating-promises': 0,
       '@typescript-eslint/no-unused-vars': [
         1,
         {

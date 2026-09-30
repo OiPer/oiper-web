@@ -1,7 +1,7 @@
 import { useSearchParams as useS } from 'next/navigation'
 import { useMemo } from 'react'
 
-export function useSearchParams() {
+export function useUrlSearchParams() {
   const searchParams = useS()!
 
   const setSearchParam = useMemo(

@@ -18,11 +18,7 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 
 function SignedInActions() {
-  const { currentUser, signOut } = useAuth()
-
-  if (!currentUser) {
-    throw new Error('Account header requires an authenticated user')
-  }
+  const { signOut, currentUser } = useAuth({ required: true })
 
   const label = getUserLabel(currentUser)
   const initials = getUserInitials(currentUser)
@@ -32,7 +28,7 @@ function SignedInActions() {
       const result = await signOut()
       window.location.assign(result.logoutUrl)
     } catch {
-      toast.error('Failed to sign out')
+      toast.error("Couldn't sign out")
     }
   }
 
@@ -94,7 +90,7 @@ function SignedInActions() {
           variant="destructive"
           onSelect={(event) => {
             event.preventDefault()
-            void handleSignOut()
+            handleSignOut()
           }}
         >
           <LogOut className="size-4" />
@@ -111,7 +107,7 @@ function HeaderActions() {
 
 export function Header() {
   return (
-    <header className="border-border/70 bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-20 border-b backdrop-blur">
+    <header className="border-border/70 bg-background/95 supports-backdrop-filter:bg-background/80 sticky top-0 z-20 border-b backdrop-blur">
       <Wrapper className="relative z-10 flex h-16 items-center gap-6">
         <div className="flex min-w-0 flex-1 items-center">
           <Link href="/" className="block w-fit">

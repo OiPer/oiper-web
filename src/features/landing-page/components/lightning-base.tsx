@@ -5,11 +5,9 @@ import { motion } from 'framer-motion'
 export function LightningBase() {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-80 overflow-hidden">
-      {/* Subtle warm radial glow from bottom center */}
       <div className="absolute bottom-0 left-1/2 h-70 w-200 -translate-x-1/2 bg-[radial-gradient(ellipse_at_50%_100%,rgba(255,255,255,0.06),transparent_65%)]" />
       <div className="absolute bottom-0 left-1/2 h-30 w-100 -translate-x-1/2 bg-[radial-gradient(ellipse_at_50%_100%,rgba(255,255,255,0.08),transparent_55%)]" />
 
-      {/* Central energy pillar */}
       <div className="absolute bottom-0 left-1/2 h-70 w-15 -translate-x-1/2 bg-[linear-gradient(180deg,transparent_0%,rgba(255,255,255,0.04)_40%,rgba(255,255,255,0.08)_70%,rgba(255,255,255,0.06)_100%)] blur-2xl" />
 
       <svg
@@ -45,7 +43,6 @@ export function LightningBase() {
           </filter>
         </defs>
 
-        {/* Central energy beam */}
         <motion.path
           d="M450 320 L445 220 L455 140 L448 60 L450 0"
           stroke="url(#boltGrad1)"
@@ -63,7 +60,6 @@ export function LightningBase() {
           }}
         />
 
-        {/* Main lightning bolts */}
         {[
           'M250 320 L280 240 L265 190 L295 120 L275 50 L285 0',
           'M350 320 L330 250 L350 180 L325 110 L345 40 L335 0',
@@ -92,7 +88,6 @@ export function LightningBase() {
           />
         ))}
 
-        {/* Secondary bolts */}
         {[
           'M300 320 L315 260 L305 210 L320 150 L310 90',
           'M400 320 L390 270 L410 210 L395 150 L405 100',
@@ -119,7 +114,6 @@ export function LightningBase() {
           />
         ))}
 
-        {/* Branch bolts */}
         {[
           'M280 240 L310 225',
           'M350 180 L375 195',
@@ -148,7 +142,6 @@ export function LightningBase() {
           />
         ))}
 
-        {/* Crackling at base */}
         {[
           'M280 320 L290 295 L270 280',
           'M450 320 L460 295 L440 280',
@@ -175,13 +168,11 @@ export function LightningBase() {
         ))}
       </svg>
 
-      {/* Base line */}
-      <div className="absolute bottom-0 left-1/2 h-[2px] w-150 -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.5),rgba(255,255,255,0.15),transparent_70%)]" />
+      <div className="absolute bottom-0 left-1/2 h-0.5 w-150 -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.5),rgba(255,255,255,0.15),transparent_70%)]" />
       <div className="absolute bottom-px left-1/2 h-15 w-100 -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.08),transparent_65%)] blur-2xl" />
 
-      {/* Subtle energy rings */}
       <motion.div
-        className="absolute -bottom-5 left-1/2 h-[50px] w-125 -translate-x-1/2 rounded-full border border-white/10"
+        className="absolute -bottom-5 left-1/2 h-12.5 w-125 -translate-x-1/2 rounded-full border border-white/10"
         animate={{
           scale: [1, 1.2, 1],
           opacity: [0.3, 0.1, 0.3],
@@ -189,7 +180,7 @@ export function LightningBase() {
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute bottom-[-10px] left-1/2 h-[30px] w-75 -translate-x-1/2 rounded-full border border-white/15"
+        className="absolute -bottom-2.5 left-1/2 h-7.5 w-75 -translate-x-1/2 rounded-full border border-white/15"
         animate={{
           scale: [1, 1.15, 1],
           opacity: [0.4, 0.15, 0.4],

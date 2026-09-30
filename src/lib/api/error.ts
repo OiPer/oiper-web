@@ -1,66 +1,53 @@
-import type { components } from '@/lib/api/schema'
+import type { paths } from '@/lib/api/schema'
 
-type AppErrorEnvelope = components['schemas']['AppErrorEnvelope']
-type AppErrorCode = components['schemas']['AppErrorCode']
+type ResponseBody<T> = T extends { content: { 'application/json': infer B } }
+  ? B
+  : never
+
+type AppErrorCodeOf<Responses> = {
+  [K in keyof Responses]: ResponseBody<Responses[K]> extends {
+    error: { code: infer Code }
+  }
+    ? Code
+    : never
+}[keyof Responses]
+
+export type ErrorCodeOf<
+  Path extends keyof paths,
+  Method extends keyof paths[Path] & string,
+> = paths[Path][Method] extends { responses: infer R }
+  ? AppErrorCodeOf<R>
+  : never
+
+export type ErrorResponse = {
+  error: {
+    type: string
+    code: string
+    message: string
+    details?: unknown
+  }
+  requestId: string
+}
 
 export function isAbortError(error: unknown): boolean {
   return error instanceof DOMException && error.name === 'AbortError'
 }
 
-export function isAppErrorEnvelope(error: unknown): error is AppErrorEnvelope {
-  if (!error || typeof error !== 'object') {
-    return false
-  }
-
-  const envelope = error as {
-    error?: { code?: unknown; message?: unknown; details?: unknown }
-  }
+export function isAppErrorEnvelope(error: unknown): error is ErrorResponse {
+  if (!error || typeof error !== 'object') return false
+  const envelope = error as ErrorResponse
 
   return (
+    typeof envelope.error?.type === 'string' &&
     typeof envelope.error?.code === 'string' &&
     typeof envelope.error?.message === 'string'
   )
 }
 
-export function getAppErrorCode(error: unknown): AppErrorCode | null {
-  if (!isAppErrorEnvelope(error)) {
-    return null
-  }
-
-  return error.error.code
-}
-
-export function getAppErrorDetailsCode(error: unknown): string | null {
-  if (!isAppErrorEnvelope(error)) {
-    return null
-  }
-
-  const { details } = error.error
-
-  if (!details || typeof details !== 'object' || !('code' in details)) {
-    return null
-  }
-
-  const code = details.code
-
-  return typeof code === 'string' && code.trim() ? code : null
-}
-
-export function getAppErrorMessage(
-  error: unknown,
-  fallback = 'Something went wrong!'
-): string {
-  if (isAppErrorEnvelope(error)) {
-    return error.error.message
-  }
-
-  if (error instanceof Error && error.message.trim()) {
-    return error.message
-  }
-
-  if (typeof error === 'string' && error.trim()) {
-    return error
-  }
-
-  return fallback
+export function getAppErrorCode<
+  Method extends keyof paths[Path] & string,
+  Path extends keyof paths,
+>(error: unknown): ErrorCodeOf<Path, Method> | null {
+  if (!isAppErrorEnvelope(error)) return null
+  return error.error.code as ErrorCodeOf<Path, Method>
 }

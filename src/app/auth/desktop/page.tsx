@@ -2,9 +2,10 @@
 
 import { Spinner } from '@/components/ui/spinner'
 import { $api } from '@/lib/api/client'
-import { getAppErrorMessage } from '@/lib/api/error'
+import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 type DesktopAuthPageState = {
   status: 'loading' | 'redirecting_sign_in' | 'continuing' | 'error'
@@ -38,46 +39,44 @@ export default function DesktopAuthPage() {
     }
   )
 
+  const hasNavigatedRef = useRef(false)
+
   useEffect(() => {
     if (!requestId) return router.replace('/')
-
-    if (sessionQuery.isPending) {
-      setState({ status: 'loading' })
-      return
-    }
+    if (sessionQuery.isPending) return setState({ status: 'loading' })
 
     if (sessionQuery.error) {
-      setState({
+      return setState({
         status: 'error',
-        message: getAppErrorMessage(
-          sessionQuery.error,
-          'Failed to verify web session'
-        ),
+        message: "Couldn't verify your session",
       })
-      return
     }
 
     if (!sessionQuery.data) {
-      setState({
+      return setState({
         status: 'error',
-        message: 'Failed to verify web session',
+        message: "Couldn't verify your session",
       })
-      return
     }
 
+    if (hasNavigatedRef.current) return
     if (!sessionQuery.data.authenticated) {
+      hasNavigatedRef.current = true
       setState({ status: 'redirecting_sign_in' })
-      window.location.replace(signInUrl)
-      return
+      return window.location.replace(signInUrl)
     }
 
+    hasNavigatedRef.current = true
     setState({ status: 'continuing' })
-    window.location.replace(
-      `/v1/auth/desktop/continue?${new URLSearchParams({
+    const continueUrl = joinUrl(
+      env.OIPER_SERVER_URL,
+      '/v1/auth/desktop/continue',
+      {
         requestId,
         callbackUrl: '/',
-      }).toString()}`
+      }
     )
+    window.location.replace(continueUrl)
   }, [
     requestId,
     router,
@@ -132,7 +131,7 @@ export default function DesktopAuthPage() {
                 Couldn&apos;t continue
               </h1>
               <p className="text-sm text-white/55">
-                {state.message ?? 'Something went wrong!'}
+                {state.message ?? 'Something went wrong'}
               </p>
             </div>
           </div>

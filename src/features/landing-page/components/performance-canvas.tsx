@@ -283,9 +283,7 @@ export function PerformanceCanvas() {
         ctx.fillStyle = `rgba(255,255,255,${renderAlpha * 0.8})`
         ctx.fillText(note.symbol, note.x, drawY)
 
-        if (note.x > beamX + 10 || note.alpha < 0.005) {
-          notes.splice(idx, 1)
-        }
+        if (note.x > beamX + 10 || note.alpha < 0.005) notes.splice(idx, 1)
       }
 
       for (let idx = words.length - 1; idx >= 0; idx--) {
@@ -297,9 +295,7 @@ export function PerformanceCanvas() {
         ctx.fillStyle = `rgba(255,255,255,${word.alpha})`
         ctx.fillText(word.text, word.x, word.y)
 
-        if (word.x > w + 50) {
-          words.splice(idx, 1)
-        }
+        if (word.x > w + 50) words.splice(idx, 1)
       }
 
       for (let idx = sparks.length - 1; idx >= 0; idx--) {
@@ -316,9 +312,7 @@ export function PerformanceCanvas() {
         ctx.arc(s.x, s.y, 1.2, 0, Math.PI * 2)
         ctx.fill()
 
-        if (s.life > s.maxLife) {
-          sparks.splice(idx, 1)
-        }
+        if (s.life > s.maxLife) sparks.splice(idx, 1)
       }
 
       if (Math.random() < 0.18) spawnNote()
