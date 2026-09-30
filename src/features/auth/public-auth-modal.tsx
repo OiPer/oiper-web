@@ -36,6 +36,7 @@ export function PublicAuthModal() {
     >
       <DialogContent
         className="h-full w-full! max-w-full! overflow-auto rounded-none border-none bg-transparent! p-0 shadow-none ring-0 outline-none"
+        overlayClassName="backdrop-blur-[3px] data-[state=open]:animate-none"
         showCloseButton={false}
         aria-describedby={undefined}
         onPointerDownOutside={(event) => {
