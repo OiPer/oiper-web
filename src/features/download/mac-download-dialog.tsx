@@ -2,7 +2,6 @@
 
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
 import { Button } from '@/components/ui/button'
-import { DialogFooter, DialogHeader } from '@/components/ui/dialog'
 import { ChevronDown } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
@@ -42,7 +41,7 @@ export function MacDownloadDialog() {
   return (
     <ResponsiveDialog open={open} onOpenChange={setOpen}>
       <ResponsiveDialog.Content>
-        <DialogHeader className="text-left">
+        <ResponsiveDialog.Header>
           <ResponsiveDialog.Title>
             Mac build not signed by Apple
           </ResponsiveDialog.Title>
@@ -83,9 +82,9 @@ export function MacDownloadDialog() {
             </a>
             .
           </ResponsiveDialog.Description>
-        </DialogHeader>
+        </ResponsiveDialog.Header>
 
-        <DialogFooter className="group-data-[vaul-drawer-direction=bottom]/drawer-content:flex-col-reverse">
+        <ResponsiveDialog.Footer>
           <ResponsiveDialog.Close asChild>
             <Button variant="outline" type="button">
               Cancel
@@ -96,7 +95,7 @@ export function MacDownloadDialog() {
               Yes, download
             </a>
           </Button>
-        </DialogFooter>
+        </ResponsiveDialog.Footer>
       </ResponsiveDialog.Content>
     </ResponsiveDialog>
   )
