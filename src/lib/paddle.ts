@@ -1,5 +1,9 @@
 import { env } from '@/lib/env'
-import { initializePaddle, type Paddle } from '@paddle/paddle-js'
+import {
+  CheckoutEventNames,
+  initializePaddle,
+  type Paddle,
+} from '@paddle/paddle-js'
 
 let paddlePromise: Promise<Paddle | undefined> | null = null
 
@@ -14,10 +18,17 @@ export function getPaddleClient(): Promise<Paddle | undefined> {
 
 export async function openPaddleCheckout(
   transactionId: string,
-  email?: string
+  email: string | undefined,
+  onCompleted: () => void
 ): Promise<void> {
   const paddle = await getPaddleClient()
   if (!paddle) throw new Error('Paddle failed to initialize')
+
+  paddle.Update({
+    eventCallback: (event) => {
+      if (event.name === CheckoutEventNames.CHECKOUT_COMPLETED) onCompleted()
+    },
+  })
 
   paddle.Checkout.open({
     transactionId,

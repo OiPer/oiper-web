@@ -6,6 +6,7 @@ import type { components } from '@/lib/api/schema'
 import { env } from '@/lib/env'
 import { openPaddleCheckout } from '@/lib/paddle'
 import { redirectToStripeCheckout } from '@/lib/stripe-checkout'
+import { useQueryClient } from '@tanstack/react-query'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -53,12 +54,28 @@ export type PendingCheckout = {
 
 export function useStartCheckout() {
   const { currentUser } = useAuth()
+  const queryClient = useQueryClient()
   const checkoutMutation = $api.useMutation(
     'post',
     '/v1/account/subscription/checkout'
   )
   const [pendingCheckout, setPendingCheckout] =
     useState<PendingCheckout | null>(null)
+
+  function refreshSubscriptionUntil(plan: 'PRO' | 'MAX') {
+    const subscriptionQuery = {
+      ...$api.queryOptions('get', '/v1/account/subscription', {
+        cache: 'no-store',
+      }),
+      staleTime: 0,
+    }
+
+    pollUntil(
+      () => queryClient.fetchQuery(subscriptionQuery),
+      (subscription) =>
+        subscription.plan === plan && subscription.status === 'ACTIVE'
+    ).catch(() => undefined)
+  }
 
   async function startCheckout(
     provider: 'PADDLE' | 'STRIPE',
@@ -77,7 +94,8 @@ export function useStartCheckout() {
         case 'PADDLE':
           return await openPaddleCheckout(
             result.transactionId,
-            currentUser?.email
+            currentUser?.email,
+            () => refreshSubscriptionUntil(plan)
           )
         case 'STRIPE':
           return redirectToStripeCheckout(result.checkoutUrl)
