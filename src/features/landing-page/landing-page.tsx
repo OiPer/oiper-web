@@ -14,7 +14,10 @@ export function LandingPage(props: {
   plans: components['schemas']['PricingPlan'][]
 }) {
   return (
-    <main className="min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
+    <main
+      suppressHydrationWarning
+      className="min-h-screen overflow-hidden bg-[#0a0a0a] text-white"
+    >
       <HeroSection />
       <FeaturesSection />
       <PerformanceSection />

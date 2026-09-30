@@ -22,7 +22,7 @@ import { $api } from '@/lib/api/client'
 import type { components } from '@/lib/api/schema'
 import { formatCurrencyFromCents, planDisplayName } from '@/lib/format'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type PricingPlan = components['schemas']['PricingPlan']
 
@@ -33,6 +33,9 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [interval, setInterval] = useState<'MONTHLY' | 'YEARLY'>('MONTHLY')
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => setIsMounted(true), [])
   const [changePlanTarget, setChangePlanTarget] =
     useState<PlanChangeTarget | null>(null)
   const { startCheckout, pendingCheckout } = useStartCheckout()
@@ -68,7 +71,9 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     .sort((a, b) => b.discountPercentFloored - a.discountPercentFloored)[0]
 
   const isStatusUnknown =
-    isAuthLoading || (!!currentUser && subscriptionQuery.isPending)
+    !isMounted ||
+    isAuthLoading ||
+    (!!currentUser && subscriptionQuery.isPending)
 
   function signupCta(
     checkout: 'pro' | 'max',

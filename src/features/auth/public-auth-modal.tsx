@@ -2,6 +2,7 @@
 
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { useUrlSearchParams } from '@/hooks/use-search-params'
+import { useEffect, useState } from 'react'
 import { AuthPageShell } from './auth-page-shell'
 import { EmailVerificationForm } from './email-verification-form'
 import { ForgotPasswordForm } from './forgot-password-form'
@@ -10,6 +11,9 @@ import { SignUpForm } from './signup-form'
 
 export function PublicAuthModal() {
   const [searchParams, setSearchParams] = useUrlSearchParams()
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => setIsMounted(true), [])
 
   const authPage = searchParams.get('auth-page')
   const isSignInOpen = authPage === 'signin'
@@ -25,7 +29,7 @@ export function PublicAuthModal() {
 
   return (
     <Dialog
-      open={isOpen}
+      open={isOpen && isMounted}
       onOpenChange={(open) => {
         if (!open) closeModal()
       }}
