@@ -3,7 +3,6 @@
 import { Loading } from '@/components/shared/loading'
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
 import { Button } from '@/components/ui/button'
-import { DialogFooter } from '@/components/ui/dialog'
 import { Slot } from 'radix-ui'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -112,14 +111,14 @@ export function AccountAvatarModal({
 
       <ResponsiveDialog open={open} onOpenChange={handleOpenChange}>
         <ResponsiveDialog.Content>
-          <div className="space-y-1">
+          <ResponsiveDialog.Header>
             <ResponsiveDialog.Title>Update Avatar</ResponsiveDialog.Title>
             <ResponsiveDialog.Description>
               Use a clean square image for your Oiper account profile.
             </ResponsiveDialog.Description>
-          </div>
+          </ResponsiveDialog.Header>
 
-          <div className="space-y-4">
+          <ResponsiveDialog.Body className="space-y-4">
             <div className="flex justify-center">
               <div className="bg-muted relative size-44 overflow-hidden rounded-2xl border">
                 {selectedFile ? (
@@ -140,23 +139,23 @@ export function AccountAvatarModal({
               PNG, JPG, and WebP work best. Keep it under {maxSize}MB for a
               sharp, fast-loading profile image.
             </div>
+          </ResponsiveDialog.Body>
 
-            <DialogFooter className="gap-2">
-              <ResponsiveDialog.Close asChild>
-                <Button variant="outline" type="button" disabled={isSaving}>
-                  Cancel
-                </Button>
-              </ResponsiveDialog.Close>
-
-              <Button
-                type="button"
-                onClick={() => void handleSaveAvatar()}
-                disabled={!selectedFile || isSaving}
-              >
-                <Loading loading={isSaving}>Save Avatar</Loading>
+          <ResponsiveDialog.Footer>
+            <ResponsiveDialog.Close asChild>
+              <Button variant="outline" type="button" disabled={isSaving}>
+                Cancel
               </Button>
-            </DialogFooter>
-          </div>
+            </ResponsiveDialog.Close>
+
+            <Button
+              type="button"
+              onClick={() => void handleSaveAvatar()}
+              disabled={!selectedFile || isSaving}
+            >
+              <Loading loading={isSaving}>Save Avatar</Loading>
+            </Button>
+          </ResponsiveDialog.Footer>
         </ResponsiveDialog.Content>
       </ResponsiveDialog>
     </Fragment>

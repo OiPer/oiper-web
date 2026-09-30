@@ -5,7 +5,6 @@ import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
 import { SectionCard, SectionHeading } from '@/components/shared/section-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
@@ -50,14 +49,14 @@ function AccountDeleteModal({
       <ResponsiveDialog.Trigger asChild>{children}</ResponsiveDialog.Trigger>
 
       <ResponsiveDialog.Content>
-        <div className="space-y-1">
+        <ResponsiveDialog.Header>
           <ResponsiveDialog.Title>Account delete</ResponsiveDialog.Title>
           <ResponsiveDialog.Description>
             This action is permanent and cannot be undone.
           </ResponsiveDialog.Description>
-        </div>
+        </ResponsiveDialog.Header>
 
-        <div className="flex flex-col gap-4">
+        <ResponsiveDialog.Body className="flex flex-col gap-4">
           <div className="flex items-center gap-2 rounded-lg border px-4 py-3 text-sm font-medium">
             <TriangleAlert className="size-4" />
             <p>
@@ -75,24 +74,24 @@ function AccountDeleteModal({
               onChange={(event) => setConfirm(event.target.value)}
             />
           </div>
+        </ResponsiveDialog.Body>
 
-          <DialogFooter className="flex-row gap-2 *:flex-1 sm:*:flex-none">
-            <ResponsiveDialog.Close asChild>
-              <Button variant="outline" type="button" disabled={isDeleting}>
-                Cancel
-              </Button>
-            </ResponsiveDialog.Close>
-
-            <Button
-              type="button"
-              variant="destructive"
-              disabled={confirm !== confirmationText || isDeleting}
-              onClick={() => void onDelete()}
-            >
-              <Loading loading={isDeleting}>Delete</Loading>
+        <ResponsiveDialog.Footer>
+          <ResponsiveDialog.Close asChild>
+            <Button variant="outline" type="button" disabled={isDeleting}>
+              Cancel
             </Button>
-          </DialogFooter>
-        </div>
+          </ResponsiveDialog.Close>
+
+          <Button
+            type="button"
+            variant="destructive"
+            disabled={confirm !== confirmationText || isDeleting}
+            onClick={() => void onDelete()}
+          >
+            <Loading loading={isDeleting}>Delete</Loading>
+          </Button>
+        </ResponsiveDialog.Footer>
       </ResponsiveDialog.Content>
     </ResponsiveDialog>
   )
