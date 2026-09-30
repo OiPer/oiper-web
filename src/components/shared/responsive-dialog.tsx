@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogClose,
@@ -120,9 +121,15 @@ export function ResponsiveDialogHeader({
     >
       <div className="flex min-w-0 flex-1 flex-col gap-1">{children}</div>
       {isDesktop && showCloseButton && (
-        <ResponsiveDialogClose className="text-muted-foreground hover:text-foreground focus-visible:ring-ring -mt-0.5 -mr-1 flex size-6 shrink-0 items-center justify-center rounded-sm outline-none focus-visible:ring-2">
-          <XIcon className="size-4" />
-          <span className="sr-only">Close</span>
+        <ResponsiveDialogClose asChild>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="text-muted-foreground hover:bg-foreground/10 hover:text-foreground -mt-2 -mr-2 shrink-0"
+          >
+            <XIcon className="size-4" />
+            <span className="sr-only">Close</span>
+          </Button>
         </ResponsiveDialogClose>
       )}
     </div>
