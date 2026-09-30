@@ -4,7 +4,6 @@ import { Loading } from '@/components/shared/loading'
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { DialogFooter } from '@/components/ui/dialog'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getAccountMutationHeaders } from '@/features/auth/web-session'
@@ -348,159 +347,161 @@ export function ChangePlanDialog({
   return (
     <ResponsiveDialog open={open} onOpenChange={handleOpenChange}>
       <ResponsiveDialog.Content>
-        <div className="space-y-1">
+        <ResponsiveDialog.Header>
           <ResponsiveDialog.Title className="font-medium">
             Change plan
           </ResponsiveDialog.Title>
           <ResponsiveDialog.Description className="font-normal">
             Choose a new plan for your subscription.
           </ResponsiveDialog.Description>
-        </div>
+        </ResponsiveDialog.Header>
 
-        <RadioGroup
-          value={selectedKey ?? undefined}
-          onValueChange={setSelectedKey}
-        >
-          {options.map((entry) => (
-            <PlanOption
-              key={optionKey(entry)}
-              entry={entry}
-              isCurrent={
-                entry.plan === currentSubscription.plan &&
-                entry.interval === currentSubscription.interval
-              }
-            />
-          ))}
-        </RadioGroup>
-
-        <div className="min-h-16">
-          {isCurrentSelected && (
-            <div className="divide-y rounded-lg border">
-              <SummaryRow
-                label="Status"
-                value={formatLabel(currentSubscription.status)}
-              />
-              <SummaryRow
-                label={
-                  currentSubscription.cancelAtPeriodEnd
-                    ? 'Access ends'
-                    : 'Renews'
-                }
-                value={
-                  currentSubscription.currentPeriodEnd
-                    ? formatDate(currentSubscription.currentPeriodEnd)
-                    : '-'
+        <ResponsiveDialog.Body className="flex flex-col gap-4">
+          <RadioGroup
+            value={selectedKey ?? undefined}
+            onValueChange={setSelectedKey}
+          >
+            {options.map((entry) => (
+              <PlanOption
+                key={optionKey(entry)}
+                entry={entry}
+                isCurrent={
+                  entry.plan === currentSubscription.plan &&
+                  entry.interval === currentSubscription.interval
                 }
               />
-              {!currentSubscription.cancelAtPeriodEnd && (
+            ))}
+          </RadioGroup>
+
+          <div className="min-h-16">
+            {isCurrentSelected && (
+              <div className="divide-y rounded-lg border">
                 <SummaryRow
-                  label="Amount"
+                  label="Status"
+                  value={formatLabel(currentSubscription.status)}
+                />
+                <SummaryRow
+                  label={
+                    currentSubscription.cancelAtPeriodEnd
+                      ? 'Access ends'
+                      : 'Renews'
+                  }
                   value={
-                    currentCatalogEntry
-                      ? formatCurrencyFromCents(
-                          currentCatalogEntry.priceAmountCents
-                        )
+                    currentSubscription.currentPeriodEnd
+                      ? formatDate(currentSubscription.currentPeriodEnd)
                       : '-'
                   }
                 />
-              )}
-            </div>
-          )}
+                {!currentSubscription.cancelAtPeriodEnd && (
+                  <SummaryRow
+                    label="Amount"
+                    value={
+                      currentCatalogEntry
+                        ? formatCurrencyFromCents(
+                            currentCatalogEntry.priceAmountCents
+                          )
+                        : '-'
+                    }
+                  />
+                )}
+              </div>
+            )}
 
-          {previewTarget &&
-            !isPreviewPending &&
-            preview?.kind === 'BLOCKED' && (
-              <Alert className="border-warning/40 bg-warning/5">
-                <AlertDescription className="space-y-3">
-                  <p>
-                    Your subscription is scheduled to cancel
-                    {preview.currentPeriodEnd &&
-                      ` on ${formatDate(preview.currentPeriodEnd)}`}{' '}
-                    so keep it active to switch plans
-                  </p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => void handleResume()}
-                    disabled={isResuming}
-                  >
-                    <Loading loading={isResuming}>Keep subscription</Loading>
-                  </Button>
+            {previewTarget &&
+              !isPreviewPending &&
+              preview?.kind === 'BLOCKED' && (
+                <Alert className="border-warning/40 bg-warning/5">
+                  <AlertDescription className="space-y-3">
+                    <p>
+                      Your subscription is scheduled to cancel
+                      {preview.currentPeriodEnd &&
+                        ` on ${formatDate(preview.currentPeriodEnd)}`}{' '}
+                      so keep it active to switch plans
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => void handleResume()}
+                      disabled={isResuming}
+                    >
+                      <Loading loading={isResuming}>Keep subscription</Loading>
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+            {previewTarget && isPreviewPending && (
+              <div className="divide-y rounded-lg border">
+                <SummaryRowSkeleton labelWidth="w-20" />
+                <SummaryRowSkeleton labelWidth="w-16" />
+                <SummaryRowSkeleton labelWidth="w-28" detailWidth="w-40" />
+                <SummaryRowSkeleton labelWidth="w-24" detailWidth="w-20" />
+              </div>
+            )}
+
+            {previewTarget && !isPreviewPending && !!previewError && (
+              <Alert
+                variant="destructive"
+                className="border-destructive/40 bg-destructive/5"
+              >
+                <AlertDescription>
+                  {describePreviewError(previewError)}
                 </AlertDescription>
               </Alert>
             )}
 
-          {previewTarget && isPreviewPending && (
-            <div className="divide-y rounded-lg border">
-              <SummaryRowSkeleton labelWidth="w-20" />
-              <SummaryRowSkeleton labelWidth="w-16" />
-              <SummaryRowSkeleton labelWidth="w-28" detailWidth="w-40" />
-              <SummaryRowSkeleton labelWidth="w-24" detailWidth="w-20" />
-            </div>
-          )}
-
-          {previewTarget && !isPreviewPending && !!previewError && (
-            <Alert
-              variant="destructive"
-              className="border-destructive/40 bg-destructive/5"
-            >
-              <AlertDescription>
-                {describePreviewError(previewError)}
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {previewTarget && !isPreviewPending && previewRows && (
-            <div className="divide-y rounded-lg border">
-              <SummaryRow
-                label="New plan"
-                value={subscriptionPlanLabel(
-                  previewTarget.plan,
-                  previewTarget.interval
-                )}
-              />
-              <SummaryRow
-                label="Effective"
-                value={formatDate(previewRows.effectiveAt)}
-              />
-
-              {todayRow && (
+            {previewTarget && !isPreviewPending && previewRows && (
+              <div className="divide-y rounded-lg border">
                 <SummaryRow
-                  label={todayRow.label}
-                  detail={todayRow.detail}
-                  value={todayRow.value}
-                  emphasis={todayRow.emphasis}
-                />
-              )}
-
-              {previewRows.nextPayment && (
-                <SummaryRow
-                  label="Next payment"
-                  detail={formatDate(previewRows.nextPayment.dueAt)}
-                  value={formatCurrencyFromCents(
-                    Number(previewRows.nextPayment.amount),
-                    previewRows.currencyCode
+                  label="New plan"
+                  value={subscriptionPlanLabel(
+                    previewTarget.plan,
+                    previewTarget.interval
                   )}
                 />
-              )}
+                <SummaryRow
+                  label="Effective"
+                  value={formatDate(previewRows.effectiveAt)}
+                />
 
-              {previewRows.kind === 'IMMEDIATE' &&
-                previewRows.regularAmount && (
+                {todayRow && (
                   <SummaryRow
-                    label="Regular price"
-                    detail={getRegularPriceDetail(previewTarget.interval)}
+                    label={todayRow.label}
+                    detail={todayRow.detail}
+                    value={todayRow.value}
+                    emphasis={todayRow.emphasis}
+                  />
+                )}
+
+                {previewRows.nextPayment && (
+                  <SummaryRow
+                    label="Next payment"
+                    detail={formatDate(previewRows.nextPayment.dueAt)}
                     value={formatCurrencyFromCents(
-                      Number(previewRows.regularAmount),
+                      Number(previewRows.nextPayment.amount),
                       previewRows.currencyCode
                     )}
                   />
                 )}
-            </div>
-          )}
-        </div>
 
-        <DialogFooter className="gap-2">
+                {previewRows.kind === 'IMMEDIATE' &&
+                  previewRows.regularAmount && (
+                    <SummaryRow
+                      label="Regular price"
+                      detail={getRegularPriceDetail(previewTarget.interval)}
+                      value={formatCurrencyFromCents(
+                        Number(previewRows.regularAmount),
+                        previewRows.currencyCode
+                      )}
+                    />
+                  )}
+              </div>
+            )}
+          </div>
+        </ResponsiveDialog.Body>
+
+        <ResponsiveDialog.Footer>
           <ResponsiveDialog.Close asChild>
             <Button
               variant="outline"
@@ -524,7 +525,7 @@ export function ChangePlanDialog({
           >
             <Loading loading={changeMutation.isPending}>{confirmLabel}</Loading>
           </Button>
-        </DialogFooter>
+        </ResponsiveDialog.Footer>
       </ResponsiveDialog.Content>
     </ResponsiveDialog>
   )
