@@ -182,9 +182,7 @@ export function PlanCard(props: {
                           strokeWidth={1.5}
                         />
                       </TooltipTrigger>
-                      <TooltipContent className="max-w-80">
-                        {feature.detail}
-                      </TooltipContent>
+                      <TooltipContent>{feature.detail}</TooltipContent>
                     </Tooltip>
                   )}
                 </p>
