@@ -162,7 +162,12 @@ function CurrentPlan() {
 
   const subscription = subscriptionQuery.data
   const paidSubscription =
-    subscription && subscription.plan !== 'FREE' ? subscription : undefined
+    subscription &&
+    subscription.plan !== 'FREE' &&
+    subscription.status !== 'CANCELLED' &&
+    subscription.status !== 'EXPIRED'
+      ? subscription
+      : undefined
 
   const catalogEntry = paidSubscription
     ? findCatalogEntry(
@@ -216,7 +221,7 @@ function CurrentPlan() {
             <Row
               label="Plan"
               value={subscriptionPlanLabel(
-                subscription.plan,
+                paidSubscription?.plan ?? 'FREE',
                 paidSubscription?.billingInterval ?? null
               )}
             />
@@ -269,7 +274,7 @@ function CurrentPlan() {
           </>
         )}
 
-        {subscription?.plan === 'FREE' && <SubscribeButton />}
+        {subscription && !paidSubscription && <SubscribeButton />}
 
         {paidSubscription && (
           <>
