@@ -226,7 +226,7 @@ export function useOpenBillingPortal() {
         params: { header: headers },
       })
 
-      window.open(urls.portalUrl, '_blank', 'noopener,noreferrer')
+      window.location.assign(urls.portalUrl)
     } catch (error) {
       const code = getAppErrorCode<'post', '/v1/account/subscription/portal'>(
         error
