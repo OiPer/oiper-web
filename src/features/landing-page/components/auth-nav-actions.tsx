@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Spinner } from '@/components/ui/spinner'
 import { getUserInitials, getUserLabel } from '@/features/account/utils'
 import { useAuth } from '@/features/auth/auth-context'
 import { DownloadButton } from '@/features/download/download-button'
@@ -113,7 +114,6 @@ function SignedInActions() {
       window.location.assign(result.logoutUrl)
     } catch {
       toast.error("Couldn't sign out")
-    } finally {
       setIsSigningOut(false)
     }
   }
@@ -171,8 +171,8 @@ function SignedInActions() {
               handleSignOut()
             }}
           >
-            <LogOut className="size-4" />
-            {isSigningOut ? 'Signing out...' : 'Sign out'}
+            {isSigningOut ? <Spinner /> : <LogOut className="size-4" />}
+            Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

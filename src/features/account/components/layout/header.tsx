@@ -10,25 +10,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Spinner } from '@/components/ui/spinner'
 import { Wrapper } from '@/components/wrapper'
 import { getUserInitials, getUserLabel } from '@/features/account/utils'
 import { useAuth } from '@/features/auth/auth-context'
 import { CreditCard, LogOut, Settings2 } from 'lucide-react'
 import Link from 'next/link'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 function SignedInActions() {
   const { signOut, currentUser } = useAuth({ required: true })
+  const [isSigningOut, setIsSigningOut] = useState(false)
 
   const label = getUserLabel(currentUser)
   const initials = getUserInitials(currentUser)
 
   async function handleSignOut() {
+    if (isSigningOut) return
+
+    setIsSigningOut(true)
+
     try {
       const result = await signOut()
       window.location.assign(result.logoutUrl)
     } catch {
       toast.error("Couldn't sign out")
+      setIsSigningOut(false)
     }
   }
 
@@ -88,12 +96,13 @@ function SignedInActions() {
         <DropdownMenuItem
           className="cursor-pointer gap-3 px-3 py-2"
           variant="destructive"
+          disabled={isSigningOut}
           onSelect={(event) => {
             event.preventDefault()
             handleSignOut()
           }}
         >
-          <LogOut className="size-4" />
+          {isSigningOut ? <Spinner /> : <LogOut className="size-4" />}
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
