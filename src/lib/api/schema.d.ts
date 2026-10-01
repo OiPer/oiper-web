@@ -4274,7 +4274,7 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description The scheduled cancellation was reversed */
+                /** @description The scheduled cancellation was reversed, or the paused subscription resumed */
                 200: {
                     headers: {
                         [name: string]: unknown;
@@ -4315,7 +4315,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4355,7 +4355,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4395,7 +4395,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4435,7 +4435,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4475,7 +4475,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4515,7 +4515,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4555,7 +4555,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };

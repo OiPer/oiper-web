@@ -9,15 +9,18 @@ import { AccountPageHeader } from '@/features/account/components/account-page-he
 import { ChangePlanDialog } from '@/features/billing/change-plan-dialog'
 import {
   findCatalogEntry,
+  pollUntil,
   useCheckoutReturn,
   useOpenBillingPortal,
   usePollUntilPlanChangeLands,
+  useResumeSubscription,
   type ActiveSubscription,
   type PaidSubscriptionView,
   type PlanChangeTarget,
 } from '@/features/billing/use-checkout'
 import { ANCHOR_PRICING, HOME } from '@/features/landing-page/constants/links'
 import { $api } from '@/lib/api/client'
+import { isAppErrorEnvelope } from '@/lib/api/error'
 import type { components } from '@/lib/api/schema'
 import {
   formatCurrencyFromCents,
@@ -27,6 +30,7 @@ import {
 } from '@/lib/format'
 import Link from 'next/link'
 import { useState, type ReactNode } from 'react'
+import { toast } from 'sonner'
 
 type PricingPlan = components['schemas']['PricingPlan']
 type SubscriptionStatus = PaidSubscriptionView['status']
@@ -115,6 +119,42 @@ function ManageBillingButton(props: { isPastDue?: boolean }) {
   )
 }
 
+function ResumePausedButton(props: {
+  onResumed: () => Promise<{
+    data?: components['schemas']['SubscriptionAccountView'] | undefined
+  }>
+}) {
+  const { resumeSubscription, isResuming } = useResumeSubscription()
+  const [isWaiting, setIsWaiting] = useState(false)
+
+  async function handleResume() {
+    try {
+      await resumeSubscription()
+      setIsWaiting(true)
+      await pollUntil(
+        props.onResumed,
+        (result) =>
+          result.data?.plan !== 'FREE' && result.data?.status === 'ACTIVE'
+      )
+      toast.success('Your subscription is active again')
+    } catch (error) {
+      toast.error(
+        isAppErrorEnvelope(error)
+          ? error.error.message
+          : "Couldn't resume your subscription"
+      )
+    } finally {
+      setIsWaiting(false)
+    }
+  }
+
+  return (
+    <Button onClick={() => void handleResume()}>
+      <Loading loading={isResuming || isWaiting}>Resume subscription</Loading>
+    </Button>
+  )
+}
+
 function ChangePlanButton(props: {
   plans: PricingPlan[] | undefined
   subscription: ActiveSubscription
@@ -177,6 +217,7 @@ function CurrentPlan() {
       ? subscription
       : undefined
   const isPastDue = paidSubscription?.status === 'PAST_DUE'
+  const isPaused = paidSubscription?.status === 'PAUSED'
 
   const catalogEntry = paidSubscription
     ? findCatalogEntry(
@@ -234,6 +275,16 @@ function CurrentPlan() {
           </Alert>
         )}
 
+        {isPaused && (
+          <Alert className="my-2">
+            <AlertTitle>Your subscription is paused</AlertTitle>
+            <AlertDescription>
+              Cloud features are off and you won&apos;t be charged until you
+              resume it.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {subscription && (
           <div className="divide-y">
             <Row
@@ -264,7 +315,7 @@ function CurrentPlan() {
                       paidSubscription.currentPeriodEnd
                     )}
                   />
-                ) : (
+                ) : isPaused ? null : (
                   <DateValueRow
                     label={isPastDue ? 'Amount due' : 'Next payment'}
                     value={formatNextPaymentAmount(
@@ -293,6 +344,10 @@ function CurrentPlan() {
         )}
 
         {subscription && !paidSubscription && <SubscribeButton />}
+
+        {isPaused && (
+          <ResumePausedButton onResumed={() => subscriptionQuery.refetch()} />
+        )}
 
         {paidSubscription && (
           <>
