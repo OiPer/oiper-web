@@ -2,6 +2,7 @@
 
 import { Loading } from '@/components/shared/loading'
 import { SectionCard } from '@/components/shared/section-card'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AccountPageHeader } from '@/features/account/components/account-page-header'
@@ -98,12 +99,17 @@ function StatusValue(props: { status: SubscriptionStatus }) {
   return <>{formatLabel(props.status)}</>
 }
 
-function ManageBillingButton() {
+function ManageBillingButton(props: { isPastDue?: boolean }) {
   const { openBillingPortal, isOpeningPortal } = useOpenBillingPortal()
 
   return (
-    <Button variant="outline" onClick={() => void openBillingPortal()}>
-      <Loading loading={isOpeningPortal}>Manage subscription</Loading>
+    <Button
+      variant={props.isPastDue ? 'default' : 'outline'}
+      onClick={() => void openBillingPortal()}
+    >
+      <Loading loading={isOpeningPortal}>
+        {props.isPastDue ? 'Fix payment' : 'Manage subscription'}
+      </Loading>
     </Button>
   )
 }
@@ -168,6 +174,7 @@ function CurrentPlan() {
     subscription.status !== 'EXPIRED'
       ? subscription
       : undefined
+  const isPastDue = paidSubscription?.status === 'PAST_DUE'
 
   const catalogEntry = paidSubscription
     ? findCatalogEntry(
@@ -216,6 +223,15 @@ function CurrentPlan() {
           </p>
         )}
 
+        {isPastDue && (
+          <Alert variant="destructive" className="my-2">
+            <AlertTitle>Your last payment failed</AlertTitle>
+            <AlertDescription>
+              Update your payment method to restore access.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {subscription && (
           <div className="divide-y">
             <Row
@@ -248,7 +264,7 @@ function CurrentPlan() {
                   />
                 ) : (
                   <DateValueRow
-                    label="Next payment"
+                    label={isPastDue ? 'Amount due' : 'Next payment'}
                     value={formatNextPaymentAmount(
                       paidSubscription.nextPayment,
                       catalogEntry,
@@ -278,7 +294,7 @@ function CurrentPlan() {
 
         {paidSubscription && (
           <>
-            <ManageBillingButton />
+            <ManageBillingButton isPastDue={isPastDue} />
             <ChangePlanButton
               plans={pricingQuery.data?.plans}
               subscription={{
