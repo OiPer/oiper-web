@@ -9,6 +9,7 @@ import { AccountPageHeader } from '@/features/account/components/account-page-he
 import { ChangePlanDialog } from '@/features/billing/change-plan-dialog'
 import {
   findCatalogEntry,
+  useCheckoutReturn,
   useOpenBillingPortal,
   usePollUntilPlanChangeLands,
   type ActiveSubscription,
@@ -165,6 +166,7 @@ function CurrentPlan() {
   const { pendingTarget, setPendingTarget } = usePollUntilPlanChangeLands(
     subscriptionQuery.refetch
   )
+  useCheckoutReturn(subscriptionQuery.refetch)
 
   const subscription = subscriptionQuery.data
   const paidSubscription =

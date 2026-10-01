@@ -135,6 +135,12 @@ export function useAutoOpenCheckoutFromQueryParam(
     searchParams.get('provider') === 'stripe' ? 'STRIPE' : 'PADDLE'
 
   useEffect(() => {
+    if (checkoutPlan !== 'cancelled') return
+    toast.info("Checkout cancelled — you weren't charged")
+    router.replace(redirectTo)
+  }, [checkoutPlan, redirectTo, router])
+
+  useEffect(() => {
     if (!isSignedIn || !plans) return
     if (checkoutPlan !== 'pro' && checkoutPlan !== 'max') return
 
@@ -171,6 +177,30 @@ export async function pollUntil<T>(
   }
 
   return result
+}
+
+// Stripe Checkout sends the user back to Billing with ?checkout=success,
+// usually a moment before the subscription webhook lands.
+export function useCheckoutReturn(
+  refetch: () => Promise<{
+    data?: { plan: string; status?: string } | undefined
+  }>
+) {
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('checkout') !== 'success') return
+
+    window.history.replaceState(null, '', window.location.pathname)
+    toast.success('Payment received — setting up your subscription')
+    pollUntil(
+      refetch,
+      (result) =>
+        result.data?.plan !== undefined &&
+        result.data.plan !== 'FREE' &&
+        result.data.status === 'ACTIVE'
+    ).catch(() => undefined)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 }
 
 export function usePollUntilPlanChangeLands(
