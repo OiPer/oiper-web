@@ -309,12 +309,18 @@ export function ChangePlanDialog({
 
       const finalResult = await pollUntil(onResumed, (result) => {
         const stillPaid = result.data?.plan !== 'FREE' ? result.data : undefined
-        return stillPaid?.cancelAtPeriodEnd === false
+        return (
+          stillPaid?.status === 'ACTIVE' &&
+          stillPaid.cancelAtPeriodEnd === false
+        )
       })
 
       const stillPaid =
         finalResult.data?.plan !== 'FREE' ? finalResult.data : undefined
-      if (stillPaid?.cancelAtPeriodEnd !== false) {
+      if (
+        stillPaid?.status !== 'ACTIVE' ||
+        stillPaid.cancelAtPeriodEnd !== false
+      ) {
         toast.info(
           "Still processing — check back in a moment if this doesn't update"
         )
