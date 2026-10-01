@@ -21,7 +21,7 @@ import {
   type PlanChangeTarget,
 } from '@/features/billing/use-checkout'
 import { $api } from '@/lib/api/client'
-import { getAppErrorCode } from '@/lib/api/error'
+import { isAppErrorEnvelope } from '@/lib/api/error'
 import type { components } from '@/lib/api/schema'
 import {
   formatCurrencyFromCents,
@@ -48,15 +48,14 @@ function optionKey(target: PlanChangeTarget) {
   return `${target.plan}-${target.interval}`
 }
 
-function describePlanChangeError(
-  code: string | null | undefined,
-  fallback: string
-): string {
+// The server explains refused changes and declined charges (renewing right
+// now, already ended, card declined), so show its reason.
+function describePlanChangeError(error: unknown, fallback: string): string {
+  const code = isAppErrorEnvelope(error) ? error.error.code : null
   switch (code) {
     case 'BILLING_PLAN_CHANGE_NOT_ALLOWED':
-      return 'This plan change is not available right now'
     case 'BILLING_PAYMENT_FAILED':
-      return "We couldn't charge your card, so your plan wasn't changed. Update your payment method and try again"
+      return isAppErrorEnvelope(error) ? error.error.message : fallback
     case 'BILLING_SUBSCRIPTION_NOT_FOUND':
       return "Couldn't find an active subscription for this account"
     default:
@@ -65,11 +64,7 @@ function describePlanChangeError(
 }
 
 function describePreviewError(error: unknown) {
-  const code = getAppErrorCode<
-    'post',
-    '/v1/account/subscription/upgrade/preview'
-  >(error)
-  return describePlanChangeError(code, "Couldn't preview this plan change")
+  return describePlanChangeError(error, "Couldn't preview this plan change")
 }
 
 function SummaryRow(props: {
@@ -303,10 +298,7 @@ export function ChangePlanDialog({
       if (!isScheduled) onChangeSubmitted(selected)
       handleOpenChange(false)
     } catch (error) {
-      const code = getAppErrorCode<'post', '/v1/account/subscription/upgrade'>(
-        error
-      )
-      toast.error(describePlanChangeError(code, "Couldn't change your plan"))
+      toast.error(describePlanChangeError(error, "Couldn't change your plan"))
     }
   }
 
@@ -327,8 +319,10 @@ export function ChangePlanDialog({
           "Still processing — check back in a moment if this doesn't update"
         )
       }
-    } catch {
-      toast.error("Couldn't reverse the cancellation")
+    } catch (error) {
+      toast.error(
+        describePlanChangeError(error, "Couldn't reverse the cancellation")
+      )
     } finally {
       setIsWaitingForResume(false)
     }
