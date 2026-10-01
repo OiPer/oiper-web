@@ -140,6 +140,7 @@ function ConfigureAccount() {
     })
 
     syncAccountProfileInSession(queryClient, updatedProfile)
+
     return updatedProfile
   }
 

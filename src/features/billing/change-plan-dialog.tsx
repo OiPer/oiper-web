@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 'use client'
 
 import { Loading } from '@/components/shared/loading'
@@ -48,8 +50,6 @@ function optionKey(target: PlanChangeTarget) {
   return `${target.plan}-${target.interval}`
 }
 
-// The server explains refused changes and declined charges (renewing right
-// now, already ended, card declined), so show its reason.
 function describePlanChangeError(error: unknown, fallback: string): string {
   const code = isAppErrorEnvelope(error) ? error.error.code : null
   switch (code) {
@@ -187,7 +187,9 @@ export function ChangePlanDialog({
     'post',
     '/v1/account/subscription/upgrade/preview'
   )
+
   type PreviewData = NonNullable<typeof previewMutation.data>
+
   const [previewState, setPreviewState] = useState<
     | { key: string; status: 'pending' }
     | { key: string; status: 'error'; error: unknown }
@@ -215,7 +217,6 @@ export function ChangePlanDialog({
 
   useEffect(() => {
     if (open) setSelectedKey(defaultKey)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   useEffect(() => {
@@ -227,6 +228,7 @@ export function ChangePlanDialog({
     const target = selected
     const key = optionKey(target)
     let cancelled = false
+
     setPreviewState({ key, status: 'pending' })
 
     async function runPreview() {
@@ -246,10 +248,10 @@ export function ChangePlanDialog({
     }
 
     runPreview()
+
     return () => {
       cancelled = true
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, selectedKey, currentSubscription.cancelAtPeriodEnd])
 
   function handleOpenChange(nextOpen: boolean) {

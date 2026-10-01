@@ -35,6 +35,7 @@ export function isAbortError(error: unknown): boolean {
 
 export function isAppErrorEnvelope(error: unknown): error is ErrorResponse {
   if (!error || typeof error !== 'object') return false
+
   const envelope = error as ErrorResponse
 
   return (

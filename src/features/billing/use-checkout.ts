@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useAuth } from '@/features/auth/auth-context'
 import { getAccountMutationHeaders } from '@/features/auth/web-session'
 import { $api } from '@/lib/api/client'
@@ -83,6 +85,7 @@ export function useStartCheckout() {
     interval: 'MONTHLY' | 'YEARLY'
   ) {
     setPendingCheckout({ plan, provider })
+
     try {
       const headers = await getAccountMutationHeaders()
       const result = await checkoutMutation.mutateAsync({
@@ -150,7 +153,6 @@ export function useAutoOpenCheckoutFromQueryParam(
 
     startCheckout(checkoutProvider, plan, checkoutInterval)
     router.replace(redirectTo)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isSignedIn,
     plans,
@@ -169,6 +171,7 @@ export async function pollUntil<T>(
   const { attempts = 8, delayMs = 1500, signal } = options
 
   let result = await fetch()
+
   for (let attempt = 1; attempt < attempts && !isDone(result); attempt++) {
     if (signal?.aborted) break
     await new Promise((resolve) => setTimeout(resolve, delayMs))
@@ -179,8 +182,6 @@ export async function pollUntil<T>(
   return result
 }
 
-// Stripe Checkout sends the user back to Billing with ?checkout=success,
-// usually a moment before the subscription webhook lands.
 export function useCheckoutReturn(
   refetch: () => Promise<{
     data?: { plan: string; status?: string } | undefined
@@ -199,7 +200,6 @@ export function useCheckoutReturn(
         result.data.plan !== 'FREE' &&
         result.data.status === 'ACTIVE'
     ).catch(() => undefined)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 }
 
@@ -230,16 +230,17 @@ export function usePollUntilPlanChangeLands(
 
     pollUntil(refetch, landed, { signal: controller.signal }).then((result) => {
       if (controller.signal.aborted) return
+
       if (!landed(result)) {
         toast.info(
           "Still processing — check back in a moment if your plan hasn't updated"
         )
       }
+
       setPendingTarget(null)
     })
 
     return () => controller.abort()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingTarget])
 
   return { pendingTarget, setPendingTarget }

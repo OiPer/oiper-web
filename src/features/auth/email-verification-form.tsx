@@ -92,6 +92,7 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
       if (response.alreadyVerified) {
         toast.info('Email already verified. Sign in again to continue')
       }
+
       if (!response.alreadyVerified) toast.success('Verification code sent')
     } catch {
       setErrorMessage("Couldn't resend the code")

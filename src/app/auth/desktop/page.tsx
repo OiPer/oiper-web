@@ -60,6 +60,7 @@ export default function DesktopAuthPage() {
     }
 
     if (hasNavigatedRef.current) return
+
     if (!sessionQuery.data.authenticated) {
       hasNavigatedRef.current = true
       setState({ status: 'redirecting_sign_in' })
@@ -68,6 +69,7 @@ export default function DesktopAuthPage() {
 
     hasNavigatedRef.current = true
     setState({ status: 'continuing' })
+
     const continueUrl = joinUrl(
       env.OIPER_SERVER_URL,
       '/v1/auth/desktop/continue',

@@ -70,6 +70,7 @@ function CtaLink(props: {
       </button>
     )
   }
+
   if (props.disabled) {
     return (
       <button type="button" disabled className={props.className}>
@@ -93,6 +94,7 @@ function CtaLink(props: {
       </Link>
     )
   }
+
   return (
     <button
       type="button"

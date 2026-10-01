@@ -55,9 +55,11 @@ function formatNextPaymentAmount(
   if (nextPayment) {
     return formatCurrencyFromCents(Number(nextPayment.amount), currencyCode)
   }
+
   if (catalogEntry) {
     return formatCurrencyFromCents(catalogEntry.priceAmountCents)
   }
+
   return '-'
 }
 

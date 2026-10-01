@@ -30,9 +30,7 @@ void (async () => {
     const { name, fillColor } = contents[key]
 
     const dirName = path.join(__dirname, '../../public/logo')
-    if (!fs.existsSync(dirName)) {
-      fs.mkdirSync(dirName, { recursive: true })
-    }
+    if (!fs.existsSync(dirName)) fs.mkdirSync(dirName, { recursive: true })
 
     const svgHtml = renderToStaticMarkup(
       <OiPerLogo brandColor={fillColor} width="1006" height="1006" />

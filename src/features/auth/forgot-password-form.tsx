@@ -105,6 +105,7 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
     values: z.infer<typeof resetWithTokenSchema>
   ) {
     if (!token) return setErrorMessage('Missing reset token')
+
     setErrorMessage(null)
 
     try {

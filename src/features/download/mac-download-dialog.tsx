@@ -19,12 +19,14 @@ export function MacDownloadDialog() {
   useEffect(() => {
     function onClick(event: MouseEvent) {
       if (event.button !== 0 || event.metaKey || event.ctrlKey) return
+
       const link = (event.target as Element).closest<HTMLAnchorElement>(
         'a[data-mac-build]'
       )
       if (!link) return
 
       event.preventDefault()
+
       const current = link.dataset.macBuild as MacBuild
       const other = current === 'macos' ? 'macos-intel' : 'macos'
       setUrls({ [current]: link.href, [other]: link.dataset.macAlt })
