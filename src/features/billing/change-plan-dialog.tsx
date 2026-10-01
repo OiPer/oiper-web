@@ -55,6 +55,8 @@ function describePlanChangeError(
   switch (code) {
     case 'BILLING_PLAN_CHANGE_NOT_ALLOWED':
       return 'This plan change is not available right now'
+    case 'BILLING_PAYMENT_FAILED':
+      return "We couldn't charge your card, so your plan wasn't changed. Update your payment method and try again"
     case 'BILLING_SUBSCRIPTION_NOT_FOUND':
       return "Couldn't find an active subscription for this account"
     default:

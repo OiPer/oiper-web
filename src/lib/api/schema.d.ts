@@ -3998,7 +3998,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4038,7 +4038,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4078,7 +4078,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4118,7 +4118,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4158,7 +4158,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4198,7 +4198,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4238,7 +4238,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_SUBSCRIPTION_NOT_FOUND" | "BILLING_PLAN_CHANGE_NOT_ALLOWED" | "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
