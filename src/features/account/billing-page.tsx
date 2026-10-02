@@ -112,7 +112,8 @@ function ManageBillingButton(props: { isPastDue?: boolean }) {
   )
 }
 
-function ResumePausedButton(props: {
+function ResumeButton(props: {
+  isPaused: boolean
   onResumed: () => Promise<{
     data?: components['schemas']['SubscriptionAccountView'] | undefined
   }>
@@ -127,14 +128,22 @@ function ResumePausedButton(props: {
       await pollUntil(
         props.onResumed,
         (result) =>
-          result.data?.plan !== 'FREE' && result.data?.status === 'ACTIVE'
+          result.data?.plan !== 'FREE' &&
+          result.data?.status === 'ACTIVE' &&
+          !result.data.cancelAtPeriodEnd
       )
-      toast.success('Your subscription is active again')
+      toast.success(
+        props.isPaused
+          ? 'Your subscription is active again'
+          : 'Your subscription will keep renewing'
+      )
     } catch (error) {
       toast.error(
         isAppErrorEnvelope(error)
           ? error.error.message
-          : "Couldn't resume your subscription"
+          : props.isPaused
+            ? "Couldn't resume your subscription"
+            : "Couldn't keep your subscription"
       )
     } finally {
       setIsWaiting(false)
@@ -143,7 +152,9 @@ function ResumePausedButton(props: {
 
   return (
     <Button onClick={() => void handleResume()}>
-      <Loading loading={isResuming || isWaiting}>Resume subscription</Loading>
+      <Loading loading={isResuming || isWaiting}>
+        {props.isPaused ? 'Resume subscription' : 'Keep subscription'}
+      </Loading>
     </Button>
   )
 }
@@ -329,13 +340,19 @@ function CurrentPlan() {
 
         {subscription && !paidSubscription && <SubscribeButton />}
 
-        {isPaused && (
-          <ResumePausedButton onResumed={() => subscriptionQuery.refetch()} />
-        )}
+        {paidSubscription && <ManageBillingButton isPastDue={isPastDue} />}
 
-        {paidSubscription && (
-          <>
-            <ManageBillingButton isPastDue={isPastDue} />
+        {paidSubscription &&
+          (isPaused || paidSubscription.cancelAtPeriodEnd) && (
+            <ResumeButton
+              isPaused={isPaused}
+              onResumed={() => subscriptionQuery.refetch()}
+            />
+          )}
+
+        {paidSubscription &&
+          !isPaused &&
+          !paidSubscription.cancelAtPeriodEnd && (
             <ChangePlanButton
               plans={pricingQuery.data?.plans}
               subscription={{
@@ -351,8 +368,7 @@ function CurrentPlan() {
               onChangeSubmitted={setPendingTarget}
               onResumed={() => subscriptionQuery.refetch()}
             />
-          </>
-        )}
+          )}
 
         {subscriptionQuery.error && !subscription && <ManageBillingButton />}
       </div>
