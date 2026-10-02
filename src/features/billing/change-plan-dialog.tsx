@@ -252,7 +252,12 @@ export function ChangePlanDialog({
     return () => {
       cancelled = true
     }
-  }, [open, selectedKey, currentSubscription.cancelAtPeriodEnd])
+  }, [
+    open,
+    selectedKey,
+    currentSubscription.cancelAtPeriodEnd,
+    currentSubscription.status,
+  ])
 
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen) {
@@ -416,12 +421,18 @@ export function ChangePlanDialog({
               preview?.kind === 'BLOCKED' && (
                 <Alert className="border-warning/40 bg-warning/5">
                   <AlertDescription className="space-y-3">
-                    <p>
-                      Your subscription is scheduled to cancel
-                      {preview.currentPeriodEnd &&
-                        ` on ${formatDate(preview.currentPeriodEnd)}`}{' '}
-                      so keep it active to switch plans
-                    </p>
+                    {preview.reason === 'PAUSED' ? (
+                      <p>
+                        Your subscription is paused so resume it to switch plans
+                      </p>
+                    ) : (
+                      <p>
+                        Your subscription is scheduled to cancel
+                        {preview.currentPeriodEnd &&
+                          ` on ${formatDate(preview.currentPeriodEnd)}`}{' '}
+                        so keep it active to switch plans
+                      </p>
+                    )}
                     <Button
                       type="button"
                       variant="outline"
@@ -429,7 +440,11 @@ export function ChangePlanDialog({
                       onClick={() => void handleResume()}
                       disabled={isResuming}
                     >
-                      <Loading loading={isResuming}>Keep subscription</Loading>
+                      <Loading loading={isResuming}>
+                        {preview.reason === 'PAUSED'
+                          ? 'Resume subscription'
+                          : 'Keep subscription'}
+                      </Loading>
                     </Button>
                   </AlertDescription>
                 </Alert>

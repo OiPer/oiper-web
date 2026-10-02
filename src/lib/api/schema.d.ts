@@ -7594,6 +7594,8 @@ export interface components {
         ChangeSubscriptionPlanPreview: {
             /** @enum {string} */
             kind: "BLOCKED";
+            /** @enum {string} */
+            reason: "ENDING" | "PAUSED";
             /** Format: date-time */
             currentPeriodEnd: string | null;
         } | {
