@@ -289,6 +289,8 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
               status: subscriptionQuery.data.status,
               currentPeriodEnd: subscriptionQuery.data.currentPeriodEnd,
               cancelAtPeriodEnd: subscriptionQuery.data.cancelAtPeriodEnd,
+              nextPayment: subscriptionQuery.data.nextPayment,
+              currencyCode: subscriptionQuery.data.currencyCode,
             }}
             onChangeSubmitted={(target) => {
               setPendingTarget(target)

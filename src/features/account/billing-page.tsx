@@ -8,7 +8,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { AccountPageHeader } from '@/features/account/components/account-page-header'
 import { ChangePlanDialog } from '@/features/billing/change-plan-dialog'
 import {
-  findCatalogEntry,
   pollUntil,
   useCheckoutReturn,
   useOpenBillingPortal,
@@ -49,18 +48,10 @@ function formatNextPaymentDue(
 
 function formatNextPaymentAmount(
   nextPayment: NextPayment,
-  catalogEntry: PricingPlan | undefined,
   currencyCode: string | undefined
 ) {
-  if (nextPayment) {
-    return formatCurrencyFromCents(Number(nextPayment.amount), currencyCode)
-  }
-
-  if (catalogEntry) {
-    return formatCurrencyFromCents(catalogEntry.priceAmountCents)
-  }
-
-  return '-'
+  if (!nextPayment) return '-'
+  return formatCurrencyFromCents(Number(nextPayment.amount), currencyCode)
 }
 
 function Row(props: { label: string; value: ReactNode }) {
@@ -221,14 +212,6 @@ function CurrentPlan() {
   const isPastDue = paidSubscription?.status === 'PAST_DUE'
   const isPaused = paidSubscription?.status === 'PAUSED'
 
-  const catalogEntry = paidSubscription
-    ? findCatalogEntry(
-        pricingQuery.data?.plans,
-        paidSubscription.plan,
-        paidSubscription.billingInterval
-      )
-    : undefined
-
   const scheduledChange = paidSubscription?.scheduledChange
     ? {
         date: formatDate(paidSubscription.scheduledChange.changeAt),
@@ -322,7 +305,6 @@ function CurrentPlan() {
                     label={isPastDue ? 'Amount due' : 'Next payment'}
                     value={formatNextPaymentAmount(
                       paidSubscription.nextPayment,
-                      catalogEntry,
                       paidSubscription.currencyCode ?? undefined
                     )}
                     date={formatNextPaymentDue(
@@ -362,6 +344,8 @@ function CurrentPlan() {
                 status: paidSubscription.status,
                 currentPeriodEnd: paidSubscription.currentPeriodEnd,
                 cancelAtPeriodEnd: paidSubscription.cancelAtPeriodEnd,
+                nextPayment: paidSubscription.nextPayment,
+                currencyCode: paidSubscription.currencyCode,
               }}
               isBusy={!!pendingTarget}
               onChangeSubmitted={setPendingTarget}

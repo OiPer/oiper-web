@@ -28,7 +28,11 @@ export type PaidSubscriptionView = Extract<
 export type ActiveSubscription = PlanChangeTarget &
   Pick<
     PaidSubscriptionView,
-    'status' | 'currentPeriodEnd' | 'cancelAtPeriodEnd'
+    | 'status'
+    | 'currentPeriodEnd'
+    | 'cancelAtPeriodEnd'
+    | 'nextPayment'
+    | 'currencyCode'
   >
 
 export const STRIPE_CHECKOUT_ENABLED = env.ENABLE_STRIPE_CHECKOUT

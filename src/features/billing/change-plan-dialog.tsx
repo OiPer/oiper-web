@@ -347,11 +347,6 @@ export function ChangePlanDialog({
   const confirmLabel = previewRows
     ? getConfirmLabel(previewRows.kind)
     : 'Confirm change'
-  const currentCatalogEntry = findCatalogEntry(
-    plans,
-    currentSubscription.plan,
-    currentSubscription.interval
-  )
 
   return (
     <ResponsiveDialog open={open} onOpenChange={handleOpenChange}>
@@ -405,9 +400,10 @@ export function ChangePlanDialog({
                   <SummaryRow
                     label="Amount"
                     value={
-                      currentCatalogEntry
+                      currentSubscription.nextPayment
                         ? formatCurrencyFromCents(
-                            currentCatalogEntry.priceAmountCents
+                            Number(currentSubscription.nextPayment.amount),
+                            currentSubscription.currencyCode ?? undefined
                           )
                         : '-'
                     }
