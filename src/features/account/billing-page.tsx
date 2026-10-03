@@ -114,12 +114,12 @@ function ManageBillingButton(props: { isPastDue?: boolean }) {
 
 function ResumeButton(props: {
   isPaused: boolean
-  onResumed: () => Promise<{
+  refetchSubscription: () => Promise<{
     data?: components['schemas']['SubscriptionAccountView'] | undefined
   }>
 }) {
   const { resumeSubscription, isResuming } = useResumeSubscription(
-    props.onResumed
+    props.refetchSubscription
   )
 
   async function handleResume() {
@@ -159,7 +159,7 @@ function ChangePlanButton(props: {
   subscription: ActiveSubscription
   isBusy: boolean
   onChangeSubmitted: (target: PlanChangeTarget) => void
-  onResumed: () => Promise<{
+  refetchSubscription: () => Promise<{
     data?: components['schemas']['SubscriptionAccountView'] | undefined
   }>
 }) {
@@ -180,7 +180,7 @@ function ChangePlanButton(props: {
           props.onChangeSubmitted(target)
           setOpen(false)
         }}
-        onResumed={props.onResumed}
+        refetchSubscription={props.refetchSubscription}
       />
     </>
   )
@@ -349,7 +349,7 @@ function CurrentPlan() {
           (isPaused || paidSubscription.cancelAtPeriodEnd) && (
             <ResumeButton
               isPaused={isPaused}
-              onResumed={() => subscriptionQuery.refetch()}
+              refetchSubscription={() => subscriptionQuery.refetch()}
             />
           )}
 
@@ -369,7 +369,7 @@ function CurrentPlan() {
               }}
               isBusy={!!pendingTarget}
               onChangeSubmitted={setPendingTarget}
-              onResumed={() => subscriptionQuery.refetch()}
+              refetchSubscription={() => subscriptionQuery.refetch()}
             />
           )}
 

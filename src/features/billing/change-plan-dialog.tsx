@@ -154,7 +154,7 @@ interface ChangePlanDialogProps {
   currentSubscription: ActiveSubscription
   initialTarget?: PlanChangeTarget | null
   onChangeSubmitted: (target: PlanChangeTarget) => void
-  onResumed: () => Promise<{
+  refetchSubscription: () => Promise<{
     data?: components['schemas']['SubscriptionAccountView'] | undefined
   }>
 }
@@ -166,7 +166,7 @@ export function ChangePlanDialog({
   currentSubscription,
   initialTarget,
   onChangeSubmitted,
-  onResumed,
+  refetchSubscription,
 }: ChangePlanDialogProps) {
   const options = PLAN_OPTIONS_ORDER.map((target) =>
     findCatalogEntry(plans, target.plan, target.interval)
@@ -200,7 +200,8 @@ export function ChangePlanDialog({
     '/v1/account/subscription/upgrade'
   )
 
-  const { resumeSubscription, isResuming } = useResumeSubscription(onResumed)
+  const { resumeSubscription, isResuming } =
+    useResumeSubscription(refetchSubscription)
 
   const selected =
     options.find((entry) => optionKey(entry) === selectedKey) ?? null
@@ -293,7 +294,8 @@ export function ChangePlanDialog({
           ? 'Plan change scheduled — it takes effect at the end of your current billing period'
           : 'Plan change requested — this can take a few seconds to show up'
       )
-      if (!isScheduled) onChangeSubmitted(selected)
+      if (isScheduled) void refetchSubscription()
+      else onChangeSubmitted(selected)
       handleOpenChange(false)
     } catch (error) {
       toast.error(describePlanChangeError(error, "Couldn't change your plan"))

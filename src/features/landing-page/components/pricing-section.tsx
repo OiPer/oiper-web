@@ -296,7 +296,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
               setPendingTarget(target)
               setChangePlanTarget(null)
             }}
-            onResumed={() => subscriptionQuery.refetch()}
+            refetchSubscription={() => subscriptionQuery.refetch()}
           />
         )}
     </section>
