@@ -103,6 +103,7 @@ function ManageBillingButton(props: { isPastDue?: boolean }) {
   return (
     <Button
       variant={props.isPastDue ? 'default' : 'outline'}
+      disabled={isOpeningPortal}
       onClick={() => void openBillingPortal()}
     >
       <Loading loading={isOpeningPortal}>
@@ -151,7 +152,10 @@ function ResumeButton(props: {
   }
 
   return (
-    <Button onClick={() => void handleResume()}>
+    <Button
+      disabled={isResuming || isWaiting}
+      onClick={() => void handleResume()}
+    >
       <Loading loading={isResuming || isWaiting}>
         {props.isPaused ? 'Resume subscription' : 'Keep subscription'}
       </Loading>

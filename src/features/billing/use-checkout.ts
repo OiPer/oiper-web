@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useAuth } from '@/features/auth/auth-context'
-import { getAccountMutationHeaders } from '@/features/auth/web-session'
+import { useAccountMutation } from '@/features/auth/web-session'
 import { $api } from '@/lib/api/client'
 import { getAppErrorCode } from '@/lib/api/error'
 import type { components } from '@/lib/api/schema'
@@ -61,7 +61,7 @@ export type PendingCheckout = {
 export function useStartCheckout() {
   const { currentUser } = useAuth()
   const queryClient = useQueryClient()
-  const checkoutMutation = $api.useMutation(
+  const checkoutMutation = useAccountMutation(
     'post',
     '/v1/account/subscription/checkout'
   )
@@ -91,10 +91,8 @@ export function useStartCheckout() {
     setPendingCheckout({ plan, provider })
 
     try {
-      const headers = await getAccountMutationHeaders()
       const result = await checkoutMutation.mutateAsync({
         body: { provider, plan, interval },
-        params: { header: headers },
       })
 
       switch (result.provider) {
@@ -251,33 +249,27 @@ export function usePollUntilPlanChangeLands(
 }
 
 export function useResumeSubscription() {
-  const resumeMutation = $api.useMutation(
+  const resumeMutation = useAccountMutation(
     'post',
     '/v1/account/subscription/resume'
   )
 
   async function resumeSubscription() {
-    const headers = await getAccountMutationHeaders()
-    await resumeMutation.mutateAsync({ params: { header: headers } })
+    await resumeMutation.mutateAsync({})
   }
 
   return { resumeSubscription, isResuming: resumeMutation.isPending }
 }
 
 export function useOpenBillingPortal() {
-  const portalMutation = $api.useMutation(
+  const portalMutation = useAccountMutation(
     'post',
     '/v1/account/subscription/portal'
   )
 
   async function openBillingPortal() {
     try {
-      const headers = await getAccountMutationHeaders()
-
-      const urls = await portalMutation.mutateAsync({
-        body: {},
-        params: { header: headers },
-      })
+      const urls = await portalMutation.mutateAsync({ body: {} })
 
       window.location.assign(urls.portalUrl)
     } catch (error) {

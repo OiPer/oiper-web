@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getAccountMutationHeaders } from '@/features/auth/web-session'
+import { useAccountMutation } from '@/features/auth/web-session'
 import {
   describeTodayCharge,
   getConfirmLabel,
@@ -22,7 +22,6 @@ import {
   type PlanCatalogEntry,
   type PlanChangeTarget,
 } from '@/features/billing/use-checkout'
-import { $api } from '@/lib/api/client'
 import { isAppErrorEnvelope } from '@/lib/api/error'
 import type { components } from '@/lib/api/schema'
 import {
@@ -183,7 +182,7 @@ export function ChangePlanDialog({
     initialKey ?? (options[0] ? optionKey(PLAN_OPTIONS_ORDER[0]) : null)
   const [selectedKey, setSelectedKey] = useState(defaultKey)
 
-  const previewMutation = $api.useMutation(
+  const previewMutation = useAccountMutation(
     'post',
     '/v1/account/subscription/upgrade/preview'
   )
@@ -197,7 +196,7 @@ export function ChangePlanDialog({
     | null
   >(null)
 
-  const changeMutation = $api.useMutation(
+  const changeMutation = useAccountMutation(
     'post',
     '/v1/account/subscription/upgrade'
   )
@@ -233,13 +232,11 @@ export function ChangePlanDialog({
 
     async function runPreview() {
       try {
-        const headers = await getAccountMutationHeaders()
         const data = await previewMutation.mutateAsync({
           body: {
             targetPlan: target.plan,
             targetInterval: target.interval,
           },
-          params: { header: headers },
         })
         if (!cancelled) setPreviewState({ key, status: 'success', data })
       } catch (error) {
@@ -287,13 +284,11 @@ export function ChangePlanDialog({
     }
 
     try {
-      const headers = await getAccountMutationHeaders()
       await changeMutation.mutateAsync({
         body: {
           targetPlan: selected.plan,
           targetInterval: selected.interval,
         },
-        params: { header: headers },
       })
 
       const isScheduled = preview?.kind === 'SCHEDULED'

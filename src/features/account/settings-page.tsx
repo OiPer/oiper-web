@@ -15,8 +15,7 @@ import {
   getUserLabel,
 } from '@/features/account/utils'
 import { useAuth } from '@/features/auth/auth-context'
-import { getAccountMutationHeaders } from '@/features/auth/web-session'
-import { $api } from '@/lib/api/client'
+import { useAccountMutation } from '@/features/auth/web-session'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { Trash2, TriangleAlert } from 'lucide-react'
@@ -100,7 +99,10 @@ function AccountDeleteModal({
 function ConfigureAccount() {
   const { currentUser } = useAuth({ required: true })
   const queryClient = useQueryClient()
-  const updateProfileMutation = $api.useMutation('patch', '/v1/account/profile')
+  const updateProfileMutation = useAccountMutation(
+    'patch',
+    '/v1/account/profile'
+  )
 
   const profile = useMemo(() => {
     return {
@@ -131,13 +133,7 @@ function ConfigureAccount() {
   async function updateProfile(
     body: z.infer<typeof accountConfigureSchema> | { profilePictureUrl: string }
   ) {
-    const headers = await getAccountMutationHeaders()
-    const updatedProfile = await updateProfileMutation.mutateAsync({
-      body,
-      params: {
-        header: headers,
-      },
-    })
+    const updatedProfile = await updateProfileMutation.mutateAsync({ body })
 
     syncAccountProfileInSession(queryClient, updatedProfile)
 
@@ -261,18 +257,13 @@ function ConfigureAccount() {
 function AccountDangerZone() {
   const { currentUser } = useAuth({ required: true })
   const queryClient = useQueryClient()
-  const deleteAccountMutation = $api.useMutation('delete', '/v1/account')
+  const deleteAccountMutation = useAccountMutation('delete', '/v1/account')
 
   const confirmationText = `DELETE ${getUserLabel(currentUser)}`
 
   async function handleDeleteAccount() {
     try {
-      const headers = await getAccountMutationHeaders()
-      await deleteAccountMutation.mutateAsync({
-        params: {
-          header: headers,
-        },
-      })
+      await deleteAccountMutation.mutateAsync({})
 
       clearAccountSession(queryClient)
       toast.success('Account deleted successfully')
