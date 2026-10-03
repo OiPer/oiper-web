@@ -16,7 +16,6 @@ import {
 } from '@/features/billing/change-plan-pricing'
 import {
   findCatalogEntry,
-  pollUntil,
   useResumeSubscription,
   type ActiveSubscription,
   type PlanCatalogEntry,
@@ -201,10 +200,7 @@ export function ChangePlanDialog({
     '/v1/account/subscription/upgrade'
   )
 
-  const { resumeSubscription, isResuming: isSubmittingResume } =
-    useResumeSubscription()
-  const [isWaitingForResume, setIsWaitingForResume] = useState(false)
-  const isResuming = isSubmittingResume || isWaitingForResume
+  const { resumeSubscription, isResuming } = useResumeSubscription(onResumed)
 
   const selected =
     options.find((entry) => optionKey(entry) === selectedKey) ?? null
@@ -306,23 +302,7 @@ export function ChangePlanDialog({
 
   async function handleResume() {
     try {
-      await resumeSubscription()
-      setIsWaitingForResume(true)
-
-      const finalResult = await pollUntil(onResumed, (result) => {
-        const stillPaid = result.data?.plan !== 'FREE' ? result.data : undefined
-        return (
-          stillPaid?.status === 'ACTIVE' &&
-          stillPaid.cancelAtPeriodEnd === false
-        )
-      })
-
-      const stillPaid =
-        finalResult.data?.plan !== 'FREE' ? finalResult.data : undefined
-      if (
-        stillPaid?.status !== 'ACTIVE' ||
-        stillPaid.cancelAtPeriodEnd !== false
-      ) {
+      if (!(await resumeSubscription())) {
         toast.info(
           "Still processing — check back in a moment if this doesn't update"
         )
@@ -331,8 +311,6 @@ export function ChangePlanDialog({
       toast.error(
         describePlanChangeError(error, "Couldn't reverse the cancellation")
       )
-    } finally {
-      setIsWaitingForResume(false)
     }
   }
 

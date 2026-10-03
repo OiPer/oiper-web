@@ -280,17 +280,39 @@ export function usePollUntilPlanChangeLands(
   return { pendingTarget, setPendingTarget }
 }
 
-export function useResumeSubscription() {
+type SubscriptionRefetch = () => Promise<{
+  data?: components['schemas']['SubscriptionAccountView'] | undefined
+}>
+
+function isResumed(result: Awaited<ReturnType<SubscriptionRefetch>>) {
+  const subscription = result.data?.plan !== 'FREE' ? result.data : undefined
+  return (
+    subscription?.status === 'ACTIVE' &&
+    subscription.cancelAtPeriodEnd === false
+  )
+}
+
+export function useResumeSubscription(refetch: SubscriptionRefetch) {
   const resumeMutation = useAccountMutation(
     'post',
     '/v1/account/subscription/resume'
   )
+  const [isWaiting, setIsWaiting] = useState(false)
 
   async function resumeSubscription() {
     await resumeMutation.mutateAsync({})
+    setIsWaiting(true)
+    try {
+      return isResumed(await pollUntil(refetch, isResumed))
+    } finally {
+      setIsWaiting(false)
+    }
   }
 
-  return { resumeSubscription, isResuming: resumeMutation.isPending }
+  return {
+    resumeSubscription,
+    isResuming: resumeMutation.isPending || isWaiting,
+  }
 }
 
 export function useOpenBillingPortal() {

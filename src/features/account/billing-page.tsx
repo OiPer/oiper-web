@@ -8,7 +8,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { AccountPageHeader } from '@/features/account/components/account-page-header'
 import { ChangePlanDialog } from '@/features/billing/change-plan-dialog'
 import {
-  pollUntil,
   useCheckoutReturn,
   useOpenBillingPortal,
   usePollUntilPlanChangeLands,
@@ -119,20 +118,17 @@ function ResumeButton(props: {
     data?: components['schemas']['SubscriptionAccountView'] | undefined
   }>
 }) {
-  const { resumeSubscription, isResuming } = useResumeSubscription()
-  const [isWaiting, setIsWaiting] = useState(false)
+  const { resumeSubscription, isResuming } = useResumeSubscription(
+    props.onResumed
+  )
 
   async function handleResume() {
     try {
-      await resumeSubscription()
-      setIsWaiting(true)
-      await pollUntil(
-        props.onResumed,
-        (result) =>
-          result.data?.plan !== 'FREE' &&
-          result.data?.status === 'ACTIVE' &&
-          !result.data.cancelAtPeriodEnd
-      )
+      if (!(await resumeSubscription())) {
+        return toast.info(
+          "Still processing — check back in a moment if this doesn't update"
+        )
+      }
       toast.success(
         props.isPaused
           ? 'Your subscription is active again'
@@ -146,17 +142,12 @@ function ResumeButton(props: {
             ? "Couldn't resume your subscription"
             : "Couldn't keep your subscription"
       )
-    } finally {
-      setIsWaiting(false)
     }
   }
 
   return (
-    <Button
-      disabled={isResuming || isWaiting}
-      onClick={() => void handleResume()}
-    >
-      <Loading loading={isResuming || isWaiting}>
+    <Button disabled={isResuming} onClick={() => void handleResume()}>
+      <Loading loading={isResuming}>
         {props.isPaused ? 'Resume subscription' : 'Keep subscription'}
       </Loading>
     </Button>
