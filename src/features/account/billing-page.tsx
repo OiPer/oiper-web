@@ -214,7 +214,9 @@ function CurrentPlan() {
   const { pendingTarget, setPendingTarget } = usePollUntilPlanChangeLands(
     subscriptionQuery.refetch
   )
-  useCheckoutReturn(subscriptionQuery.refetch)
+  const { isProcessing: isCheckoutProcessing } = useCheckoutReturn(
+    subscriptionQuery.refetch
+  )
 
   const subscription = subscriptionQuery.data
   const paidSubscription =
@@ -289,10 +291,14 @@ function CurrentPlan() {
           <div className="divide-y">
             <Row
               label="Plan"
-              value={subscriptionPlanLabel(
-                paidSubscription?.plan ?? 'FREE',
-                paidSubscription?.billingInterval ?? null
-              )}
+              value={
+                !paidSubscription && isCheckoutProcessing
+                  ? 'Setting up your subscription…'
+                  : subscriptionPlanLabel(
+                      paidSubscription?.plan ?? 'FREE',
+                      paidSubscription?.billingInterval ?? null
+                    )
+              }
             />
             {paidSubscription && (
               <>
@@ -342,7 +348,9 @@ function CurrentPlan() {
           </>
         )}
 
-        {subscription && !paidSubscription && <SubscribeButton />}
+        {subscription && !paidSubscription && !isCheckoutProcessing && (
+          <SubscribeButton />
+        )}
 
         {paidSubscription && <ManageBillingButton isPastDue={isPastDue} />}
 

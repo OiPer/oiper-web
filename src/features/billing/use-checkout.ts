@@ -3,7 +3,7 @@
 import { useAuth } from '@/features/auth/auth-context'
 import { useAccountMutation } from '@/features/auth/web-session'
 import { $api } from '@/lib/api/client'
-import { getAppErrorCode } from '@/lib/api/error'
+import { getAppErrorCode, isAppErrorEnvelope } from '@/lib/api/error'
 import type { components } from '@/lib/api/schema'
 import { env } from '@/lib/env'
 import { openPaddleCheckout } from '@/lib/paddle'
@@ -53,6 +53,16 @@ export function findCatalogEntry(
   )
 }
 
+const STILL_PROCESSING_MESSAGE =
+  "Still processing — check back in a moment if your plan hasn't updated"
+
+const subscriptionRefetchOptions = {
+  ...$api.queryOptions('get', '/v1/account/subscription', {
+    cache: 'no-store',
+  }),
+  staleTime: 0,
+}
+
 export type PendingCheckout = {
   plan: 'PRO' | 'MAX'
   provider: 'PADDLE' | 'STRIPE'
@@ -69,18 +79,18 @@ export function useStartCheckout() {
     useState<PendingCheckout | null>(null)
 
   function refreshSubscriptionUntil(plan: 'PRO' | 'MAX') {
-    const subscriptionQuery = {
-      ...$api.queryOptions('get', '/v1/account/subscription', {
-        cache: 'no-store',
-      }),
-      staleTime: 0,
+    function landed(subscription: { plan: string; status?: string }) {
+      return subscription.plan === plan && subscription.status === 'ACTIVE'
     }
 
-    pollUntil(
-      () => queryClient.fetchQuery(subscriptionQuery),
-      (subscription) =>
-        subscription.plan === plan && subscription.status === 'ACTIVE'
-    ).catch(() => undefined)
+    setPendingCheckout({ plan, provider: 'PADDLE' })
+
+    pollUntil(() => queryClient.fetchQuery(subscriptionRefetchOptions), landed)
+      .then((subscription) => {
+        if (!landed(subscription)) toast.info(STILL_PROCESSING_MESSAGE)
+      })
+      .catch(() => toast.info(STILL_PROCESSING_MESSAGE))
+      .finally(() => setPendingCheckout(null))
   }
 
   async function startCheckout(
@@ -111,8 +121,19 @@ export function useStartCheckout() {
       )
       switch (code) {
         case 'BILLING_ALREADY_SUBSCRIBED':
+          queryClient.invalidateQueries({
+            queryKey: subscriptionRefetchOptions.queryKey,
+          })
           return toast.error(
-            'You already have a subscription — manage it from billing instead'
+            isAppErrorEnvelope(error)
+              ? error.error.message
+              : 'You already have a subscription — manage it from billing'
+          )
+        case 'BILLING_PROVIDER_NOT_AVAILABLE':
+          return toast.error(
+            isAppErrorEnvelope(error)
+              ? error.error.message
+              : "This payment provider isn't available — use the other one"
           )
         default:
           return toast.error("Couldn't open checkout")
@@ -168,17 +189,20 @@ export function useAutoOpenCheckoutFromQueryParam(
 export async function pollUntil<T>(
   fetch: () => Promise<T>,
   isDone: (result: T) => boolean,
-  options: { attempts?: number; delayMs?: number; signal?: AbortSignal } = {}
+  options: { timeoutMs?: number; signal?: AbortSignal } = {}
 ): Promise<T> {
-  const { attempts = 8, delayMs = 1500, signal } = options
+  const { timeoutMs = 120_000, signal } = options
+  const deadline = Date.now() + timeoutMs
+  let delayMs = 1000
 
   let result = await fetch()
 
-  for (let attempt = 1; attempt < attempts && !isDone(result); attempt++) {
+  while (!isDone(result) && Date.now() + delayMs <= deadline) {
     if (signal?.aborted) break
     await new Promise((resolve) => setTimeout(resolve, delayMs))
     if (signal?.aborted) break
     result = await fetch()
+    delayMs = Math.min(delayMs * 1.5, 10_000)
   }
 
   return result
@@ -189,20 +213,32 @@ export function useCheckoutReturn(
     data?: { plan: string; status?: string } | undefined
   }>
 ) {
+  const [isProcessing, setIsProcessing] = useState(false)
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (params.get('checkout') !== 'success') return
 
-    window.history.replaceState(null, '', window.location.pathname)
-    toast.success('Payment received — setting up your subscription')
-    pollUntil(
-      refetch,
-      (result) =>
+    function landed(result: Awaited<ReturnType<typeof refetch>>) {
+      return (
         result.data?.plan !== undefined &&
         result.data.plan !== 'FREE' &&
         result.data.status === 'ACTIVE'
-    ).catch(() => undefined)
+      )
+    }
+
+    window.history.replaceState(null, '', window.location.pathname)
+    setIsProcessing(true)
+    toast.success('Payment received — setting up your subscription')
+    pollUntil(refetch, landed)
+      .then((result) => {
+        if (!landed(result)) toast.info(STILL_PROCESSING_MESSAGE)
+      })
+      .catch(() => toast.info(STILL_PROCESSING_MESSAGE))
+      .finally(() => setIsProcessing(false))
   }, [])
+
+  return { isProcessing }
 }
 
 export function usePollUntilPlanChangeLands(
@@ -233,11 +269,7 @@ export function usePollUntilPlanChangeLands(
     pollUntil(refetch, landed, { signal: controller.signal }).then((result) => {
       if (controller.signal.aborted) return
 
-      if (!landed(result)) {
-        toast.info(
-          "Still processing — check back in a moment if your plan hasn't updated"
-        )
-      }
+      if (!landed(result)) toast.info(STILL_PROCESSING_MESSAGE)
 
       setPendingTarget(null)
     })
