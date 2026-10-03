@@ -2,7 +2,7 @@ import { SubscriptionStatesPage } from '@/features/dev/subscription-states/subsc
 import { notFound } from 'next/navigation'
 
 export default function DevSubscriptionStatesRoute() {
-  if (process.env.NODE_ENV === 'production') notFound()
+  if (process.env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
 
   return <SubscriptionStatesPage />
 }

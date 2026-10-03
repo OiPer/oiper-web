@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const isProduction = process.env.NODE_ENV === 'production'
+const isProduction = process.env.NEXT_PUBLIC_APP_ENV === 'production'
 
 const productionSafeUrl = z
   .url()
@@ -16,23 +16,23 @@ const productionSafeUrl = z
   )
   .transform((value) => value.replace(/\/+$/, ''))
 
-const envSchema = z.object({
-  OIPER_SERVER_URL: productionSafeUrl,
-  PADDLE_CLIENT_TOKEN: z.string().trim().min(1),
-  PADDLE_ENVIRONMENT: z
-    .enum(['sandbox', 'production'])
-    .optional()
-    .default('sandbox'),
-  ENABLE_STRIPE_CHECKOUT: z
-    .enum(['true', 'false'])
-    .optional()
-    .default('false')
-    .transform((value) => value === 'true'),
-})
+const envSchema = z
+  .object({
+    APP_ENV: z.enum(['development', 'production']),
+    OIPER_SERVER_URL: productionSafeUrl,
+    PADDLE_CLIENT_TOKEN: z.string().trim().min(1),
+  })
+  .transform((value) => ({
+    ...value,
+    PADDLE_ENVIRONMENT:
+      value.APP_ENV === 'production'
+        ? ('production' as const)
+        : ('sandbox' as const),
+    ENABLE_STRIPE_CHECKOUT: value.APP_ENV !== 'production',
+  }))
 
 export const env = envSchema.parse({
+  APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
   OIPER_SERVER_URL: process.env.NEXT_PUBLIC_OIPER_SERVER_URL,
   PADDLE_CLIENT_TOKEN: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
-  PADDLE_ENVIRONMENT: process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT,
-  ENABLE_STRIPE_CHECKOUT: process.env.NEXT_PUBLIC_ENABLE_STRIPE_CHECKOUT,
 })
