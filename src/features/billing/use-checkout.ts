@@ -146,19 +146,17 @@ export function useStartCheckout() {
   return { startCheckout, pendingCheckout }
 }
 
-export function useAutoOpenCheckoutFromQueryParam(
+export function useCheckoutQueryParam(
   plans: PricingPlan[] | undefined,
-  isSignedIn: boolean,
-  redirectTo: string
+  isReady: boolean,
+  redirectTo: string,
+  onSelect: (target: PlanChangeTarget) => void
 ) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { startCheckout } = useStartCheckout()
   const checkoutPlan = searchParams.get('checkout')
   const checkoutInterval =
     searchParams.get('interval') === 'yearly' ? 'YEARLY' : 'MONTHLY'
-  const checkoutProvider =
-    searchParams.get('provider') === 'stripe' ? 'STRIPE' : 'PADDLE'
 
   useEffect(() => {
     if (checkoutPlan !== 'cancelled') return
@@ -167,23 +165,15 @@ export function useAutoOpenCheckoutFromQueryParam(
   }, [checkoutPlan, redirectTo, router])
 
   useEffect(() => {
-    if (!isSignedIn || !plans) return
+    if (!isReady || !plans) return
     if (checkoutPlan !== 'pro' && checkoutPlan !== 'max') return
 
     const plan = checkoutPlan === 'max' ? 'MAX' : 'PRO'
-    const entry = findCatalogEntry(plans, plan, checkoutInterval)
-    if (!entry) return
+    if (!findCatalogEntry(plans, plan, checkoutInterval)) return
 
-    startCheckout(checkoutProvider, plan, checkoutInterval)
-    router.replace(redirectTo)
-  }, [
-    isSignedIn,
-    plans,
-    checkoutPlan,
-    checkoutInterval,
-    checkoutProvider,
-    router,
-  ])
+    onSelect({ plan, interval: checkoutInterval })
+    router.replace(redirectTo, { scroll: false })
+  }, [isReady, plans, checkoutPlan, checkoutInterval, router])
 }
 
 export async function pollUntil<T>(

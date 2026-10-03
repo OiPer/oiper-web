@@ -7,7 +7,7 @@ import { buildAuthUrl } from '@/features/auth/auth-form-utils'
 import { ChangePlanDialog } from '@/features/billing/change-plan-dialog'
 import {
   STRIPE_CHECKOUT_ENABLED,
-  useAutoOpenCheckoutFromQueryParam,
+  useCheckoutQueryParam,
   usePollUntilPlanChangeLands,
   useStartCheckout,
   type PlanChangeTarget,
@@ -50,8 +50,6 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     subscriptionQuery.refetch
   )
 
-  useAutoOpenCheckoutFromQueryParam(props.plans, !!currentUser, '/')
-
   const free = props.plans.find((plan) => plan.plan === 'FREE')
 
   const pro = props.plans.find(
@@ -69,10 +67,29 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     .filter((plan) => plan.interval === 'YEARLY')
     .sort((a, b) => b.discountPercentFloored - a.discountPercentFloored)[0]
 
+  const subscription = subscriptionQuery.data
+  const isLapsed =
+    !currentUser ||
+    !subscription ||
+    subscription.plan === 'FREE' ||
+    subscription.status === 'CANCELLED' ||
+    subscription.status === 'EXPIRED'
+
   const isStatusUnknown =
     !isMounted ||
     isAuthLoading ||
     (!!currentUser && subscriptionQuery.isPending)
+
+  useCheckoutQueryParam(
+    props.plans,
+    !!currentUser && !isStatusUnknown,
+    '/',
+    (target) => {
+      setInterval(target.interval)
+      document.getElementById('pricing')?.scrollIntoView()
+      if (!isLapsed) setChangePlanTarget(target)
+    }
+  )
 
   function signupCta(
     checkout: 'pro' | 'max',
@@ -142,14 +159,6 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
         loading: true,
       }
     }
-
-    const subscription = subscriptionQuery.data
-    const isLapsed =
-      !currentUser ||
-      !subscription ||
-      subscription.plan === 'FREE' ||
-      subscription.status === 'CANCELLED' ||
-      subscription.status === 'EXPIRED'
 
     if (isLapsed) {
       const checkoutSlug = cardPlan === 'PRO' ? 'pro' : 'max'
