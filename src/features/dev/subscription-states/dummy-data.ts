@@ -879,7 +879,7 @@ export type UsageCardState = {
     headline: string
     meter?: { used: string; allowance: string; usedPercent: number }
     requests: string
-    resetsAt: string
+    resetsIn: string
   }
 }
 
@@ -893,7 +893,7 @@ export const USAGE_CARD_STATES: UsageCardState[] = [
       headlineLabel: 'Remaining today',
       headline: '',
       requests: '',
-      resetsAt: '',
+      resetsIn: '',
     },
   },
   {
@@ -905,7 +905,7 @@ export const USAGE_CARD_STATES: UsageCardState[] = [
       headlineLabel: 'Remaining today',
       headline: '',
       requests: '',
-      resetsAt: '',
+      resetsIn: '',
     },
   },
   {
@@ -917,7 +917,7 @@ export const USAGE_CARD_STATES: UsageCardState[] = [
       headline: '2h 45m',
       meter: { used: '1h 15m', allowance: '3h', usedPercent: 42 },
       requests: '18',
-      resetsAt: '12:00 AM',
+      resetsIn: '14 hours',
     },
   },
   {
@@ -929,19 +929,19 @@ export const USAGE_CARD_STATES: UsageCardState[] = [
       headline: '25m',
       meter: { used: '2h 35m', allowance: '3h', usedPercent: 86 },
       requests: '61',
-      resetsAt: '12:00 AM',
+      resetsIn: '2 hours 10 minutes',
     },
   },
   {
     title: 'Pro · limit reached',
-    description: 'The meter turns destructive and the headline changes.',
+    description: 'The meter fills and turns destructive.',
     card: {
       planLabel: 'Pro',
       headlineLabel: 'Remaining today',
       headline: 'Daily limit reached',
       meter: { used: '3h', allowance: '3h', usedPercent: 100 },
       requests: '94',
-      resetsAt: '12:00 AM',
+      resetsIn: '35 minutes',
     },
   },
   {
@@ -953,7 +953,7 @@ export const USAGE_CARD_STATES: UsageCardState[] = [
       headlineLabel: 'Daily allowance',
       headline: 'Unlimited',
       requests: '412',
-      resetsAt: '12:00 AM',
+      resetsIn: '9 hours',
     },
   },
 ]

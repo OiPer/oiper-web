@@ -45,7 +45,7 @@ function UsageMeter(props: {
 
 function UsageStat(props: { label: string; value: string }) {
   return (
-    <div>
+    <div className="last:text-right">
       <dt className="text-muted-foreground text-sm">{props.label}</dt>
       <dd className="mt-0.5 font-medium">{props.value}</dd>
     </div>
@@ -58,17 +58,11 @@ export function UsageCardPreview(props: { card: UsageCardState['card'] }) {
   if (card.loading) {
     return (
       <div className="bg-card mx-auto w-full max-w-6xl rounded-xl border p-4 shadow-sm sm:p-6">
-        <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:gap-12">
-          <div className="shrink-0">
-            <Skeleton className="h-4 w-28" />
-            <Skeleton className="mt-2.5 h-11 w-32" />
-          </div>
-          <div className="w-full flex-1">
-            <Skeleton className="h-2.5 w-full" />
-            <Skeleton className="mt-3 h-4 w-48" />
-          </div>
+        <Skeleton className="h-2.5 w-full" />
+        <div className="mt-6 flex justify-between gap-4">
+          <Skeleton className="h-9 w-24" />
+          <Skeleton className="h-9 w-32" />
         </div>
-        <Skeleton className="mt-6 h-10 w-full" />
       </div>
     )
   }
@@ -90,14 +84,14 @@ export function UsageCardPreview(props: { card: UsageCardState['card'] }) {
       </p>
       <section className="bg-card text-card-foreground mx-auto w-full max-w-6xl rounded-xl border p-4 shadow-sm sm:p-6">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:gap-12">
-          <div className="shrink-0">
-            <p className="text-muted-foreground text-sm">
-              {card.headlineLabel}
-            </p>
-            <p className="mt-1 text-4xl font-semibold tracking-tight sm:text-5xl">
-              {card.headline}
-            </p>
-          </div>
+          {!card.meter && (
+            <div className="shrink-0">
+              <p className="text-muted-foreground text-sm">
+                {card.headlineLabel}
+              </p>
+              <p className="mt-0.5 text-lg font-semibold">{card.headline}</p>
+            </div>
+          )}
           {card.meter && (
             <div className="w-full flex-1">
               <UsageMeter
@@ -109,9 +103,9 @@ export function UsageCardPreview(props: { card: UsageCardState['card'] }) {
           )}
         </div>
 
-        <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-4 border-t pt-6">
-          <UsageStat label="Requests today" value={card.requests} />
-          <UsageStat label="Resets at" value={card.resetsAt} />
+        <dl className="mt-6 flex justify-between gap-4">
+          <UsageStat label="Recordings" value={card.requests} />
+          <UsageStat label="Resets in" value={card.resetsIn} />
         </dl>
       </section>
     </div>
