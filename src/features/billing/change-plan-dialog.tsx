@@ -291,13 +291,16 @@ export function ChangePlanDialog({
       toast.success(
         isScheduled
           ? 'Plan change scheduled — it takes effect at the end of your current billing period'
-          : 'Plan change requested — this can take a few seconds to show up'
+          : 'Plan change requested — this can take a few seconds to show up',
+        { id: 'plan-change' }
       )
       if (isScheduled) void refetchSubscription()
       else onChangeSubmitted(selected)
       handleOpenChange(false)
     } catch (error) {
-      toast.error(describePlanChangeError(error, "Couldn't change your plan"))
+      toast.error(describePlanChangeError(error, "Couldn't change your plan"), {
+        id: 'plan-change',
+      })
     }
   }
 
@@ -305,12 +308,14 @@ export function ChangePlanDialog({
     try {
       if (!(await resumeSubscription())) {
         toast.info(
-          "Still processing — check back in a moment if this doesn't update"
+          "Still processing — check back in a moment if this doesn't update",
+          { id: 'resume' }
         )
       }
     } catch (error) {
       toast.error(
-        describePlanChangeError(error, "Couldn't reverse the cancellation")
+        describePlanChangeError(error, "Couldn't reverse the cancellation"),
+        { id: 'resume' }
       )
     }
   }

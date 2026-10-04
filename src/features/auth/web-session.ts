@@ -1,6 +1,7 @@
 import { $api, api } from '@/lib/api/client'
 import { useMutation } from '@tanstack/react-query'
 import type { ClientPathsWithMethod } from 'openapi-fetch'
+import { useRef } from 'react'
 
 export const webSessionRequest = { cache: 'no-store' } as const
 
@@ -26,11 +27,34 @@ export function useAccountMutation<
   const request = $api.useMutation(method, path)
   type Init = Parameters<typeof request.mutateAsync>[0]
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: async (init: Omit<Init, 'params'>) =>
       request.mutateAsync({
         ...init,
         params: { header: await getAccountMutationHeaders() },
       } as Init),
   })
+
+  const inFlight = useRef<{
+    key: string
+    promise: ReturnType<typeof mutation.mutateAsync>
+  } | null>(null)
+
+  function mutateAsync(init: Omit<Init, 'params'>) {
+    const key = JSON.stringify(init)
+    if (inFlight.current?.key === key) return inFlight.current.promise
+
+    const entry = { key, promise: mutation.mutateAsync(init) }
+    inFlight.current = entry
+
+    function release() {
+      if (inFlight.current === entry) inFlight.current = null
+    }
+
+    entry.promise.then(release, release)
+
+    return entry.promise
+  }
+
+  return { ...mutation, mutateAsync }
 }

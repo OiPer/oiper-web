@@ -126,13 +126,15 @@ function ResumeButton(props: {
     try {
       if (!(await resumeSubscription())) {
         return toast.info(
-          "Still processing — check back in a moment if this doesn't update"
+          "Still processing — check back in a moment if this doesn't update",
+          { id: 'resume' }
         )
       }
       toast.success(
         props.isPaused
           ? 'Your subscription is active again'
-          : 'Your subscription will keep renewing'
+          : 'Your subscription will keep renewing',
+        { id: 'resume' }
       )
     } catch (error) {
       toast.error(
@@ -140,7 +142,8 @@ function ResumeButton(props: {
           ? error.error.message
           : props.isPaused
             ? "Couldn't resume your subscription"
-            : "Couldn't keep your subscription"
+            : "Couldn't keep your subscription",
+        { id: 'resume' }
       )
     }
   }
