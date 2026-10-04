@@ -177,7 +177,14 @@ export function ChangePlanDialog({
     initialTarget && optionKeys.has(optionKey(initialTarget))
       ? optionKey(initialTarget)
       : null
-  const defaultKey = initialKey ?? (options[0] ? optionKey(options[0]) : null)
+  const defaultOption =
+    options.find(
+      (entry) =>
+        entry.plan !== currentSubscription.plan ||
+        entry.interval !== currentSubscription.interval
+    ) ?? options[0]
+  const defaultKey =
+    initialKey ?? (defaultOption ? optionKey(defaultOption) : null)
   const [selectedKey, setSelectedKey] = useState(defaultKey)
 
   const previewMutation = useAccountMutation(
