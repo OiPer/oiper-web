@@ -283,6 +283,7 @@ export type CurrentPlanCardState = {
     pastDueAlert?: boolean
     pausedAlert?: boolean
     checkoutProcessing?: boolean
+    note?: 'free' | 'setting-up'
     planLabel: string
     status?: string
     scheduledChange?: { date: string; planLabel: string }
@@ -327,17 +328,14 @@ export const CURRENT_PLAN_STATES: CurrentPlanCardState[] = [
   {
     title: 'Free',
     description:
-      'Never subscribed or already cancelled and expired. Both render as Free.',
-    card: { planLabel: 'Free', buttons: [{ label: 'Subscribe' }] },
+      'Never subscribed, or cancelled and expired. All show this note in a card with no title.',
+    card: { note: 'free', planLabel: '' },
   },
   {
     title: 'Checkout return',
     description:
-      'Payment succeeded but the webhook has not landed yet so all buttons hide.',
-    card: {
-      checkoutProcessing: true,
-      planLabel: 'Setting up your subscription…',
-    },
+      'Payment succeeded but the webhook has not landed yet. Same note card, different text.',
+    card: { checkoutProcessing: true, note: 'setting-up', planLabel: '' },
   },
   {
     title: 'Active',

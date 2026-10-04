@@ -3,6 +3,7 @@ import { SectionCard } from '@/components/shared/section-card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { PlanNote } from '@/features/account/components/plan-note'
 import type { ReactNode } from 'react'
 import type { CurrentPlanCardState } from './dummy-data'
 
@@ -39,20 +40,15 @@ function DateValueRow(props: {
   )
 }
 
-function RowSkeleton() {
-  return (
-    <div className="flex items-center justify-between gap-4 py-3">
-      <Skeleton className="h-4 w-20" />
-      <Skeleton className="h-4 w-24" />
-    </div>
-  )
-}
-
 export function CurrentPlanCardPreview(props: {
   card: CurrentPlanCardState['card']
 }) {
   const { card } = props
   const isAccessEnding = card.payment?.label === 'Access ends'
+
+  if (card.note) return <PlanNote variant={card.note} />
+
+  if (card.loading) return <Skeleton className="h-40 w-full rounded-xl" />
 
   return (
     <SectionCard className="gap-4">
@@ -60,15 +56,6 @@ export function CurrentPlanCardPreview(props: {
         <p className="text-muted-foreground mb-1 text-sm font-medium">
           Subscription
         </p>
-
-        {card.loading && (
-          <div className="divide-y">
-            <RowSkeleton />
-            <RowSkeleton />
-            <RowSkeleton />
-            <RowSkeleton />
-          </div>
-        )}
 
         {card.error === 'none' && (
           <p className="text-destructive py-3 text-sm">
@@ -128,13 +115,6 @@ export function CurrentPlanCardPreview(props: {
       </div>
 
       <div className="flex flex-wrap items-center justify-end gap-2 border-t px-(--x-padding) py-4">
-        {card.loading && (
-          <>
-            <Skeleton className="h-9 w-28" />
-            <Skeleton className="h-9 w-24" />
-          </>
-        )}
-
         {card.buttons?.map((button) => (
           <Button
             key={button.label}

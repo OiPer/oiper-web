@@ -6,6 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AccountPageHeader } from '@/features/account/components/account-page-header'
+import { PlanNote } from '@/features/account/components/plan-note'
 import { ChangePlanDialog } from '@/features/billing/change-plan-dialog'
 import {
   useCheckoutReturn,
@@ -16,7 +17,6 @@ import {
   type PaidSubscriptionView,
   type PlanChangeTarget,
 } from '@/features/billing/use-checkout'
-import { ANCHOR_PRICING, HOME } from '@/features/landing-page/constants/links'
 import { $api } from '@/lib/api/client'
 import { isAppErrorEnvelope } from '@/lib/api/error'
 import type { components } from '@/lib/api/schema'
@@ -26,7 +26,6 @@ import {
   formatLabel,
   subscriptionPlanLabel,
 } from '@/lib/format'
-import Link from 'next/link'
 import { useState, type ReactNode } from 'react'
 import { toast } from 'sonner'
 
@@ -79,15 +78,6 @@ function DateValueRow(props: {
           {props.value} on {props.date}
         </p>
       </div>
-    </div>
-  )
-}
-
-function RowSkeleton() {
-  return (
-    <div className="flex items-center justify-between gap-4 py-3">
-      <Skeleton className="h-4 w-20" />
-      <Skeleton className="h-4 w-24" />
     </div>
   )
 }
@@ -189,14 +179,6 @@ function ChangePlanButton(props: {
   )
 }
 
-function SubscribeButton() {
-  return (
-    <Button asChild>
-      <Link href={`${HOME}${ANCHOR_PRICING}`}>Subscribe</Link>
-    </Button>
-  )
-}
-
 function CurrentPlan() {
   const subscriptionQuery = $api.useQuery(
     'get',
@@ -233,21 +215,22 @@ function CurrentPlan() {
       }
     : null
 
+  if (subscriptionQuery.isPending) {
+    return <Skeleton className="h-40 w-full rounded-xl" />
+  }
+
+  if (subscription && !paidSubscription && isCheckoutProcessing) {
+    return <PlanNote variant="setting-up" />
+  }
+
+  if (subscription && !paidSubscription) return <PlanNote variant="free" />
+
   return (
     <SectionCard id="current-plan" className="gap-4">
       <div className="px-(--x-padding)">
         <p className="text-muted-foreground mb-1 text-sm font-medium">
           Subscription
         </p>
-
-        {subscriptionQuery.isPending && (
-          <div className="divide-y">
-            <RowSkeleton />
-            <RowSkeleton />
-            <RowSkeleton />
-            <RowSkeleton />
-          </div>
-        )}
 
         {subscriptionQuery.error && !subscription && (
           <p className="text-destructive py-3 text-sm">
@@ -281,71 +264,52 @@ function CurrentPlan() {
           </Alert>
         )}
 
-        {subscription && (
+        {paidSubscription && (
           <div className="divide-y">
             <Row
               label="Plan"
-              value={
-                !paidSubscription && isCheckoutProcessing
-                  ? 'Setting up your subscription…'
-                  : subscriptionPlanLabel(
-                      paidSubscription?.plan ?? 'FREE',
-                      paidSubscription?.billingInterval ?? null
-                    )
-              }
+              value={subscriptionPlanLabel(
+                paidSubscription.plan,
+                paidSubscription.billingInterval
+              )}
             />
-            {paidSubscription && (
-              <>
-                <Row
-                  label="Status"
-                  value={<StatusValue status={paidSubscription.status} />}
-                />
-                {scheduledChange && (
-                  <DateValueRow
-                    label="Scheduled to change"
-                    value={scheduledChange.planLabel}
-                    date={scheduledChange.date}
-                  />
+            <Row
+              label="Status"
+              value={<StatusValue status={paidSubscription.status} />}
+            />
+            {scheduledChange && (
+              <DateValueRow
+                label="Scheduled to change"
+                value={scheduledChange.planLabel}
+                date={scheduledChange.date}
+              />
+            )}
+            {paidSubscription.cancelAtPeriodEnd ? (
+              <Row
+                label="Access ends"
+                value={formatNextPaymentDue(
+                  paidSubscription.nextPayment,
+                  paidSubscription.currentPeriodEnd
                 )}
-                {paidSubscription.cancelAtPeriodEnd ? (
-                  <Row
-                    label="Access ends"
-                    value={formatNextPaymentDue(
-                      paidSubscription.nextPayment,
-                      paidSubscription.currentPeriodEnd
-                    )}
-                  />
-                ) : isPaused ? null : (
-                  <DateValueRow
-                    label={isPastDue ? 'Amount due' : 'Next payment'}
-                    value={formatNextPaymentAmount(
-                      paidSubscription.nextPayment,
-                      paidSubscription.currencyCode ?? undefined
-                    )}
-                    date={formatNextPaymentDue(
-                      paidSubscription.nextPayment,
-                      paidSubscription.currentPeriodEnd
-                    )}
-                  />
+              />
+            ) : isPaused ? null : (
+              <DateValueRow
+                label={isPastDue ? 'Amount due' : 'Next payment'}
+                value={formatNextPaymentAmount(
+                  paidSubscription.nextPayment,
+                  paidSubscription.currencyCode ?? undefined
                 )}
-              </>
+                date={formatNextPaymentDue(
+                  paidSubscription.nextPayment,
+                  paidSubscription.currentPeriodEnd
+                )}
+              />
             )}
           </div>
         )}
       </div>
 
       <div className="flex flex-wrap items-center justify-end gap-2 border-t px-(--x-padding) py-4">
-        {subscriptionQuery.isPending && (
-          <>
-            <Skeleton className="h-9 w-28" />
-            <Skeleton className="h-9 w-24" />
-          </>
-        )}
-
-        {subscription && !paidSubscription && !isCheckoutProcessing && (
-          <SubscribeButton />
-        )}
-
         {paidSubscription && <ManageBillingButton isPastDue={isPastDue} />}
 
         {paidSubscription &&
