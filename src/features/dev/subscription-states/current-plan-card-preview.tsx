@@ -1,9 +1,15 @@
+import { Loading } from '@/components/shared/loading'
 import { SectionCard } from '@/components/shared/section-card'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import type { ReactNode } from 'react'
 import type { CurrentPlanCardState } from './dummy-data'
 
-function Row(props: { label: string; value: string }) {
+// Markup copied 1:1 from CurrentPlan in features/account/billing-page.tsx —
+// keep both in sync when the real card changes.
+
+function Row(props: { label: string; value: ReactNode }) {
   return (
     <div className="flex items-center justify-between gap-4 py-3 text-sm">
       <p className="text-muted-foreground font-medium">{props.label}</p>
@@ -12,7 +18,11 @@ function Row(props: { label: string; value: string }) {
   )
 }
 
-function DateValueRow(props: { label: string; value: string; date: string }) {
+function DateValueRow(props: {
+  label: string
+  value: ReactNode
+  date: ReactNode
+}) {
   if (props.date === '-') return <Row label={props.label} value={props.value} />
 
   return (
@@ -42,6 +52,7 @@ export function CurrentPlanCardPreview(props: {
   card: CurrentPlanCardState['card']
 }) {
   const { card } = props
+  const isAccessEnding = card.payment?.label === 'Access ends'
 
   return (
     <SectionCard className="gap-4">
@@ -59,32 +70,59 @@ export function CurrentPlanCardPreview(props: {
           </div>
         )}
 
-        {card.error && (
+        {card.error === 'none' && (
           <p className="text-destructive py-3 text-sm">
-            Couldn&apos;t load your subscription
+            Couldn&apos;t load your subscription. You can still manage billing
+            below.
           </p>
         )}
 
-        {!card.loading && !card.error && (
+        {card.error === 'stale' && (
+          <p className="text-muted-foreground py-3 text-sm">
+            Couldn&apos;t refresh — showing your last known status.
+          </p>
+        )}
+
+        {card.pastDueAlert && (
+          <Alert variant="destructive" className="my-2">
+            <AlertTitle>Your last payment failed</AlertTitle>
+            <AlertDescription>
+              Update your payment method to restore access.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {card.pausedAlert && (
+          <Alert className="my-2">
+            <AlertTitle>Your subscription is paused</AlertTitle>
+            <AlertDescription>
+              Cloud features are off and you won&apos;t be charged until you
+              resume it.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {!card.loading && card.error !== 'none' && (
           <div className="divide-y">
-            <Row label="Status" value={card.status ?? '-'} />
-            <Row label="Plan" value={card.planLabel ?? '-'} />
-            {card.scheduledChangeDate && card.scheduledChangePlanLabel && (
+            <Row label="Plan" value={card.planLabel} />
+            {card.status && <Row label="Status" value={card.status} />}
+            {card.scheduledChange && (
               <DateValueRow
                 label="Scheduled to change"
-                value={card.scheduledChangePlanLabel}
-                date={card.scheduledChangeDate}
+                value={card.scheduledChange.planLabel}
+                date={card.scheduledChange.date}
               />
             )}
-            {card.paymentLabel === 'Access ends' ? (
-              <Row label="Access ends" value={card.paymentValue ?? '-'} />
-            ) : (
-              <DateValueRow
-                label={card.paymentLabel ?? 'Next payment'}
-                value={card.amountValue ?? '-'}
-                date={card.paymentValue ?? '-'}
-              />
-            )}
+            {card.payment &&
+              (isAccessEnding ? (
+                <Row label="Access ends" value={card.payment.date} />
+              ) : (
+                <DateValueRow
+                  label={card.payment.label}
+                  value={card.payment.amount}
+                  date={card.payment.date}
+                />
+              ))}
           </div>
         )}
       </div>
@@ -97,17 +135,15 @@ export function CurrentPlanCardPreview(props: {
           </>
         )}
 
-        {card.buttons?.includes('subscribe') && (
-          <Button type="button">Subscribe</Button>
-        )}
-        {card.buttons?.includes('manage') && (
-          <Button type="button" variant="outline">
-            Manage subscription
+        {card.buttons?.map((button) => (
+          <Button
+            key={button.label}
+            variant={button.variant ?? 'default'}
+            disabled={button.disabled}
+          >
+            <Loading loading={!!button.loading}>{button.label}</Loading>
           </Button>
-        )}
-        {card.buttons?.includes('change') && (
-          <Button type="button">Change plan</Button>
-        )}
+        ))}
       </div>
     </SectionCard>
   )

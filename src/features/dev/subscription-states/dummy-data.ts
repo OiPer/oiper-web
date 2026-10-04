@@ -1,361 +1,512 @@
+import type { PlanCardCta } from '@/features/landing-page/components/plan-card'
+
 export type PricingFeature = { label: string; detail: string | null }
 
+// Mirrors prisma/seed-pricing.ts in oiper-server — keep in sync with the real catalog.
 export const FREE_FEATURES: PricingFeature[] = [
-  { label: 'Unlimited local transcription', detail: null },
-  { label: 'Core local and offline features', detail: null },
-  { label: 'No custom prompt for formatting', detail: null },
+  { label: 'Unlimited Local Transcription', detail: null },
+  { label: 'Global Hotkey Support', detail: null },
+  { label: 'Snippet Support', detail: null },
+  {
+    label: 'Self-Managed Transcription',
+    detail: 'Connect your own speech-to-text model',
+  },
+  {
+    label: 'Self-Managed Formatting',
+    detail: 'Connect your own text generation model',
+  },
+  { label: 'Community Support', detail: null },
 ]
 
 export const PRO_FEATURES: PricingFeature[] = [
+  { label: 'Everything in Free', detail: null },
   {
-    label: '180 minutes of managed cloud transcription per day',
-    detail: 'Resets daily',
+    label: '3-5x Faster Speed',
+    detail:
+      'Powered by frontier speech-to-text and text-generation models delivering premium-quality results where matching the same quality locally requires top-tier hardware and is still significantly slower',
   },
-  { label: 'Custom dictionary', detail: null },
-  { label: 'Priority processing', detail: null },
-  { label: 'Snippets', detail: null },
-  { label: 'Custom formatting', detail: null },
-  { label: 'Cloud sync', detail: null },
-  { label: 'Email support', detail: null },
+  {
+    label: 'Everything is managed for you',
+    detail:
+      'Just use the app - we handle everything behind the scenes to keep it fast and reliable',
+  },
+  {
+    label: '180 Min/Day Transcription',
+    detail: '180 minutes of managed cloud transcription every day',
+  },
+  {
+    label: 'Custom Dictionary',
+    detail: 'Teach it names and specialized vocabulary unique to you',
+  },
+  {
+    label: 'Custom Formatting Prompts',
+    detail: 'Control how your transcribed text is formatted',
+  },
+  { label: 'Priority Email Support', detail: null },
 ]
 
 export const MAX_FEATURES: PricingFeature[] = [
+  { label: 'Everything in Pro', detail: null },
   {
-    label: 'Unlimited managed cloud transcription',
-    detail: 'Subject to abuse protection',
+    label: 'Unlimited Transcription',
+    detail: 'Unlimited cloud transcription with fair use safeguards',
   },
-  { label: 'Enhanced custom dictionary', detail: null },
-  { label: 'Highest priority processing', detail: null },
-  { label: 'Snippets', detail: null },
-  { label: 'Custom formatting', detail: null },
-  { label: 'Cloud sync', detail: null },
-  { label: 'Highest priority support', detail: null },
-  { label: 'Early access to features', detail: null },
+  { label: 'Priority Processing', detail: null },
+  { label: 'Early Access', detail: null },
 ]
+
+const noop = { type: 'button', onClick: () => undefined } as const
+
+function cta(props: {
+  label: string | null
+  variant?: 'default' | 'outline'
+  disabled?: boolean
+  loading?: boolean
+  submitting?: boolean
+  stripeSecondary?: 'link' | 'button' | 'submitting' | 'disabled'
+}): PlanCardCta {
+  const stripe = props.stripeSecondary
+
+  return {
+    cta: props.label,
+    action: noop,
+    disabled: props.disabled,
+    loading: props.loading,
+    submitting: props.submitting,
+    ctaVariant: props.variant,
+    secondaryCta: stripe
+      ? {
+          label: 'Upgrade via Stripe instead',
+          action: noop,
+          submitting: stripe === 'submitting',
+          disabled: stripe === 'disabled',
+        }
+      : undefined,
+  }
+}
 
 export type PricingCardState = {
   title: string
   description: string
+  entryNote?: string
   card: {
     displayName: string
     price: string
     period: string
     discountPercent: number
+    discountPercentFloored: number
     description: string
     features: PricingFeature[]
-    ctaLabel: string | null
-    ctaVariant: 'default' | 'outline'
-    disabled?: boolean
-    loading?: boolean
     featured: boolean
-    secondaryCtaLabel?: string
+    cta: PlanCardCta
   }
+}
+
+const FREE_CARD = {
+  displayName: 'Free',
+  price: '$0',
+  period: 'Forever',
+  discountPercent: 0,
+  discountPercentFloored: 0,
+  description: 'Unlimited local transcription, no limits, no cost.',
+  features: FREE_FEATURES,
+  featured: false,
+}
+
+const PRO_MONTHLY_CARD = {
+  displayName: 'Pro',
+  price: '$7.99',
+  period: '/ month',
+  discountPercent: 0,
+  discountPercentFloored: 0,
+  description: 'Managed cloud transcription with a daily allowance.',
+  features: PRO_FEATURES,
+  featured: true,
+}
+
+const PRO_YEARLY_CARD = {
+  ...PRO_MONTHLY_CARD,
+  price: '$74.99',
+  period: '/ year',
+  discountPercent: 22,
+  discountPercentFloored: 20,
+}
+
+const MAX_MONTHLY_CARD = {
+  displayName: 'Max',
+  price: '$14.99',
+  period: '/ month',
+  discountPercent: 0,
+  discountPercentFloored: 0,
+  description:
+    'Unlimited managed cloud transcription, subject to abuse protection.',
+  features: MAX_FEATURES,
+  featured: false,
+}
+
+const MAX_YEARLY_CARD = {
+  ...MAX_MONTHLY_CARD,
+  price: '$124.99',
+  period: '/ year',
+  discountPercent: 31,
+  discountPercentFloored: 30,
 }
 
 export const PRICING_CARD_STATES: PricingCardState[] = [
   {
-    title: 'Free — always static',
-    description:
-      'No auth-dependent variation. CTA links straight to the desktop download page.',
+    title: 'Free',
+    description: 'Never varies. The CTA is the real download button.',
+    card: { ...FREE_CARD, cta: { cta: null, action: { type: 'download' } } },
+  },
+  {
+    title: 'Pro · loading',
+    description: 'Auth or subscription status is still resolving.',
     card: {
-      displayName: 'Free',
-      price: '$0',
-      period: 'Free forever',
-      discountPercent: 0,
-      description: 'Unlimited local transcription, no limits, no cost.',
-      features: FREE_FEATURES,
-      ctaLabel: 'Download',
-      ctaVariant: 'outline',
-      featured: false,
+      ...PRO_MONTHLY_CARD,
+      cta: cta({ label: null, loading: true }),
     },
   },
   {
-    title: 'Pro — loading',
+    title: 'Pro · visitor',
     description:
-      'Auth or subscription status is still resolving (page just loaded, or the query is pending). The CTA area pulses instead of showing a button.',
+      'Links to sign-up with the plan preselected so checkout starts right after.',
     card: {
-      displayName: 'Pro',
-      price: '$14.99',
-      period: 'Per month',
-      discountPercent: 0,
-      description: 'Managed cloud transcription with a daily allowance.',
-      features: PRO_FEATURES,
-      ctaLabel: null,
-      ctaVariant: 'default',
-      loading: true,
-      featured: true,
+      ...PRO_MONTHLY_CARD,
+      cta: cta({ label: 'Upgrade to Pro', stripeSecondary: 'link' }),
     },
   },
   {
-    title: 'Pro — visitor not signed in',
-    description:
-      'CTA links to sign-up with the plan/interval pre-filled as query params; checkout auto-starts right after signup.',
+    title: 'Pro · signed in on Free',
+    description: 'Opens Paddle checkout directly.',
     card: {
-      displayName: 'Pro',
-      price: '$14.99',
-      period: 'Per month',
-      discountPercent: 0,
-      description: 'Managed cloud transcription with a daily allowance.',
-      features: PRO_FEATURES,
-      ctaLabel: 'Upgrade to Pro',
-      ctaVariant: 'default',
-      featured: true,
+      ...PRO_MONTHLY_CARD,
+      cta: cta({ label: 'Upgrade to Pro', stripeSecondary: 'button' }),
     },
   },
   {
-    title: 'Pro — Yearly toggle (discount badge)',
-    description:
-      'Switching the Monthly/Yearly toggle changes every card\'s price and shows the "Save X%" badge when the plan has a yearly discount.',
+    title: 'Pro · Stripe disabled',
+    description: 'With Stripe checkout off there is no secondary CTA.',
     card: {
-      displayName: 'Pro',
-      price: '$139.99',
-      period: 'Per year',
-      discountPercent: 22,
-      description: 'Managed cloud transcription with a daily allowance.',
-      features: PRO_FEATURES,
-      ctaLabel: 'Upgrade to Pro',
-      ctaVariant: 'default',
-      featured: true,
+      ...PRO_MONTHLY_CARD,
+      cta: cta({ label: 'Upgrade to Pro' }),
     },
   },
   {
-    title: 'Pro — signed in, no active paid plan',
-    description:
-      'Signed-in user is on Free, or their subscription is Cancelled/Expired. CTA opens Paddle checkout directly (a button, not a link).',
+    title: 'Pro · Paddle submitting',
+    description: 'The Paddle overlay is opening and other CTAs lock.',
     card: {
-      displayName: 'Pro',
-      price: '$14.99',
-      period: 'Per month',
-      discountPercent: 0,
-      description: 'Managed cloud transcription with a daily allowance.',
-      features: PRO_FEATURES,
-      ctaLabel: 'Upgrade to Pro',
-      ctaVariant: 'default',
-      featured: true,
+      ...PRO_MONTHLY_CARD,
+      cta: cta({
+        label: 'Upgrade to Pro',
+        submitting: true,
+        stripeSecondary: 'disabled',
+      }),
     },
   },
   {
-    title: "Pro — this is the user's current plan",
-    description:
-      'Signed-in user is already on this exact plan + interval. CTA is disabled and reads "Current Plan".',
+    title: 'Pro · Stripe submitting',
+    description: 'Same flow entered from the Stripe CTA.',
     card: {
-      displayName: 'Pro',
-      price: '$14.99',
-      period: 'Per month',
-      discountPercent: 0,
-      description: 'Managed cloud transcription with a daily allowance.',
-      features: PRO_FEATURES,
-      ctaLabel: 'Current Plan',
-      ctaVariant: 'outline',
-      disabled: true,
-      featured: true,
+      ...PRO_MONTHLY_CARD,
+      cta: cta({
+        label: 'Upgrade to Pro',
+        disabled: true,
+        stripeSecondary: 'submitting',
+      }),
     },
   },
   {
-    title: 'Pro — downgrading from Max',
-    description:
-      'Signed-in Paddle subscriber currently on Max clicks this Pro card. CTA opens the Change Plan dialog, pre-selected to this plan (see the Change Plan section below).',
+    title: 'Pro · yearly',
+    description: 'Yearly price with the save badge.',
     card: {
-      displayName: 'Pro',
-      price: '$14.99',
-      period: 'Per month',
-      discountPercent: 0,
-      description: 'Managed cloud transcription with a daily allowance.',
-      features: PRO_FEATURES,
-      ctaLabel: 'Downgrade to Pro',
-      ctaVariant: 'outline',
-      featured: true,
+      ...PRO_YEARLY_CARD,
+      cta: cta({ label: 'Upgrade to Pro', stripeSecondary: 'link' }),
     },
   },
   {
-    title: 'Max — upgrading from Pro',
-    description:
-      'Signed-in Paddle subscriber currently on Pro clicks this Max card. Opens the Change Plan dialog pre-selected to Max.',
+    title: 'Max · yearly',
+    description: 'The non-featured card at the yearly interval.',
     card: {
-      displayName: 'Max',
-      price: '$29.99',
-      period: 'Per month',
-      discountPercent: 0,
-      description:
-        'Unlimited managed cloud transcription, subject to abuse protection.',
-      features: MAX_FEATURES,
-      ctaLabel: 'Upgrade to Max',
-      ctaVariant: 'default',
-      featured: false,
+      ...MAX_YEARLY_CARD,
+      cta: cta({ label: 'Upgrade to Max', stripeSecondary: 'link' }),
     },
   },
   {
-    title: 'Max — current plan',
-    description:
-      'Signed-in user is already on Max at this interval. CTA is disabled.',
+    title: 'Pro · current plan',
+    description: 'Already on this exact plan and interval.',
     card: {
-      displayName: 'Max',
-      price: '$29.99',
-      period: 'Per month',
-      discountPercent: 0,
-      description:
-        'Unlimited managed cloud transcription, subject to abuse protection.',
-      features: MAX_FEATURES,
-      ctaLabel: 'Current Plan',
-      ctaVariant: 'outline',
-      disabled: true,
-      featured: false,
+      ...PRO_MONTHLY_CARD,
+      cta: cta({ label: 'Current Plan', variant: 'outline', disabled: true }),
     },
   },
   {
-    title: 'Max — Stripe subscriber switching plans',
-    description:
-      'Signed-in subscriber pays via Stripe instead of Paddle. Opens the exact same in-app Change Plan dialog as a Paddle subscriber would — Stripe and Paddle subscribers see identical UI here, the provider difference only shows up in the preview math.',
+    title: 'Max · current plan',
+    description: 'Already on this exact plan and interval.',
     card: {
-      displayName: 'Max',
-      price: '$29.99',
-      period: 'Per month',
-      discountPercent: 0,
-      description:
-        'Unlimited managed cloud transcription, subject to abuse protection.',
-      features: MAX_FEATURES,
-      ctaLabel: 'Upgrade to Max',
-      ctaVariant: 'default',
-      featured: false,
+      ...MAX_MONTHLY_CARD,
+      cta: cta({ label: 'Current Plan', variant: 'outline', disabled: true }),
+    },
+  },
+  {
+    title: 'Pro · Switch',
+    description:
+      'Opens the in-app change dialog preselected to this card on either provider.',
+    card: {
+      ...PRO_MONTHLY_CARD,
+      cta: cta({ label: 'Switch', variant: 'outline' }),
+    },
+  },
+  {
+    title: 'Max · Switch locked',
+    description: 'A plan change was just confirmed and is still landing.',
+    card: {
+      ...MAX_MONTHLY_CARD,
+      cta: cta({ label: 'Switch', variant: 'outline', disabled: true }),
     },
   },
 ]
 
+export type CurrentPlanButton = {
+  label: string
+  variant?: 'default' | 'outline'
+  loading?: boolean
+  disabled?: boolean
+}
+
 export type CurrentPlanCardState = {
   title: string
   description: string
+  entryNote?: string
   card: {
     loading?: boolean
-    error?: boolean
+    error?: 'none' | 'stale'
+    pastDueAlert?: boolean
+    pausedAlert?: boolean
+    checkoutProcessing?: boolean
+    planLabel: string
     status?: string
-    planLabel?: string
-    scheduledChangeDate?: string
-    scheduledChangePlanLabel?: string
-    paymentLabel?: string
-    paymentValue?: string
-    amountValue?: string
-    buttons?: ('subscribe' | 'manage' | 'change')[]
+    scheduledChange?: { date: string; planLabel: string }
+    payment?: { label: string; date: string; amount: string }
+    buttons?: CurrentPlanButton[]
   }
 }
 
 export const CURRENT_PLAN_STATES: CurrentPlanCardState[] = [
   {
     title: 'Loading',
-    description:
-      "The subscription query hasn't resolved yet. Four skeleton rows, two skeleton buttons.",
-    card: { loading: true },
+    description: 'The subscription query has not resolved yet.',
+    card: { loading: true, planLabel: '' },
   },
   {
     title: 'Fetch error',
-    description:
-      'The subscription request failed. No rows or action buttons render.',
-    card: { error: true },
-  },
-  {
-    title: 'Free plan',
-    description:
-      'No subscription on file. Only a "Subscribe" button shows, linking to the pricing section. With no date, Next payment collapses to a bare "-" instead of "- on -".',
+    description: 'Nothing loaded so only the portal button remains.',
     card: {
-      status: '-',
-      planLabel: 'Free',
-      paymentLabel: 'Next payment',
-      paymentValue: '-',
-      amountValue: '-',
-      buttons: ['subscribe'],
+      error: 'none',
+      planLabel: '',
+      buttons: [{ label: 'Manage subscription', variant: 'outline' }],
     },
   },
   {
-    title: 'Active, Paddle, live payment data',
-    description:
-      "Status is Active and the account is on Paddle without a scheduled cancellation — Next payment pairs the date with Paddle's live-computed amount.",
+    title: 'Stale after refresh error',
+    description: 'Rows render from the last known data.',
     card: {
-      status: 'Active',
+      error: 'stale',
       planLabel: 'Pro · Monthly',
-      paymentLabel: 'Next payment',
-      paymentValue: 'September 14 2026',
-      amountValue: '$14.99',
-      buttons: ['manage', 'change'],
+      status: 'Active',
+      payment: {
+        label: 'Next payment',
+        date: 'October 14 2026',
+        amount: '$7.99',
+      },
+      buttons: [
+        { label: 'Manage subscription', variant: 'outline' },
+        { label: 'Change plan' },
+      ],
     },
   },
   {
-    title: 'Past Due',
+    title: 'Free',
     description:
-      "A payment failed. Live payment data isn't fetched for non-Active subscriptions, so the amount paired with the date falls back to the static catalog price for the plan.",
+      'Never subscribed or already cancelled and expired. Both render as Free.',
+    card: { planLabel: 'Free', buttons: [{ label: 'Subscribe' }] },
+  },
+  {
+    title: 'Checkout return',
+    description:
+      'Payment succeeded but the webhook has not landed yet so all buttons hide.',
     card: {
+      checkoutProcessing: true,
+      planLabel: 'Setting up your subscription…',
+    },
+  },
+  {
+    title: 'Active',
+    description: 'The happy path.',
+    card: {
+      planLabel: 'Pro · Monthly',
+      status: 'Active',
+      payment: {
+        label: 'Next payment',
+        date: 'October 14 2026',
+        amount: '$7.99',
+      },
+      buttons: [
+        { label: 'Manage subscription', variant: 'outline' },
+        { label: 'Change plan' },
+      ],
+    },
+  },
+  {
+    title: 'Past due',
+    description:
+      'The last payment failed so the portal button becomes Fix payment.',
+    card: {
+      pastDueAlert: true,
+      planLabel: 'Max · Monthly',
       status: 'Past Due',
-      planLabel: 'Max · Monthly',
-      paymentLabel: 'Next payment',
-      paymentValue: 'August 20 2026',
-      amountValue: '$29.99',
-      buttons: ['manage', 'change'],
+      payment: {
+        label: 'Amount due',
+        date: 'October 20 2026',
+        amount: '$14.99',
+      },
+      buttons: [{ label: 'Fix payment' }, { label: 'Change plan' }],
     },
   },
   {
-    title: 'Cancelled, access ending',
-    description:
-      'User cancelled but keeps access until the period ends. Label switches to "Access ends" and only shows the date — no amount, since nothing gets charged.',
+    title: 'Paused',
+    description: 'No payment row while paused and Change plan becomes Resume.',
     card: {
-      status: 'Cancelled',
+      pausedAlert: true,
       planLabel: 'Pro · Yearly',
-      paymentLabel: 'Access ends',
-      paymentValue: 'December 1 2026',
-      buttons: ['manage', 'change'],
+      status: 'Paused',
+      buttons: [
+        { label: 'Manage subscription', variant: 'outline' },
+        { label: 'Resume subscription' },
+      ],
     },
   },
   {
-    title: 'Expired, no period end on file',
+    title: 'Cancelling',
     description:
-      'Subscription has fully lapsed with no known period end — Next payment collapses to a single "-" rather than "- on -".',
+      'Access runs to the period end and Keep subscription undoes it.',
     card: {
-      status: 'Expired',
+      planLabel: 'Pro · Yearly',
+      status: 'Active',
+      payment: { label: 'Access ends', date: 'December 1 2026', amount: '' },
+      buttons: [
+        { label: 'Manage subscription', variant: 'outline' },
+        { label: 'Keep subscription' },
+      ],
+    },
+  },
+  {
+    title: 'Downgrade scheduled',
+    description:
+      'Next payment already reflects the incoming plan and Change plan rebuilds the schedule.',
+    card: {
+      planLabel: 'Max · Yearly',
+      status: 'Active',
+      scheduledChange: { date: 'August 15 2027', planLabel: 'Pro · Yearly' },
+      payment: {
+        label: 'Next payment',
+        date: 'August 15 2027',
+        amount: '$74.99',
+      },
+      buttons: [
+        { label: 'Manage subscription', variant: 'outline' },
+        { label: 'Change plan' },
+      ],
+    },
+  },
+  {
+    title: 'No upcoming payment',
+    description:
+      'The amount falls back to a dash when the provider reports none.',
+    card: {
+      planLabel: 'Pro · Monthly',
+      status: 'Active',
+      payment: { label: 'Next payment', date: 'October 14 2026', amount: '-' },
+      buttons: [
+        { label: 'Manage subscription', variant: 'outline' },
+        { label: 'Change plan' },
+      ],
+    },
+  },
+  {
+    title: 'Past due and cancelling',
+    description: 'Both alerts and both action buttons at once.',
+    card: {
+      pastDueAlert: true,
       planLabel: 'Max · Monthly',
-      paymentLabel: 'Next payment',
-      paymentValue: '-',
-      amountValue: '-',
-      buttons: ['manage', 'change'],
+      status: 'Past Due',
+      payment: { label: 'Access ends', date: 'October 20 2026', amount: '' },
+      buttons: [{ label: 'Fix payment' }, { label: 'Keep subscription' }],
     },
   },
   {
-    title: 'Active, Stripe',
-    description:
-      'Stripe subscribers get the same "Change plan" button Paddle subscribers do — plan changes run through our own API for both providers now, not the external Stripe portal.',
+    title: 'Scheduled and cancelling',
+    description: 'A pending schedule combined with a portal cancellation.',
     card: {
-      status: 'Active',
       planLabel: 'Max · Yearly',
-      paymentLabel: 'Next payment',
-      paymentValue: 'January 3 2027',
-      amountValue: '$249.99',
-      buttons: ['manage', 'change'],
+      status: 'Active',
+      scheduledChange: { date: 'August 15 2027', planLabel: 'Pro · Yearly' },
+      payment: { label: 'Access ends', date: 'December 1 2026', amount: '' },
+      buttons: [
+        { label: 'Manage subscription', variant: 'outline' },
+        { label: 'Keep subscription' },
+      ],
     },
   },
   {
-    title: 'Active, Stripe, downgrade scheduled (plan)',
-    description:
-      'The subscription has a Stripe Subscription Schedule attached that swaps it to a cheaper plan at the next renewal (fetched live from Stripe on every load, not cached). The "Scheduled to change" row appears right after Plan; Next payment and Amount already reflect the plan it\'s switching to, not the current one. "Change plan" still opens the dialog — picking a different target rebuilds the schedule instead of creating a second one.',
+    title: 'Plan change landing',
+    description: 'Change plan stays busy until the new plan appears.',
     card: {
+      planLabel: 'Pro · Monthly',
       status: 'Active',
-      planLabel: 'Max · Yearly',
-      scheduledChangeDate: 'August 15 2027',
-      scheduledChangePlanLabel: 'Pro · Yearly',
-      paymentLabel: 'Next payment',
-      paymentValue: 'August 15 2027',
-      amountValue: '$139.99',
-      buttons: ['manage', 'change'],
+      payment: {
+        label: 'Next payment',
+        date: 'October 14 2026',
+        amount: '$14.99',
+      },
+      buttons: [
+        { label: 'Manage subscription', variant: 'outline' },
+        { label: 'Change plan', loading: true, disabled: true },
+      ],
     },
   },
   {
-    title: 'Active, Stripe, downgrade scheduled (interval)',
-    description:
-      'Same as above, but the scheduled change only swaps billing interval (Yearly → Monthly) — the plan tier stays Max. Stripe defers this the same way it defers a tier downgrade; Paddle could not (see the Change Plan dialog states below for the Paddle-vs-Stripe contrast on this exact kind of change).',
+    title: 'Portal opening',
+    description: 'The portal session is being created.',
     card: {
+      planLabel: 'Pro · Monthly',
       status: 'Active',
-      planLabel: 'Max · Yearly',
-      scheduledChangeDate: 'August 15 2027',
-      scheduledChangePlanLabel: 'Max · Monthly',
-      paymentLabel: 'Next payment',
-      paymentValue: 'August 15 2027',
-      amountValue: '$29.99',
-      buttons: ['manage', 'change'],
+      payment: {
+        label: 'Next payment',
+        date: 'October 14 2026',
+        amount: '$7.99',
+      },
+      buttons: [
+        {
+          label: 'Manage subscription',
+          variant: 'outline',
+          loading: true,
+          disabled: true,
+        },
+        { label: 'Change plan', disabled: true },
+      ],
+    },
+  },
+  {
+    title: 'Resuming',
+    description: 'The button stays busy through the mutation and the poll.',
+    card: {
+      planLabel: 'Pro · Yearly',
+      status: 'Active',
+      payment: { label: 'Access ends', date: 'December 1 2026', amount: '' },
+      buttons: [
+        { label: 'Manage subscription', variant: 'outline' },
+        { label: 'Keep subscription', loading: true, disabled: true },
+      ],
     },
   },
 ]
@@ -367,9 +518,11 @@ export type SummaryRowFixture = {
   emphasis?: 'credit'
 }
 
-export type ChangePlanOptionFixture = {
+export type ChangePlanOption = {
+  key: string
   label: string
-  priceLine: string
+  pricePerMonth: string
+  pricePerYear?: string
   isCurrent: boolean
   isSelected: boolean
 }
@@ -377,25 +530,34 @@ export type ChangePlanOptionFixture = {
 function FOUR_OPTIONS(
   currentKey: string,
   selectedKey: string
-): ChangePlanOptionFixture[] {
+): ChangePlanOption[] {
   const all = [
-    { key: 'PRO-MONTHLY', label: 'Pro · Monthly', priceLine: '$14.99 / month' },
+    {
+      key: 'PRO-MONTHLY',
+      label: 'Pro · Monthly',
+      pricePerMonth: '$7.99 / month',
+    },
     {
       key: 'PRO-YEARLY',
       label: 'Pro · Yearly',
-      priceLine: '$11.67 / month · $139.99 / year',
+      pricePerMonth: '$6.25 / month',
+      pricePerYear: '$74.99 / year',
     },
-    { key: 'MAX-MONTHLY', label: 'Max · Monthly', priceLine: '$29.99 / month' },
+    {
+      key: 'MAX-MONTHLY',
+      label: 'Max · Monthly',
+      pricePerMonth: '$14.99 / month',
+    },
     {
       key: 'MAX-YEARLY',
       label: 'Max · Yearly',
-      priceLine: '$20.83 / month · $249.99 / year',
+      pricePerMonth: '$10.42 / month',
+      pricePerYear: '$124.99 / year',
     },
   ]
 
   return all.map((entry) => ({
-    label: entry.label,
-    priceLine: entry.priceLine,
+    ...entry,
     isCurrent: entry.key === currentKey,
     isSelected: entry.key === selectedKey,
   }))
@@ -405,7 +567,7 @@ export type ChangePlanState = {
   title: string
   description: string
   entryNote?: string
-  options: ChangePlanOptionFixture[]
+  options: ChangePlanOption[]
   summary:
     | {
         kind: 'current'
@@ -416,28 +578,34 @@ export type ChangePlanState = {
       }
     | { kind: 'loading' }
     | { kind: 'error'; message: string }
-    | { kind: 'cancel-blocked'; message: string }
+    | {
+        kind: 'blocked'
+        reason: 'ENDING' | 'PAUSED'
+        periodEnd?: string
+        resumeLoading?: boolean
+      }
     | { kind: 'preview'; rows: SummaryRowFixture[] }
+    | { kind: 'none' }
   confirmLabel: string
   confirmDisabled?: boolean
+  confirmLoading?: boolean
 }
 
 export const CHANGE_PLAN_STATES: ChangePlanState[] = [
   {
-    title: 'Opened from the Billing page',
+    title: 'From Billing',
     description:
-      "Default selection is always Pro Monthly, regardless of the account's current plan. Here the current plan is actually Max Yearly, so that mismatch triggers an immediate preview fetch the moment the dialog opens.",
-    entryNote: 'Entry point: "Change plan" button on Account → Billing',
-    options: FOUR_OPTIONS('MAX-YEARLY', 'PRO-MONTHLY'),
+      'Opens on the first plan that is not the current one so a preview fires right away.',
+    entryNote: 'Billing page',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'PRO-YEARLY'),
     summary: { kind: 'loading' },
     confirmLabel: 'Confirm change',
     confirmDisabled: true,
   },
   {
-    title: 'Opened from a pricing card',
-    description:
-      'Clicking a pricing card\'s "Switch to…" CTA opens this same dialog pre-selected to the plan that was clicked (Max Yearly here), instead of always defaulting to Pro Monthly.',
-    entryNote: 'Entry point: pricing-card CTA on the homepage',
+    title: 'From a pricing card',
+    description: 'A Switch CTA or a checkout link preselects that exact plan.',
+    entryNote: 'Pricing card or checkout link',
     options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-YEARLY'),
     summary: {
       kind: 'preview',
@@ -447,55 +615,52 @@ export const CHANGE_PLAN_STATES: ChangePlanState[] = [
         {
           label: 'Charged today',
           detail: 'Prorated for the rest of this cycle',
-          value: '$228.41',
+          value: '$117.87',
         },
-        { label: 'Next payment', detail: 'January 3 2027', value: '$249.99' },
+        { label: 'Next payment', detail: 'January 3 2027', value: '$124.99' },
       ],
     },
     confirmLabel: 'Confirm change',
   },
   {
-    title: 'Selected option is the current plan',
+    title: 'Current plan selected',
     description:
-      "Selecting the radio option that matches the account's current plan+interval shows a static summary instead of a price preview — there's nothing to change.",
+      'Nothing to change so the summary is static and Confirm locks.',
     options: FOUR_OPTIONS('PRO-MONTHLY', 'PRO-MONTHLY'),
     summary: {
       kind: 'current',
       status: 'Active',
       renewLabel: 'Renews',
-      renewValue: 'September 14 2026',
-      amountValue: '$14.99',
+      renewValue: 'October 14 2026',
+      amountValue: '$7.99',
     },
     confirmLabel: 'Confirm change',
     confirmDisabled: true,
   },
   {
-    title: 'Selected option is the current plan, cancellation scheduled',
-    description:
-      'Same as above, but the subscription is scheduled to cancel — label switches to "Access ends" and the "Amount" row is dropped entirely, since nothing will actually be charged again.',
+    title: 'Current plan and cancelling',
+    description: 'The label reads Access ends and the amount row is dropped.',
     options: FOUR_OPTIONS('MAX-MONTHLY', 'MAX-MONTHLY'),
     summary: {
       kind: 'current',
       status: 'Active',
       renewLabel: 'Access ends',
-      renewValue: 'September 17 2026',
+      renewValue: 'October 17 2026',
     },
     confirmLabel: 'Confirm change',
     confirmDisabled: true,
   },
   {
-    title: 'Fetching a preview',
-    description:
-      "Any time a different plan/interval is selected, a preview request fires immediately; this skeleton shows while it's in flight.",
+    title: 'Fetching preview',
+    description: 'Every selection change fires a preview request.',
     options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
     summary: { kind: 'loading' },
     confirmLabel: 'Confirm change',
     confirmDisabled: true,
   },
   {
-    title: 'Preview error — change not allowed',
-    description:
-      'Server rejected the requested change (e.g. a pricing/catalog mismatch). Confirm stays disabled.',
+    title: 'Error · not allowed',
+    description: 'The server rejected this change.',
     options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-YEARLY'),
     summary: {
       kind: 'error',
@@ -505,9 +670,8 @@ export const CHANGE_PLAN_STATES: ChangePlanState[] = [
     confirmDisabled: true,
   },
   {
-    title: 'Preview error — subscription not found',
-    description:
-      'The account has no active subscription to change (e.g. it just expired in another tab). Confirm stays disabled.',
+    title: 'Error · no subscription',
+    description: 'The subscription expired elsewhere.',
     options: FOUR_OPTIONS('MAX-MONTHLY', 'PRO-MONTHLY'),
     summary: {
       kind: 'error',
@@ -517,9 +681,68 @@ export const CHANGE_PLAN_STATES: ChangePlanState[] = [
     confirmDisabled: true,
   },
   {
-    title: 'Upgrade — charged today',
+    title: 'Error · payment failed',
+    description: 'The provider message is shown verbatim.',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'error',
+      message: 'Your payment method was declined by the issuer',
+    },
+    confirmLabel: 'Confirm change',
+    confirmDisabled: true,
+  },
+  {
+    title: 'Error · anything else',
+    description: 'The generic fallback.',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-YEARLY'),
+    summary: { kind: 'error', message: "Couldn't preview this plan change" },
+    confirmLabel: 'Confirm change',
+    confirmDisabled: true,
+  },
+  {
+    title: 'No catalog',
     description:
-      'Upgrading (a higher tier, or the same tier billed Yearly instead of Monthly) is prorated and billed immediately.',
+      'The pricing query failed or is pending so nothing renders and Confirm is left enabled. Rough edge.',
+    options: [],
+    summary: { kind: 'none' },
+    confirmLabel: 'Confirm change',
+  },
+  {
+    title: 'Blocked · cancelling',
+    description: 'Keep subscription reverses the cancellation first.',
+    options: FOUR_OPTIONS('MAX-YEARLY', 'PRO-MONTHLY'),
+    summary: {
+      kind: 'blocked',
+      reason: 'ENDING',
+      periodEnd: 'October 14 2026',
+    },
+    confirmLabel: 'Confirm change',
+    confirmDisabled: true,
+  },
+  {
+    title: 'Blocked · paused',
+    description: 'Resume subscription unlocks plan changes.',
+    options: FOUR_OPTIONS('PRO-YEARLY', 'PRO-MONTHLY'),
+    summary: { kind: 'blocked', reason: 'PAUSED' },
+    confirmLabel: 'Confirm change',
+    confirmDisabled: true,
+  },
+  {
+    title: 'Blocked · resuming',
+    description: 'The button spins through the mutation and the poll.',
+    options: FOUR_OPTIONS('MAX-YEARLY', 'PRO-MONTHLY'),
+    summary: {
+      kind: 'blocked',
+      reason: 'ENDING',
+      periodEnd: 'October 14 2026',
+      resumeLoading: true,
+    },
+    confirmLabel: 'Confirm change',
+    confirmDisabled: true,
+  },
+  {
+    title: 'Upgrade · charged today',
+    description: 'Upgrades are prorated and billed immediately.',
     options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
     summary: {
       kind: 'preview',
@@ -529,50 +752,9 @@ export const CHANGE_PLAN_STATES: ChangePlanState[] = [
         {
           label: 'Charged today',
           detail: 'Prorated for the rest of this cycle',
-          value: '$15.00',
+          value: '$7.00',
         },
-        { label: 'Next payment', detail: 'September 14 2026', value: '$29.99' },
-      ],
-    },
-    confirmLabel: 'Confirm change',
-  },
-  {
-    title: 'Upgrade — charge partially covered by credit',
-    description:
-      "Same as above, but existing account credit (e.g. from an earlier downgrade) covers part of today's prorated charge.",
-    options: FOUR_OPTIONS('PRO-YEARLY', 'MAX-YEARLY'),
-    summary: {
-      kind: 'preview',
-      rows: [
-        { label: 'New plan', value: 'Max · Yearly' },
-        { label: 'Effective', value: 'Today' },
-        {
-          label: 'Charged today',
-          detail:
-            'Prorated for the rest of this cycle — $42.00 covered by account credit',
-          value: '$68.00',
-        },
-        { label: 'Next payment', detail: 'January 3 2027', value: '$249.99' },
-      ],
-    },
-    confirmLabel: 'Confirm change',
-  },
-  {
-    title: 'Downgrade on Paddle — credit today, not deferred',
-    description:
-      'Paddle can\'t schedule a plan/price change at all (only cancel/pause/resume are schedulable) and separately rejects deferred billing outright whenever the interval also changes — so every Paddle change bills immediately regardless of direction. A downgrade credits the account balance today instead of waiting for the next renewal. No "Next payment" row: the credit doesn\'t exist on the account yet at preview time, so Paddle\'s own next-transaction figure can\'t account for it and would understate the real coverage — "Regular price" shows what it costs once the credit runs out instead.',
-    options: FOUR_OPTIONS('MAX-MONTHLY', 'PRO-MONTHLY'),
-    summary: {
-      kind: 'preview',
-      rows: [
-        { label: 'New plan', value: 'Pro · Monthly' },
-        { label: 'Effective', value: 'Today' },
-        {
-          label: 'Credit today',
-          detail: 'Applied toward your account balance',
-          value: '$15.00',
-          emphasis: 'credit',
-        },
+        { label: 'Next payment', detail: 'October 14 2026', value: '$14.99' },
         {
           label: 'Regular price',
           detail: 'Every month, once your account credit is used',
@@ -583,36 +765,293 @@ export const CHANGE_PLAN_STATES: ChangePlanState[] = [
     confirmLabel: 'Confirm change',
   },
   {
-    title: 'Downgrade on Stripe — scheduled for period end',
+    title: 'Upgrade · credit covers part',
+    description: 'Account credit pays for part of the prorated charge.',
+    options: FOUR_OPTIONS('PRO-YEARLY', 'MAX-YEARLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Max · Yearly' },
+        { label: 'Effective', value: 'Today' },
+        {
+          label: 'Charged today',
+          detail:
+            'Prorated for the rest of this cycle — $42.00 covered by account credit',
+          value: '$75.87',
+        },
+        { label: 'Next payment', detail: 'January 3 2027', value: '$124.99' },
+      ],
+    },
+    confirmLabel: 'Confirm change',
+  },
+  {
+    title: 'Downgrade · Paddle',
     description:
-      'Stripe (unlike Paddle) genuinely defers a downgrade via a Subscription Schedule — the old plan stays active and nothing bills until the current period actually ends, then the new plan and its regular price take over. "Effective" shows that real future date, and the footer button reads "Schedule change" instead of "Confirm change".',
+      'Paddle always bills immediately so a downgrade credits the balance today and the regular price row replaces next payment.',
     options: FOUR_OPTIONS('MAX-MONTHLY', 'PRO-MONTHLY'),
     summary: {
       kind: 'preview',
       rows: [
         { label: 'New plan', value: 'Pro · Monthly' },
-        { label: 'Effective', value: 'September 14 2026' },
+        { label: 'Effective', value: 'Today' },
+        {
+          label: 'Credit today',
+          detail: 'Applied toward your account balance',
+          value: '$7.00',
+          emphasis: 'credit',
+        },
+        {
+          label: 'Regular price',
+          detail: 'Every month, once your account credit is used',
+          value: '$7.99',
+        },
+      ],
+    },
+    confirmLabel: 'Confirm change',
+  },
+  {
+    title: 'Downgrade · Stripe',
+    description:
+      'Stripe defers downgrades to the period end so nothing bills today.',
+    options: FOUR_OPTIONS('MAX-MONTHLY', 'PRO-MONTHLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Pro · Monthly' },
+        { label: 'Effective', value: 'October 14 2026' },
         {
           label: 'Due today',
           detail: 'Nothing to charge right now',
           value: '$0.00',
         },
-        { label: 'Next payment', detail: 'September 14 2026', value: '$14.99' },
+        { label: 'Next payment', detail: 'October 14 2026', value: '$7.99' },
       ],
     },
     confirmLabel: 'Schedule change',
   },
   {
-    title: 'Blocked — subscription already scheduled to cancel',
-    description:
-      'The account has already requested cancellation (on either provider). Picking a different plan shows this warning instead of a preview, with a "Keep subscription" button that reverses the cancellation — Confirm stays disabled until it does.',
-    options: FOUR_OPTIONS('MAX-YEARLY', 'PRO-MONTHLY'),
+    title: 'Immediate · nothing due',
+    description: 'An immediate change whose proration nets to zero.',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
     summary: {
-      kind: 'cancel-blocked',
-      message:
-        'Your subscription is scheduled to cancel on September 14 2026 so keep it active to switch plans',
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Max · Monthly' },
+        { label: 'Effective', value: 'Today' },
+        {
+          label: 'Due today',
+          detail: 'Nothing to charge right now',
+          value: '$0.00',
+        },
+        { label: 'Next payment', detail: 'October 14 2026', value: '$14.99' },
+      ],
     },
     confirmLabel: 'Confirm change',
-    confirmDisabled: true,
+  },
+  {
+    title: 'Confirming',
+    description: 'Confirm spins while the request runs and Cancel locks.',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Max · Monthly' },
+        { label: 'Effective', value: 'Today' },
+        {
+          label: 'Charged today',
+          detail: 'Prorated for the rest of this cycle',
+          value: '$7.00',
+        },
+        { label: 'Next payment', detail: 'October 14 2026', value: '$14.99' },
+      ],
+    },
+    confirmLabel: 'Confirm change',
+    confirmLoading: true,
+  },
+]
+
+export type UsageCardState = {
+  title: string
+  description: string
+  card: {
+    loading?: boolean
+    error?: boolean
+    planLabel: string
+    headlineLabel: string
+    headline: string
+    meter?: { used: string; allowance: string; usedPercent: number }
+    requests: string
+    resetsAt: string
+  }
+}
+
+export const USAGE_CARD_STATES: UsageCardState[] = [
+  {
+    title: 'Loading',
+    description: 'The usage query has not resolved yet.',
+    card: {
+      loading: true,
+      planLabel: '—',
+      headlineLabel: 'Remaining today',
+      headline: '',
+      requests: '',
+      resetsAt: '',
+    },
+  },
+  {
+    title: 'Fetch error',
+    description: 'The request failed.',
+    card: {
+      error: true,
+      planLabel: '—',
+      headlineLabel: 'Remaining today',
+      headline: '',
+      requests: '',
+      resetsAt: '',
+    },
+  },
+  {
+    title: 'Pro · normal',
+    description: 'The metered allowance below the warning threshold.',
+    card: {
+      planLabel: 'Pro',
+      headlineLabel: 'Remaining today',
+      headline: '2h 45m',
+      meter: { used: '1h 15m', allowance: '3h', usedPercent: 42 },
+      requests: '18',
+      resetsAt: '12:00 AM',
+    },
+  },
+  {
+    title: 'Pro · past 80%',
+    description: 'The meter turns warning colored.',
+    card: {
+      planLabel: 'Pro',
+      headlineLabel: 'Remaining today',
+      headline: '25m',
+      meter: { used: '2h 35m', allowance: '3h', usedPercent: 86 },
+      requests: '61',
+      resetsAt: '12:00 AM',
+    },
+  },
+  {
+    title: 'Pro · limit reached',
+    description: 'The meter turns destructive and the headline changes.',
+    card: {
+      planLabel: 'Pro',
+      headlineLabel: 'Remaining today',
+      headline: 'Daily limit reached',
+      meter: { used: '3h', allowance: '3h', usedPercent: 100 },
+      requests: '94',
+      resetsAt: '12:00 AM',
+    },
+  },
+  {
+    title: 'Unlimited',
+    description:
+      'Max renders this and so does Free since its allowance is null.',
+    card: {
+      planLabel: 'Max',
+      headlineLabel: 'Daily allowance',
+      headline: 'Unlimited',
+      requests: '412',
+      resetsAt: '12:00 AM',
+    },
+  },
+]
+
+export type ToastFixture = {
+  type: 'success' | 'info' | 'error'
+  message: string
+  when: string
+}
+
+export const TOAST_STATES: ToastFixture[] = [
+  {
+    type: 'success',
+    message: 'Payment received — setting up your subscription',
+    when: 'Checkout return while the webhook lands',
+  },
+  {
+    type: 'success',
+    message: 'Plan change requested — this can take a few seconds to show up',
+    when: 'Immediate change confirmed',
+  },
+  {
+    type: 'success',
+    message:
+      'Plan change scheduled — it takes effect at the end of your current billing period',
+    when: 'Scheduled change confirmed',
+  },
+  {
+    type: 'success',
+    message: 'Your subscription is active again',
+    when: 'Resume succeeded',
+  },
+  {
+    type: 'success',
+    message: 'Your subscription will keep renewing',
+    when: 'Cancellation reversed',
+  },
+  {
+    type: 'info',
+    message:
+      "Still processing — check back in a moment if your plan hasn't updated",
+    when: 'A checkout or plan change poll timed out',
+  },
+  {
+    type: 'info',
+    message: "Still processing — check back in a moment if this doesn't update",
+    when: 'A resume poll timed out',
+  },
+  {
+    type: 'info',
+    message: "Checkout cancelled — you weren't charged",
+    when: 'Cancelled checkout return',
+  },
+  {
+    type: 'error',
+    message: "Couldn't resume your subscription",
+    when: 'Resume failed on the billing page',
+  },
+  {
+    type: 'error',
+    message: "Couldn't keep your subscription",
+    when: 'Keep failed on the billing page',
+  },
+  {
+    type: 'error',
+    message: "Couldn't reverse the cancellation",
+    when: 'Keep or resume failed in the dialog',
+  },
+  {
+    type: 'error',
+    message: "Couldn't change your plan",
+    when: 'Confirm failed',
+  },
+  {
+    type: 'error',
+    message: "Couldn't find an active subscription for this account",
+    when: 'Portal or change with no subscription',
+  },
+  {
+    type: 'error',
+    message: "Couldn't open the billing portal",
+    when: 'Portal session failed',
+  },
+  {
+    type: 'error',
+    message: "Couldn't open checkout",
+    when: 'Checkout session failed',
+  },
+  {
+    type: 'error',
+    message: "This payment provider isn't available — use the other one",
+    when: 'Provider disabled',
+  },
+  {
+    type: 'error',
+    message: 'You already have a subscription — manage it from billing',
+    when: 'Checkout started twice',
   },
 ]
