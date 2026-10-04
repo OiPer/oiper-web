@@ -874,6 +874,7 @@ export type UsageCardState = {
   card: {
     loading?: boolean
     error?: boolean
+    note?: 'free'
     planLabel: string
     headlineLabel: string
     headline: string
@@ -946,14 +947,26 @@ export const USAGE_CARD_STATES: UsageCardState[] = [
   },
   {
     title: 'Unlimited',
-    description:
-      'Max renders this and so does Free since its allowance is null.',
+    description: 'Max has no daily allowance so only Unlimited shows.',
     card: {
       planLabel: 'Max',
       headlineLabel: 'Daily allowance',
       headline: 'Unlimited',
       requests: '412',
       resetsIn: '9 hours',
+    },
+  },
+  {
+    title: 'Free',
+    description:
+      'Free has no cloud usage, so it shows the same plan note as the billing page instead of a meter.',
+    card: {
+      note: 'free',
+      planLabel: 'Free',
+      headlineLabel: '',
+      headline: '',
+      requests: '',
+      resetsIn: '',
     },
   },
 ]

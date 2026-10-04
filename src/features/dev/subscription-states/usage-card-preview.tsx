@@ -1,4 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton'
+import { PlanNote } from '@/features/account/components/plan-note'
 import { cn } from '@/lib/utils'
 import type { UsageCardState } from './dummy-data'
 
@@ -54,6 +55,8 @@ function UsageStat(props: { label: string; value: string }) {
 
 export function UsageCardPreview(props: { card: UsageCardState['card'] }) {
   const { card } = props
+
+  if (card.note) return <PlanNote variant={card.note} />
 
   if (card.loading) {
     return (

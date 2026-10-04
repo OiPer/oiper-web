@@ -2,6 +2,7 @@
 
 import { Skeleton } from '@/components/ui/skeleton'
 import { AccountPageHeader } from '@/features/account/components/account-page-header'
+import { PlanNote } from '@/features/account/components/plan-note'
 import { $api } from '@/lib/api/client'
 import {
   formatDurationFromSeconds,
@@ -136,7 +137,9 @@ export function UsagePage() {
         </div>
       )}
 
-      {usage && (
+      {usage && usage.plan === 'FREE' && <PlanNote variant="free" />}
+
+      {usage && usage.plan !== 'FREE' && (
         <section className="bg-card text-card-foreground mx-auto w-full max-w-6xl rounded-xl border p-4 shadow-sm sm:p-6">
           {isLimited && (
             <UsageMeter
