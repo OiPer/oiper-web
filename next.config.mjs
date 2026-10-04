@@ -12,7 +12,7 @@ const securityHeaders = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  compiler: { removeConsole: process.env.NEXT_PUBLIC_APP_ENV === 'production' },
+  compiler: { removeConsole: process.env.NODE_ENV === 'production' },
   devIndicators: false,
   poweredByHeader: false,
   async headers() {

@@ -18,6 +18,7 @@ const productionSafeUrl = z
 
 const envSchema = z
   .object({
+    NODE_ENV: z.enum(['development', 'production']),
     APP_ENV: z.enum(['development', 'production']),
     OIPER_SERVER_URL: productionSafeUrl,
     PADDLE_CLIENT_TOKEN: z.string().trim().min(1),
@@ -32,6 +33,7 @@ const envSchema = z
   }))
 
 export const env = envSchema.parse({
+  NODE_ENV: process.env.NODE_ENV,
   APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
   OIPER_SERVER_URL: process.env.NEXT_PUBLIC_OIPER_SERVER_URL,
   PADDLE_CLIENT_TOKEN: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
