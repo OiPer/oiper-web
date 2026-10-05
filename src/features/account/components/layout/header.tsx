@@ -10,29 +10,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Spinner } from '@/components/ui/spinner'
 import { Wrapper } from '@/components/wrapper'
 import { getUserInitials, getUserLabel } from '@/features/account/utils'
 import { useAuth } from '@/features/auth/auth-context'
 import { CreditCard, LogOut, Settings2 } from 'lucide-react'
 import Link from 'next/link'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 function SignedInActions() {
-  const { currentUser, signOut } = useAuth()
-
-  if (!currentUser) {
-    throw new Error('Account header requires an authenticated user')
-  }
+  const { signOut, currentUser } = useAuth({ required: true })
+  const [isSigningOut, setIsSigningOut] = useState(false)
 
   const label = getUserLabel(currentUser)
   const initials = getUserInitials(currentUser)
 
   async function handleSignOut() {
+    if (isSigningOut) return
+
+    setIsSigningOut(true)
+
     try {
       const result = await signOut()
       window.location.assign(result.logoutUrl)
     } catch {
-      toast.error('Failed to sign out')
+      toast.error("Couldn't sign out")
+      setIsSigningOut(false)
     }
   }
 
@@ -92,12 +96,13 @@ function SignedInActions() {
         <DropdownMenuItem
           className="cursor-pointer gap-3 px-3 py-2"
           variant="destructive"
+          disabled={isSigningOut}
           onSelect={(event) => {
             event.preventDefault()
-            void handleSignOut()
+            handleSignOut()
           }}
         >
-          <LogOut className="size-4" />
+          {isSigningOut ? <Spinner /> : <LogOut className="size-4" />}
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -111,7 +116,7 @@ function HeaderActions() {
 
 export function Header() {
   return (
-    <header className="border-border/70 bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-20 border-b backdrop-blur">
+    <header className="border-border/70 bg-background/95 supports-backdrop-filter:bg-background/80 sticky top-0 z-20 border-b backdrop-blur">
       <Wrapper className="relative z-10 flex h-16 items-center gap-6">
         <div className="flex min-w-0 flex-1 items-center">
           <Link href="/" className="block w-fit">

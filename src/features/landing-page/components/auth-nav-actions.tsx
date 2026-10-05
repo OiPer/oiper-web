@@ -10,42 +10,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Spinner } from '@/components/ui/spinner'
+import { getUserInitials, getUserLabel } from '@/features/account/utils'
 import { useAuth } from '@/features/auth/auth-context'
 import { DownloadButton } from '@/features/download/download-button'
 import { useHydrated } from '@/hooks/use-hydrated'
 import { cn } from '@/lib/utils'
 import { ChevronDown, LogOut, Settings2 } from 'lucide-react'
+import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 const SIGN_IN_URL = '/?auth-page=signin'
 const SIGN_UP_URL = '/?auth-page=signup'
-
-function getUserLabel(
-  user: NonNullable<ReturnType<typeof useAuth>['currentUser']>
-) {
-  const fullName = [user.firstName, user.lastName]
-    .filter((name): name is string => Boolean(name))
-    .join(' ')
-
-  return fullName || user.email
-}
-
-function getUserInitials(
-  user: NonNullable<ReturnType<typeof useAuth>['currentUser']>
-) {
-  const initials = [user.firstName, user.lastName]
-    .filter((name): name is string => Boolean(name))
-    .map((name) => name[0]?.toUpperCase() ?? '')
-    .join('')
-    .slice(0, 2)
-
-  if (initials) {
-    return initials
-  }
-
-  return user.email.slice(0, 2).toUpperCase()
-}
 
 function LoadingAvatar() {
   return (
@@ -69,9 +46,7 @@ function SignedOutActions() {
   const [menuWidth, setMenuWidth] = useState<string>()
 
   useEffect(() => {
-    if (!ref.current) {
-      return
-    }
+    if (!ref.current) return
 
     setMenuWidth(`${ref.current.clientWidth / 16 + 0.1}rem`)
   }, [])
@@ -79,15 +54,16 @@ function SignedOutActions() {
   return (
     <div className="flex items-center gap-3">
       <div ref={ref} className="flex items-center">
-        <a
+        <Link
           href={SIGN_UP_URL}
+          scroll={false}
           className={cn(
             buttonVariants({ size: 'lg' }),
             'h-10 rounded-r-none border border-white/18 border-r-white/28 bg-white/6 px-4 text-sm font-medium text-white hover:bg-white/10 focus-visible:ring-0'
           )}
         >
           Sign up
-        </a>
+        </Link>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button className="h-10 min-w-9 rounded-l-none border border-l-0 border-white/18 bg-white/6 px-0 text-white hover:bg-white/10 focus-visible:ring-0">
@@ -100,7 +76,9 @@ function SignedOutActions() {
             className="-right-1 border-white/12 bg-[#121212] text-white shadow-2xl"
           >
             <DropdownMenuItem asChild className="cursor-pointer">
-              <a href={SIGN_IN_URL}>Sign in</a>
+              <Link href={SIGN_IN_URL} scroll={false}>
+                Sign in
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -135,8 +113,7 @@ function SignedInActions() {
       const result = await signOut()
       window.location.assign(result.logoutUrl)
     } catch {
-      toast.error('Failed to Signout')
-    } finally {
+      toast.error("Couldn't sign out")
       setIsSigningOut(false)
     }
   }
@@ -191,11 +168,11 @@ function SignedInActions() {
             disabled={isSigningOut}
             onSelect={(event) => {
               event.preventDefault()
-              void handleSignOut()
+              handleSignOut()
             }}
           >
-            <LogOut className="size-4" />
-            {isSigningOut ? 'Signing out...' : 'Sign out'}
+            {isSigningOut ? <Spinner /> : <LogOut className="size-4" />}
+            Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -207,13 +184,9 @@ export function AuthNavActions() {
   const { currentUser, isLoading } = useAuth()
   const hydrated = useHydrated()
 
-  if (!hydrated || isLoading) {
-    return <LoadingAvatar />
-  }
+  if (!hydrated || isLoading) return <LoadingAvatar />
 
-  if (currentUser) {
-    return <SignedInActions />
-  }
+  if (currentUser) return <SignedInActions />
 
   return <SignedOutActions />
 }

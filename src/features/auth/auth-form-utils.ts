@@ -1,15 +1,11 @@
+import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
+
 export type AuthMode = 'modal' | 'page'
 
 export type AuthPage = 'signin' | 'signup' | 'forgot-password' | 'verify-email'
 
 export type WebAuthProvider = 'google' | 'github'
-
-const NEXT_PUBLIC_OIPER_SERVER_URL =
-  process.env.NEXT_PUBLIC_OIPER_SERVER_URL?.trim().replace(/\/+$/u, '')
-
-if (!NEXT_PUBLIC_OIPER_SERVER_URL) {
-  throw new Error('NEXT_PUBLIC_OIPER_SERVER_URL is not configured')
-}
 
 function buildUrl(pathname: string, searchParams: URLSearchParams): string {
   const query = searchParams.toString()
@@ -41,10 +37,22 @@ function applyAdditionalParams(
   })
 }
 
+const CALLBACK_URL_BASE = 'http://internal.invalid'
+
+function isSafeRelativePath(candidate: string): boolean {
+  if (!candidate.startsWith('/') || candidate.startsWith('//')) return false
+  if (/[\\\t\r\n]/.test(candidate)) return false
+
+  try {
+    return new URL(candidate, CALLBACK_URL_BASE).origin === CALLBACK_URL_BASE
+  } catch {
+    return false
+  }
+}
+
 export function getCallbackUrl(searchParams: URLSearchParams): string {
   const callbackUrl = searchParams.get('callbackUrl')
-  if (!callbackUrl || !callbackUrl.startsWith('/')) return '/'
-  if (callbackUrl.startsWith('//')) return '/'
+  if (!callbackUrl || !isSafeRelativePath(callbackUrl)) return '/'
   return callbackUrl
 }
 
@@ -85,9 +93,9 @@ export function buildWebAuthStartUrl(input: {
   mode: AuthMode
   provider: WebAuthProvider
 }): string {
-  const url = new URL('/v1/auth/web/start', `${NEXT_PUBLIC_OIPER_SERVER_URL}/`)
-  url.searchParams.set('callbackUrl', input.callbackUrl)
-  url.searchParams.set('mode', input.mode)
-  url.searchParams.set('provider', input.provider)
-  return url.toString()
+  return joinUrl(env.OIPER_SERVER_URL, '/v1/auth/web/start', {
+    callbackUrl: input.callbackUrl,
+    mode: input.mode,
+    provider: input.provider,
+  })
 }

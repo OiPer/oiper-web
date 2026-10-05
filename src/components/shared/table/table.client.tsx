@@ -60,6 +60,7 @@ export function ClientDataTable<TData, TValue>({
       initiallyHiddenColumns.forEach((columnId) => {
         initialVisibility[columnId as string] = false
       })
+
       return initialVisibility
     })
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

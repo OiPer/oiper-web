@@ -62,6 +62,7 @@ export function DataTable<TData, TValue>({
       initiallyHiddenColumns.forEach((columnId) => {
         initialVisibility[columnId] = false
       })
+
       return initialVisibility
     })
 

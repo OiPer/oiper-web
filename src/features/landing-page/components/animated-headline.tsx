@@ -80,9 +80,7 @@ function ScrambleText({
 
   const accentStart = accent ? text.indexOf(accent) : -1
 
-  if (accentStart < 0) {
-    return <span className={className}>{display}</span>
-  }
+  if (accentStart < 0) return <span className={className}>{display}</span>
 
   const accentEnd = accentStart + accent!.length
 

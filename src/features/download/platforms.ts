@@ -91,6 +91,7 @@ export function detectPackage(
 
 export function macDownloadProps(id: Package['id'], altUrl?: string | null) {
   if (id !== 'macos' && id !== 'macos-intel') return {}
+
   const alt = id === 'macos' ? 'macos-intel' : 'macos'
   return {
     'data-mac-build': id,

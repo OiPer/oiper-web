@@ -7,16 +7,12 @@ type AuthLoginPageProps = {
 function buildQueryString(
   searchParams: AuthLoginPageProps['searchParams']
 ): string {
-  if (!searchParams) {
-    return ''
-  }
+  if (!searchParams) return ''
 
   const query = new URLSearchParams()
 
   for (const [key, value] of Object.entries(searchParams)) {
-    if (typeof value === 'undefined') {
-      continue
-    }
+    if (typeof value === 'undefined') continue
 
     if (Array.isArray(value)) {
       for (const item of value) {

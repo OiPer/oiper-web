@@ -1,20 +1,21 @@
 'use client'
 
+import { Loading } from '@/components/shared/loading'
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
+import { SectionCard, SectionHeading } from '@/components/shared/section-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { Spinner } from '@/components/ui/spinner'
+import { AccountPageHeader } from '@/features/account/components/account-page-header'
 import {
   formatMemberSince,
   getUserInitials,
   getUserLabel,
 } from '@/features/account/utils'
 import { useAuth } from '@/features/auth/auth-context'
-import { $api } from '@/lib/api/client'
+import { useAccountMutation } from '@/features/auth/web-session'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { Trash2, TriangleAlert } from 'lucide-react'
@@ -22,11 +23,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import {
-  clearAccountSession,
-  getAccountMutationHeaders,
-  syncAccountProfileInSession,
-} from './account-api'
+import { clearAccountSession, syncAccountProfileInSession } from './account-api'
 import { AccountAvatarModal } from './avatar-modal'
 
 const accountConfigureSchema = z.object({
@@ -51,17 +48,20 @@ function AccountDeleteModal({
       <ResponsiveDialog.Trigger asChild>{children}</ResponsiveDialog.Trigger>
 
       <ResponsiveDialog.Content>
-        <div className="space-y-1">
+        <ResponsiveDialog.Header>
           <ResponsiveDialog.Title>Account delete</ResponsiveDialog.Title>
           <ResponsiveDialog.Description>
             This action is permanent and cannot be undone.
           </ResponsiveDialog.Description>
-        </div>
+        </ResponsiveDialog.Header>
 
-        <div className="flex flex-col gap-4">
+        <ResponsiveDialog.Body className="flex flex-col gap-4">
           <div className="flex items-center gap-2 rounded-lg border px-4 py-3 text-sm font-medium">
             <TriangleAlert className="size-4" />
-            <p>Subscription access and billing history will be removed</p>
+            <p>
+              Your subscription will be cancelled and access removed. Billing
+              history stays with our payment provider.
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -73,37 +73,36 @@ function AccountDeleteModal({
               onChange={(event) => setConfirm(event.target.value)}
             />
           </div>
+        </ResponsiveDialog.Body>
 
-          <DialogFooter className="flex-row gap-2 [&>*]:flex-1 sm:[&>*]:flex-none">
-            <ResponsiveDialog.Close asChild>
-              <Button variant="outline" type="button" disabled={isDeleting}>
-                Cancel
-              </Button>
-            </ResponsiveDialog.Close>
-
-            <Button
-              type="button"
-              variant="destructive"
-              disabled={confirm !== confirmationText || isDeleting}
-              onClick={() => void onDelete()}
-            >
-              {isDeleting ? <Spinner /> : 'Delete'}
+        <ResponsiveDialog.Footer>
+          <ResponsiveDialog.Close asChild>
+            <Button variant="outline" type="button" disabled={isDeleting}>
+              Cancel
             </Button>
-          </DialogFooter>
-        </div>
+          </ResponsiveDialog.Close>
+
+          <Button
+            type="button"
+            variant="destructive"
+            disabled={confirm !== confirmationText || isDeleting}
+            onClick={() => void onDelete()}
+          >
+            <Loading loading={isDeleting}>Delete</Loading>
+          </Button>
+        </ResponsiveDialog.Footer>
       </ResponsiveDialog.Content>
     </ResponsiveDialog>
   )
 }
 
 function ConfigureAccount() {
-  const { currentUser } = useAuth()
+  const { currentUser } = useAuth({ required: true })
   const queryClient = useQueryClient()
-  const updateProfileMutation = $api.useMutation('patch', '/v1/account/profile')
-
-  if (!currentUser) {
-    throw new Error('Account settings require an authenticated user')
-  }
+  const updateProfileMutation = useAccountMutation(
+    'patch',
+    '/v1/account/profile'
+  )
 
   const profile = useMemo(() => {
     return {
@@ -134,15 +133,10 @@ function ConfigureAccount() {
   async function updateProfile(
     body: z.infer<typeof accountConfigureSchema> | { profilePictureUrl: string }
   ) {
-    const headers = await getAccountMutationHeaders()
-    const updatedProfile = await updateProfileMutation.mutateAsync({
-      body,
-      params: {
-        header: headers,
-      },
-    })
+    const updatedProfile = await updateProfileMutation.mutateAsync({ body })
 
     syncAccountProfileInSession(queryClient, updatedProfile)
+
     return updatedProfile
   }
 
@@ -151,7 +145,7 @@ function ConfigureAccount() {
       await updateProfile(values)
       toast.success('Name updated successfully')
     } catch {
-      toast.error('Could not update your account')
+      toast.error("Couldn't update your account")
     }
   }
 
@@ -160,7 +154,7 @@ function ConfigureAccount() {
       await updateProfile({ profilePictureUrl })
       toast.success('Avatar updated successfully')
     } catch (error) {
-      toast.error('Could not update your avatar')
+      toast.error("Couldn't update your avatar")
       throw error
     }
   }
@@ -204,20 +198,18 @@ function ConfigureAccount() {
         </AccountAvatarModal>
       </div>
 
-      <form
+      <SectionCard
+        as="form"
         id="account-name"
-        className="bg-card text-card-foreground flex flex-col justify-between gap-6 rounded-xl border pt-4 shadow-sm [--x-padding:theme(spacing.4)] sm:pt-6 sm:[--x-padding:theme(spacing.6)]"
         onSubmit={form.handleSubmit(handleUpdate)}
         noValidate
       >
-        <div className="px-[var(--x-padding)]">
-          <Label className="text-base select-auto">Account name</Label>
-          <p className="text-muted-foreground text-sm">
-            This name appears across your Oiper settings and billing emails.
-          </p>
-        </div>
+        <SectionHeading
+          title="Account name"
+          description="This name appears across your Oiper settings and billing emails."
+        />
 
-        <div className="max-w-lg space-y-4 px-[var(--x-padding)]">
+        <div className="max-w-lg space-y-4 px-(--x-padding)">
           <div className="space-y-2">
             <Label htmlFor="account-name-input">What should we call you?</Label>
             <Input
@@ -241,7 +233,7 @@ function ConfigureAccount() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-2 border-t px-[var(--x-padding)] py-4">
+        <div className="flex items-center justify-between gap-2 border-t px-(--x-padding) py-4">
           <p className="text-muted-foreground text-sm text-balance">
             Keep your name consistent with the account owner on invoices
           </p>
@@ -254,39 +246,30 @@ function ConfigureAccount() {
               name.trim() === profile.label
             }
           >
-            {updateProfileMutation.isPending ? <Spinner /> : 'Save'}
+            <Loading loading={updateProfileMutation.isPending}>Save</Loading>
           </Button>
         </div>
-      </form>
+      </SectionCard>
     </div>
   )
 }
 
 function AccountDangerZone() {
-  const { currentUser } = useAuth()
+  const { currentUser } = useAuth({ required: true })
   const queryClient = useQueryClient()
-  const deleteAccountMutation = $api.useMutation('delete', '/v1/account')
-
-  if (!currentUser) {
-    throw new Error('Account danger zone requires an authenticated user')
-  }
+  const deleteAccountMutation = useAccountMutation('delete', '/v1/account')
 
   const confirmationText = `DELETE ${getUserLabel(currentUser)}`
 
   async function handleDeleteAccount() {
     try {
-      const headers = await getAccountMutationHeaders()
-      await deleteAccountMutation.mutateAsync({
-        params: {
-          header: headers,
-        },
-      })
+      await deleteAccountMutation.mutateAsync({})
 
       clearAccountSession(queryClient)
       toast.success('Account deleted successfully')
       window.location.assign('/')
     } catch {
-      toast.error('Account deletion failed')
+      toast.error("Couldn't delete account")
     }
   }
 
@@ -320,17 +303,14 @@ function AccountDangerZone() {
 
 export function SettingsPage() {
   return (
-    <div id="settings" className="mx-auto flex w-full flex-col gap-6 md:gap-8">
-      <div className="mx-auto grid w-full max-w-6xl gap-0.5">
-        <h1 className="text-lg font-semibold">Account Settings</h1>
-        <p className="text-muted-foreground text-sm">
-          Manage your account settings
-        </p>
-      </div>
-
+    <AccountPageHeader
+      id="settings"
+      title="Account Settings"
+      description="Manage your account settings"
+    >
       <ConfigureAccount />
       <Separator />
       <AccountDangerZone />
-    </div>
+    </AccountPageHeader>
   )
 }

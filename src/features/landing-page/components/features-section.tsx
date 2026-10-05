@@ -41,7 +41,7 @@ export function FeaturesSection() {
   return (
     <section
       id="features"
-      className="relative border-b border-white/[0.06] bg-[#0c0c0c] py-32 sm:py-40"
+      className="relative border-b border-white/6 bg-[#0c0c0c] py-32 sm:py-40"
     >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(255,255,255,0.03),transparent_50%)]" />
@@ -63,10 +63,10 @@ export function FeaturesSection() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-7 sm:p-8"
+              className="relative overflow-hidden rounded-2xl border border-white/6 bg-white/2 p-7 sm:p-8"
             >
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
-              <div className="flex size-11 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03]">
+              <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
+              <div className="flex size-11 items-center justify-center rounded-xl border border-white/8 bg-white/3">
                 <feature.icon
                   className="size-5 text-white/50"
                   strokeWidth={1.5}
