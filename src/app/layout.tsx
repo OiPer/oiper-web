@@ -8,6 +8,7 @@ import { AuthProvider } from '@/features/auth/auth-context'
 import { PublicAuthModalClientNoSSR } from '@/features/auth/public-auth-modal-client'
 import { DetectOSScript } from '@/features/download/download-button'
 import { MacDownloadDialog } from '@/features/download/mac-download-dialog'
+import { JsonLd, ORGANIZATION_ID, WEBSITE_ID } from '@/features/seo/json-ld'
 import { cn } from '@/lib/utils'
 import { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
@@ -84,6 +85,29 @@ export default function Layout({ children }: PropsWithChildren) {
         <DetectOSScript />
       </head>
       <body className={cn('antialiased', inter.variable, firaCode.variable)}>
+        <JsonLd
+          data={{
+            '@graph': [
+              {
+                '@type': 'Organization',
+                '@id': ORGANIZATION_ID,
+                name: 'OiPer',
+                url: env.SITE_URL,
+                logo: `${env.SITE_URL}/icon`,
+                email: 'support@oiper.com',
+                sameAs: ['https://github.com/OiPer'],
+              },
+              {
+                '@type': 'WebSite',
+                '@id': WEBSITE_ID,
+                name: 'OiPer',
+                url: env.SITE_URL,
+                publisher: { '@id': ORGANIZATION_ID },
+              },
+            ],
+          }}
+        />
+
         <ThemeProvider
           attribute="class"
           enableSystem

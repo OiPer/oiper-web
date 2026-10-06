@@ -1,3 +1,5 @@
+import { JsonLd, ORGANIZATION_ID, WEBSITE_ID } from '@/features/seo/json-ld'
+import { env } from '@/lib/env'
 import {
   DocsBody,
   DocsDescription,
@@ -22,8 +24,37 @@ export function DocumentationPage({ source, slug }: DocumentationPageProps) {
 
   const MdxContent = page.data.body
 
+  const trail = page.slugs
+    .map((_, index) => source.getPage(page.slugs.slice(0, index)))
+    .filter((item) => item !== undefined)
+    .concat(page)
+
   return (
     <DocsPage toc={page.data.toc}>
+      <JsonLd
+        data={{
+          '@graph': [
+            {
+              '@type': 'TechArticle',
+              headline: page.data.title,
+              description: page.data.description,
+              url: `${env.SITE_URL}${page.url}`,
+              image: `${env.SITE_URL}/og${page.url}`,
+              publisher: { '@id': ORGANIZATION_ID },
+              isPartOf: { '@id': WEBSITE_ID },
+            },
+            {
+              '@type': 'BreadcrumbList',
+              itemListElement: trail.map((item, index) => ({
+                '@type': 'ListItem',
+                position: index + 1,
+                name: item.data.title,
+                item: `${env.SITE_URL}${item.url}`,
+              })),
+            },
+          ],
+        }}
+      />
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
