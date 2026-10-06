@@ -28,7 +28,7 @@ type EventDetails = Record<string, string | number | boolean>
 | Helper        | Event name         | Use it when                                                                                          |
 | ------------- | ------------------ | ---------------------------------------------------------------------------------------------------- |
 | `logClick`    | `{name}_clicked`   | The click itself is the signal: a download, an upgrade button, sign in, sign out, a navigation link  |
-| `logView`     | `{name}_viewed`    | Something important became visible, once per visit, e.g. the pricing section                         |
+| `logView`     | `{name}_viewed`    | Something important became visible, e.g. the pricing section (once per page view)                    |
 | `logSelect`   | `{name}_selected`  | The user picked an option: billing interval, Mac build                                               |
 | `logOpen`     | `{name}_opened`    | The user opened something that isn't a deterministic result of a tracked click, e.g. an FAQ question |
 | `logClose`    | `{name}_closed`    | The user closed or abandoned something meaningful, e.g. leaving checkout without paying              |
@@ -74,6 +74,7 @@ Forms follow one pattern: `logSubmit` after validation → `logComplete` when th
 | `settings`            | `/account/settings`                                                     |
 | `security`            | `/account/security`                                                     |
 | `account`             | Account area header                                                     |
+| `not_found`           | The 404 page                                                            |
 
 Reserved for future use: `features`, `navigation`, `mobile_menu`.
 
@@ -127,7 +128,7 @@ But:
 
 > Don't add analytics to every DOM element, and don't create duplicate events to increase coverage.
 
-Track navigation, product discovery, conversions, feature use and important decisions. Skip decorative elements (carousel, animated headline, globe), hovers, tooltips and dismissals.
+Track navigation, product discovery, conversions, feature use and important decisions. For internal links use `NavigationLink` from `src/components/navigation-link.tsx`: it is a `next/link` that logs `navigation_clicked` with a `location` and `destination`, and works inside server components. Skip decorative elements (carousel, animated headline, globe), hovers, tooltips and dismissals.
 
 ## Before adding a new event
 
@@ -162,11 +163,11 @@ Every event the site sends. All events also carry `location`.
 
 ### Navigation and content
 
-| Event                | Location  | Details                                                                                       | When                                                                                |
-| -------------------- | --------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `navigation_clicked` | `footer`  | `destination` (the link path as an id: `features`, `pricing`, `docs`, `resources_changelog`…) | Internal footer links (product anchors, docs, resources, changelog, privacy, terms) |
-| `pricing_viewed`     | `landing` | —                                                                                             | Pricing section scrolls into view, once per visit                                   |
-| `faq_opened`         | `faq`     | `question`: `offline` `free` `platforms` `audio_privacy` `apps` `hardware`                    | Opening an FAQ question                                                             |
+| Event                | Location                                                | Details                                                                                                                                                                                                      | When                                                                                                                                                    |
+| -------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigation_clicked` | `footer` `header` `auth` `download_section` `not_found` | `destination` as an id: footer links use their path (`features`, `pricing`, `docs`, `resources_changelog`…), others `home`, `account`, `changelog`, `terms_of_service`, `privacy_policy`, `download`, `docs` | Internal links: footer, logos, the header "Account" item, "What's new" on the download page, Terms and Privacy on the auth pages, links on the 404 page |
+| `pricing_viewed`     | `landing`                                               | —                                                                                                                                                                                                            | Pricing section scrolls into view, once per page view                                                                                                   |
+| `faq_opened`         | `faq`                                                   | `question`: `offline` `free` `platforms` `audio_privacy` `apps` `hardware`                                                                                                                                   | Opening an FAQ question                                                                                                                                 |
 
 ### Sign in and sign up
 
@@ -213,10 +214,10 @@ Every event the site sends. All events also carry `location`.
 - **Dismissals** (closing the auth modal, cancelling the Mac dialog). Drop-off is visible from the funnel.
 - **External links** (GitHub, Support, the Apple guide). GA4's outbound click tracking covers them.
 - **Docs UI** (sidebar, search, table of contents). It's fumadocs internals, and page views already show which docs pages people read and in what order.
-- **Account sidenav and header menu links, changelog pagination.** Page views cover the destination.
-- **Exploratory UI state:** radio changes in the change-plan dialog (the final choice is captured on confirm), the version list on the download page.
+- **Navigation inside the account area** (sidenav, account header menu) **and changelog pagination.** Page views cover the destination.
+- **Exploratory UI state:** radio changes in the change-plan dialog (the final choice is captured on confirm), expanding versions and "Show older versions" on the download page.
 - **Decorative interactions:** carousel, animated headline, globe and canvases, hovers, tooltips.
 - **Payment failures inside Paddle or Stripe.** They happen on the provider's side and reach us only through server webhooks.
 - **OAuth provider failures.** Not observable in the browser; `oauth_clicked` without a later `signin_completed` shows abandonment.
-- **`/dev` pages.** Internal tools.
+- **`/dev` pages.** Internal tools. They return 404 in production; previews there reuse real components, so a click on dev can still reach the dev GA property.
 - **Anything personal:** emails, names, ids, tokens, typed content.
