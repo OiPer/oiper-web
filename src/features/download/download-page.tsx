@@ -1,4 +1,5 @@
 import { OiPerLogoText } from '@/components/logo-text'
+import { NavigationLink } from '@/components/navigation-link'
 import { buttonVariants } from '@/components/ui/button'
 import { Wrapper } from '@/components/wrapper'
 import { findLatest, type Release } from '@/features/changelog/github-releases'
@@ -9,21 +10,13 @@ import {
   GITHUB_REPO,
   HOME,
 } from '@/features/landing-page/constants/links'
-import { formatFileSize, formatPaddedDate } from '@/lib/format'
+import { formatPaddedDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { ArrowUpRight, ChevronDown, Download } from 'lucide-react'
-import Link from 'next/link'
-import { Fragment } from 'react'
+import { ArrowUpRight, ChevronDown } from 'lucide-react'
+import { BuildLink, Separator } from './build-link'
 import { DownloadButton } from './download-button'
 import { OSIcon } from './os-icons'
-import {
-  findAsset,
-  macDownloadProps,
-  OS_LABELS,
-  PACKAGES,
-  type OS,
-  type Package,
-} from './platforms'
+import { findAsset, OS_LABELS, PACKAGES, type OS } from './platforms'
 
 const VISIBLE_VERSIONS = 7
 const OSES = Object.keys(OS_LABELS) as OS[]
@@ -52,9 +45,14 @@ export function DownloadPage({
     <main className="bg-background text-foreground min-h-screen overflow-hidden">
       <Wrapper>
         <nav className="flex h-20 items-center justify-between">
-          <Link href={HOME} className="flex items-center gap-3">
+          <NavigationLink
+            href={HOME}
+            location="header"
+            destination="home"
+            className="flex items-center gap-3"
+          >
             <OiPerLogoText className="text-[2rem]" />
-          </Link>
+          </NavigationLink>
           <AuthNavActions />
         </nav>
       </Wrapper>
@@ -68,6 +66,7 @@ export function DownloadPage({
             Get the right build for Windows, macOS, or Linux and start speaking
           </p>
           <DownloadButton
+            location="download_section"
             className={cn(
               buttonVariants({ size: 'lg' }),
               'mt-10 h-12 px-7 text-base'
@@ -80,12 +79,14 @@ export function DownloadPage({
               <Separator />
               {formatPaddedDate(latest.publishedAt)}
               <Separator />
-              <Link
+              <NavigationLink
                 href={`${CHANGELOG_URL}#${latest.anchor}`}
+                location="download_section"
+                destination="changelog"
                 className="text-foreground underline-offset-4 hover:underline"
               >
                 What&apos;s new
-              </Link>
+              </NavigationLink>
             </p>
           )}
         </div>
@@ -137,49 +138,6 @@ export function DownloadPage({
 
       <FooterSection />
     </main>
-  )
-}
-
-function Separator() {
-  return (
-    <span aria-hidden="true" className="bg-muted-foreground/20 h-2.5 w-px" />
-  )
-}
-
-function BuildLink({
-  pkg,
-  url,
-  macAltUrl,
-  size,
-}: {
-  pkg: Package
-  url: string
-  macAltUrl: string | null
-  size: number
-}) {
-  return (
-    <a
-      href={url}
-      {...macDownloadProps(pkg.id, macAltUrl)}
-      className="group/build flex items-center gap-4 px-4 py-3.5"
-    >
-      <OSIcon os={pkg.os} className="text-muted-foreground size-4 shrink-0" />
-      <span className="min-w-0 flex-1 text-sm font-medium">
-        {OS_LABELS[pkg.os]} {pkg.label}
-        <span className="text-muted-foreground ml-4 hidden items-center gap-3 font-normal group-hover/build:inline-flex">
-          {pkg.details.map((detail, index) => (
-            <Fragment key={detail}>
-              {index > 0 && <Separator />}
-              {detail}
-            </Fragment>
-          ))}
-        </span>
-      </span>
-      <span className="text-muted-foreground text-xs tabular-nums">
-        {formatFileSize(size)}
-      </span>
-      <Download className="text-muted-foreground group-hover/build:text-foreground size-4 shrink-0" />
-    </a>
   )
 }
 

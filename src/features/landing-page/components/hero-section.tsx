@@ -1,12 +1,12 @@
 'use client'
 
 import { OiPerLogoText } from '@/components/logo-text'
+import { NavigationLink } from '@/components/navigation-link'
 import {
   DownloadButton,
   OtherDownloads,
 } from '@/features/download/download-button'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Wrapper } from '../../../components/wrapper'
 import { HOME } from '../constants/links'
@@ -82,9 +82,14 @@ export function HeroSection() {
 
       <Wrapper className="relative z-10">
         <nav className="flex h-20 items-center justify-between">
-          <Link href={HOME} className="flex items-center gap-3">
+          <NavigationLink
+            href={HOME}
+            location="header"
+            destination="home"
+            className="flex items-center gap-3"
+          >
             <OiPerLogoText className="text-[2rem]" />
-          </Link>
+          </NavigationLink>
 
           <AuthNavActions />
         </nav>
@@ -95,16 +100,18 @@ export function HeroSection() {
           <AnimatedHeadline />
 
           <p className="mt-7 max-w-120 text-[clamp(0.95rem,4vw,1.25rem)] leading-relaxed text-white/50">
-            Hold a key, speak, and your words appear in any app. Instantly,
-            privately, and fully offline.
+            Hold a key, speak, and your words appear in any app on Windows,
+            macOS and Linux. Instant, private, and offline by default.
           </p>
 
           <div className="mt-10">
             <DownloadButton
+              location="hero"
               className="h-13 rounded-md bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
               iconClassName="size-5"
             />
             <OtherDownloads
+              location="hero"
               className="mt-4 justify-center text-sm text-white/40"
               linkClassName="underline-offset-4 hover:text-white/70 hover:underline"
             />

@@ -5,6 +5,7 @@ import { SectionCard, SectionHeading } from '@/components/shared/section-card'
 import { Button } from '@/components/ui/button'
 import { AccountPageHeader } from '@/features/account/components/account-page-header'
 import { useAuth } from '@/features/auth/auth-context'
+import { logComplete, logError } from '@/lib/analytics'
 import { $api } from '@/lib/api/client'
 import { toast } from 'sonner'
 
@@ -25,8 +26,10 @@ function PasswordReset() {
         },
       })
 
+      logComplete('password_reset_request', 'security')
       toast.success('Password reset email sent')
     } catch {
+      logError('password_reset_request', 'security', { error_type: 'unknown' })
       toast.error("Couldn't send password reset email")
     }
   }

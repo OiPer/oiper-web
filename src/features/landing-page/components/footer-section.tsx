@@ -1,6 +1,8 @@
 'use client'
 
+import { NavigationLink } from '@/components/navigation-link'
 import { DownloadButton } from '@/features/download/download-button'
+import { OiPerLogoBackground } from '@oiper/logo'
 import {
   BookOpen,
   Github,
@@ -13,6 +15,7 @@ import {
 import Link from 'next/link'
 import { Wrapper } from '../../../components/wrapper'
 import {
+  ANCHOR_FAQ,
   ANCHOR_FEATURES,
   ANCHOR_LANGUAGES,
   ANCHOR_PERFORMANCE,
@@ -27,21 +30,68 @@ import {
 } from '../constants/links'
 
 const productLinks = [
-  { label: 'Features', href: ANCHOR_FEATURES },
-  { label: 'Performance', href: ANCHOR_PERFORMANCE },
-  { label: 'Privacy', href: ANCHOR_PRIVACY },
-  { label: 'Languages', href: ANCHOR_LANGUAGES },
-  { label: 'Pricing', href: ANCHOR_PRICING },
+  { label: 'Features', href: ANCHOR_FEATURES, destination: 'features' },
+  {
+    label: 'Performance',
+    href: ANCHOR_PERFORMANCE,
+    destination: 'performance',
+  },
+  { label: 'Privacy', href: ANCHOR_PRIVACY, destination: 'privacy' },
+  { label: 'Languages', href: ANCHOR_LANGUAGES, destination: 'languages' },
+  { label: 'Pricing', href: ANCHOR_PRICING, destination: 'pricing' },
+  { label: 'FAQ', href: ANCHOR_FAQ, destination: 'faq' },
 ]
 
 const resourceLinks = [
-  { icon: BookOpen, label: 'Documentation', href: DOCS_URL },
-  { icon: Library, label: 'Resources', href: RESOURCES_URL },
-  { icon: Tag, label: 'Changelog', href: CHANGELOG_URL },
-  { icon: Github, label: 'GitHub', href: GITHUB_REPO },
-  { icon: LifeBuoy, label: 'Support', href: GITHUB_REPO },
-  { icon: ShieldCheck, label: 'Privacy', href: PRIVACY_POLICY_URL },
-  { icon: Scale, label: 'Terms', href: TERMS_OF_SERVICE_URL },
+  {
+    icon: BookOpen,
+    label: 'Documentation',
+    href: DOCS_URL,
+    destination: 'docs',
+    external: false,
+  },
+  {
+    icon: Library,
+    label: 'Resources',
+    href: RESOURCES_URL,
+    destination: 'resources',
+    external: false,
+  },
+  {
+    icon: Tag,
+    label: 'Changelog',
+    href: CHANGELOG_URL,
+    destination: 'changelog',
+    external: false,
+  },
+  {
+    icon: Github,
+    label: 'GitHub',
+    href: GITHUB_REPO,
+    destination: 'github',
+    external: true,
+  },
+  {
+    icon: LifeBuoy,
+    label: 'Support',
+    href: GITHUB_REPO,
+    destination: 'support',
+    external: true,
+  },
+  {
+    icon: ShieldCheck,
+    label: 'Privacy',
+    href: PRIVACY_POLICY_URL,
+    destination: 'privacy_policy',
+    external: false,
+  },
+  {
+    icon: Scale,
+    label: 'Terms',
+    href: TERMS_OF_SERVICE_URL,
+    destination: 'terms_of_service',
+    external: false,
+  },
 ]
 
 export function FooterSection() {
@@ -59,11 +109,12 @@ export function FooterSection() {
             <h2 className="text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
               Ready to talk faster?
             </h2>
-            <p className="mt-5 text-base leading-relaxed text-white/40">
+            <p className="mt-5 text-base leading-relaxed text-white/50">
               Download OiPer and start transcribing privately in under a minute.
               No account required.
             </p>
             <DownloadButton
+              location="footer"
               className="mt-10 h-13 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
               iconClassName="size-5"
             />
@@ -75,12 +126,14 @@ export function FooterSection() {
               <ul className="mt-6 space-y-3">
                 {productLinks.map((link) => (
                   <li key={link.label}>
-                    <Link
+                    <NavigationLink
                       href={link.href}
+                      location="footer"
+                      destination={link.destination}
                       className="text-sm text-white/35 hover:text-white/80"
                     >
                       {link.label}
-                    </Link>
+                    </NavigationLink>
                   </li>
                 ))}
               </ul>
@@ -90,13 +143,25 @@ export function FooterSection() {
               <ul className="mt-6 space-y-3">
                 {resourceLinks.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white/80"
-                    >
-                      <link.icon className="size-4" strokeWidth={1.5} />
-                      {link.label}
-                    </Link>
+                    {link.external ? (
+                      <Link
+                        href={link.href}
+                        className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white/80"
+                      >
+                        <link.icon className="size-4" strokeWidth={1.5} />
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <NavigationLink
+                        href={link.href}
+                        location="footer"
+                        destination={link.destination}
+                        className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white/80"
+                      >
+                        <link.icon className="size-4" strokeWidth={1.5} />
+                        {link.label}
+                      </NavigationLink>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -106,10 +171,10 @@ export function FooterSection() {
 
         <div className="mt-24 flex flex-col items-start justify-between gap-6 border-t border-white/6 pt-8 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <img
-              src="https://github.com/oiper.png"
-              alt="OiPer"
-              className="h-7 w-auto rounded-md"
+            <OiPerLogoBackground
+              role="img"
+              aria-label="OiPer"
+              className="size-7"
             />
             <span className="text-sm text-white/25">
               Private speech transcription.

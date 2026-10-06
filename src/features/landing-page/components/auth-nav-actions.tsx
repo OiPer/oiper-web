@@ -15,6 +15,7 @@ import { getUserInitials, getUserLabel } from '@/features/account/utils'
 import { useAuth } from '@/features/auth/auth-context'
 import { DownloadButton } from '@/features/download/download-button'
 import { useHydrated } from '@/hooks/use-hydrated'
+import { logClick, logError } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 import { ChevronDown, LogOut, Settings2 } from 'lucide-react'
 import Link from 'next/link'
@@ -31,6 +32,7 @@ function LoadingAvatar() {
         <div className="h-10 w-28 animate-pulse rounded-md border bg-white/7" />
       </div>
       <DownloadButton
+        location="header"
         compact
         className={cn(
           buttonVariants({ size: 'lg' }),
@@ -57,6 +59,7 @@ function SignedOutActions() {
         <Link
           href={SIGN_UP_URL}
           scroll={false}
+          onClick={() => logClick('signup', 'header')}
           className={cn(
             buttonVariants({ size: 'lg' }),
             'h-10 rounded-r-none border border-white/18 border-r-white/28 bg-white/6 px-4 text-sm font-medium text-white hover:bg-white/10 focus-visible:ring-0'
@@ -66,7 +69,10 @@ function SignedOutActions() {
         </Link>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button className="h-10 min-w-9 rounded-l-none border border-l-0 border-white/18 bg-white/6 px-0 text-white hover:bg-white/10 focus-visible:ring-0">
+            <Button
+              aria-label="More account options"
+              className="h-10 min-w-9 rounded-l-none border border-l-0 border-white/18 bg-white/6 px-0 text-white hover:bg-white/10 focus-visible:ring-0"
+            >
               <ChevronDown className="size-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -76,7 +82,11 @@ function SignedOutActions() {
             className="-right-1 border-white/12 bg-[#121212] text-white shadow-2xl"
           >
             <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href={SIGN_IN_URL} scroll={false}>
+              <Link
+                href={SIGN_IN_URL}
+                scroll={false}
+                onClick={() => logClick('signin', 'header')}
+              >
                 Sign in
               </Link>
             </DropdownMenuItem>
@@ -85,6 +95,7 @@ function SignedOutActions() {
       </div>
 
       <DownloadButton
+        location="header"
         compact
         className={cn(
           buttonVariants({ size: 'lg' }),
@@ -108,11 +119,13 @@ function SignedInActions() {
     if (isSigningOut) return
 
     setIsSigningOut(true)
+    logClick('signout', 'header')
 
     try {
       const result = await signOut()
       window.location.assign(result.logoutUrl)
     } catch {
+      logError('signout', 'header', { error_type: 'unknown' })
       toast.error("Couldn't sign out")
       setIsSigningOut(false)
     }
@@ -121,6 +134,7 @@ function SignedInActions() {
   return (
     <div className="flex items-center gap-3">
       <DownloadButton
+        location="header"
         compact
         className={cn(
           buttonVariants({ size: 'lg' }),
@@ -156,7 +170,12 @@ function SignedInActions() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-white/8" />
           <DropdownMenuItem asChild className="cursor-pointer gap-3 px-3 py-2">
-            <a href="/account">
+            <a
+              href="/account"
+              onClick={() =>
+                logClick('navigation', 'header', { destination: 'account' })
+              }
+            >
               <Settings2 className="size-4" />
               Account
             </a>

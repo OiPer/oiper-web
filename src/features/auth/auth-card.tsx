@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
+import { logClick } from '@/lib/analytics'
 import { Github, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -150,6 +151,9 @@ export function AuthCard({
             <div className="grid grid-cols-2 gap-3">
               <a
                 href={googleAuthHref}
+                onClick={() =>
+                  logClick('oauth', 'auth', { provider: 'google', mode })
+                }
                 className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:border-white/40 hover:bg-white/10"
               >
                 <GoogleIcon />
@@ -158,6 +162,9 @@ export function AuthCard({
 
               <a
                 href={githubAuthHref}
+                onClick={() =>
+                  logClick('oauth', 'auth', { provider: 'github', mode })
+                }
                 className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:border-white/40 hover:bg-white/10"
               >
                 <Github className="size-4" />
@@ -175,6 +182,7 @@ export function AuthCard({
             href={switchHref}
             className="font-medium text-white underline underline-offset-4"
             scroll={false}
+            onClick={() => logClick(nextPage, 'auth')}
           >
             {footer.linkLabel}
           </Link>

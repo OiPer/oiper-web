@@ -1,5 +1,6 @@
 'use client'
 
+import { logComplete, logError, logSubmit } from '@/lib/analytics'
 import { $api } from '@/lib/api/client'
 import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -87,6 +88,7 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
     values: z.infer<typeof requestResetSchema>
   ) {
     setErrorMessage(null)
+    logSubmit('password_reset_request', 'auth', { mode })
 
     try {
       await requestResetMutation.mutateAsync({
@@ -95,8 +97,17 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
         },
       })
 
+      logComplete('password_reset_request', 'auth', { mode })
       toast.success('Password reset email sent')
-    } catch {
+    } catch (error) {
+      const code = getAppErrorCode<
+        'post',
+        '/v1/auth/web/password-reset/request'
+      >(error)
+      logError('password_reset_request', 'auth', {
+        mode,
+        error_type: code ?? 'unknown',
+      })
       setErrorMessage("Couldn't send the reset email")
     }
   }
@@ -104,7 +115,15 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
   async function handlePasswordReset(
     values: z.infer<typeof resetWithTokenSchema>
   ) {
-    if (!token) return setErrorMessage('Missing reset token')
+    logSubmit('password_reset_confirm', 'auth', { mode })
+
+    if (!token) {
+      logError('password_reset_confirm', 'auth', {
+        mode,
+        error_type: 'missing_token',
+      })
+      return setErrorMessage('Missing reset token')
+    }
 
     setErrorMessage(null)
 
@@ -116,6 +135,7 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
         },
       })
 
+      logComplete('password_reset_confirm', 'auth', { mode })
       toast.success('Password updated, redirecting to sign in')
       window.setTimeout(() => goToSignIn(), 600)
     } catch (error) {
@@ -123,6 +143,11 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
         'post',
         '/v1/auth/web/password-reset/confirm'
       >(error)
+      logError('password_reset_confirm', 'auth', {
+        mode,
+        error_type: code ?? 'unknown',
+      })
+
       switch (code) {
         case 'AUTH_REQUEST_REJECTED':
           return setErrorMessage('Invalid or expired reset link')

@@ -17,6 +17,7 @@ import {
   type PaidSubscriptionView,
   type PlanChangeTarget,
 } from '@/features/billing/use-checkout'
+import { logClick, logComplete, logError } from '@/lib/analytics'
 import { $api } from '@/lib/api/client'
 import { isAppErrorEnvelope } from '@/lib/api/error'
 import type { components } from '@/lib/api/schema'
@@ -114,7 +115,12 @@ function ResumeButton(props: {
 
   async function handleResume() {
     try {
-      if (!(await resumeSubscription())) {
+      const resumed = await resumeSubscription()
+      logComplete('subscription_resume', 'billing', {
+        outcome: resumed ? 'resumed' : 'processing',
+      })
+
+      if (!resumed) {
         return toast.info(
           "Still processing — check back in a moment if this doesn't update",
           { id: 'resume' }
@@ -127,6 +133,9 @@ function ResumeButton(props: {
         { id: 'resume' }
       )
     } catch (error) {
+      logError('subscription_resume', 'billing', {
+        error_type: isAppErrorEnvelope(error) ? error.error.code : 'unknown',
+      })
       toast.error(
         isAppErrorEnvelope(error)
           ? error.error.message
@@ -160,11 +169,18 @@ function ChangePlanButton(props: {
 
   return (
     <>
-      <Button disabled={props.isBusy} onClick={() => setOpen(true)}>
+      <Button
+        disabled={props.isBusy}
+        onClick={() => {
+          logClick('plan_change', 'billing')
+          setOpen(true)
+        }}
+      >
         <Loading loading={props.isBusy}>Change plan</Loading>
       </Button>
 
       <ChangePlanDialog
+        location="billing"
         open={open}
         onOpenChange={setOpen}
         plans={props.plans}

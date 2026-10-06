@@ -1,10 +1,31 @@
 import { getReleases, type Release } from '@/features/changelog/github-releases'
 import { DownloadPage } from '@/features/download/download-page'
+import { DOWNLOAD_URL, HOME } from '@/features/landing-page/constants/links'
+import { ogCopy } from '@/features/seo/app-pages'
+import { breadcrumbs, JsonLd } from '@/features/seo/json-ld'
 import type { Metadata } from 'next'
 
+const title = 'Download OiPer for Windows, macOS and Linux'
+
+const description =
+  'Download OiPer, the private voice dictation app, for Windows, macOS (Apple Silicon and Intel) and Linux (AppImage, .deb, .rpm). Free for local use.'
+
 export const metadata: Metadata = {
-  title: 'Download',
-  description: 'Download OiPer for Windows, macOS and Linux.',
+  title: { absolute: title },
+  description,
+  alternates: { canonical: '/download' },
+  openGraph: {
+    url: '/download',
+    siteName: 'OiPer',
+    type: 'website',
+    title: ogCopy('/download').title,
+    description: ogCopy('/download').description,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: ogCopy('/download').title,
+    description: ogCopy('/download').description,
+  },
 }
 
 interface PageProps {
@@ -22,9 +43,18 @@ export default async function Page({ searchParams }: PageProps) {
   }
 
   return (
-    <DownloadPage
-      releases={releases}
-      version={Array.isArray(version) ? version[0] : version}
-    />
+    <>
+      <JsonLd
+        data={breadcrumbs([
+          { name: 'Home', path: HOME },
+          { name: 'Download', path: DOWNLOAD_URL },
+        ])}
+      />
+
+      <DownloadPage
+        releases={releases}
+        version={Array.isArray(version) ? version[0] : version}
+      />
+    </>
   )
 }

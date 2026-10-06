@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/features/auth/auth-context'
 import { useAccountMutation } from '@/features/auth/web-session'
+import { logClose, logComplete, logError } from '@/lib/analytics'
 import { $api } from '@/lib/api/client'
 import { getAppErrorCode, isAppErrorEnvelope } from '@/lib/api/error'
 import type { components } from '@/lib/api/schema'
@@ -10,7 +11,7 @@ import { openPaddleCheckout } from '@/lib/paddle'
 import { redirectToStripeCheckout } from '@/lib/stripe-checkout'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 type PricingPlan = components['schemas']['PricingPlan']
@@ -84,6 +85,10 @@ export function useStartCheckout() {
     }
 
     setPendingCheckout({ plan, provider: 'PADDLE' })
+    logComplete('checkout', 'pricing', {
+      plan: plan.toLowerCase(),
+      provider: 'paddle',
+    })
 
     pollUntil(() => queryClient.fetchQuery(subscriptionRefetchOptions), landed)
       .then((subscription) => {
@@ -110,7 +115,12 @@ export function useStartCheckout() {
           return await openPaddleCheckout(
             result.transactionId,
             currentUser?.email,
-            () => refreshSubscriptionUntil(plan)
+            () => refreshSubscriptionUntil(plan),
+            () =>
+              logClose('checkout', 'pricing', {
+                plan: plan.toLowerCase(),
+                provider: 'paddle',
+              })
           )
         case 'STRIPE':
           return redirectToStripeCheckout(result.checkoutUrl)
@@ -119,6 +129,13 @@ export function useStartCheckout() {
       const code = getAppErrorCode<'post', '/v1/account/subscription/checkout'>(
         error
       )
+      logError('checkout', 'pricing', {
+        plan: plan.toLowerCase(),
+        interval: interval.toLowerCase(),
+        provider: provider.toLowerCase(),
+        error_type: code ?? 'unknown',
+      })
+
       switch (code) {
         case 'BILLING_ALREADY_SUBSCRIBED':
           queryClient.invalidateQueries({
@@ -157,9 +174,19 @@ export function useCheckoutQueryParam(
   const checkoutPlan = searchParams.get('checkout')
   const checkoutInterval =
     searchParams.get('interval') === 'yearly' ? 'YEARLY' : 'MONTHLY'
+  const loggedCancel = useRef(false)
 
   useEffect(() => {
-    if (checkoutPlan !== 'cancelled') return
+    if (checkoutPlan !== 'cancelled') {
+      loggedCancel.current = false
+      return
+    }
+
+    if (!loggedCancel.current) {
+      loggedCancel.current = true
+      logClose('checkout', 'pricing', { provider: 'stripe' })
+    }
+
     toast.info("Checkout cancelled — you weren't charged")
     router.replace(redirectTo)
   }, [checkoutPlan, redirectTo, router])
@@ -218,6 +245,7 @@ export function useCheckoutReturn(
     }
 
     window.history.replaceState(null, '', window.location.pathname)
+    logComplete('checkout', 'billing', { provider: 'stripe' })
     setIsProcessing(true)
     toast.success('Payment received — setting up your subscription')
     pollUntil(refetch, landed)
@@ -315,11 +343,14 @@ export function useOpenBillingPortal() {
     try {
       const urls = await portalMutation.mutateAsync({ body: {} })
 
+      logComplete('billing_portal', 'billing')
       window.location.assign(urls.portalUrl)
     } catch (error) {
       const code = getAppErrorCode<'post', '/v1/account/subscription/portal'>(
         error
       )
+      logError('billing_portal', 'billing', { error_type: code ?? 'unknown' })
+
       switch (code) {
         case 'BILLING_SUBSCRIPTION_NOT_FOUND':
           return toast.error(

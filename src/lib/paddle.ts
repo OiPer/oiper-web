@@ -19,14 +19,24 @@ export function getPaddleClient(): Promise<Paddle | undefined> {
 export async function openPaddleCheckout(
   transactionId: string,
   email: string | undefined,
-  onCompleted: () => void
+  onCompleted: () => void,
+  onAbandoned: () => void
 ): Promise<void> {
   const paddle = await getPaddleClient()
   if (!paddle) throw new Error('Paddle failed to initialize')
 
+  let completed = false
+
   paddle.Update({
     eventCallback: (event) => {
-      if (event.name === CheckoutEventNames.CHECKOUT_COMPLETED) onCompleted()
+      if (event.name === CheckoutEventNames.CHECKOUT_COMPLETED) {
+        completed = true
+        onCompleted()
+      }
+
+      if (event.name === CheckoutEventNames.CHECKOUT_CLOSED && !completed) {
+        onAbandoned()
+      }
     },
   })
 

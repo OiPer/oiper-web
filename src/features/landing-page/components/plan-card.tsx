@@ -16,7 +16,7 @@ import type { ReactNode } from 'react'
 type PricingPlan = components['schemas']['PricingPlan']
 
 export type CtaAction =
-  | { type: 'link'; href: string; scroll?: boolean }
+  | { type: 'link'; href: string; scroll?: boolean; onClick?: () => void }
   | { type: 'button'; onClick: () => void }
   | { type: 'download' }
 
@@ -80,7 +80,9 @@ function CtaLink(props: {
   }
 
   if (props.action.type === 'download') {
-    return <DownloadButton className={props.className} compact />
+    return (
+      <DownloadButton location="pricing" className={props.className} compact />
+    )
   }
 
   if (props.action.type === 'link') {
@@ -89,6 +91,7 @@ function CtaLink(props: {
         href={props.action.href}
         scroll={props.action.scroll ?? true}
         className={props.className}
+        onClick={props.action.onClick}
       >
         {props.children}
       </Link>
@@ -219,7 +222,7 @@ export function PlanCard(props: {
           action={props.cta.secondaryCta.action}
           disabled={props.cta.secondaryCta.disabled}
           submitting={props.cta.secondaryCta.submitting}
-          className="mt-3 text-center text-xs text-white/40 hover:text-white/60"
+          className="mt-3 text-center text-xs text-white/50 hover:text-white/70"
         >
           {props.cta.secondaryCta.label}
         </CtaLink>

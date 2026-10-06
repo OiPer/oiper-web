@@ -53,9 +53,9 @@ export function FeaturesSection() {
           <h2 className="text-4xl font-semibold tracking-[-0.03em] text-white sm:text-5xl">
             Everything you need.
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-white/40">
-            OiPer is minimal, private, and built for speed. Every feature serves
-            a purpose and gets out of your way.
+          <p className="mt-5 text-base leading-relaxed text-white/50">
+            OiPer is voice dictation that is minimal, private, and built for
+            speed. Every feature serves a purpose and gets out of your way.
           </p>
         </div>
 

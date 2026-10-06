@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuth } from '@/features/auth/auth-context'
+import { logComplete, logError, logSubmit } from '@/lib/analytics'
 import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -60,6 +61,7 @@ export function SignUpForm({ mode }: SignUpFormProps) {
 
   async function handleSignUp(values: SignUpSchema) {
     setErrorMessage(null)
+    logSubmit('signup', 'auth', { mode })
 
     try {
       const result = await signUp({
@@ -69,6 +71,7 @@ export function SignUpForm({ mode }: SignUpFormProps) {
       })
 
       if ('type' in result && result.type === 'email_verification') {
+        logComplete('signup', 'auth', { mode, outcome: 'email_verification' })
         return router.push(
           buildAuthUrl({
             mode,
@@ -85,14 +88,18 @@ export function SignUpForm({ mode }: SignUpFormProps) {
       }
 
       if ('authenticated' in result && !result.authenticated) {
+        logError('signup', 'auth', { mode, error_type: 'not_authenticated' })
         return setErrorMessage('Something went wrong')
       }
 
+      logComplete('signup', 'auth', { mode })
       router.push(callbackUrl)
     } catch (error) {
       const code = getAppErrorCode<'post', '/v1/auth/web/sign-up/password'>(
         error
       )
+      logError('signup', 'auth', { mode, error_type: code ?? 'unknown' })
+
       switch (code) {
         case 'AUTH_EMAIL_ALREADY_EXISTS':
           return setErrorMessage('An account already exists with this email')

@@ -43,7 +43,7 @@ export function TestimonialsSection() {
           <h2 className="text-4xl font-semibold tracking-[-0.03em] text-white sm:text-5xl">
             Loved by users.
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-white/40">
+          <p className="mt-5 text-base leading-relaxed text-white/50">
             Here is what people are saying about using OiPer every day.
           </p>
         </div>
