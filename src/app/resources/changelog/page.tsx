@@ -8,6 +8,7 @@ import {
   RESOURCES_URL,
 } from '@/features/landing-page/constants/links'
 import { breadcrumbs, JsonLd } from '@/features/seo/json-ld'
+import { ogCopy } from '@/features/seo/og-copy'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -30,6 +31,7 @@ export async function generateMetadata({
   const cursor = parseCursor(value)
   const title = cursor === undefined ? 'Changelog' : `Changelog after ${cursor}`
   const url = cursor === undefined ? CHANGELOG_URL : getCursorUrl(cursor)
+  const og = ogCopy(CHANGELOG_URL)
 
   const description =
     'Every OiPer Desktop release, newest first: new features, fixes, and improvements to the voice-to-text app for Windows, macOS and Linux.'
@@ -41,13 +43,13 @@ export async function generateMetadata({
     openGraph: {
       url,
       siteName: 'OiPer',
-      title,
-      description,
+      title: og.title,
+      description: og.description,
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
+      title: og.title,
+      description: og.description,
     },
   }
 }

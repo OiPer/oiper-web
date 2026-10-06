@@ -1,41 +1,35 @@
 import { docsSource } from '@/features/docs/docs-source'
 import { resourcesSource } from '@/features/docs/resources-source'
-import { APP_PAGES, type AppPagePath } from '@/features/seo/app-pages'
-import { OG_SIZE, OgCard } from '@/features/seo/og-card'
+import { APP_PAGES } from '@/features/seo/app-pages'
+import { ogImage } from '@/features/seo/og-card'
 import { notFound } from 'next/navigation'
-import { ImageResponse } from 'next/og'
 
 interface RouteProps {
   params: Promise<{ slug: string[] }>
 }
 
-function getCard(slug: string[]) {
+function getEyebrow(slug: string[]) {
   const [name, ...rest] = slug
-  const path = `/${slug.join('/')}`
 
-  if (name === 'docs' || name === 'resources') {
-    const source = name === 'docs' ? docsSource : resourcesSource
-    const page = source.getPage(rest)
-    if (!page) notFound()
-
-    return {
-      eyebrow: name === 'docs' ? 'Docs' : 'Resources',
-      title: page.data.title,
-      description: page.data.description ?? '',
-    }
+  if (name === 'docs') {
+    if (!docsSource.getPage(rest)) notFound()
+    return 'Docs'
   }
 
-  if (Object.hasOwn(APP_PAGES, path)) {
-    return { eyebrow: 'Account', ...APP_PAGES[path as AppPagePath] }
+  if (name === 'resources') {
+    if (!resourcesSource.getPage(rest)) notFound()
+    return 'Resources'
   }
+
+  if (Object.hasOwn(APP_PAGES, `/${slug.join('/')}`)) return 'Account'
 
   notFound()
 }
 
 export async function GET(_request: Request, { params }: RouteProps) {
-  const card = getCard((await params).slug)
+  const { slug } = await params
 
-  return new ImageResponse(<OgCard {...card} />, OG_SIZE)
+  return ogImage(`/${slug.join('/')}`, getEyebrow(slug))
 }
 
 export const dynamicParams = false

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { OG_SIZE } from './og-card'
+import { ogCopy } from './og-copy'
 
 export const APP_PAGES = {
   '/auth/signin': {
@@ -52,7 +53,8 @@ export type AppPagePath = keyof typeof APP_PAGES
 
 export function appPageMetadata(path: AppPagePath): Metadata {
   const { title, description } = APP_PAGES[path]
-  const image = { url: `/og${path}`, ...OG_SIZE, alt: title }
+  const og = ogCopy(path)
+  const image = { url: `/og${path}`, ...OG_SIZE, alt: og.title }
 
   return {
     title,
@@ -61,14 +63,14 @@ export function appPageMetadata(path: AppPagePath): Metadata {
       type: 'website',
       siteName: 'OiPer',
       url: path,
-      title,
-      description,
+      title: og.title,
+      description: og.description,
       images: [image],
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
+      title: og.title,
+      description: og.description,
       images: [image],
     },
   }

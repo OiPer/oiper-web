@@ -12,6 +12,7 @@ import { MacDownloadDialog } from '@/features/download/mac-download-dialog'
 import { ServiceWorker } from '@/features/pwa/service-worker'
 import { GoogleAnalytics } from '@/features/seo/google-analytics'
 import { JsonLd, ORGANIZATION_ID, WEBSITE_ID } from '@/features/seo/json-ld'
+import { ogCopy } from '@/features/seo/og-copy'
 import { cn } from '@/lib/utils'
 import { Metadata, Viewport } from 'next'
 import { ThemeProvider } from 'next-themes'
@@ -69,13 +70,13 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: '/',
     siteName: 'OiPer',
-    title,
-    description,
+    title: ogCopy('/').title,
+    description: ogCopy('/').description,
   },
   twitter: {
     card: 'summary_large_image',
-    title,
-    description,
+    title: ogCopy('/').title,
+    description: ogCopy('/').description,
   },
   verification: { google: env.GOOGLE_SITE_VERIFICATION },
   category: 'technology',

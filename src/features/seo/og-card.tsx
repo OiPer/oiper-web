@@ -1,12 +1,33 @@
 import { OiPerLogo } from '@oiper/logo'
+import { ImageResponse } from 'next/og'
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { ogCopy } from './og-copy'
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
-export function OgCard(props: {
+export async function ogImage(path: string, eyebrow: string) {
+  const { title, description, screenshot } = ogCopy(path)
+  const file = await readFile(
+    join(process.cwd(), `public/hero-${screenshot}.png`)
+  )
+
+  return new ImageResponse(
+    <OgCard
+      eyebrow={eyebrow}
+      title={title}
+      description={description}
+      screenshot={`data:image/png;base64,${file.toString('base64')}`}
+    />,
+    OG_SIZE
+  )
+}
+
+function OgCard(props: {
   eyebrow: string
   title: string
   description: string
-  screenshot?: string
+  screenshot: string
 }) {
   return (
     <div
@@ -28,7 +49,7 @@ export function OgCard(props: {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          width: props.screenshot ? 560 : '100%',
+          width: 560,
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
@@ -48,10 +69,10 @@ export function OgCard(props: {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           <div
             style={{
-              fontSize: props.title.length > 32 ? 52 : 60,
-              fontWeight: 700,
+              fontSize: 60,
               lineHeight: 1.05,
               letterSpacing: -2,
+              whiteSpace: 'nowrap',
             }}
           >
             {props.title}
@@ -80,15 +101,13 @@ export function OgCard(props: {
         </div>
       </div>
 
-      {props.screenshot && (
-        <img
-          src={props.screenshot}
-          alt=""
-          width={680}
-          height={402}
-          style={{ position: 'absolute', right: -200, bottom: 90 }}
-        />
-      )}
+      <img
+        src={props.screenshot}
+        alt=""
+        width={680}
+        height={402}
+        style={{ position: 'absolute', right: -200, bottom: 90 }}
+      />
     </div>
   )
 }

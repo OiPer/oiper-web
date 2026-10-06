@@ -4,6 +4,7 @@ import {
   ORGANIZATION_ID,
   WEBSITE_ID,
 } from '@/features/seo/json-ld'
+import { ogCopy } from '@/features/seo/og-copy'
 import { env } from '@/lib/env'
 import { joinUrl } from '@/lib/url'
 import {
@@ -77,11 +78,12 @@ export function getDocumentationMetadata(
 
   if (!page) notFound()
 
+  const og = ogCopy(page.url)
   const image = {
     url: `/og${page.url}`,
     width: 1200,
     height: 630,
-    alt: page.data.title,
+    alt: og.title,
   }
 
   return {
@@ -94,14 +96,14 @@ export function getDocumentationMetadata(
       type: 'article',
       siteName: 'OiPer',
       url: page.url,
-      title: page.data.title,
-      description: page.data.description,
+      title: og.title,
+      description: og.description,
       images: [image],
     },
     twitter: {
       card: 'summary_large_image',
-      title: page.data.title,
-      description: page.data.description,
+      title: og.title,
+      description: og.description,
       images: [image],
     },
   }
