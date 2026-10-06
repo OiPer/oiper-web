@@ -6,12 +6,12 @@ export default function robots(): MetadataRoute.Robots {
     return { rules: { userAgent: '*', disallow: '/' } }
   }
 
-  return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: ['/account', '/auth', '/api', '/dev'],
-    },
-    sitemap: `${env.SITE_URL}/sitemap.xml`,
+  if (env.APP_ENV === 'production') {
+    return {
+      rules: { userAgent: '*', allow: '/', disallow: ['/api', '/dev'] },
+      sitemap: `${env.SITE_URL}/sitemap.xml`,
+    }
   }
+
+  throw new Error(`Unknown APP_ENV: ${env.APP_ENV}`)
 }
