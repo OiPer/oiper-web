@@ -33,18 +33,18 @@ export default function NotFound() {
         The page you are looking for doesn&apos;t exist or has moved.
       </p>
 
-      <nav className="mt-8 flex flex-wrap items-center justify-center gap-x-2.5 text-sm text-white/50">
+      <nav className="mt-10 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-sm">
         {links.map((link, index) => (
           <Fragment key={link.href}>
             {index > 0 && (
               <span
                 aria-hidden="true"
-                className="h-2.5 rounded-full border-l-2 border-current/50"
+                className="bg-muted-foreground/20 h-3 w-px"
               />
             )}
             <Link
               href={link.href}
-              className="underline-offset-4 hover:text-white/80 hover:underline"
+              className="text-foreground hover:text-foreground/80 underline underline-offset-4"
             >
               {link.label}
             </Link>
