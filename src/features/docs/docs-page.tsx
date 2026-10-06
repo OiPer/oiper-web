@@ -45,11 +45,27 @@ export function getDocumentationMetadata(
 
   if (!page) notFound()
 
+  const image = { url: `/og${page.url}`, width: 1200, height: 630 }
+
   return {
     title: page.data.title,
     description: page.data.description,
     alternates: {
       canonical: page.url,
+    },
+    openGraph: {
+      type: 'article',
+      siteName: 'OiPer',
+      url: page.url,
+      title: page.data.title,
+      description: page.data.description,
+      images: [image],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: page.data.title,
+      description: page.data.description,
+      images: [image],
     },
   }
 }
