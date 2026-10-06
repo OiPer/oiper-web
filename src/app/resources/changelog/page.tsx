@@ -43,6 +43,7 @@ export async function generateMetadata({
     openGraph: {
       url,
       siteName: 'OiPer',
+      type: 'website',
       title: og.title,
       description: og.description,
     },

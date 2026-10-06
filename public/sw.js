@@ -1,4 +1,4 @@
-const VERSION = 'v1'
+const VERSION = 'v2'
 const PAGES = `oiper-pages-${VERSION}`
 const ASSETS = `oiper-assets-${VERSION}`
 const PRECACHE = ['/', '/docs']
@@ -17,12 +17,6 @@ const CACHE_FIRST = [
   /^\/og\//,
   /\/opengraph-image$/,
   /^\/hero-\d+\.png$/,
-]
-
-const STALE_WHILE_REVALIDATE = [
-  /^\/$/,
-  /^\/docs(\/|$)/,
-  /^\/resources(\/(privacy-policy|security|terms-of-service))?$/,
 ]
 
 const LOGO_PATH =
@@ -87,23 +81,6 @@ async function cacheFirst(request) {
   return response
 }
 
-async function staleWhileRevalidate(request) {
-  const cache = await caches.open(PAGES)
-  const cached = await cache.match(request)
-
-  const fresh = fetch(request).then(async (response) => {
-    if (cacheable(response)) await cache.put(request, response.clone())
-    return response
-  })
-
-  if (cached) {
-    fresh.catch(() => undefined)
-    return cached
-  }
-
-  return fresh.catch(() => offline())
-}
-
 async function networkFirst(request) {
   const cache = await caches.open(PAGES)
 
@@ -163,10 +140,6 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (request.mode !== 'navigate') return
-
-  if (matches(STALE_WHILE_REVALIDATE, url.pathname)) {
-    return event.respondWith(staleWhileRevalidate(request))
-  }
 
   event.respondWith(networkFirst(request))
 })

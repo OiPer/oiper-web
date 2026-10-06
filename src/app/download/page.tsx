@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     url: '/download',
     siteName: 'OiPer',
+    type: 'website',
     title: ogCopy('/download').title,
     description: ogCopy('/download').description,
   },

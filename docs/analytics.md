@@ -112,6 +112,8 @@ Add a detail only when it carries product context GA4 can't know and that change
 
 Don't send any of this yourself: page views and page titles, referrer and traffic source, session and engagement time, scroll depth, outbound link clicks, file downloads from external links, OS, browser, device, screen size, country, city and language.
 
+GA4 also records the page URL of every page view, including its query string, so values such as `?email=` or reset tokens on auth URLs can appear there. We accept this (agreed decision); it is automatic GA4 behaviour, not something our events send. Our own event parameters never contain URLs, emails or tokens.
+
 ## One action, one event
 
 - A click that always opens a dialog logs the click only. The dialog opening is not a second event (Mac dialog, auth modal, change-plan dialog, dropdown menus).
