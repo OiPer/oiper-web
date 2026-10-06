@@ -95,8 +95,8 @@ export function HeroSection() {
           <AnimatedHeadline />
 
           <p className="mt-7 max-w-120 text-[clamp(0.95rem,4vw,1.25rem)] leading-relaxed text-white/50">
-            Hold a key, speak, and your words appear in any app. Instantly,
-            privately, and fully offline.
+            Hold a key, speak, and your words appear in any app on Windows,
+            macOS and Linux. Instant, private, and offline by default.
           </p>
 
           <div className="mt-10">

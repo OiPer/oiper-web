@@ -13,6 +13,7 @@ import {
 import Link from 'next/link'
 import { Wrapper } from '../../../components/wrapper'
 import {
+  ANCHOR_FAQ,
   ANCHOR_FEATURES,
   ANCHOR_LANGUAGES,
   ANCHOR_PERFORMANCE,
@@ -32,6 +33,7 @@ const productLinks = [
   { label: 'Privacy', href: ANCHOR_PRIVACY },
   { label: 'Languages', href: ANCHOR_LANGUAGES },
   { label: 'Pricing', href: ANCHOR_PRICING },
+  { label: 'FAQ', href: ANCHOR_FAQ },
 ]
 
 const resourceLinks = [
