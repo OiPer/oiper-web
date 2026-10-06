@@ -62,7 +62,7 @@ export function FooterSection() {
             <h2 className="text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
               Ready to talk faster?
             </h2>
-            <p className="mt-5 text-base leading-relaxed text-white/40">
+            <p className="mt-5 text-base leading-relaxed text-white/50">
               Download OiPer and start transcribing privately in under a minute.
               No account required.
             </p>

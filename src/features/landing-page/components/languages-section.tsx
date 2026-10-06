@@ -50,7 +50,7 @@ export function LanguagesSection() {
           <h2 className="text-4xl font-semibold tracking-[-0.03em] text-white sm:text-5xl">
             Speak your language.
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-white/40">
+          <p className="mt-5 text-base leading-relaxed text-white/50">
             Transcribe in the language you are most comfortable with. More
             languages are added regularly.
           </p>
@@ -75,7 +75,7 @@ export function LanguagesSection() {
                 <span className="text-base font-medium tracking-tight text-white">
                   {language.native}
                 </span>
-                <span className="text-xs text-white/30">{language.name}</span>
+                <span className="text-xs text-white/50">{language.name}</span>
               </div>
             </div>
           ))}

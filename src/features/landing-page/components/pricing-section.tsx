@@ -220,7 +220,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
           <h2 className="text-4xl font-semibold tracking-[-0.03em] text-white sm:text-5xl">
             Simple pricing.
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-white/40">
+          <p className="mt-5 text-base leading-relaxed text-white/50">
             Choose the plan that works best for you. No hidden fees.
           </p>
 

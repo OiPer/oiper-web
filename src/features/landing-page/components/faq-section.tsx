@@ -56,7 +56,7 @@ export function FaqSection() {
           <h2 className="text-4xl font-semibold tracking-[-0.03em] text-white sm:text-5xl">
             Questions, answered.
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-white/40">
+          <p className="mt-5 text-base leading-relaxed text-white/50">
             What people ask before they start dictating with OiPer.
           </p>
         </div>

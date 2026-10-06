@@ -66,7 +66,10 @@ function SignedOutActions() {
         </Link>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button className="h-10 min-w-9 rounded-l-none border border-l-0 border-white/18 bg-white/6 px-0 text-white hover:bg-white/10 focus-visible:ring-0">
+            <Button
+              aria-label="More account options"
+              className="h-10 min-w-9 rounded-l-none border border-l-0 border-white/18 bg-white/6 px-0 text-white hover:bg-white/10 focus-visible:ring-0"
+            >
               <ChevronDown className="size-4" />
             </Button>
           </DropdownMenuTrigger>

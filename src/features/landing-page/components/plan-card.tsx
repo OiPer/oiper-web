@@ -219,7 +219,7 @@ export function PlanCard(props: {
           action={props.cta.secondaryCta.action}
           disabled={props.cta.secondaryCta.disabled}
           submitting={props.cta.secondaryCta.submitting}
-          className="mt-3 text-center text-xs text-white/40 hover:text-white/60"
+          className="mt-3 text-center text-xs text-white/50 hover:text-white/70"
         >
           {props.cta.secondaryCta.label}
         </CtaLink>
