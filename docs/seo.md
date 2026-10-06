@@ -8,6 +8,59 @@ What's in place, what's left to do, and how to check it. Research baseline: 2026
 - AI search answers never mentioned OiPer for buyer questions such as "Wispr Flow alternative for Linux" or "voice to text for coding". Competitors like Wispr Flow, Superwhisper, Handy and OpenWhispr showed up every time.
 - There were no third-party mentions. OiPer only existed on oiper.com and GitHub.
 
+## Tracker
+
+### Done (2026-10-06, branch `seo`)
+
+- [x] Researched oiper.com, dev.oiper.com and 11 competitors. Baseline crawl data is in [oiper-test-suite](https://github.com/al-imam/oiper-test-suite) `seo/results`
+- [x] Fixed the homepage HTML: it would have been empty for crawlers in the next release
+- [x] Canonical domain is now oiper.com (it was `desktop.oiper.com`)
+- [x] Added `robots.txt` and `sitemap.xml`. Dev is `noindex`, as are the auth, account and dev pages
+- [x] Unknown docs URLs return a real 404
+- [x] Every page has its own title, description, canonical and social card. All 21 docs descriptions rewritten
+- [x] Generated the favicon, app icons, manifest and social cards from the logo. Deleted the oversized `og.png`
+- [x] Added structured data: Organization, WebSite, SoftwareApplication, FAQPage, TechArticle, BreadcrumbList
+- [x] Added `/llms.txt` for AI assistants
+- [x] GA4 and Search Console verification, switched on per environment
+- [x] Homepage FAQ section. The hero now names the platforms
+- [x] Lazy-loaded the 3D globe, gave the flag images sizes, labeled the menu button, improved text contrast
+- [x] Docs cover Linux (downloads, text-typing tools, data folders). The privacy policy discloses GA
+- [x] Moved the SEO scripts into `oiper-test-suite/seo`
+
+### Must do
+
+- [ ] Merge `seo` into `dev`, deploy, and run the checks in [Verify after each deploy](#verify-after-each-deploy)
+- [ ] **Netlify:** make `oiper.com` the primary domain and 301 `desktop.oiper.com/*` → `https://oiper.com/:splat`. Today Netlify treats `desktop.oiper.com` as primary.
+- [ ] Set the [environment variables](#environment-variables) in Netlify for prod and dev.
+- [ ] **Search Console:** add a Domain property for `oiper.com` (DNS TXT covers all subdomains) and submit `https://oiper.com/sitemap.xml`.
+- [ ] **Bing Webmaster Tools:** import from Search Console. ChatGPT search uses Bing's index.
+- [ ] **Consent:** decide whether EU/UK visitors get a cookie banner before GA loads. The privacy policy already discloses GA.
+- [ ] **Testimonials:** the three homepage quotes look like placeholders, and AI search already repeats them as real reviews. Replace them with real, attributable quotes or remove the section.
+- [ ] **Speed claim:** pick one number and use it everywhere. The site and docs currently say 1 s, 1.5 s and "3.5x faster". A benchmarks page that shows the method would back it up.
+
+### Later: content that wins search (biggest impact)
+
+Competitors rank with these page types. OiPer has none yet.
+
+- [ ] `/alternatives/wispr-flow` and `/alternatives/superwhisper`: an honest comparison of platforms, offline use, price and speed.
+- [ ] `/linux` and `/windows`: few polished dictation apps exist for these, and most results are GitHub repos.
+- [ ] `/use-cases/coding`: dictating into VS Code, Cursor and the Claude Code terminal, using snippets and the dictionary for jargon.
+- [ ] `/benchmarks`: method, hardware and results.
+
+### Later: off-site (AI assistants recommend brands that others mention)
+
+- [ ] Add GitHub topics to `OiPer/desktop` (`speech-to-text`, `dictation`, `voice-typing`, `whisper`, `wispr-flow-alternative`, `tauri`) and a README with features, platforms and a link to oiper.com.
+- [ ] Clean up the GitHub org: archive the unrelated `todo*` and `media-*` repos, and check that `oiper-web` is meant to be public.
+- [ ] List OiPer on Product Hunt and AlternativeTo (as an alternative to Wispr Flow, Superwhisper and Dragon).
+- [ ] Give honest answers in relevant Reddit threads (r/linux, r/software, r/ChatGPTCoding), open PRs to "awesome" dictation/Whisper lists, and post a short demo video.
+- [ ] Create X, LinkedIn and YouTube profiles and add them to `sameAs` in `src/app/layout.tsx`.
+
+### Later: smaller fixes
+
+- [ ] Render the pricing cards on the server: move `useSearchParams` in `pricing-section.tsx` into a small child component.
+- [ ] Trim the `/download` page DOM (about 6,700 nodes) and cache the GitHub releases fetch.
+- [ ] `/resources/changelog?cursor=<unknown>` returns a `noindex` page with status 200 instead of 404.
+
 ## What the code does now
 
 | Area            | Behaviour                                                                                                                                                                                                                   |
@@ -31,41 +84,6 @@ One variable per concern. Each environment gets its own value.
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console HTML-tag token (skip if you verify by DNS) | not needed                         |
 
 Empty means the feature is off. A malformed GA ID stops the app at startup.
-
-## To do
-
-### Before or at launch
-
-- [ ] **Netlify:** make `oiper.com` the primary domain and 301 `desktop.oiper.com/*` → `https://oiper.com/:splat`. Today Netlify treats `desktop.oiper.com` as primary.
-- [ ] Set the env vars above in Netlify for prod and dev.
-- [ ] **Search Console:** add a Domain property for `oiper.com` (DNS TXT covers all subdomains) and submit `https://oiper.com/sitemap.xml`.
-- [ ] **Bing Webmaster Tools:** import from Search Console. ChatGPT search uses Bing's index.
-- [ ] **Consent:** decide whether EU/UK visitors get a cookie banner before GA loads. The privacy policy already discloses GA.
-- [ ] **Testimonials:** the three homepage quotes look like placeholders, and AI search already repeats them as real reviews. Replace them with real, attributable quotes or remove the section.
-- [ ] **Speed claim:** pick one number and use it everywhere. The site and docs currently say 1 s, 1.5 s and "3.5x faster". A benchmarks page that shows the method would back it up.
-
-### Content that wins search (biggest impact)
-
-Competitors rank with these page types. OiPer has none yet.
-
-- [ ] `/alternatives/wispr-flow` and `/alternatives/superwhisper`: an honest comparison of platforms, offline use, price and speed.
-- [ ] `/linux` and `/windows`: few polished dictation apps exist for these, and most results are GitHub repos.
-- [ ] `/use-cases/coding`: dictating into VS Code, Cursor and the Claude Code terminal, using snippets and the dictionary for jargon.
-- [ ] `/benchmarks`: method, hardware and results.
-
-### Off-site (AI assistants recommend brands that others mention)
-
-- [ ] Add GitHub topics to `OiPer/desktop` (`speech-to-text`, `dictation`, `voice-typing`, `whisper`, `wispr-flow-alternative`, `tauri`) and a README with features, platforms and a link to oiper.com.
-- [ ] Clean up the GitHub org: archive the unrelated `todo*` and `media-*` repos, and check that `oiper-web` is meant to be public.
-- [ ] List OiPer on Product Hunt and AlternativeTo (as an alternative to Wispr Flow, Superwhisper and Dragon).
-- [ ] Give honest answers in relevant Reddit threads (r/linux, r/software, r/ChatGPTCoding), open PRs to "awesome" dictation/Whisper lists, and post a short demo video.
-- [ ] Create X, LinkedIn and YouTube profiles and add them to `sameAs` in `src/app/layout.tsx`.
-
-### Smaller fixes
-
-- [ ] Render the pricing cards on the server: move `useSearchParams` in `pricing-section.tsx` into a small child component.
-- [ ] Trim the `/download` page DOM (about 6,700 nodes) and cache the GitHub releases fetch.
-- [ ] `/resources/changelog?cursor=<unknown>` returns a `noindex` page with status 200 instead of 404.
 
 ## Verify after each deploy
 
