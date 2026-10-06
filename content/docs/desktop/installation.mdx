@@ -5,11 +5,15 @@ description: "Download and install OiPer on Windows, macOS or Linux, grant the m
 
 ## Download
 
-Builds for macOS and Windows are published on GitHub:
+Builds for Windows, macOS (Apple Silicon and Intel), and Linux (AppImage, `.deb`, and `.rpm`)
+are on the [download page](/download) and published on GitHub:
 
 [github.com/oiper/desktop/releases/latest](https://github.com/oiper/desktop/releases/latest)
 
 macOS requires version 10.15 or later.
+
+On Linux, OiPer types the transcript with a system tool. Install one of them: `wtype`,
+`kwtype`, `dotool`, or `ydotool` on Wayland, or `xdotool` or `ydotool` on X11.
 
 Install the app, then launch it. On first launch you go through
 [first-run setup](/docs/desktop/quickstart).
@@ -36,6 +40,7 @@ Everything the app writes lives in one application data directory:
 
 - macOS: `~/Library/Application Support/com.oiper.desktop`
 - Windows: `%APPDATA%\com.oiper.desktop`
+- Linux: `~/.config/com.oiper.desktop`
 
 That directory holds `config.json`, the `oiper.db` history database, downloaded models
 under `models/`, recorded audio under `audio/`, and logs under `logs/`. Deleting the
