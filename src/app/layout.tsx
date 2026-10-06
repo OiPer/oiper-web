@@ -41,6 +41,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(env.BASE_URL),
   applicationName: 'OiPer',
+  appleWebApp: {
+    capable: true,
+    title: 'OiPer',
+    statusBarStyle: 'black-translucent',
+  },
   title: {
     default: title,
     template: '%s | OiPer',

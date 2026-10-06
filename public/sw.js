@@ -13,7 +13,7 @@ const NETWORK_ONLY = [
 
 const CACHE_FIRST = [
   /^\/_next\/static\//,
-  /^\/(icon|apple-icon|favicon\.ico)/,
+  /^\/(icon|apple-icon|maskable-icon|favicon\.ico)/,
   /^\/og\//,
   /\/opengraph-image$/,
   /^\/hero-\d+\.png$/,
