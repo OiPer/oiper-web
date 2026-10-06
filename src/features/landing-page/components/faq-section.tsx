@@ -1,5 +1,5 @@
 import { JsonLd } from '@/features/seo/json-ld'
-import { Plus } from 'lucide-react'
+import { Minus, Plus } from 'lucide-react'
 import { Wrapper } from '../../../components/wrapper'
 
 const questions = [
@@ -57,37 +57,38 @@ export function FaqSection() {
       />
 
       <Wrapper className="relative">
-        <div className="grid gap-16 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-24">
-          <div>
-            <h2 className="text-4xl font-semibold tracking-[-0.03em] text-white sm:text-5xl">
-              Questions, answered.
-            </h2>
-            <p className="mt-5 text-base leading-relaxed text-white/50">
-              What people ask before they start dictating with OiPer.
-            </p>
-          </div>
+        <h2 className="text-4xl font-semibold tracking-[-0.03em] text-white sm:text-5xl">
+          Questions, answered.
+        </h2>
+        <p className="mt-5 text-base leading-relaxed text-white/50">
+          What people ask before they start dictating with OiPer.
+        </p>
 
-          <div className="border-b border-white/6">
-            {questions.map((item, index) => (
-              <details
-                key={item.question}
-                open={index === 0}
-                className="group border-t border-white/6"
-              >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 outline-none focus-visible:ring-2 focus-visible:ring-white/30 [&::-webkit-details-marker]:hidden">
-                  <h3 className="text-lg font-medium text-white/90">
-                    {item.question}
-                  </h3>
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/50 transition-transform duration-200 group-open:rotate-45 group-hover:border-white/20 group-hover:text-white/80">
-                    <Plus className="size-4" strokeWidth={1.5} />
-                  </span>
-                </summary>
-                <p className="max-w-160 pb-7 text-sm leading-relaxed text-white/50 sm:text-base">
-                  {item.answer}
-                </p>
-              </details>
-            ))}
-          </div>
+        <div className="mt-16 border-b border-white/6 sm:mt-20">
+          {questions.map((item, index) => (
+            <details
+              key={item.question}
+              open={index === 0}
+              className="group border-t border-white/6"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-white/50 outline-none hover:text-white/90 focus-visible:ring-2 focus-visible:ring-white/30 [&::-webkit-details-marker]:hidden">
+                <h3 className="text-lg font-medium text-white/90">
+                  {item.question}
+                </h3>
+                <Plus
+                  className="size-5 shrink-0 group-open:hidden"
+                  strokeWidth={1.5}
+                />
+                <Minus
+                  className="hidden size-5 shrink-0 group-open:block"
+                  strokeWidth={1.5}
+                />
+              </summary>
+              <p className="max-w-180 pb-7 text-sm leading-relaxed text-white/50 sm:text-base">
+                {item.answer}
+              </p>
+            </details>
+          ))}
         </div>
       </Wrapper>
     </section>
