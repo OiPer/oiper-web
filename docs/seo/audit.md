@@ -3,7 +3,7 @@
 AUDIT: oiper.com (prod) + dev.oiper.com (next release) — 2026-10-06
 SCORE SUMMARY: 4 P0 · 10 P1 · 7 P2
 
-Method: crawled every reachable page on `oiper.com`, `dev.oiper.com` and `desktop.oiper.com` with a Googlebot user agent (37 URLs each), read the raw HTML that crawlers receive, cross-checked against the source in `oiper-web/src`, and ran Lighthouse 12 locally (mobile + desktop) on the 4 key pages. Raw data lives in [`data/`](data/), scripts in `W:/tauri/seo-tools` (kept outside the repo).
+Method: crawled every reachable page on `oiper.com`, `dev.oiper.com` and `desktop.oiper.com` with a Googlebot user agent (37 URLs each), read the raw HTML that crawlers receive, cross-checked against the source in `oiper-web/src`, and ran Lighthouse 12 locally (mobile + desktop) on the 4 key pages. Raw data lives in [`data/`](data/), scripts in the `seo/` suite of [oiper-test-suite](https://github.com/al-imam/oiper-test-suite).
 
 > Note: Lighthouse scores SEO 100/100 on every page. That score is misleading here because Lighthouse only checks that a canonical tag exists, not that it points to the right domain.
 

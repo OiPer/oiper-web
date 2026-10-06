@@ -19,15 +19,15 @@ Research date: 2026-10-06 · Sites: `oiper.com` (prod), `dev.oiper.com` (next re
 
 ## Files
 
-| File                                   | What's in it                                                                                                                |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| [implementation.md](implementation.md) | **What the `seo` branch changed**, env vars for dev and prod, manual steps, post-deploy checks                              |
-| [plan.md](plan.md)                     | The original plan: 18 ranked fixes, unanswered buyer questions, the GA4/GSC setup split for dev and prod, release checklist |
-| [audit.md](audit.md)                   | Technical audit: P0/P1/P2 findings with evidence, per-page table for prod vs dev, Lighthouse                                |
-| [visibility.md](visibility.md)         | AI and brand visibility: who gets recommended instead and why                                                               |
-| [competitors.md](competitors.md)       | Product positioning, brand hygiene, 11-competitor SEO benchmark, keyword clusters                                           |
-| `data/`                                | Raw crawl JSON (3 hosts), autocomplete keywords, Lighthouse summary                                                         |
-| `W:/tauri/seo-tools`                   | Scripts to re-run the crawl, table, competitor benchmark and keyword mining (outside the repo, `npm install` there first)   |
+| File                                   | What's in it                                                                                                                      |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| [implementation.md](implementation.md) | **What the `seo` branch changed**, env vars for dev and prod, manual steps, post-deploy checks                                    |
+| [plan.md](plan.md)                     | The original plan: 18 ranked fixes, unanswered buyer questions, the GA4/GSC setup split for dev and prod, release checklist       |
+| [audit.md](audit.md)                   | Technical audit: P0/P1/P2 findings with evidence, per-page table for prod vs dev, Lighthouse                                      |
+| [visibility.md](visibility.md)         | AI and brand visibility: who gets recommended instead and why                                                                     |
+| [competitors.md](competitors.md)       | Product positioning, brand hygiene, 11-competitor SEO benchmark, keyword clusters                                                 |
+| `data/`                                | Raw crawl JSON (3 hosts), autocomplete keywords, Lighthouse summary                                                               |
+| `oiper-test-suite/seo`                 | Scripts to re-run the crawl, table, competitor benchmark and keyword mining ([repo](https://github.com/al-imam/oiper-test-suite)) |
 
 ## Limits of this research
 

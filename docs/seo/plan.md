@@ -99,11 +99,11 @@ Then submit the sitemap in Search Console and Bing, and run [Rich Results Test](
 ## Re-running this research
 
 ```bash
-cd W:/tauri/seo-tools && npm install
-npm run crawl        # every page on prod + dev → data/out-*.json
-npm run table        # per-page markdown table
-npm run competitors  # competitor schema / sitemap / llms.txt benchmark
-npm run keywords     # autocomplete demand → data/keywords.json
+cd W:/tauri/oiper-test-suite && npm install
+npm run seo:crawl        # every page on prod + dev → seo/results/out-*.json
+npm run seo:table        # per-page markdown table
+npm run seo:competitors  # competitor schema / sitemap / llms.txt benchmark
+npm run seo:keywords     # autocomplete demand → seo/results/keywords.json
 ```
 
 Once Search Console has 4+ weeks of data, connect the GSC MCP (`claude mcp add gsc -- npx -y mcp-server-gsc`) and re-run the `audit` skill to get real rankings and quick wins. The skills are installed in `W:/tauri/.claude/skills/`.
