@@ -30,27 +30,68 @@ import {
 } from '../constants/links'
 
 const productLinks = [
-  { label: 'Features', href: ANCHOR_FEATURES },
-  { label: 'Performance', href: ANCHOR_PERFORMANCE },
-  { label: 'Privacy', href: ANCHOR_PRIVACY },
-  { label: 'Languages', href: ANCHOR_LANGUAGES },
-  { label: 'Pricing', href: ANCHOR_PRICING },
-  { label: 'FAQ', href: ANCHOR_FAQ },
+  { label: 'Features', href: ANCHOR_FEATURES, destination: 'features' },
+  {
+    label: 'Performance',
+    href: ANCHOR_PERFORMANCE,
+    destination: 'performance',
+  },
+  { label: 'Privacy', href: ANCHOR_PRIVACY, destination: 'privacy' },
+  { label: 'Languages', href: ANCHOR_LANGUAGES, destination: 'languages' },
+  { label: 'Pricing', href: ANCHOR_PRICING, destination: 'pricing' },
+  { label: 'FAQ', href: ANCHOR_FAQ, destination: 'faq' },
 ]
 
 const resourceLinks = [
-  { icon: BookOpen, label: 'Documentation', href: DOCS_URL, external: false },
-  { icon: Library, label: 'Resources', href: RESOURCES_URL, external: false },
-  { icon: Tag, label: 'Changelog', href: CHANGELOG_URL, external: false },
-  { icon: Github, label: 'GitHub', href: GITHUB_REPO, external: true },
-  { icon: LifeBuoy, label: 'Support', href: GITHUB_REPO, external: true },
+  {
+    icon: BookOpen,
+    label: 'Documentation',
+    href: DOCS_URL,
+    destination: 'docs',
+    external: false,
+  },
+  {
+    icon: Library,
+    label: 'Resources',
+    href: RESOURCES_URL,
+    destination: 'resources',
+    external: false,
+  },
+  {
+    icon: Tag,
+    label: 'Changelog',
+    href: CHANGELOG_URL,
+    destination: 'changelog',
+    external: false,
+  },
+  {
+    icon: Github,
+    label: 'GitHub',
+    href: GITHUB_REPO,
+    destination: 'github',
+    external: true,
+  },
+  {
+    icon: LifeBuoy,
+    label: 'Support',
+    href: GITHUB_REPO,
+    destination: 'support',
+    external: true,
+  },
   {
     icon: ShieldCheck,
     label: 'Privacy',
     href: PRIVACY_POLICY_URL,
+    destination: 'privacy_policy',
     external: false,
   },
-  { icon: Scale, label: 'Terms', href: TERMS_OF_SERVICE_URL, external: false },
+  {
+    icon: Scale,
+    label: 'Terms',
+    href: TERMS_OF_SERVICE_URL,
+    destination: 'terms_of_service',
+    external: false,
+  },
 ]
 
 export function FooterSection() {
@@ -88,7 +129,7 @@ export function FooterSection() {
                     <NavigationLink
                       href={link.href}
                       location="footer"
-                      destination={link.href}
+                      destination={link.destination}
                       className="text-sm text-white/35 hover:text-white/80"
                     >
                       {link.label}
@@ -114,7 +155,7 @@ export function FooterSection() {
                       <NavigationLink
                         href={link.href}
                         location="footer"
-                        destination={link.href}
+                        destination={link.destination}
                         className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white/80"
                       >
                         <link.icon className="size-4" strokeWidth={1.5} />

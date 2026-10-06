@@ -177,7 +177,10 @@ export function useCheckoutQueryParam(
   const loggedCancel = useRef(false)
 
   useEffect(() => {
-    if (checkoutPlan !== 'cancelled') return
+    if (checkoutPlan !== 'cancelled') {
+      loggedCancel.current = false
+      return
+    }
 
     if (!loggedCancel.current) {
       loggedCancel.current = true
