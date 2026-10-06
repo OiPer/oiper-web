@@ -9,10 +9,11 @@ import { AuthProvider } from '@/features/auth/auth-context'
 import { PublicAuthModalClientNoSSR } from '@/features/auth/public-auth-modal-client'
 import { DetectOSScript } from '@/features/download/download-button'
 import { MacDownloadDialog } from '@/features/download/mac-download-dialog'
+import { ServiceWorker } from '@/features/pwa/service-worker'
 import { GoogleAnalytics } from '@/features/seo/google-analytics'
 import { JsonLd, ORGANIZATION_ID, WEBSITE_ID } from '@/features/seo/json-ld'
 import { cn } from '@/lib/utils'
-import { Metadata } from 'next'
+import { Metadata, Viewport } from 'next'
 import { ThemeProvider } from 'next-themes'
 import { Fira_Code, Inter } from 'next/font/google'
 import { PropsWithChildren, Suspense } from 'react'
@@ -31,6 +32,10 @@ const title = 'OiPer: Private Voice Dictation for Windows, Mac & Linux'
 
 const description =
   'Hold a hotkey, speak, and your words appear in any app. OiPer is fast, private voice-to-text that runs locally on Windows, macOS and Linux. Free to use.'
+
+export const viewport: Viewport = {
+  themeColor: '#0a0a0a',
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.BASE_URL),
@@ -96,7 +101,7 @@ export default function Layout({ children }: PropsWithChildren) {
                 '@id': ORGANIZATION_ID,
                 name: 'OiPer',
                 url: joinUrl(env.BASE_URL),
-                logo: joinUrl(env.BASE_URL, '/icon'),
+                logo: joinUrl(env.BASE_URL, '/icon/512'),
                 email: 'support@oiper.com',
                 sameAs: ['https://github.com/OiPer'],
               },
@@ -123,6 +128,7 @@ export default function Layout({ children }: PropsWithChildren) {
 
               <PublicAuthModalClientNoSSR />
               <MacDownloadDialog />
+              <ServiceWorker />
               <Toaster richColors />
             </AuthProvider>
           </QueryProvider>

@@ -25,7 +25,9 @@ What's in place, what's left to do, and how to check it. Research baseline: 2026
 - [x] Homepage FAQ section. The hero now names the platforms
 - [x] Lazy-loaded the 3D globe, gave the flag images sizes, labeled the menu button, improved text contrast
 - [x] Docs cover Linux (downloads, text-typing tools, data folders). The privacy policy discloses GA
-- [x] Moved the SEO scripts into `oiper-test-suite/seo`
+- [x] Moved the SEO scripts into `oiper-test-suite/seo` (`seo:audit` checks every page, `seo/previews.js` saves every social card and icon)
+- [x] Sign-in, account and 404 pages have their own titles, descriptions and social cards
+- [x] PWA per the official Next.js guide: manifest with 192/512 icons and screenshots, theme color, hand-written `public/sw.js`, offline page
 
 ### Must do
 
@@ -63,16 +65,17 @@ Competitors rank with these page types. OiPer has none yet.
 
 ## What the code does now
 
-| Area            | Behaviour                                                                                                                                                                                                                   |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Domain          | `metadataBase`, canonicals and every absolute URL come from `NEXT_PUBLIC_BASE_URL`                                                                                                                                          |
-| Indexing        | `robots.txt` and `sitemap.xml` (home, download, changelog, every docs and resources page). Dev serves `Disallow: /` and `noindex` on every page. `/auth`, `/account` and `/dev` are `noindex`. Unknown docs URLs return 404 |
-| Rendering       | The homepage is server-rendered. Only the pricing cards load in the browser                                                                                                                                                 |
-| Metadata        | Every public page has its own title, a 120–160 char description, canonical, `og:url` and social card. Docs pages use `… \| OiPer Docs`                                                                                      |
-| Images          | `favicon.ico`, `icon`, `apple-icon`, the manifest, a 1200×630 card at `/opengraph-image`, and one card per docs page at `/og/<path>`. All are generated from `@oiper/logo`                                                  |
-| Structured data | `Organization` + `WebSite` on every page. `SoftwareApplication` (live prices) + `FAQPage` on home. `TechArticle` + `BreadcrumbList` on docs                                                                                 |
-| AI assistants   | `/llms.txt`, built from the docs                                                                                                                                                                                            |
-| Analytics       | GA4 and the Search Console tag, each loaded only when its env var is set                                                                                                                                                    |
+| Area            | Behaviour                                                                                                                                                                                                                                                                                                                                                                |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Domain          | `metadataBase`, canonicals and every absolute URL come from `NEXT_PUBLIC_BASE_URL`                                                                                                                                                                                                                                                                                       |
+| Indexing        | `robots.txt` and `sitemap.xml` (home, download, changelog, every docs and resources page). Dev serves `Disallow: /` and `noindex` on every page. `/auth`, `/account` and `/dev` are `noindex`. Unknown docs URLs return 404                                                                                                                                              |
+| Rendering       | The homepage is server-rendered. Only the pricing cards load in the browser                                                                                                                                                                                                                                                                                              |
+| Metadata        | Every public page has its own title, a 120–160 char description, canonical, `og:url` and social card. Docs pages use `… \| OiPer Docs`                                                                                                                                                                                                                                   |
+| Images          | `favicon.ico`, `icon`, `apple-icon`, the manifest, a 1200×630 card at `/opengraph-image`, and one card per docs page at `/og/<path>`. All are generated from `@oiper/logo`                                                                                                                                                                                               |
+| Structured data | `Organization` + `WebSite` on every page. `SoftwareApplication` (live prices) + `FAQPage` on home. `TechArticle` + `BreadcrumbList` on docs                                                                                                                                                                                                                              |
+| AI assistants   | `/llms.txt`, built from the docs                                                                                                                                                                                                                                                                                                                                         |
+| PWA             | `public/sw.js`, registered in production only. Network only: `/api`, `/auth`, `/account`, `/dev`, download redirects. Cache first: hashed JS/CSS, icons, images, social cards. Cached then refreshed in the background: home, docs, policy pages. Everything else: network first with cache fallback, then an offline page. Bump `VERSION` in `sw.js` to drop old caches |
+| Analytics       | GA4 and the Search Console tag, each loaded only when its env var is set                                                                                                                                                                                                                                                                                                 |
 
 ## Environment variables
 

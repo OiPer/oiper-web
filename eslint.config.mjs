@@ -152,4 +152,11 @@ export default defineConfig([
       'import/no-default-export': 0,
     },
   },
+
+  {
+    files: ['public/sw.js'],
+    languageOptions: {
+      globals: { self: 'readonly', caches: 'readonly', fetch: 'readonly' },
+    },
+  },
 ])
