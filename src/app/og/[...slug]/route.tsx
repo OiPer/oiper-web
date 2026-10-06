@@ -10,8 +10,10 @@ interface RouteProps {
 
 function getSection(name: string) {
   if (name === 'docs') return { eyebrow: 'Docs', source: docsSource }
-  if (name === 'resources')
+  if (name === 'resources') {
     return { eyebrow: 'Resources', source: resourcesSource }
+  }
+
   notFound()
 }
 

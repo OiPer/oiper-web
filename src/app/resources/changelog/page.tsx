@@ -4,6 +4,7 @@ import {
   RELEASES_PER_CHANGELOG_PAGE,
 } from '@/features/changelog/github-releases'
 import { CHANGELOG_URL } from '@/features/landing-page/constants/links'
+import { DEFAULT_OG_IMAGE } from '@/features/seo/og-card'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -24,12 +25,28 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { cursor: value } = await searchParams
   const cursor = parseCursor(value)
+  const title = cursor === undefined ? 'Changelog' : `Changelog after ${cursor}`
+  const url = cursor === undefined ? CHANGELOG_URL : getCursorUrl(cursor)
+
+  const description =
+    'Every OiPer Desktop release, newest first: new features, fixes, and improvements to the voice-to-text app for Windows, macOS and Linux.'
 
   return {
-    title: cursor === undefined ? 'Changelog' : `Changelog after ${cursor}`,
-    description: 'OiPer Desktop releases, newest first.',
-    alternates: {
-      canonical: cursor === undefined ? CHANGELOG_URL : getCursorUrl(cursor),
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      url,
+      siteName: 'OiPer',
+      title,
+      description,
+      images: [DEFAULT_OG_IMAGE],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [DEFAULT_OG_IMAGE],
     },
   }
 }
