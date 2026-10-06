@@ -1,0 +1,108 @@
+# SEO
+
+What's in place, what's left to do, and how to check it. Research baseline: 2026-10-06.
+
+## Where we started
+
+- Google had indexed **1 page** (the homepage). Every page declared `desktop.oiper.com` as its canonical URL.
+- AI search answers never mentioned OiPer for buyer questions such as "Wispr Flow alternative for Linux" or "voice to text for coding". Competitors like Wispr Flow, Superwhisper, Handy and OpenWhispr showed up every time.
+- There were no third-party mentions. OiPer only existed on oiper.com and GitHub.
+
+## What the code does now
+
+| Area            | Behaviour                                                                                                                                                                                                                   |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Domain          | `metadataBase` and canonicals come from `NEXT_PUBLIC_APP_ENV`: `https://oiper.com` in production, `https://dev.oiper.com` in development                                                                                    |
+| Indexing        | `robots.txt` and `sitemap.xml` (home, download, changelog, every docs and resources page). Dev serves `Disallow: /` and `noindex` on every page. `/auth`, `/account` and `/dev` are `noindex`. Unknown docs URLs return 404 |
+| Rendering       | The homepage is server-rendered. Only the pricing cards load in the browser                                                                                                                                                 |
+| Metadata        | Every public page has its own title, a 120–160 char description, canonical, `og:url` and social card. Docs pages use `… \| OiPer Docs`                                                                                      |
+| Images          | `favicon.ico`, `icon`, `apple-icon`, the manifest, a 1200×630 card at `/opengraph-image`, and one card per docs page at `/og/<path>`. All are generated from `@oiper/logo`                                                  |
+| Structured data | `Organization` + `WebSite` on every page. `SoftwareApplication` (live prices) + `FAQPage` on home. `TechArticle` + `BreadcrumbList` on docs                                                                                 |
+| AI assistants   | `/llms.txt`, built from the docs                                                                                                                                                                                            |
+| Analytics       | GA4 and the Search Console tag, each loaded only when its env var is set                                                                                                                                                    |
+
+## Environment variables
+
+One variable per concern. Each environment gets its own value.
+
+| Variable                               | Production                                                | Development                        |
+| -------------------------------------- | --------------------------------------------------------- | ---------------------------------- |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID`        | `G-…` from the prod GA4 property                          | `G-…` from a separate dev property |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console HTML-tag token (skip if you verify by DNS) | not needed                         |
+
+Empty means the feature is off. A malformed GA ID stops the app at startup.
+
+## To do
+
+### Before or at launch
+
+- [ ] **Netlify:** make `oiper.com` the primary domain and 301 `desktop.oiper.com/*` → `https://oiper.com/:splat`. Today Netlify treats `desktop.oiper.com` as primary.
+- [ ] Set the env vars above in Netlify for prod and dev.
+- [ ] **Search Console:** add a Domain property for `oiper.com` (DNS TXT covers all subdomains) and submit `https://oiper.com/sitemap.xml`.
+- [ ] **Bing Webmaster Tools:** import from Search Console. ChatGPT search uses Bing's index.
+- [ ] **Consent:** decide whether EU/UK visitors get a cookie banner before GA loads. The privacy policy already discloses GA.
+- [ ] **Testimonials:** the three homepage quotes look like placeholders, and AI search already repeats them as real reviews. Replace them with real, attributable quotes or remove the section.
+- [ ] **Speed claim:** pick one number and use it everywhere. The site and docs currently say 1 s, 1.5 s and "3.5x faster". A benchmarks page that shows the method would back it up.
+
+### Content that wins search (biggest impact)
+
+Competitors rank with these page types. OiPer has none yet.
+
+- [ ] `/alternatives/wispr-flow` and `/alternatives/superwhisper`: an honest comparison of platforms, offline use, price and speed.
+- [ ] `/linux` and `/windows`: few polished dictation apps exist for these, and most results are GitHub repos.
+- [ ] `/use-cases/coding`: dictating into VS Code, Cursor and the Claude Code terminal, using snippets and the dictionary for jargon.
+- [ ] `/benchmarks`: method, hardware and results.
+
+### Off-site (AI assistants recommend brands that others mention)
+
+- [ ] Add GitHub topics to `OiPer/desktop` (`speech-to-text`, `dictation`, `voice-typing`, `whisper`, `wispr-flow-alternative`, `tauri`) and a README with features, platforms and a link to oiper.com.
+- [ ] Clean up the GitHub org: archive the unrelated `todo*` and `media-*` repos, and check that `oiper-web` is meant to be public.
+- [ ] List OiPer on Product Hunt and AlternativeTo (as an alternative to Wispr Flow, Superwhisper and Dragon).
+- [ ] Give honest answers in relevant Reddit threads (r/linux, r/software, r/ChatGPTCoding), open PRs to "awesome" dictation/Whisper lists, and post a short demo video.
+- [ ] Create X, LinkedIn and YouTube profiles and add them to `sameAs` in `src/app/layout.tsx`.
+
+### Smaller fixes
+
+- [ ] Render the pricing cards on the server: move `useSearchParams` in `pricing-section.tsx` into a small child component.
+- [ ] Trim the `/download` page DOM (about 6,700 nodes) and cache the GitHub releases fetch.
+- [ ] `/resources/changelog?cursor=<unknown>` returns a `noindex` page with status 200 instead of 404.
+
+## Verify after each deploy
+
+```bash
+curl -s https://dev.oiper.com/ | grep -c "Everything you need"               # > 0: homepage is server-rendered
+curl -s https://dev.oiper.com/ | grep -o '<meta name="robots"[^>]*>'           # noindex, nofollow
+curl -s https://dev.oiper.com/robots.txt                                      # Disallow: /
+curl -s -o /dev/null -w "%{http_code}\n" https://dev.oiper.com/docs/nope      # 404
+curl -s https://oiper.com/ | grep -o 'rel="canonical" href="[^"]*"'           # https://oiper.com
+curl -sI https://desktop.oiper.com/docs | grep -i location                    # 301 to oiper.com (after the Netlify change)
+```
+
+Then run the [Rich Results Test](https://search.google.com/test/rich-results) and an [opengraph.xyz](https://www.opengraph.xyz/) preview on `/` and one docs page.
+
+## Keep checking
+
+- **Monthly:** search these buyer questions and note who gets recommended:
+  1. best free offline dictation app for Windows
+  2. Wispr Flow alternative for Linux
+  3. voice to text for coding
+  4. private speech to text app that works offline
+  5. Superwhisper alternative for Windows
+- **4–6 weeks after Search Console goes live:** connect the GSC MCP (`claude mcp add gsc -- npx -y mcp-server-gsc`) and run the `audit` skill in `W:/tauri/.claude/skills/` to get real rankings and quick wins.
+- **Re-crawl:** the scripts and the 2026-10-06 baseline data live in the [oiper-test-suite](https://github.com/al-imam/oiper-test-suite) `seo/` folder. Run `npm run seo:crawl`, `seo:table`, `seo:competitors` and `seo:keywords`.
+
+## Research notes
+
+**Positioning:** the fastest private dictation app that works the same on Windows, macOS and Linux. Premium competitors are Mac-first (Superwhisper, VoiceInk, MacWhisper) or skip Linux (Wispr Flow). The free Linux tools (Handy, OpenWhispr, Voquill) are open source with rougher UX. OiPer isn't open source, so never claim it is.
+
+**Real searches people type** (Google Autocomplete), in priority order:
+
+| Cluster           | Examples                                                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ |
+| Linux             | speech to text linux (ubuntu / mint / local), voice typing for linux, wispr flow alternative linux           |
+| Windows           | speech to text windows 11 (free / app), offline speech to text windows, superwhisper alternative for windows |
+| Alternatives      | wispr flow alternative (local / free / open source), superwhisper alternative                                |
+| Coding            | voice to text for coding / vibe coding / claude code / vs code                                               |
+| Private / offline | offline speech to text app, private speech to text, local whisper app                                        |
+
+**Brand:** "OiPer review" searches get mixed up with Zoiper (a VoIP softphone). Keep using "OiPer" consistently, along with the `Organization` schema.
