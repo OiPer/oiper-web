@@ -52,14 +52,10 @@ export const metadata: Metadata = {
   authors: [{ name: 'OiPer', url: '/' }],
   creator: 'OiPer',
   publisher: 'OiPer',
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-    },
-  },
+  robots:
+    env.APP_ENV === 'production'
+      ? { index: true, follow: true }
+      : { index: false, follow: false },
   openGraph: {
     type: 'website',
     locale: 'en_US',
