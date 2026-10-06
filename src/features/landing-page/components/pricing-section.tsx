@@ -55,6 +55,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     observer.observe(section)
     return () => observer.disconnect()
   }, [])
+
   const [changePlanTarget, setChangePlanTarget] =
     useState<PlanChangeTarget | null>(null)
   const { startCheckout, pendingCheckout } = useStartCheckout()
@@ -274,6 +275,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
             <IntervalToggle
               value={interval}
               onChange={(next) => {
+                if (next === interval) return
                 setInterval(next)
                 logSelect('billing_interval', 'pricing', {
                   interval: next.toLowerCase(),

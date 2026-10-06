@@ -11,7 +11,7 @@ import { openPaddleCheckout } from '@/lib/paddle'
 import { redirectToStripeCheckout } from '@/lib/stripe-checkout'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 type PricingPlan = components['schemas']['PricingPlan']
@@ -174,10 +174,16 @@ export function useCheckoutQueryParam(
   const checkoutPlan = searchParams.get('checkout')
   const checkoutInterval =
     searchParams.get('interval') === 'yearly' ? 'YEARLY' : 'MONTHLY'
+  const loggedCancel = useRef(false)
 
   useEffect(() => {
     if (checkoutPlan !== 'cancelled') return
-    logClose('checkout', 'pricing', { provider: 'stripe' })
+
+    if (!loggedCancel.current) {
+      loggedCancel.current = true
+      logClose('checkout', 'pricing', { provider: 'stripe' })
+    }
+
     toast.info("Checkout cancelled — you weren't charged")
     router.replace(redirectTo)
   }, [checkoutPlan, redirectTo, router])
