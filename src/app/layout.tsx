@@ -1,4 +1,4 @@
-import '@/lib/env'
+import { env } from '@/lib/env'
 import '@/styles/index.css'
 import '@/styles/theme.css'
 
@@ -24,27 +24,32 @@ const firaCode = Fira_Code({
   variable: '--next-font-fira-code',
 })
 
+const title = 'OiPer: Private Voice Dictation for Windows, Mac & Linux'
+
+const description =
+  'Hold a hotkey, speak, and your words appear in any app. OiPer is fast, private voice-to-text that runs locally on Windows, macOS and Linux. Free to use.'
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://desktop.oiper.com'),
+  metadataBase: new URL(env.SITE_URL),
+  applicationName: 'OiPer',
   title: {
-    default: 'OiPer | Privacy-First Voice-to-Text',
+    default: title,
     template: '%s | OiPer',
   },
-  description:
-    'OiPer is a privacy-first desktop application that transforms your voice into text with elegance and precision. Hold a hotkey, speak, release — and watch your words appear. Free for macOS, Windows & Linux.',
+  description,
   keywords: [
+    'voice dictation',
     'voice to text',
     'speech to text',
-    'transcription',
-    'privacy',
-    'desktop app',
-    'macOS',
+    'dictation app',
+    'offline speech to text',
+    'local whisper',
+    'voice typing',
     'Windows',
+    'macOS',
     'Linux',
-    'local transcription',
-    'voice recognition',
   ],
-  authors: [{ name: 'OiPer', url: 'https://desktop.oiper.com' }],
+  authors: [{ name: 'OiPer', url: '/' }],
   creator: 'OiPer',
   publisher: 'OiPer',
   robots: {
@@ -58,29 +63,24 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://desktop.oiper.com',
+    url: '/',
     siteName: 'OiPer',
-    title: 'OiPer | Privacy-First Voice-to-Text',
-    description:
-      'Privacy-first desktop app that transforms your voice into text. Hold a hotkey, speak, release. Free for macOS, Windows & Linux.',
+    title,
+    description,
     images: [
       {
         url: '/og.png',
         width: 1200,
         height: 630,
-        alt: 'OiPer | Privacy-First Voice-to-Text',
+        alt: title,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'OiPer | Privacy-First Voice-to-Text',
-    description:
-      'Privacy-first desktop app that transforms your voice into text. Free for macOS, Windows & Linux.',
+    title,
+    description,
     images: ['/og.png'],
-  },
-  alternates: {
-    canonical: 'https://desktop.oiper.com',
   },
   category: 'technology',
   formatDetection: {

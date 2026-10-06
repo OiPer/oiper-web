@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Download',
   description: 'Download OiPer for Windows, macOS and Linux.',
+  alternates: { canonical: '/download' },
 }
 
 interface PageProps {

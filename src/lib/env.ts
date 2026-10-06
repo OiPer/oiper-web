@@ -30,6 +30,10 @@ const envSchema = z
         ? ('production' as const)
         : ('sandbox' as const),
     ENABLE_STRIPE_CHECKOUT: value.APP_ENV !== 'production',
+    SITE_URL:
+      value.APP_ENV === 'production'
+        ? 'https://oiper.com'
+        : 'https://dev.oiper.com',
   }))
 
 export const env = envSchema.parse({
