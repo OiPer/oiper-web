@@ -1,4 +1,5 @@
-import { OG_SIZE, ogImage } from '@/features/seo/og-card'
+import { OG_SIZE } from '@/features/seo/app-pages'
+import { ogImage } from '@/features/seo/og-card'
 
 export const alt = 'OiPer: private voice dictation for Windows, macOS and Linux'
 export const size = OG_SIZE

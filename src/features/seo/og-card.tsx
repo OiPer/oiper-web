@@ -2,9 +2,7 @@ import { OiPerLogo } from '@oiper/logo'
 import { ImageResponse } from 'next/og'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { ogCopy } from './og-copy'
-
-export const OG_SIZE = { width: 1200, height: 630 }
+import { OG_SIZE, ogCopy } from './app-pages'
 
 export async function ogImage(path: string, eyebrow: string) {
   const { title, description, screenshot } = ogCopy(path)

@@ -1,10 +1,10 @@
+import { ogCopy } from '@/features/seo/app-pages'
 import {
   breadcrumbs,
   JsonLd,
   ORGANIZATION_ID,
   WEBSITE_ID,
 } from '@/features/seo/json-ld'
-import { ogCopy } from '@/features/seo/og-copy'
 import { env } from '@/lib/env'
 import { joinUrl } from '@/lib/url'
 import {

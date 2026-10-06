@@ -1,8 +1,8 @@
 import { getReleases, type Release } from '@/features/changelog/github-releases'
 import { DownloadPage } from '@/features/download/download-page'
 import { DOWNLOAD_URL, HOME } from '@/features/landing-page/constants/links'
+import { ogCopy } from '@/features/seo/app-pages'
 import { breadcrumbs, JsonLd } from '@/features/seo/json-ld'
-import { ogCopy } from '@/features/seo/og-copy'
 import type { Metadata } from 'next'
 
 const title = 'Download OiPer for Windows, macOS and Linux'

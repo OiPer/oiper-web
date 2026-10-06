@@ -7,8 +7,8 @@ import {
   CHANGELOG_URL,
   RESOURCES_URL,
 } from '@/features/landing-page/constants/links'
+import { ogCopy } from '@/features/seo/app-pages'
 import { breadcrumbs, JsonLd } from '@/features/seo/json-ld'
-import { ogCopy } from '@/features/seo/og-copy'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
