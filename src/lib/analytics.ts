@@ -18,13 +18,27 @@ const SUFFIXES = {
   error: 'failed',
 } as const
 
+function snakeCase(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+}
+
 function send(
   verb: keyof typeof SUFFIXES,
   name: string,
   location: string,
-  details?: EventDetails
+  details: EventDetails = {}
 ) {
-  window.gtag?.('event', `${name}_${SUFFIXES[verb]}`, { location, ...details })
+  const params = Object.fromEntries(
+    Object.entries({ location, ...details }).map(([key, value]) => [
+      key,
+      typeof value === 'string' ? snakeCase(value) : value,
+    ])
+  )
+
+  window.gtag?.('event', `${snakeCase(name)}_${SUFFIXES[verb]}`, params)
 }
 
 export function logClick(

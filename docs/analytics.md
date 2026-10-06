@@ -46,9 +46,9 @@ logSelect('billing_interval', 'pricing', { interval: 'yearly' })
 
 logError('signin', 'auth', {
   mode: 'modal',
-  error_type: 'AUTH_INVALID_CREDENTIALS',
+  error_type: 'auth_invalid_credentials',
 })
-// → signin_failed { location: 'auth', mode: 'modal', error_type: 'AUTH_INVALID_CREDENTIALS' }
+// → signin_failed { location: 'auth', mode: 'modal', error_type: 'auth_invalid_credentials' }
 ```
 
 Never build an event name by hand and never call `window.gtag` directly.
@@ -85,12 +85,12 @@ Add a detail only when it carries product context GA4 can't know and that change
 
 | Good                                                      | Why                                                      |
 | --------------------------------------------------------- | -------------------------------------------------------- |
-| `platform: 'macos-intel'`                                 | Which OiPer build was chosen                             |
+| `platform: 'macos_intel'`                                 | Which OiPer build was chosen                             |
 | `plan: 'pro'`, `interval: 'yearly'`, `provider: 'paddle'` | Which offer drove the upgrade                            |
 | `mode: 'modal'`                                           | Whether auth happened in the modal or on the full page   |
-| `error_type: 'AUTH_EMAIL_ALREADY_EXISTS'`                 | Why the journey broke                                    |
+| `error_type: 'auth_email_already_exists'`                 | Why the journey broke                                    |
 | `outcome: 'email_verification'`                           | Which branch a successful action took                    |
-| `destination: '/docs'`                                    | Where a navigation link leads                            |
+| `destination: 'docs'`                                     | Where a navigation link leads                            |
 | `question: 'offline'`                                     | Which FAQ entry was opened (a stable id, never the text) |
 
 | Bad                                                  | Why                                           |
@@ -101,9 +101,11 @@ Add a detail only when it carries product context GA4 can't know and that change
 | Raw error messages or anything the user typed        | May contain personal data; use a code instead |
 | Timestamps, random ids, full URLs with query strings | Dynamic and noisy                             |
 
-`platform` always means the **OiPer download target** (`windows`, `macos`, `macos-intel`, `linux`, `linux-deb`, `linux-rpm`), never the visitor's operating system.
+`platform` always means the **OiPer download target** (`windows`, `macos`, `macos_intel`, `linux`, `linux_deb`, `linux_rpm`), never the visitor's operating system.
 
-`error_type` is the API error code when there is one (e.g. `BILLING_ALREADY_SUBSCRIBED`), otherwise a short snake_case label (`missing_token`, `too_large`, `unknown`).
+`error_type` is the API error code when there is one (e.g. `billing_already_subscribed`), otherwise a short label (`missing_token`, `too_large`, `unknown`).
+
+**Every event name, location and string detail is lowercase snake_case.** The helper enforces this: it converts every string value before sending, so API codes like `AUTH_INVALID_CREDENTIALS` become `auth_invalid_credentials`, `macos-intel` becomes `macos_intel`, and a link to `/resources/privacy-policy` becomes `resources_privacy_policy`. Pass values as they are and let the helper normalise them.
 
 ## What GA4 already provides
 
@@ -160,11 +162,11 @@ Every event the site sends. All events also carry `location`.
 
 ### Navigation and content
 
-| Event                | Location  | Details                                                                    | When                                                                                |
-| -------------------- | --------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `navigation_clicked` | `footer`  | `destination`                                                              | Internal footer links (product anchors, docs, resources, changelog, privacy, terms) |
-| `pricing_viewed`     | `landing` | —                                                                          | Pricing section scrolls into view, once per visit                                   |
-| `faq_opened`         | `faq`     | `question`: `offline` `free` `platforms` `audio_privacy` `apps` `hardware` | Opening an FAQ question                                                             |
+| Event                | Location  | Details                                                                                       | When                                                                                |
+| -------------------- | --------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `navigation_clicked` | `footer`  | `destination` (the link path as an id: `features`, `pricing`, `docs`, `resources_changelog`…) | Internal footer links (product anchors, docs, resources, changelog, privacy, terms) |
+| `pricing_viewed`     | `landing` | —                                                                                             | Pricing section scrolls into view, once per visit                                   |
+| `faq_opened`         | `faq`     | `question`: `offline` `free` `platforms` `audio_privacy` `apps` `hardware`                    | Opening an FAQ question                                                             |
 
 ### Sign in and sign up
 
@@ -174,12 +176,12 @@ Every event the site sends. All events also carry `location`.
 | `signin_clicked`                                              | `header` `auth`    | —                                                                                                                                                | "Sign in" in the header menu or the auth card switch link |
 | `oauth_clicked`                                               | `auth`             | `provider`: `google` `github`, `mode`                                                                                                            | "Continue with" Google or GitHub                          |
 | `forgot_password_clicked`                                     | `auth`             | —                                                                                                                                                | "Forgot password?"                                        |
-| `signin_submitted` / `signin_completed` / `signin_failed`     | `auth`             | `mode`, `outcome` (`email_verification`), `error_type` (`AUTH_INVALID_CREDENTIALS` `AUTH_AUTH_METHOD_NOT_ALLOWED` `not_authenticated` `unknown`) | Sign-in form                                              |
-| `signup_submitted` / `signup_completed` / `signup_failed`     | `auth`             | `mode`, `outcome` (`email_verification`), `error_type` (`AUTH_EMAIL_ALREADY_EXISTS` `AUTH_PASSWORD_POLICY_FAILED` `not_authenticated` `unknown`) | Sign-up form                                              |
+| `signin_submitted` / `signin_completed` / `signin_failed`     | `auth`             | `mode`, `outcome` (`email_verification`), `error_type` (`auth_invalid_credentials` `auth_auth_method_not_allowed` `not_authenticated` `unknown`) | Sign-in form                                              |
+| `signup_submitted` / `signup_completed` / `signup_failed`     | `auth`             | `mode`, `outcome` (`email_verification`), `error_type` (`auth_email_already_exists` `auth_password_policy_failed` `not_authenticated` `unknown`) | Sign-up form                                              |
 | `password_reset_request_submitted` / `_completed` / `_failed` | `auth`             | `mode`, `error_type`                                                                                                                             | "Send reset email" form                                   |
 | `password_reset_request_completed` / `_failed`                | `security`         | `error_type`                                                                                                                                     | "Send reset email" on the account security page           |
-| `password_reset_confirm_submitted` / `_completed` / `_failed` | `auth`             | `mode`, `error_type` (`missing_token` `AUTH_REQUEST_REJECTED` `unknown`)                                                                         | Set-new-password form                                     |
-| `email_verification_submitted` / `_completed` / `_failed`     | `auth`             | `mode`, `error_type` (`AUTH_INVALID_VERIFICATION_CODE` `not_authenticated` `unknown`)                                                            | Verification code form                                    |
+| `password_reset_confirm_submitted` / `_completed` / `_failed` | `auth`             | `mode`, `error_type` (`missing_token` `auth_request_rejected` `unknown`)                                                                         | Set-new-password form                                     |
+| `email_verification_submitted` / `_completed` / `_failed`     | `auth`             | `mode`, `error_type` (`auth_invalid_verification_code` `not_authenticated` `unknown`)                                                            | Verification code form                                    |
 | `verification_resend_completed` / `_failed`                   | `auth`             | `mode`, `outcome` (`sent` `already_verified`), `error_type` (`no_verification_id` `unknown`)                                                     | "Resend code"                                             |
 | `signout_clicked` / `signout_failed`                          | `header` `account` | `error_type`                                                                                                                                     | "Sign out"                                                |
 
@@ -189,18 +191,18 @@ Every event the site sends. All events also carry `location`.
 | ---------------------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | `billing_interval_selected`                    | `pricing`                                    | `interval`: `monthly` `yearly`                                                                                                                                                | Monthly/yearly toggle                                                      |
 | `upgrade_clicked`                              | `pricing`                                    | `plan`: `pro` `max`, `interval`, `provider`: `paddle` `stripe`                                                                                                                | Any upgrade button, signed in or out                                       |
-| `checkout_failed`                              | `pricing`                                    | `plan`, `interval`, `provider`, `error_type` (`BILLING_ALREADY_SUBSCRIBED` `BILLING_PROVIDER_NOT_AVAILABLE` `unknown`)                                                        | Checkout couldn't open                                                     |
+| `checkout_failed`                              | `pricing`                                    | `plan`, `interval`, `provider`, `error_type` (`billing_already_subscribed` `billing_provider_not_available` `unknown`)                                                        | Checkout couldn't open                                                     |
 | `checkout_completed`                           | `pricing` (Paddle) `billing` (Stripe return) | `plan` (Paddle only), `provider`                                                                                                                                              | Payment went through                                                       |
 | `checkout_closed`                              | `pricing`                                    | `plan` (Paddle only), `provider`                                                                                                                                              | Left checkout without paying (Paddle overlay closed, Stripe cancel return) |
 | `plan_change_clicked`                          | `pricing` `billing`                          | `plan`, `interval` (pricing only)                                                                                                                                             | "Switch" on pricing or "Change plan" on billing                            |
-| `plan_change_completed` / `plan_change_failed` | `pricing` `billing`                          | `plan`, `interval`, `outcome` (`scheduled` `immediate`), `error_type` (`BILLING_PLAN_CHANGE_NOT_ALLOWED` `BILLING_PAYMENT_FAILED` `BILLING_SUBSCRIPTION_NOT_FOUND` `unknown`) | Confirm in the change-plan dialog                                          |
+| `plan_change_completed` / `plan_change_failed` | `pricing` `billing`                          | `plan`, `interval`, `outcome` (`scheduled` `immediate`), `error_type` (`billing_plan_change_not_allowed` `billing_payment_failed` `billing_subscription_not_found` `unknown`) | Confirm in the change-plan dialog                                          |
 
 ### Account
 
 | Event                                                 | Location            | Details                                                                     | When                            |
 | ----------------------------------------------------- | ------------------- | --------------------------------------------------------------------------- | ------------------------------- |
 | `subscription_resume_completed` / `_failed`           | `billing` `pricing` | `outcome` (`resumed` `processing`), `error_type`                            | "Resume" or "Keep subscription" |
-| `billing_portal_completed` / `_failed`                | `billing`           | `error_type` (`BILLING_SUBSCRIPTION_NOT_FOUND` `unknown`)                   | "Manage billing"                |
+| `billing_portal_completed` / `_failed`                | `billing`           | `error_type` (`billing_subscription_not_found` `unknown`)                   | "Manage billing"                |
 | `profile_update_submitted` / `_completed` / `_failed` | `settings`          | `error_type`                                                                | Account name form               |
 | `avatar_update_completed` / `_failed`                 | `settings`          | `error_type` (`unsupported_format` `too_large` `read_failed` `save_failed`) | Avatar upload                   |
 | `account_deletion_completed` / `_failed`              | `settings`          | `error_type`                                                                | Delete account                  |
