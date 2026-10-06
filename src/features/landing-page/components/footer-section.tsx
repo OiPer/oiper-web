@@ -1,6 +1,7 @@
 'use client'
 
 import { DownloadButton } from '@/features/download/download-button'
+import { OiPerLogoBackground } from '@oiper/logo'
 import {
   BookOpen,
   Github,
@@ -108,10 +109,10 @@ export function FooterSection() {
 
         <div className="mt-24 flex flex-col items-start justify-between gap-6 border-t border-white/6 pt-8 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <img
-              src="https://github.com/oiper.png"
-              alt="OiPer"
-              className="h-7 w-auto rounded-md"
+            <OiPerLogoBackground
+              role="img"
+              aria-label="OiPer"
+              className="size-7"
             />
             <span className="text-sm text-white/25">
               Private speech transcription.

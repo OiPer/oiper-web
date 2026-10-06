@@ -1,8 +1,13 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useCallback, useState } from 'react'
 import { Wrapper } from '../../../components/wrapper'
-import { GlobeCanvas } from './globe-canvas'
+
+const GlobeCanvas = dynamic(
+  () => import('./globe-canvas').then((module) => module.GlobeCanvas),
+  { ssr: false }
+)
 
 const languages = [
   { name: 'English', native: 'English', code: 'gb' },
@@ -59,7 +64,9 @@ export function LanguagesSection() {
               <div className="relative h-4 w-6 shrink-0 overflow-hidden">
                 <img
                   src={`https://flagcdn.com/${language.code}.svg`}
-                  alt={language.name}
+                  alt=""
+                  width={24}
+                  height={16}
                   className="absolute inset-0 size-full object-cover"
                   loading="lazy"
                 />
