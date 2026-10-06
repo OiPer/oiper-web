@@ -132,7 +132,7 @@ export const APP_PAGES = {
 export const SITE_PAGES = {
   '/': {
     og: {
-      title: 'Dictate Anywhere',
+      title: 'Type at Speech Speed',
       description:
         'Hold a hotkey and speak while OiPer types your words into any app on your computer',
       screenshot: 1,
