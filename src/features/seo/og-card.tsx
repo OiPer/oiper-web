@@ -2,8 +2,6 @@ import { OiPerLogo } from '@oiper/logo'
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
-export const DEFAULT_OG_IMAGE = { url: '/opengraph-image', ...OG_SIZE }
-
 export function OgCard(props: {
   eyebrow: string
   title: string

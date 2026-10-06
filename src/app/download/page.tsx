@@ -1,6 +1,7 @@
 import { getReleases, type Release } from '@/features/changelog/github-releases'
 import { DownloadPage } from '@/features/download/download-page'
-import { DEFAULT_OG_IMAGE } from '@/features/seo/og-card'
+import { DOWNLOAD_URL, HOME } from '@/features/landing-page/constants/links'
+import { breadcrumbs, JsonLd } from '@/features/seo/json-ld'
 import type { Metadata } from 'next'
 
 const title = 'Download OiPer for Windows, macOS and Linux'
@@ -17,13 +18,11 @@ export const metadata: Metadata = {
     siteName: 'OiPer',
     title,
     description,
-    images: [DEFAULT_OG_IMAGE],
   },
   twitter: {
     card: 'summary_large_image',
     title,
     description,
-    images: [DEFAULT_OG_IMAGE],
   },
 }
 
@@ -42,9 +41,18 @@ export default async function Page({ searchParams }: PageProps) {
   }
 
   return (
-    <DownloadPage
-      releases={releases}
-      version={Array.isArray(version) ? version[0] : version}
-    />
+    <>
+      <JsonLd
+        data={breadcrumbs([
+          { name: 'Home', path: HOME },
+          { name: 'Download', path: DOWNLOAD_URL },
+        ])}
+      />
+
+      <DownloadPage
+        releases={releases}
+        version={Array.isArray(version) ? version[0] : version}
+      />
+    </>
   )
 }

@@ -17,7 +17,7 @@ What's in place, what's left to do, and how to check it. Research baseline: 2026
 - [x] Canonical domain is now oiper.com (it was `desktop.oiper.com`), set by `NEXT_PUBLIC_BASE_URL`
 - [x] Added `robots.txt` and `sitemap.xml`. Dev is `noindex`, as are the auth, account and dev pages
 - [x] Unknown docs URLs return a real 404
-- [x] Every page has its own title, description, canonical and social card. All 21 docs descriptions rewritten
+- [x] Every public page has its own title, description, canonical and social card (home, download and changelog each have a custom card; docs and policies get a card per page). All 21 docs descriptions rewritten
 - [x] Generated the favicon, app icons, manifest and social cards from the logo. Deleted the oversized `og.png`
 - [x] Added structured data: Organization, WebSite, SoftwareApplication, FAQPage, TechArticle, BreadcrumbList
 - [x] Added `/llms.txt` for AI assistants
@@ -110,7 +110,7 @@ Then run the [Rich Results Test](https://search.google.com/test/rich-results) an
   4. private speech to text app that works offline
   5. Superwhisper alternative for Windows
 - **4–6 weeks after Search Console goes live:** connect the GSC MCP (`claude mcp add gsc -- npx -y mcp-server-gsc`) and run the `audit` skill in `W:/tauri/.claude/skills/` to get real rankings and quick wins.
-- **Re-crawl:** the scripts and the 2026-10-06 baseline data live in the [oiper-test-suite](https://github.com/al-imam/oiper-test-suite) `seo/` folder. Run `npm run seo:crawl`, `seo:table`, `seo:competitors` and `seo:keywords`.
+- **Audit every page:** `npm run seo:audit` in [oiper-test-suite](https://github.com/al-imam/oiper-test-suite) checks each sitemap page for a unique 1200×630 social image, matching canonical/`og:url`, and valid structured data (use `node seo/audit.js https://dev.oiper.com` for dev). `seo:crawl`, `seo:table`, `seo:competitors` and `seo:keywords` re-run the research against the 2026-10-06 baseline.
 
 ## Research notes
 

@@ -1,4 +1,9 @@
-import { JsonLd, ORGANIZATION_ID, WEBSITE_ID } from '@/features/seo/json-ld'
+import {
+  breadcrumbs,
+  JsonLd,
+  ORGANIZATION_ID,
+  WEBSITE_ID,
+} from '@/features/seo/json-ld'
 import { env } from '@/lib/env'
 import { joinUrl } from '@/lib/url'
 import {
@@ -36,7 +41,8 @@ export function DocumentationPage({ source, slug }: DocumentationPageProps) {
         data={{
           '@graph': [
             {
-              '@type': 'TechArticle',
+              '@type': page.url.startsWith('/docs') ? 'TechArticle' : 'WebPage',
+              name: page.data.title,
               headline: page.data.title,
               description: page.data.description,
               url: joinUrl(env.BASE_URL, page.url),
@@ -44,15 +50,9 @@ export function DocumentationPage({ source, slug }: DocumentationPageProps) {
               publisher: { '@id': ORGANIZATION_ID },
               isPartOf: { '@id': WEBSITE_ID },
             },
-            {
-              '@type': 'BreadcrumbList',
-              itemListElement: trail.map((item, index) => ({
-                '@type': 'ListItem',
-                position: index + 1,
-                name: item.data.title,
-                item: joinUrl(env.BASE_URL, item.url),
-              })),
-            },
+            breadcrumbs(
+              trail.map((item) => ({ name: item.data.title, path: item.url }))
+            ),
           ],
         }}
       />
@@ -77,7 +77,12 @@ export function getDocumentationMetadata(
 
   if (!page) notFound()
 
-  const image = { url: `/og${page.url}`, width: 1200, height: 630 }
+  const image = {
+    url: `/og${page.url}`,
+    width: 1200,
+    height: 630,
+    alt: page.data.title,
+  }
 
   return {
     title: page.data.title,

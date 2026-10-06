@@ -3,8 +3,11 @@ import {
   getReleases,
   RELEASES_PER_CHANGELOG_PAGE,
 } from '@/features/changelog/github-releases'
-import { CHANGELOG_URL } from '@/features/landing-page/constants/links'
-import { DEFAULT_OG_IMAGE } from '@/features/seo/og-card'
+import {
+  CHANGELOG_URL,
+  RESOURCES_URL,
+} from '@/features/landing-page/constants/links'
+import { breadcrumbs, JsonLd } from '@/features/seo/json-ld'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -40,13 +43,11 @@ export async function generateMetadata({
       siteName: 'OiPer',
       title,
       description,
-      images: [DEFAULT_OG_IMAGE],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [DEFAULT_OG_IMAGE],
     },
   }
 }
@@ -86,10 +87,19 @@ export default async function Page({ searchParams }: PageProps) {
       : getCursorUrl(pageReleases[pageReleases.length - 1].version)
 
   return (
-    <ChangelogPage
-      releases={pageReleases}
-      newerUrl={newerUrl}
-      olderUrl={olderUrl}
-    />
+    <>
+      <JsonLd
+        data={breadcrumbs([
+          { name: 'Resources', path: RESOURCES_URL },
+          { name: 'Changelog', path: CHANGELOG_URL },
+        ])}
+      />
+
+      <ChangelogPage
+        releases={pageReleases}
+        newerUrl={newerUrl}
+        olderUrl={olderUrl}
+      />
+    </>
   )
 }
