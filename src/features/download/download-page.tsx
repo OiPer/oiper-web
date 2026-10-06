@@ -1,4 +1,5 @@
 import { OiPerLogoText } from '@/components/logo-text'
+import { NavigationLink } from '@/components/navigation-link'
 import { buttonVariants } from '@/components/ui/button'
 import { Wrapper } from '@/components/wrapper'
 import { findLatest, type Release } from '@/features/changelog/github-releases'
@@ -12,7 +13,6 @@ import {
 import { formatPaddedDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { ArrowUpRight, ChevronDown } from 'lucide-react'
-import Link from 'next/link'
 import { BuildLink, Separator } from './build-link'
 import { DownloadButton } from './download-button'
 import { OSIcon } from './os-icons'
@@ -45,9 +45,14 @@ export function DownloadPage({
     <main className="bg-background text-foreground min-h-screen overflow-hidden">
       <Wrapper>
         <nav className="flex h-20 items-center justify-between">
-          <Link href={HOME} className="flex items-center gap-3">
+          <NavigationLink
+            href={HOME}
+            location="header"
+            destination="home"
+            className="flex items-center gap-3"
+          >
             <OiPerLogoText className="text-[2rem]" />
-          </Link>
+          </NavigationLink>
           <AuthNavActions />
         </nav>
       </Wrapper>
@@ -74,12 +79,14 @@ export function DownloadPage({
               <Separator />
               {formatPaddedDate(latest.publishedAt)}
               <Separator />
-              <Link
+              <NavigationLink
                 href={`${CHANGELOG_URL}#${latest.anchor}`}
+                location="download_section"
+                destination="changelog"
                 className="text-foreground underline-offset-4 hover:underline"
               >
                 What&apos;s new
-              </Link>
+              </NavigationLink>
             </p>
           )}
         </div>

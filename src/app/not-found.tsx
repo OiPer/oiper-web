@@ -1,10 +1,10 @@
 import { OiPerLogoText } from '@/components/logo-text'
+import { NavigationLink } from '@/components/navigation-link'
 import {
   DOCS_URL,
   DOWNLOAD_URL,
   HOME,
 } from '@/features/landing-page/constants/links'
-import Link from 'next/link'
 import { Fragment } from 'react'
 
 const links = [
@@ -22,9 +22,9 @@ export default function NotFound() {
         content="This page doesn't exist. Head back to OiPer, private voice dictation for Windows, macOS and Linux."
       />
 
-      <Link href={HOME}>
+      <NavigationLink href={HOME} location="not_found" destination="home">
         <OiPerLogoText className="text-[2rem]" />
-      </Link>
+      </NavigationLink>
 
       <h1 className="mt-12 text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">
         Page not found.
@@ -42,12 +42,14 @@ export default function NotFound() {
                 className="bg-muted-foreground/20 h-3 w-px"
               />
             )}
-            <Link
+            <NavigationLink
               href={link.href}
+              location="not_found"
+              destination={link.label}
               className="text-foreground hover:text-foreground/80 underline underline-offset-4"
             >
               {link.label}
-            </Link>
+            </NavigationLink>
           </Fragment>
         ))}
       </nav>

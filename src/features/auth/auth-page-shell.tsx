@@ -1,7 +1,11 @@
 'use client'
 
+import { NavigationLink } from '@/components/navigation-link'
+import {
+  PRIVACY_POLICY_URL,
+  TERMS_OF_SERVICE_URL,
+} from '@/features/landing-page/constants/links'
 import { cn } from '@/lib/utils'
-import Link from 'next/link'
 import type { PropsWithChildren } from 'react'
 
 type AuthPageShellProps = PropsWithChildren<{
@@ -39,16 +43,23 @@ export function AuthPageShell({
       <div className="relative pb-5 text-center text-xs text-white/70">
         <p id="oiper-auth-footer">
           By continuing, you agree to our{' '}
-          <Link
-            href="/terms-of-service"
+          <NavigationLink
+            href={TERMS_OF_SERVICE_URL}
+            location="auth"
+            destination="terms_of_service"
             className="underline underline-offset-2"
           >
             Terms of Service
-          </Link>{' '}
+          </NavigationLink>{' '}
           and{' '}
-          <Link href="/privacy-policy" className="underline underline-offset-2">
+          <NavigationLink
+            href={PRIVACY_POLICY_URL}
+            location="auth"
+            destination="privacy_policy"
+            className="underline underline-offset-2"
+          >
             Privacy Policy
-          </Link>
+          </NavigationLink>
           .
         </p>
         {mode === 'modal' ? (

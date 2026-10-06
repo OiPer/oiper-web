@@ -1,7 +1,7 @@
 'use client'
 
+import { NavigationLink } from '@/components/navigation-link'
 import { DownloadButton } from '@/features/download/download-button'
-import { logClick } from '@/lib/analytics'
 import { OiPerLogoBackground } from '@oiper/logo'
 import {
   BookOpen,
@@ -29,11 +29,6 @@ import {
   TERMS_OF_SERVICE_URL,
 } from '../constants/links'
 
-function trackNavigation(href: string) {
-  if (!href.startsWith('/')) return
-  logClick('navigation', 'footer', { destination: href })
-}
-
 const productLinks = [
   { label: 'Features', href: ANCHOR_FEATURES },
   { label: 'Performance', href: ANCHOR_PERFORMANCE },
@@ -44,13 +39,18 @@ const productLinks = [
 ]
 
 const resourceLinks = [
-  { icon: BookOpen, label: 'Documentation', href: DOCS_URL },
-  { icon: Library, label: 'Resources', href: RESOURCES_URL },
-  { icon: Tag, label: 'Changelog', href: CHANGELOG_URL },
-  { icon: Github, label: 'GitHub', href: GITHUB_REPO },
-  { icon: LifeBuoy, label: 'Support', href: GITHUB_REPO },
-  { icon: ShieldCheck, label: 'Privacy', href: PRIVACY_POLICY_URL },
-  { icon: Scale, label: 'Terms', href: TERMS_OF_SERVICE_URL },
+  { icon: BookOpen, label: 'Documentation', href: DOCS_URL, external: false },
+  { icon: Library, label: 'Resources', href: RESOURCES_URL, external: false },
+  { icon: Tag, label: 'Changelog', href: CHANGELOG_URL, external: false },
+  { icon: Github, label: 'GitHub', href: GITHUB_REPO, external: true },
+  { icon: LifeBuoy, label: 'Support', href: GITHUB_REPO, external: true },
+  {
+    icon: ShieldCheck,
+    label: 'Privacy',
+    href: PRIVACY_POLICY_URL,
+    external: false,
+  },
+  { icon: Scale, label: 'Terms', href: TERMS_OF_SERVICE_URL, external: false },
 ]
 
 export function FooterSection() {
@@ -85,13 +85,14 @@ export function FooterSection() {
               <ul className="mt-6 space-y-3">
                 {productLinks.map((link) => (
                   <li key={link.label}>
-                    <Link
+                    <NavigationLink
                       href={link.href}
+                      location="footer"
+                      destination={link.href}
                       className="text-sm text-white/35 hover:text-white/80"
-                      onClick={() => trackNavigation(link.href)}
                     >
                       {link.label}
-                    </Link>
+                    </NavigationLink>
                   </li>
                 ))}
               </ul>
@@ -101,14 +102,25 @@ export function FooterSection() {
               <ul className="mt-6 space-y-3">
                 {resourceLinks.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white/80"
-                      onClick={() => trackNavigation(link.href)}
-                    >
-                      <link.icon className="size-4" strokeWidth={1.5} />
-                      {link.label}
-                    </Link>
+                    {link.external ? (
+                      <Link
+                        href={link.href}
+                        className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white/80"
+                      >
+                        <link.icon className="size-4" strokeWidth={1.5} />
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <NavigationLink
+                        href={link.href}
+                        location="footer"
+                        destination={link.href}
+                        className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white/80"
+                      >
+                        <link.icon className="size-4" strokeWidth={1.5} />
+                        {link.label}
+                      </NavigationLink>
+                    )}
                   </li>
                 ))}
               </ul>

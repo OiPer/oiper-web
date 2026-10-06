@@ -1,12 +1,12 @@
 'use client'
 
 import { OiPerLogoText } from '@/components/logo-text'
+import { NavigationLink } from '@/components/navigation-link'
 import {
   DownloadButton,
   OtherDownloads,
 } from '@/features/download/download-button'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Wrapper } from '../../../components/wrapper'
 import { HOME } from '../constants/links'
@@ -82,9 +82,14 @@ export function HeroSection() {
 
       <Wrapper className="relative z-10">
         <nav className="flex h-20 items-center justify-between">
-          <Link href={HOME} className="flex items-center gap-3">
+          <NavigationLink
+            href={HOME}
+            location="header"
+            destination="home"
+            className="flex items-center gap-3"
+          >
             <OiPerLogoText className="text-[2rem]" />
-          </Link>
+          </NavigationLink>
 
           <AuthNavActions />
         </nav>

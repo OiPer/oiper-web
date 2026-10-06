@@ -170,7 +170,12 @@ function SignedInActions() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-white/8" />
           <DropdownMenuItem asChild className="cursor-pointer gap-3 px-3 py-2">
-            <a href="/account">
+            <a
+              href="/account"
+              onClick={() =>
+                logClick('navigation', 'header', { destination: 'account' })
+              }
+            >
               <Settings2 className="size-4" />
               Account
             </a>
