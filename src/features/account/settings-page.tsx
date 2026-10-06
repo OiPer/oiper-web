@@ -16,6 +16,7 @@ import {
 } from '@/features/account/utils'
 import { useAuth } from '@/features/auth/auth-context'
 import { useAccountMutation } from '@/features/auth/web-session'
+import { logComplete, logError, logSubmit } from '@/lib/analytics'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { Trash2, TriangleAlert } from 'lucide-react'
@@ -141,10 +142,14 @@ function ConfigureAccount() {
   }
 
   async function handleUpdate(values: z.infer<typeof accountConfigureSchema>) {
+    logSubmit('profile_update', 'settings')
+
     try {
       await updateProfile(values)
+      logComplete('profile_update', 'settings')
       toast.success('Name updated successfully')
     } catch {
+      logError('profile_update', 'settings', { error_type: 'unknown' })
       toast.error("Couldn't update your account")
     }
   }
@@ -265,10 +270,12 @@ function AccountDangerZone() {
     try {
       await deleteAccountMutation.mutateAsync({})
 
+      logComplete('account_deletion', 'settings')
       clearAccountSession(queryClient)
       toast.success('Account deleted successfully')
       window.location.assign('/')
     } catch {
+      logError('account_deletion', 'settings', { error_type: 'unknown' })
       toast.error("Couldn't delete account")
     }
   }

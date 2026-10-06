@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuth } from '@/features/auth/auth-context'
+import { logClick, logComplete, logError, logSubmit } from '@/lib/analytics'
 import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
@@ -56,6 +57,7 @@ export function SignInForm({ mode }: SignInFormProps) {
 
   async function handleSignIn(values: SignInSchema) {
     setErrorMessage(null)
+    logSubmit('signin', 'auth', { mode })
 
     try {
       const result = await signIn({
@@ -64,6 +66,7 @@ export function SignInForm({ mode }: SignInFormProps) {
       })
 
       if ('type' in result && result.type === 'email_verification') {
+        logComplete('signin', 'auth', { mode, outcome: 'email_verification' })
         return router.push(
           buildAuthUrl({
             mode,
@@ -80,14 +83,18 @@ export function SignInForm({ mode }: SignInFormProps) {
       }
 
       if ('authenticated' in result && !result.authenticated) {
+        logError('signin', 'auth', { mode, error_type: 'not_authenticated' })
         return setErrorMessage('Something went wrong')
       }
 
+      logComplete('signin', 'auth', { mode })
       router.push(callbackUrl)
     } catch (error) {
       const code = getAppErrorCode<'post', '/v1/auth/web/sign-in/password'>(
         error
       )
+      logError('signin', 'auth', { mode, error_type: code ?? 'unknown' })
+
       switch (code) {
         case 'AUTH_INVALID_CREDENTIALS':
           return setErrorMessage('Invalid credentials')
@@ -125,6 +132,7 @@ export function SignInForm({ mode }: SignInFormProps) {
             <p className="text-sm font-medium text-white">Password</p>
             <Link
               href={forgotHref}
+              onClick={() => logClick('forgot_password', 'auth')}
               className="text-xs text-white/65 underline underline-offset-[5px] hover:text-white"
               scroll={false}
             >

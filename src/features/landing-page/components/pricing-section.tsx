@@ -17,11 +17,12 @@ import {
   type CtaAction,
   type PlanCardCta,
 } from '@/features/landing-page/components/plan-card'
+import { logClick, logSelect, logView } from '@/lib/analytics'
 import { $api } from '@/lib/api/client'
 import type { components } from '@/lib/api/schema'
 import { formatCurrencyFromCents, planDisplayName } from '@/lib/format'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type PricingPlan = components['schemas']['PricingPlan']
 
@@ -35,6 +36,25 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => setIsMounted(true), [])
+
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return
+        logView('pricing', 'landing')
+        observer.disconnect()
+      },
+      { threshold: 0.3 }
+    )
+
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [])
   const [changePlanTarget, setChangePlanTarget] =
     useState<PlanChangeTarget | null>(null)
   const { startCheckout, pendingCheckout } = useStartCheckout()
@@ -109,6 +129,17 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     })
   }
 
+  function trackUpgrade(
+    cardPlan: 'PRO' | 'MAX',
+    provider: 'paddle' | 'stripe'
+  ) {
+    logClick('upgrade', 'pricing', {
+      plan: cardPlan.toLowerCase(),
+      interval: intervalParam,
+      provider,
+    })
+  }
+
   function isCheckoutSubmitting(
     cardPlan: 'PRO' | 'MAX',
     provider: 'PADDLE' | 'STRIPE'
@@ -135,12 +166,16 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     const action: CtaAction = currentUser
       ? {
           type: 'button',
-          onClick: () => void startCheckout('STRIPE', cardPlan, interval),
+          onClick: () => {
+            trackUpgrade(cardPlan, 'stripe')
+            void startCheckout('STRIPE', cardPlan, interval)
+          },
         }
       : {
           type: 'link',
           href: signupCta(checkoutSlug, intervalParam, 'stripe'),
           scroll: false,
+          onClick: () => trackUpgrade(cardPlan, 'stripe'),
         }
 
     return {
@@ -165,12 +200,16 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
       const checkoutAction: CtaAction = currentUser
         ? {
             type: 'button',
-            onClick: () => void startCheckout('PADDLE', cardPlan, interval),
+            onClick: () => {
+              trackUpgrade(cardPlan, 'paddle')
+              void startCheckout('PADDLE', cardPlan, interval)
+            },
           }
         : {
             type: 'link',
             href: signupCta(checkoutSlug, intervalParam, 'paddle'),
             scroll: false,
+            onClick: () => trackUpgrade(cardPlan, 'paddle'),
           }
 
       return {
@@ -198,7 +237,13 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
       disabled: !!pendingTarget,
       action: {
         type: 'button',
-        onClick: () => setChangePlanTarget({ plan: cardPlan, interval }),
+        onClick: () => {
+          logClick('plan_change', 'pricing', {
+            plan: cardPlan.toLowerCase(),
+            interval: intervalParam,
+          })
+          setChangePlanTarget({ plan: cardPlan, interval })
+        },
       },
     }
   }
@@ -208,6 +253,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
 
   return (
     <section
+      ref={sectionRef}
       id="pricing"
       className="relative border-b border-white/6 bg-[#0a0a0a] py-32 sm:py-40"
     >
@@ -227,7 +273,12 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
           <div className="mt-8">
             <IntervalToggle
               value={interval}
-              onChange={setInterval}
+              onChange={(next) => {
+                setInterval(next)
+                logSelect('billing_interval', 'pricing', {
+                  interval: next.toLowerCase(),
+                })
+              }}
               variant="landing"
               yearlySavePercent={bestYearlyPlan?.discountPercentFloored}
             />
@@ -286,6 +337,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
         (subscriptionQuery.data.plan === 'PRO' ||
           subscriptionQuery.data.plan === 'MAX') && (
           <ChangePlanDialog
+            location="pricing"
             open={!!changePlanTarget}
             onOpenChange={(open) => {
               if (!open) setChangePlanTarget(null)

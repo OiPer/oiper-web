@@ -3,6 +3,7 @@
 import { Loading } from '@/components/shared/loading'
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
 import { Button } from '@/components/ui/button'
+import { logComplete, logError } from '@/lib/analytics'
 import { Slot } from 'radix-ui'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -62,10 +63,14 @@ export function AccountAvatarModal({
     if (!file) return
 
     if (!allow.includes(file.type)) {
+      logError('avatar_update', 'settings', {
+        error_type: 'unsupported_format',
+      })
       return toast.error('Unsupported image format')
     }
 
     if (file.size > maxSize * 1024 * 1024) {
+      logError('avatar_update', 'settings', { error_type: 'too_large' })
       return toast.error(`Avatar must stay under ${maxSize}MB`)
     }
 
@@ -88,11 +93,23 @@ export function AccountAvatarModal({
   async function handleSaveAvatar() {
     if (!selectedFile) return
 
+    let dataUrl: string
+
     try {
-      const dataUrl = await readFileAsDataUrl(selectedFile)
+      dataUrl = await readFileAsDataUrl(selectedFile)
+    } catch {
+      logError('avatar_update', 'settings', { error_type: 'read_failed' })
+      return toast.error(
+        "Couldn't save your avatar — try picking the file again"
+      )
+    }
+
+    try {
       await onSave(dataUrl)
+      logComplete('avatar_update', 'settings')
       handleOpenChange(false)
     } catch {
+      logError('avatar_update', 'settings', { error_type: 'save_failed' })
       toast.error("Couldn't save your avatar — try picking the file again")
     }
   }

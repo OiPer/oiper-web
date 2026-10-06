@@ -1,6 +1,7 @@
 'use client'
 
 import { DownloadButton } from '@/features/download/download-button'
+import { logClick } from '@/lib/analytics'
 import { OiPerLogoBackground } from '@oiper/logo'
 import {
   BookOpen,
@@ -27,6 +28,11 @@ import {
   RESOURCES_URL,
   TERMS_OF_SERVICE_URL,
 } from '../constants/links'
+
+function trackNavigation(href: string) {
+  if (!href.startsWith('/')) return
+  logClick('navigation', 'footer', { destination: href })
+}
 
 const productLinks = [
   { label: 'Features', href: ANCHOR_FEATURES },
@@ -67,6 +73,7 @@ export function FooterSection() {
               No account required.
             </p>
             <DownloadButton
+              location="footer"
               className="mt-10 h-13 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
               iconClassName="size-5"
             />
@@ -81,6 +88,7 @@ export function FooterSection() {
                     <Link
                       href={link.href}
                       className="text-sm text-white/35 hover:text-white/80"
+                      onClick={() => trackNavigation(link.href)}
                     >
                       {link.label}
                     </Link>
@@ -96,6 +104,7 @@ export function FooterSection() {
                     <Link
                       href={link.href}
                       className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white/80"
+                      onClick={() => trackNavigation(link.href)}
                     >
                       <link.icon className="size-4" strokeWidth={1.5} />
                       {link.label}

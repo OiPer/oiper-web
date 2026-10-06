@@ -1,4 +1,7 @@
+'use client'
+
 import { DOWNLOAD_URL } from '@/features/landing-page/constants/links'
+import { logClick } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 import { Download } from 'lucide-react'
 import Link from 'next/link'
@@ -76,10 +79,12 @@ const TARGETS: {
 ]
 
 export function DownloadButton({
+  location,
   className,
   iconClassName = 'size-4',
   compact = false,
 }: {
+  location: string
   className?: string
   iconClassName?: string
   compact?: boolean
@@ -96,6 +101,7 @@ export function DownloadButton({
           href={DOWNLOAD_URL}
           aria-label={compact ? 'Download OiPer' : undefined}
           className={buttonClassName}
+          onClick={() => logClick('download', location)}
         >
           <Download className={iconClassName} aria-hidden="true" />
           {compact ? 'Download' : 'Download OiPer'}
@@ -111,6 +117,7 @@ export function DownloadButton({
               {...macDownloadProps(id)}
               aria-label={compact ? label : undefined}
               className={buttonClassName}
+              onClick={() => logClick('download', location, { platform: id })}
             >
               <OSIcon os={os} className={iconClassName} />
               {compact ? 'Download' : label}
@@ -123,9 +130,11 @@ export function DownloadButton({
 }
 
 export function OtherDownloads({
+  location,
   className,
   linkClassName,
 }: {
+  location: string
   className?: string
   linkClassName?: string
 }) {
@@ -139,7 +148,11 @@ export function OtherDownloads({
   return (
     <p className={cn('flex flex-wrap items-center gap-x-2.5', className)}>
       <span className="contents in-data-download:hidden">
-        <Link href={DOWNLOAD_URL} className={linkClassName}>
+        <Link
+          href={DOWNLOAD_URL}
+          className={linkClassName}
+          onClick={() => logClick('other_platforms', location)}
+        >
           Other platforms and versions
         </Link>
       </span>
@@ -152,13 +165,20 @@ export function OtherDownloads({
                 href={`${DOWNLOAD_URL}/${other.id}`}
                 {...macDownloadProps(other.id)}
                 className={linkClassName}
+                onClick={() =>
+                  logClick('download', location, { platform: other.id })
+                }
               >
                 {other.label}
               </a>
               {separator}
             </Fragment>
           ))}
-          <Link href={DOWNLOAD_URL} className={linkClassName}>
+          <Link
+            href={DOWNLOAD_URL}
+            className={linkClassName}
+            onClick={() => logClick('other_platforms', location)}
+          >
             Other platforms
           </Link>
         </span>

@@ -3,6 +3,7 @@
 import { Loading } from '@/components/shared/loading'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/features/auth/auth-context'
+import { logComplete, logError, logSubmit } from '@/lib/analytics'
 import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -55,6 +56,7 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
 
   async function handleEmailVerification(values: EmailVerificationForm) {
     setErrorMessage(null)
+    logSubmit('email_verification', 'auth', { mode })
 
     try {
       const session = await verifyEmail({
@@ -63,12 +65,22 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
       })
 
       if (!session.authenticated) {
+        logError('email_verification', 'auth', {
+          mode,
+          error_type: 'not_authenticated',
+        })
         return setErrorMessage('Unable to verify email')
       }
 
+      logComplete('email_verification', 'auth', { mode })
       router.push(callbackUrl)
     } catch (error) {
       const code = getAppErrorCode<'post', '/v1/auth/web/verify-email'>(error)
+      logError('email_verification', 'auth', {
+        mode,
+        error_type: code ?? 'unknown',
+      })
+
       switch (code) {
         case 'AUTH_INVALID_VERIFICATION_CODE':
           return setErrorMessage('Invalid verification code')
@@ -84,10 +96,18 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
 
     try {
       if (!emailVerificationId) {
+        logError('verification_resend', 'auth', {
+          mode,
+          error_type: 'no_verification_id',
+        })
         return toast.info('Restart sign-in to get a new code')
       }
 
       const response = await resendVerification({ evid: emailVerificationId })
+      logComplete('verification_resend', 'auth', {
+        mode,
+        outcome: response.alreadyVerified ? 'already_verified' : 'sent',
+      })
 
       if (response.alreadyVerified) {
         toast.info('Email already verified. Sign in again to continue')
@@ -95,6 +115,7 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
 
       if (!response.alreadyVerified) toast.success('Verification code sent')
     } catch {
+      logError('verification_resend', 'auth', { mode, error_type: 'unknown' })
       setErrorMessage("Couldn't resend the code")
     } finally {
       setIsResending(false)

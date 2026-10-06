@@ -21,6 +21,7 @@ import {
   type PlanCatalogEntry,
   type PlanChangeTarget,
 } from '@/features/billing/use-checkout'
+import { logComplete, logError } from '@/lib/analytics'
 import { isAppErrorEnvelope } from '@/lib/api/error'
 import type { components } from '@/lib/api/schema'
 import {
@@ -148,6 +149,7 @@ function PlanOption(props: { entry: PlanCatalogEntry; isCurrent: boolean }) {
 }
 
 interface ChangePlanDialogProps {
+  location: string
   open: boolean
   onOpenChange: (open: boolean) => void
   plans: PricingPlan[] | undefined
@@ -160,6 +162,7 @@ interface ChangePlanDialogProps {
 }
 
 export function ChangePlanDialog({
+  location,
   open,
   onOpenChange,
   plans,
@@ -295,6 +298,11 @@ export function ChangePlanDialog({
       })
 
       const isScheduled = preview?.kind === 'SCHEDULED'
+      logComplete('plan_change', location, {
+        plan: selected.plan.toLowerCase(),
+        interval: selected.interval.toLowerCase(),
+        outcome: isScheduled ? 'scheduled' : 'immediate',
+      })
       toast.success(
         isScheduled
           ? 'Plan change scheduled — it takes effect at the end of your current billing period'
@@ -305,6 +313,11 @@ export function ChangePlanDialog({
       else onChangeSubmitted(selected)
       handleOpenChange(false)
     } catch (error) {
+      logError('plan_change', location, {
+        plan: selected.plan.toLowerCase(),
+        interval: selected.interval.toLowerCase(),
+        error_type: isAppErrorEnvelope(error) ? error.error.code : 'unknown',
+      })
       toast.error(describePlanChangeError(error, "Couldn't change your plan"), {
         id: 'plan-change',
       })
@@ -313,13 +326,21 @@ export function ChangePlanDialog({
 
   async function handleResume() {
     try {
-      if (!(await resumeSubscription())) {
+      const resumed = await resumeSubscription()
+      logComplete('subscription_resume', location, {
+        outcome: resumed ? 'resumed' : 'processing',
+      })
+
+      if (!resumed) {
         toast.info(
           "Still processing — check back in a moment if this doesn't update",
           { id: 'resume' }
         )
       }
     } catch (error) {
+      logError('subscription_resume', location, {
+        error_type: isAppErrorEnvelope(error) ? error.error.code : 'unknown',
+      })
       toast.error(
         describePlanChangeError(error, "Couldn't reverse the cancellation"),
         { id: 'resume' }

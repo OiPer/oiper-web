@@ -101,10 +101,12 @@ export function HeroSection() {
 
           <div className="mt-10">
             <DownloadButton
+              location="hero"
               className="h-13 rounded-md bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
               iconClassName="size-5"
             />
             <OtherDownloads
+              location="hero"
               className="mt-4 justify-center text-sm text-white/40"
               linkClassName="underline-offset-4 hover:text-white/70 hover:underline"
             />

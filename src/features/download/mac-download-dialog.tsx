@@ -2,6 +2,7 @@
 
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
 import { Button } from '@/components/ui/button'
+import { logSelect, logStart } from '@/lib/analytics'
 import { ChevronDown } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
@@ -55,7 +56,13 @@ export function MacDownloadDialog() {
                 aria-label="Mac build"
                 value={build}
                 disabled={builds.length < 2}
-                onChange={(event) => setBuild(event.target.value as MacBuild)}
+                onChange={(event) => {
+                  const next = event.target.value as MacBuild
+                  setBuild(next)
+                  logSelect('mac_build', 'mac_download_dialog', {
+                    platform: next,
+                  })
+                }}
                 className="focus-visible:ring-ring/50 field-sizing-content cursor-pointer appearance-none bg-transparent pr-4 outline-none focus-visible:ring-2 disabled:cursor-default disabled:pr-0"
               >
                 {builds.map((b) => (
@@ -93,7 +100,13 @@ export function MacDownloadDialog() {
             </Button>
           </ResponsiveDialog.Close>
           <Button variant="destructive" asChild>
-            <a href={urls[build]} onClick={() => setOpen(false)}>
+            <a
+              href={urls[build]}
+              onClick={() => {
+                setOpen(false)
+                logStart('download', 'mac_download_dialog', { platform: build })
+              }}
+            >
               Yes, download
             </a>
           </Button>

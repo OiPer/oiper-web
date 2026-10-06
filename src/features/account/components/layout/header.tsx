@@ -14,6 +14,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { Wrapper } from '@/components/wrapper'
 import { getUserInitials, getUserLabel } from '@/features/account/utils'
 import { useAuth } from '@/features/auth/auth-context'
+import { logClick, logError } from '@/lib/analytics'
 import { CreditCard, LogOut, Settings2 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -30,11 +31,13 @@ function SignedInActions() {
     if (isSigningOut) return
 
     setIsSigningOut(true)
+    logClick('signout', 'account')
 
     try {
       const result = await signOut()
       window.location.assign(result.logoutUrl)
     } catch {
+      logError('signout', 'account', { error_type: 'unknown' })
       toast.error("Couldn't sign out")
       setIsSigningOut(false)
     }
