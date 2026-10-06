@@ -16,12 +16,25 @@ const productionSafeUrl = z
   )
   .transform((value) => value.replace(/\/+$/, ''))
 
+const optionalValue = z
+  .string()
+  .trim()
+  .optional()
+  .transform((value) => value || undefined)
+
 const envSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'production']),
     APP_ENV: z.enum(['development', 'production']),
     OIPER_SERVER_URL: productionSafeUrl,
     PADDLE_CLIENT_TOKEN: z.string().trim().min(1),
+    GA_MEASUREMENT_ID: optionalValue.pipe(
+      z
+        .string()
+        .regex(/^G-[A-Z0-9]+$/)
+        .optional()
+    ),
+    GOOGLE_SITE_VERIFICATION: optionalValue,
   })
   .transform((value) => ({
     ...value,
@@ -41,4 +54,6 @@ export const env = envSchema.parse({
   APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
   OIPER_SERVER_URL: process.env.NEXT_PUBLIC_OIPER_SERVER_URL,
   PADDLE_CLIENT_TOKEN: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
+  GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
+  GOOGLE_SITE_VERIFICATION: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
 })

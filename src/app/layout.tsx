@@ -8,6 +8,7 @@ import { AuthProvider } from '@/features/auth/auth-context'
 import { PublicAuthModalClientNoSSR } from '@/features/auth/public-auth-modal-client'
 import { DetectOSScript } from '@/features/download/download-button'
 import { MacDownloadDialog } from '@/features/download/mac-download-dialog'
+import { GoogleAnalytics } from '@/features/seo/google-analytics'
 import { JsonLd, ORGANIZATION_ID, WEBSITE_ID } from '@/features/seo/json-ld'
 import { cn } from '@/lib/utils'
 import { Metadata } from 'next'
@@ -70,6 +71,7 @@ export const metadata: Metadata = {
     title,
     description,
   },
+  verification: { google: env.GOOGLE_SITE_VERIFICATION },
   category: 'technology',
   formatDetection: {
     email: false,
@@ -124,6 +126,10 @@ export default function Layout({ children }: PropsWithChildren) {
             </AuthProvider>
           </QueryProvider>
         </ThemeProvider>
+
+        {env.GA_MEASUREMENT_ID && (
+          <GoogleAnalytics id={env.GA_MEASUREMENT_ID} />
+        )}
       </body>
     </html>
   )
