@@ -1,4 +1,5 @@
 import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
 import '@/styles/index.css'
 import '@/styles/theme.css'
 
@@ -32,7 +33,7 @@ const description =
   'Hold a hotkey, speak, and your words appear in any app. OiPer is fast, private voice-to-text that runs locally on Windows, macOS and Linux. Free to use.'
 
 export const metadata: Metadata = {
-  metadataBase: new URL(env.SITE_URL),
+  metadataBase: new URL(env.BASE_URL),
   applicationName: 'OiPer',
   title: {
     default: title,
@@ -94,8 +95,8 @@ export default function Layout({ children }: PropsWithChildren) {
                 '@type': 'Organization',
                 '@id': ORGANIZATION_ID,
                 name: 'OiPer',
-                url: env.SITE_URL,
-                logo: `${env.SITE_URL}/icon`,
+                url: joinUrl(env.BASE_URL),
+                logo: joinUrl(env.BASE_URL, '/icon'),
                 email: 'support@oiper.com',
                 sameAs: ['https://github.com/OiPer'],
               },
@@ -103,7 +104,7 @@ export default function Layout({ children }: PropsWithChildren) {
                 '@type': 'WebSite',
                 '@id': WEBSITE_ID,
                 name: 'OiPer',
-                url: env.SITE_URL,
+                url: joinUrl(env.BASE_URL),
                 publisher: { '@id': ORGANIZATION_ID },
               },
             ],

@@ -1,11 +1,12 @@
 import { docsSource } from '@/features/docs/docs-source'
 import { resourcesSource } from '@/features/docs/resources-source'
 import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
 
 export const dynamic = 'force-static'
 
 function link(page: ReturnType<typeof docsSource.getPages>[number]) {
-  return `- [${page.data.title}](${env.SITE_URL}${page.url}): ${page.data.description}`
+  return `- [${page.data.title}](${joinUrl(env.BASE_URL, page.url)}): ${page.data.description}`
 }
 
 export function GET() {
@@ -22,9 +23,9 @@ export function GET() {
     '',
     '## Product',
     '',
-    `- [Home](${env.SITE_URL}/): Features, privacy, languages, and pricing.`,
-    `- [Download](${env.SITE_URL}/download): Installers for Windows, macOS (Apple Silicon and Intel) and Linux (AppImage, .deb, .rpm).`,
-    `- [Changelog](${env.SITE_URL}/resources/changelog): Every desktop release, newest first.`,
+    `- [Home](${joinUrl(env.BASE_URL)}): Features, privacy, languages, and pricing.`,
+    `- [Download](${joinUrl(env.BASE_URL, '/download')}): Installers for Windows, macOS (Apple Silicon and Intel) and Linux (AppImage, .deb, .rpm).`,
+    `- [Changelog](${joinUrl(env.BASE_URL, '/resources/changelog')}): Every desktop release, newest first.`,
     '',
     '## Documentation',
     '',

@@ -1,7 +1,8 @@
 import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
 
-export const ORGANIZATION_ID = `${env.SITE_URL}/#organization`
-export const WEBSITE_ID = `${env.SITE_URL}/#website`
+export const ORGANIZATION_ID = joinUrl(env.BASE_URL, '/#organization')
+export const WEBSITE_ID = joinUrl(env.BASE_URL, '/#website')
 
 export function JsonLd(props: { data: Record<string, unknown> }) {
   return (

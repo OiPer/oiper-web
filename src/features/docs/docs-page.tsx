@@ -1,5 +1,6 @@
 import { JsonLd, ORGANIZATION_ID, WEBSITE_ID } from '@/features/seo/json-ld'
 import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
 import {
   DocsBody,
   DocsDescription,
@@ -38,8 +39,8 @@ export function DocumentationPage({ source, slug }: DocumentationPageProps) {
               '@type': 'TechArticle',
               headline: page.data.title,
               description: page.data.description,
-              url: `${env.SITE_URL}${page.url}`,
-              image: `${env.SITE_URL}/og${page.url}`,
+              url: joinUrl(env.BASE_URL, page.url),
+              image: joinUrl(env.BASE_URL, '/og', page.url),
               publisher: { '@id': ORGANIZATION_ID },
               isPartOf: { '@id': WEBSITE_ID },
             },
@@ -49,7 +50,7 @@ export function DocumentationPage({ source, slug }: DocumentationPageProps) {
                 '@type': 'ListItem',
                 position: index + 1,
                 name: item.data.title,
-                item: `${env.SITE_URL}${item.url}`,
+                item: joinUrl(env.BASE_URL, item.url),
               })),
             },
           ],

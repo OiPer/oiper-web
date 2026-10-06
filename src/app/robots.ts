@@ -1,4 +1,5 @@
 import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
 import type { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
@@ -9,7 +10,7 @@ export default function robots(): MetadataRoute.Robots {
   if (env.APP_ENV === 'production') {
     return {
       rules: { userAgent: '*', allow: '/', disallow: ['/api', '/dev'] },
-      sitemap: `${env.SITE_URL}/sitemap.xml`,
+      sitemap: joinUrl(env.BASE_URL, '/sitemap.xml'),
     }
   }
 

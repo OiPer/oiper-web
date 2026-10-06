@@ -6,6 +6,7 @@ import {
   HOME,
 } from '@/features/landing-page/constants/links'
 import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
 import type { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -17,5 +18,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...resourcesSource.getPages().map((page) => page.url),
   ]
 
-  return paths.map((path) => ({ url: new URL(path, env.SITE_URL).href }))
+  return paths.map((path) => ({ url: joinUrl(env.BASE_URL, path) }))
 }

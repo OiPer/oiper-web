@@ -3,6 +3,7 @@ import { LandingPage } from '@/features/landing-page/landing-page'
 import { JsonLd, ORGANIZATION_ID } from '@/features/seo/json-ld'
 import { api } from '@/lib/api/client'
 import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -20,7 +21,7 @@ export default async function Page() {
       : plan.displayName,
     price: (plan.priceAmountCents / 100).toFixed(2),
     priceCurrency: 'USD',
-    url: `${env.SITE_URL}/#pricing`,
+    url: joinUrl(env.BASE_URL, '/#pricing'),
   }))
 
   return (
@@ -33,9 +34,9 @@ export default async function Page() {
               name: 'OiPer',
               description:
                 'Private voice dictation for Windows, macOS and Linux. Hold a hotkey, speak, and your words appear in any app. Transcription runs locally by default.',
-              url: env.SITE_URL,
-              downloadUrl: `${env.SITE_URL}${DOWNLOAD_URL}`,
-              image: `${env.SITE_URL}/opengraph-image`,
+              url: joinUrl(env.BASE_URL),
+              downloadUrl: joinUrl(env.BASE_URL, DOWNLOAD_URL),
+              image: joinUrl(env.BASE_URL, '/opengraph-image'),
               applicationCategory: 'UtilitiesApplication',
               operatingSystem: 'Windows, macOS, Linux',
               publisher: { '@id': ORGANIZATION_ID },

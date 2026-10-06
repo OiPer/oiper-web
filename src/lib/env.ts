@@ -16,6 +16,16 @@ const productionSafeUrl = z
   )
   .transform((value) => value.replace(/\/+$/, ''))
 
+const baseUrl = productionSafeUrl
+  .refine(
+    (value) => {
+      const url = new URL(value)
+      return url.pathname === '/' && !url.search && !url.hash
+    },
+    { message: 'must be an origin without a path, like https://oiper.com' }
+  )
+  .transform((value) => new URL(value).origin)
+
 const optionalValue = z
   .string()
   .trim()
@@ -27,6 +37,7 @@ const envSchema = z
     NODE_ENV: z.enum(['development', 'production']),
     APP_ENV: z.enum(['development', 'production']),
     OIPER_SERVER_URL: productionSafeUrl,
+    BASE_URL: baseUrl,
     PADDLE_CLIENT_TOKEN: z.string().trim().min(1),
     GA_MEASUREMENT_ID: optionalValue.pipe(
       z
@@ -43,16 +54,13 @@ const envSchema = z
         ? ('production' as const)
         : ('sandbox' as const),
     ENABLE_STRIPE_CHECKOUT: value.APP_ENV !== 'production',
-    SITE_URL:
-      value.APP_ENV === 'production'
-        ? 'https://oiper.com'
-        : 'https://dev.oiper.com',
   }))
 
 export const env = envSchema.parse({
   NODE_ENV: process.env.NODE_ENV,
   APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
   OIPER_SERVER_URL: process.env.NEXT_PUBLIC_OIPER_SERVER_URL,
+  BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
   PADDLE_CLIENT_TOKEN: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
   GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
   GOOGLE_SITE_VERIFICATION: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
