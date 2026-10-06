@@ -113,7 +113,12 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url)
 
   if (request.method !== 'GET' || url.origin !== self.location.origin) return
-  if (matches(NETWORK_ONLY, url.pathname)) return
+
+  if (matches(NETWORK_ONLY, url.pathname)) {
+    if (request.mode !== 'navigate') return
+    return event.respondWith(fetch(request).catch(() => offline()))
+  }
+
   if (matches(CACHE_FIRST, url.pathname)) {
     return event.respondWith(cacheFirst(request))
   }
