@@ -26,10 +26,10 @@ export function LandingPage(props: {
       <TestimonialsSection />
       <LanguagesSection />
       <PrivacySection />
-      <FaqSection />
       <Suspense fallback={null}>
         <PricingSection plans={props.plans} />
       </Suspense>
+      <FaqSection />
       <FooterSection />
     </main>
   )
