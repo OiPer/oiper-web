@@ -34,6 +34,8 @@ export async function GET(_request: Request, { params }: RouteProps) {
   )
 }
 
+export const dynamicParams = false
+
 export function generateStaticParams() {
   return [
     ...docsSource.getPages().map((page) => ({ slug: ['docs', ...page.slugs] })),

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import type { PropsWithChildren } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Sign in',
+  title: { template: '%s | OiPer', default: 'Sign in' },
   robots: { index: false, follow: true },
 }
 
