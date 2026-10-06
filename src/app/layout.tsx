@@ -63,20 +63,11 @@ export const metadata: Metadata = {
     siteName: 'OiPer',
     title,
     description,
-    images: [
-      {
-        url: '/og.png',
-        width: 1200,
-        height: 630,
-        alt: title,
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title,
     description,
-    images: ['/og.png'],
   },
   category: 'technology',
   formatDetection: {
@@ -84,7 +75,6 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  manifest: '/manifest.json',
 }
 
 export default function Layout({ children }: PropsWithChildren) {

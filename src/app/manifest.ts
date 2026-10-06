@@ -4,16 +4,22 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'OiPer',
     short_name: 'OiPer',
-    description: 'Privacy-first voice transcription for desktop workflows.',
+    description:
+      'Private voice dictation for Windows, macOS and Linux. Hold a hotkey, speak, and your words appear in any app.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#ffffff',
-    theme_color: '#111827',
+    background_color: '#0a0a0a',
+    theme_color: '#0a0a0a',
     icons: [
       {
-        src: '/favicon.ico',
-        sizes: 'any',
-        type: 'image/x-icon',
+        src: '/icon',
+        sizes: '512x512',
+        type: 'image/png',
+      },
+      {
+        src: '/apple-icon',
+        sizes: '180x180',
+        type: 'image/png',
       },
     ],
   }
