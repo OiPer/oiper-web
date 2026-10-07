@@ -56,18 +56,18 @@ function useUnsubscribeContent(props: { token: string }) {
     }
   }
 
-  const topic = TOPIC_COPY[stateQuery.data.topic].label.toLowerCase()
+  const topic = TOPIC_COPY[stateQuery.data.topic].label
 
   if (unsubscribeMutation.isSuccess || !stateQuery.data.subscribed) {
     return {
       title: "You're unsubscribed.",
-      description: `You won't get OiPer ${topic} emails anymore. Changed your mind? Subscribe again from the footer of our site any time.`,
+      description: `You won’t get “${topic}” emails from OiPer anymore. Changed your mind? Subscribe again from the footer of our site any time.`,
       action: null,
     }
   }
 
   return {
-    title: `Unsubscribe from ${topic}?`,
+    title: `Unsubscribe from “${topic}”?`,
     description:
       "You'll stop getting these emails. Account emails like receipts aren't affected.",
     action: (
