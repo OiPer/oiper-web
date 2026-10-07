@@ -28,13 +28,13 @@ export function SubscribeForm(props: { location: string }) {
 
       logComplete('email_subscribe', props.location)
       setEmail('')
-      toast.success("You're on the list. We'll email you occasional updates.")
+      toast.success("You're subscribed to OiPer updates")
     } catch (error) {
       logError('email_subscribe', props.location, {
         error_type: isAppErrorEnvelope(error) ? error.error.code : 'unknown',
       })
 
-      toast.error("Couldn't subscribe. Please check the email and try again.")
+      toast.error("Couldn't subscribe, please try again")
     }
   }
 
