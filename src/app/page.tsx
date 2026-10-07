@@ -33,7 +33,7 @@ export default async function Page() {
               '@type': 'SoftwareApplication',
               name: 'OiPer',
               description:
-                'Hold a hotkey, speak, and your words appear in any app. OiPer runs locally by default on Windows, macOS and Linux, and it is free to use.',
+                'Hold a hotkey, speak, and your words appear in any app. OiPer runs locally by default on Windows, macOS and Linux, and the app is free forever.',
               url: joinUrl(env.BASE_URL),
               downloadUrl: joinUrl(env.BASE_URL, DOWNLOAD_URL),
               image: joinUrl(env.BASE_URL, '/opengraph-image'),

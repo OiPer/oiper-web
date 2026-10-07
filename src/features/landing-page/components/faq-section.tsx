@@ -14,7 +14,7 @@ const questions = [
     id: 'free',
     question: 'Is OiPer free?',
     answer:
-      "Local transcription is free and unlimited, with no account required. Paid plans add OiPer's hosted transcription and formatting models for faster, more accurate results.",
+      "Transcription on your machine is free and unlimited — no account required. Paid plans add OiPer's hosted transcription and formatting models for faster, more accurate results.",
   },
   {
     id: 'platforms',

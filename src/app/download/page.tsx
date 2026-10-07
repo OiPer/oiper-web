@@ -8,7 +8,7 @@ import type { Metadata } from 'next'
 const title = 'Download OiPer for Windows, macOS and Linux'
 
 const description =
-  'Download OiPer for Windows, macOS and Linux (AppImage, .deb, .rpm). Hold a hotkey, speak, and your words appear in any app. Free for local use.'
+  'Download OiPer for Windows, macOS and Linux (AppImage, .deb, .rpm). Hold a hotkey, speak, and your words appear in any app. Free forever on your machine.'
 
 export const metadata: Metadata = {
   title: { absolute: title },

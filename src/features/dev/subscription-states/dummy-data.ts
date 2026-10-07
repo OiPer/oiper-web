@@ -108,7 +108,7 @@ const FREE_CARD = {
   period: 'Forever',
   discountPercent: 0,
   discountPercentFloored: 0,
-  description: 'Unlimited local transcription, no limits, no cost.',
+  description: 'Unlimited transcription on your machine, no limits, no cost.',
   features: FREE_FEATURES,
   featured: false,
 }

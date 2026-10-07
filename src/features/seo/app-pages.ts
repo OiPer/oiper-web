@@ -28,12 +28,12 @@ export const APP_PAGES = {
     seo: {
       title: 'Create account',
       description:
-        'Create your OiPer account to use hosted transcription and manage your plan. Local dictation stays free and needs no account.',
+        'Create your OiPer account to use hosted transcription and manage your plan. The app is free forever on your machine — no account needed.',
     },
     og: {
       title: 'Create Account',
       description:
-        'Create an account for hosted transcription while local dictation in the app stays free',
+        'Create an account for hosted transcription while the app stays free on your machine',
       screenshot: 4,
     },
   },
