@@ -155,7 +155,7 @@ export const SITE_PAGES = {
     og: {
       title: 'Download OiPer',
       description:
-        'Get the free private dictation app for Windows, macOS and Linux and start talking in minutes',
+        'Free download for Windows, macOS and Linux — hold a hotkey, speak, and your words appear in any app',
       screenshot: 2,
     },
   },

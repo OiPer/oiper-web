@@ -19,7 +19,7 @@ export default function NotFound() {
       <title>Page not found | OiPer</title>
       <meta
         name="description"
-        content="This page doesn't exist. Head back to OiPer, private voice dictation for Windows, macOS and Linux."
+        content="This page doesn't exist. Head back to OiPer and keep typing at the speed of speech."
       />
 
       <NavigationLink href={HOME} location="not_found" destination="home">
