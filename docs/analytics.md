@@ -73,6 +73,8 @@ Forms follow one pattern: `logSubmit` after validation → `logComplete` when th
 | `billing`             | `/account/billing`                                                      |
 | `settings`            | `/account/settings`                                                     |
 | `security`            | `/account/security`                                                     |
+| `notifications`       | `/account/notifications`                                                |
+| `unsubscribe`         | `/unsubscribe` page linked from emails                                  |
 | `account`             | Account area header                                                     |
 | `not_found`           | The 404 page                                                            |
 
@@ -165,11 +167,11 @@ Every event the site sends. All events also carry `location`.
 
 ### Navigation and content
 
-| Event                | Location                                                | Details                                                                                                                                                                                                   | When                                                                                                                                                    |
-| -------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `navigation_clicked` | `footer` `header` `auth` `download_section` `not_found` | `destination` as a stable id, never a path: `features` `performance` `privacy` `languages` `pricing` `faq` `docs` `resources` `changelog` `privacy_policy` `terms_of_service` `home` `account` `download` | Internal links: footer, logos, the header "Account" item, "What's new" on the download page, Terms and Privacy on the auth pages, links on the 404 page |
-| `pricing_viewed`     | `landing`                                               | —                                                                                                                                                                                                         | Pricing section scrolls into view, once per page view                                                                                                   |
-| `faq_opened`         | `faq`                                                   | `question`: `offline` `free` `platforms` `audio_privacy` `apps` `hardware`                                                                                                                                | Opening an FAQ question                                                                                                                                 |
+| Event                | Location                                                              | Details                                                                                                                                                                                                   | When                                                                                                                                                    |
+| -------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigation_clicked` | `footer` `header` `auth` `download_section` `not_found` `unsubscribe` | `destination` as a stable id, never a path: `features` `performance` `privacy` `languages` `pricing` `faq` `docs` `resources` `changelog` `privacy_policy` `terms_of_service` `home` `account` `download` | Internal links: footer, logos, the header "Account" item, "What's new" on the download page, Terms and Privacy on the auth pages, links on the 404 page |
+| `pricing_viewed`     | `landing`                                                             | —                                                                                                                                                                                                         | Pricing section scrolls into view, once per page view                                                                                                   |
+| `faq_opened`         | `faq`                                                                 | `question`: `offline` `free` `platforms` `audio_privacy` `apps` `hardware`                                                                                                                                | Opening an FAQ question                                                                                                                                 |
 
 ### Sign in and sign up
 
@@ -209,6 +211,15 @@ Every event the site sends. All events also carry `location`.
 | `profile_update_submitted` / `_completed` / `_failed` | `settings`          | `error_type`                                                                | Account name form               |
 | `avatar_update_completed` / `_failed`                 | `settings`          | `error_type` (`unsupported_format` `too_large` `read_failed` `save_failed`) | Avatar upload                   |
 | `account_deletion_completed` / `_failed`              | `settings`          | `error_type`                                                                | Delete account                  |
+
+### Email notifications
+
+| Event                                                  | Location        | Details                                                                                                  | When                                                                                           |
+| ------------------------------------------------------ | --------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `email_subscribe_submitted` / `_completed` / `_failed` | `footer`        | `error_type`                                                                                             | Release updates form in the footer; the server answers the same for new and existing addresses |
+| `email_preferences_update_completed` / `_failed`       | `notifications` | `topic` (`product_releases`), `subscribed`, `error_type` (`notification_preferences_conflict` `unknown`) | A topic toggle on the notifications page                                                       |
+| `email_unsubscribe_all_completed` / `_failed`          | `notifications` | `error_type`                                                                                             | "Unsubscribe from all" on the notifications page                                               |
+| `email_unsubscribe_completed` / `_failed`              | `unsubscribe`   | `error_type` (`notification_unsubscribe_token_invalid` `unknown`)                                        | "Unsubscribe" on the page linked from emails                                                   |
 
 ## Intentionally not tracked
 

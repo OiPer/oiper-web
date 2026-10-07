@@ -114,6 +114,19 @@ export const APP_PAGES = {
       screenshot: 1,
     },
   },
+  '/account/notifications': {
+    seo: {
+      title: 'Notifications',
+      description:
+        'Choose which emails OiPer sends you, like release notes for every new version.',
+    },
+    og: {
+      title: 'Notifications',
+      description:
+        'Choose which OiPer emails land in your inbox, from release notes to account updates',
+      screenshot: 1,
+    },
+  },
   '/account/usage': {
     seo: {
       title: 'Usage',

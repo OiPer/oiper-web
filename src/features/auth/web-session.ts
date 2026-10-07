@@ -27,11 +27,18 @@ export function useAccountMutation<
   const request = $api.useMutation(method, path)
   type Init = Parameters<typeof request.mutateAsync>[0]
 
+  type AccountInit = Omit<Init, 'params'> & {
+    params?: { path?: Record<string, string> }
+  }
+
   const mutation = useMutation({
-    mutationFn: async (init: Omit<Init, 'params'>) =>
+    mutationFn: async (init: AccountInit) =>
       request.mutateAsync({
         ...init,
-        params: { header: await getAccountMutationHeaders() },
+        params: {
+          ...init.params,
+          header: await getAccountMutationHeaders(),
+        },
       } as Init),
   })
 
@@ -40,7 +47,7 @@ export function useAccountMutation<
     promise: ReturnType<typeof mutation.mutateAsync>
   } | null>(null)
 
-  function mutateAsync(init: Omit<Init, 'params'>) {
+  function mutateAsync(init: AccountInit) {
     const key = JSON.stringify(init)
     if (inFlight.current?.key === key) return inFlight.current.promise
 

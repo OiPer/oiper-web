@@ -5430,6 +5430,2457 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/account/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Email status and topic preferences */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccountNotifications"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Upstream provider request failed */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/account/notifications/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description The latest notifications sent to this account */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccountNotificationActivity"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Upstream provider request failed */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/account/notifications/topics/{topicKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: {
+            parameters: {
+                query?: never;
+                header: {
+                    "x-csrf-token": string;
+                };
+                path: {
+                    topicKey: components["schemas"]["NotificationTopic"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["AccountNotificationTopicBody"];
+                };
+            };
+            responses: {
+                /** @description Subscribes or unsubscribes one topic */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccountNotifications"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Upstream provider request failed */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/v1/account/notifications/unsubscribe-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    "x-csrf-token": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Unsubscribes every optional topic */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccountNotifications"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Upstream provider request failed */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PREFERENCES_CONFLICT" | "NOTIFICATION_PREFERENCES_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/notifications/subscribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["NotificationSubscribeBody"];
+                };
+            };
+            responses: {
+                /** @description Subscribes an address to a topic; the response is identical for new and existing addresses */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["NotificationAcceptedResponse"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Upstream provider request failed */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/notifications/unsubscribe/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    token: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Describes the topic an unsubscribe link controls without changing it */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["NotificationUnsubscribeState"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Upstream provider request failed */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    token: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Unsubscribes the link's topic; also serves RFC 8058 one-click unsubscribe */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["NotificationUnsubscribeResponse"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Upstream provider request failed */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/internal/notifications/campaigns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["NotificationCampaignBody"];
+                };
+            };
+            responses: {
+                /** @description Queues a campaign; repeating the same campaign key is a no-op */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["NotificationCampaignResponse"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PAYLOAD_INVALID" | "NOTIFICATION_QUEUE_UNAVAILABLE";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PAYLOAD_INVALID" | "NOTIFICATION_QUEUE_UNAVAILABLE";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PAYLOAD_INVALID" | "NOTIFICATION_QUEUE_UNAVAILABLE";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PAYLOAD_INVALID" | "NOTIFICATION_QUEUE_UNAVAILABLE";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PAYLOAD_INVALID" | "NOTIFICATION_QUEUE_UNAVAILABLE";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PAYLOAD_INVALID" | "NOTIFICATION_QUEUE_UNAVAILABLE";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Upstream provider request failed */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_PAYLOAD_INVALID" | "NOTIFICATION_QUEUE_UNAVAILABLE";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/internal/notifications/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    campaignKey?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Queue, activity and suppression counts */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["NotificationStatus"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Upstream provider request failed */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/pricing": {
         parameters: {
             query?: never;
@@ -6796,6 +9247,223 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/webhooks/ses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description SES feedback delivered through a signed SNS message */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SesWebhookReceipt"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_BAD_REQUEST" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_BAD_REQUEST" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_BAD_REQUEST" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_BAD_REQUEST" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_BAD_REQUEST" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_BAD_REQUEST" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Upstream provider request failed */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_BAD_REQUEST" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "NOTIFICATION";
+                                /** @enum {string} */
+                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/webhooks/{provider}": {
         parameters: {
             query?: never;
@@ -7417,6 +10085,8 @@ export interface components {
             ok: true;
             /** @enum {string} */
             service: "oiper-server";
+            /** @enum {string} */
+            notifications: "ok" | "degraded" | "disabled";
             requestId: string;
         };
         RequestId: string;
@@ -7661,6 +10331,89 @@ export interface components {
             /** Format: date-time */
             allowanceResetsAt: string;
         };
+        AccountNotifications: {
+            /** @enum {string} */
+            emailStatus: "PENDING" | "ACTIVE" | "SUPPRESSED" | "DISABLED";
+            /** Format: date-time */
+            updatedAt: string;
+            topics: {
+                key: components["schemas"]["NotificationTopic"];
+                subscribed: boolean;
+                /** Format: date-time */
+                changedAt: string | null;
+            }[];
+        };
+        /** @enum {string} */
+        NotificationTopic: "product-releases";
+        AccountNotificationActivity: {
+            id: string;
+            /** @enum {string} */
+            channel: "EMAIL";
+            workflowKey: string;
+            campaignKey: string | null;
+            /** @enum {string} */
+            status: "PENDING" | "QUEUED" | "PROCESSING" | "RETRYING" | "SENT" | "DELIVERED" | "SKIPPED" | "FAILED" | "BOUNCED" | "COMPLAINED";
+            renderedSubject: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            sentAt: string | null;
+            /** Format: date-time */
+            deliveredAt: string | null;
+            /** Format: date-time */
+            failedAt: string | null;
+        }[];
+        AccountNotificationTopicBody: {
+            subscribed: boolean;
+            /** Format: date-time */
+            expectedUpdatedAt: string;
+        };
+        NotificationAcceptedResponse: {
+            /** @enum {boolean} */
+            accepted: true;
+        };
+        NotificationSubscribeBody: {
+            email: string;
+            topic: components["schemas"]["NotificationTopic"];
+        };
+        NotificationUnsubscribeState: {
+            topic: components["schemas"]["NotificationTopic"];
+            subscribed: boolean;
+        };
+        NotificationUnsubscribeResponse: {
+            /** @enum {boolean} */
+            unsubscribed: true;
+        };
+        NotificationCampaignResponse: {
+            jobId: string;
+        };
+        NotificationCampaignBody: {
+            /** @enum {string} */
+            workflowKey: "product.release-published";
+            campaignKey: string;
+            payload: {
+                [key: string]: unknown;
+            };
+        };
+        NotificationStatus: {
+            queue: {
+                available: boolean;
+                counts: {
+                    [key: string]: number;
+                } | null;
+            };
+            activitiesByStatus: {
+                [key: string]: number;
+            };
+            oldestPendingAgeSeconds: number | null;
+            suppressedProfiles: number;
+            campaign: {
+                campaignKey: string;
+                activitiesByStatus: {
+                    [key: string]: number;
+                };
+            } | null;
+        };
         PricingCatalogResponse: {
             plans: components["schemas"]["PricingPlan"][];
         };
@@ -7757,6 +10510,11 @@ export interface components {
         } & {
             [key: string]: unknown;
         });
+        SesWebhookReceipt: {
+            /** @enum {boolean} */
+            received: true;
+            outcome: string;
+        };
         BillingWebhookReceipt: {
             /** @enum {boolean} */
             received: true;

@@ -2,6 +2,7 @@
 
 import { NavigationLink } from '@/components/navigation-link'
 import { DownloadButton } from '@/features/download/download-button'
+import { SubscribeForm } from '@/features/notifications/subscribe-form'
 import { OiPerLogoBackground } from '@oiper/logo'
 import {
   BookOpen,
@@ -118,6 +119,10 @@ export function FooterSection() {
               className="mt-10 h-13 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
               iconClassName="size-5"
             />
+
+            <div className="mt-14">
+              <SubscribeForm location="footer" />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-12 sm:gap-20">
