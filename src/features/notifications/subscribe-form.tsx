@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 
 export function SubscribeForm(props: { location: string }) {
   const [email, setEmail] = useState('')
+  const [focused, setFocused] = useState(false)
   const subscribeMutation = $api.useMutation(
     'post',
     '/v1/notifications/subscribe'
@@ -27,7 +28,7 @@ export function SubscribeForm(props: { location: string }) {
 
       logComplete('email_subscribe', props.location)
       setEmail('')
-      toast.success("You're on the list. We'll email you about new releases.")
+      toast.success("You're on the list. We'll email you occasional updates.")
     } catch (error) {
       logError('email_subscribe', props.location, {
         error_type: isAppErrorEnvelope(error) ? error.error.code : 'unknown',
@@ -38,33 +39,27 @@ export function SubscribeForm(props: { location: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-100">
-      <label
-        htmlFor={`subscribe-email-${props.location}`}
-        className="text-sm font-medium text-white/60"
-      >
-        Get release updates
-      </label>
-      <p className="mt-1 text-sm text-white/35">
-        One short email for every new version. No spam.
-      </p>
-
-      <div className="mt-4 flex gap-2">
+    <form onSubmit={handleSubmit} className="w-0 min-w-full">
+      <div className="relative">
         <Input
           id={`subscribe-email-${props.location}`}
           type="email"
           required
           autoComplete="email"
-          placeholder="you@example.com"
+          aria-label="Email address"
+          placeholder={focused ? 'you@example.com' : 'Stay Connected'}
           value={email}
           onChange={(event) => setEmail(event.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           disabled={subscribeMutation.isPending}
-          className="h-11 border-white/10 bg-white/3 text-white placeholder:text-white/25"
+          className="h-13 rounded-md border-white/10 bg-white/3 pr-28 text-white placeholder:text-white/25"
         />
+
         <Button
           type="submit"
           disabled={subscribeMutation.isPending}
-          className="h-11 rounded bg-white px-5 text-[#0a0a0a] hover:bg-white/90"
+          className="absolute inset-y-1 right-1 h-auto rounded-md bg-white/5 px-4 text-sm font-medium text-white hover:bg-white/10"
         >
           <Loading loading={subscribeMutation.isPending}>Subscribe</Loading>
         </Button>
