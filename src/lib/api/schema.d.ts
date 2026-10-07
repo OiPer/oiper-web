@@ -10086,7 +10086,7 @@ export interface components {
             /** @enum {string} */
             service: "oiper-server";
             /** @enum {string} */
-            notifications: "ok" | "degraded" | "disabled";
+            notifications: "ok" | "degraded";
             requestId: string;
         };
         RequestId: string;
