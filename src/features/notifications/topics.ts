@@ -8,6 +8,6 @@ export const TOPIC_COPY: Record<
 > = {
   'product-releases': {
     label: 'Product updates',
-    description: 'Everything new improved and fixed in every OiPer release.',
+    description: 'Emails about new features, improvements, and fixes.',
   },
 }
