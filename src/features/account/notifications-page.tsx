@@ -203,7 +203,7 @@ function EmailPreferences() {
           <div className="space-y-0.5">
             <Label htmlFor="account-emails">Account emails</Label>
             <p className="text-muted-foreground text-sm">
-              Welcome security and billing emails for your account.
+              Security and billing emails for your account.
             </p>
           </div>
 
