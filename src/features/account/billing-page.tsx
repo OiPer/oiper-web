@@ -17,6 +17,7 @@ import {
   type PaidSubscriptionView,
   type PlanChangeTarget,
 } from '@/features/billing/use-checkout'
+import { ANCHOR_PRICING } from '@/features/landing-page/constants/links'
 import { logClick, logComplete, logError } from '@/lib/analytics'
 import { $api } from '@/lib/api/client'
 import { isAppErrorEnvelope } from '@/lib/api/error'
@@ -25,14 +26,20 @@ import {
   formatCurrencyFromCents,
   formatDate,
   formatLabel,
+  planDisplayName,
   subscriptionPlanLabel,
 } from '@/lib/format'
+import Link from 'next/link'
 import { useState, type ReactNode } from 'react'
 import { toast } from 'sonner'
 
 type PricingPlan = components['schemas']['PricingPlan']
 type SubscriptionStatus = PaidSubscriptionView['status']
 type NextPayment = PaidSubscriptionView['nextPayment']
+type AccountGifts = components['schemas']['AccountGiftsView']
+type CurrentGift = NonNullable<AccountGifts['current']>
+
+const GIFT_ENDED_NOTE_DAYS = 30
 
 const subscriptionRequest = { cache: 'no-store' } as const
 
@@ -195,6 +202,62 @@ function ChangePlanButton(props: {
   )
 }
 
+function GiftPlanCard(props: { gift: CurrentGift }) {
+  const plan = planDisplayName(props.gift.plan)
+  const endsAt = formatDate(props.gift.endsAt)
+
+  return (
+    <SectionCard id="current-plan" className="gap-4">
+      <div className="px-(--x-padding)">
+        <p className="text-muted-foreground mb-1 text-sm font-medium">
+          Subscription
+        </p>
+
+        <div className="divide-y">
+          <Row label="Plan" value={plan} />
+          <Row label="Gift from OiPer" value={`Until ${endsAt}`} />
+          <Row label="After your gift" value="Free" />
+        </div>
+
+        <p className="text-muted-foreground pt-3 text-sm">
+          Want to keep {plan}? Pick a plan now and you won&apos;t pay anything
+          until {endsAt}.
+        </p>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-end gap-2 border-t px-(--x-padding) py-4">
+        <Button asChild>
+          <Link
+            href={ANCHOR_PRICING}
+            onClick={() =>
+              logClick('gift_keep_plan', 'billing', {
+                plan: props.gift.plan.toLowerCase(),
+              })
+            }
+          >
+            Keep {plan} after your gift
+          </Link>
+        </Button>
+      </div>
+    </SectionCard>
+  )
+}
+
+function GiftEndedNote(props: { lastEnded: AccountGifts['lastEnded'] }) {
+  if (!props.lastEnded) return null
+
+  const daysSince =
+    (Date.now() - new Date(props.lastEnded.endedAt).getTime()) / 86_400_000
+  if (daysSince > GIFT_ENDED_NOTE_DAYS) return null
+
+  return (
+    <p className="text-muted-foreground mb-4 text-sm">
+      Your {planDisplayName(props.lastEnded.plan)} gift ended on{' '}
+      {formatDate(props.lastEnded.endedAt)}. Thanks for giving it a try.
+    </p>
+  )
+}
+
 function CurrentPlan() {
   const subscriptionQuery = $api.useQuery(
     'get',
@@ -203,6 +266,13 @@ function CurrentPlan() {
     { retry: false, staleTime: 30_000 }
   )
   const pricingQuery = $api.useQuery('get', '/v1/pricing')
+  const giftsQuery = $api.useQuery(
+    'get',
+    '/v1/account/gifts',
+    subscriptionRequest,
+    { retry: false, staleTime: 30_000 }
+  )
+  const gift = giftsQuery.data?.current ?? null
   const { pendingTarget, setPendingTarget } = usePollUntilPlanChangeLands(
     subscriptionQuery.refetch
   )
@@ -231,7 +301,7 @@ function CurrentPlan() {
       }
     : null
 
-  if (subscriptionQuery.isPending) {
+  if (subscriptionQuery.isPending || giftsQuery.isPending) {
     return <Skeleton className="h-40 w-full rounded-xl" />
   }
 
@@ -239,7 +309,18 @@ function CurrentPlan() {
     return <PlanNote variant="setting-up" />
   }
 
-  if (subscription && !paidSubscription) return <PlanNote variant="free" />
+  if (subscription && !paidSubscription && gift) {
+    return <GiftPlanCard gift={gift} />
+  }
+
+  if (subscription && !paidSubscription) {
+    return (
+      <>
+        <GiftEndedNote lastEnded={giftsQuery.data?.lastEnded ?? null} />
+        <PlanNote variant="free" />
+      </>
+    )
+  }
 
   return (
     <SectionCard id="current-plan" className="gap-4">
@@ -282,8 +363,14 @@ function CurrentPlan() {
 
         {paidSubscription && (
           <div className="divide-y">
+            {gift && (
+              <Row
+                label="Gift from OiPer"
+                value={`${planDisplayName(gift.plan)} until ${formatDate(gift.endsAt)}`}
+              />
+            )}
             <Row
-              label="Plan"
+              label={gift ? 'After your gift' : 'Plan'}
               value={subscriptionPlanLabel(
                 paidSubscription.plan,
                 paidSubscription.billingInterval

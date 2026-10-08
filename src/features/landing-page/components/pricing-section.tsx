@@ -20,7 +20,11 @@ import {
 import { logClick, logSelect, logView } from '@/lib/analytics'
 import { $api } from '@/lib/api/client'
 import type { components } from '@/lib/api/schema'
-import { formatCurrencyFromCents, planDisplayName } from '@/lib/format'
+import {
+  formatCurrencyFromCents,
+  formatDate,
+  planDisplayName,
+} from '@/lib/format'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
@@ -67,6 +71,13 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     { enabled: !!currentUser, retry: false, staleTime: 30_000 }
   )
 
+  const giftsQuery = $api.useQuery(
+    'get',
+    '/v1/account/gifts',
+    subscriptionRequest,
+    { enabled: !!currentUser, retry: false, staleTime: 30_000 }
+  )
+  const gift = currentUser ? (giftsQuery.data?.current ?? null) : null
   const { pendingTarget, setPendingTarget } = usePollUntilPlanChangeLands(
     subscriptionQuery.refetch
   )
@@ -99,7 +110,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
   const isStatusUnknown =
     !isMounted ||
     isAuthLoading ||
-    (!!currentUser && subscriptionQuery.isPending)
+    (!!currentUser && (subscriptionQuery.isPending || giftsQuery.isPending))
 
   useCheckoutQueryParam(
     props.plans,
@@ -214,7 +225,9 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
           }
 
       return {
-        cta: `Upgrade to ${planDisplayName(cardPlan)}`,
+        cta: gift
+          ? `${cardPlan === gift.plan ? 'Keep' : 'Switch to'} ${planDisplayName(cardPlan)} after your gift`
+          : `Upgrade to ${planDisplayName(cardPlan)}`,
         action: checkoutAction,
         submitting: isCheckoutSubmitting(cardPlan, 'PADDLE'),
         disabled: isCheckoutDisabledByOther(cardPlan, 'PADDLE'),
@@ -268,7 +281,9 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
             Simple pricing.
           </h2>
           <p className="mt-5 text-base leading-relaxed text-white/50">
-            Choose the plan that works best for you. No hidden fees.
+            {gift && isLapsed
+              ? `Your ${planDisplayName(gift.plan)} gift runs until ${formatDate(gift.endsAt)}. Pick a plan now and you won't pay anything until then.`
+              : 'Choose the plan that works best for you. No hidden fees.'}
           </p>
 
           <div className="mt-8">
