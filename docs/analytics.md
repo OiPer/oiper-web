@@ -222,6 +222,14 @@ Every event the site sends. All events also carry `location`.
 | `email_unsubscribe_all_completed` / `_failed`          | `notifications` | `error_type`                                                                                             | "Unsubscribe from all" on the notifications page                                               |
 | `email_unsubscribe_completed` / `_failed`              | `unsubscribe`   | `error_type` (`notification_unsubscribe_token_invalid` `unknown`)                                        | "Unsubscribe" on the page linked from emails                                                   |
 
+### Gifts
+
+| Event                                             | Location  | Details                                                                          | When                                                            |
+| ------------------------------------------------- | --------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `gift_viewed`                                     | `gift`    | `state` (`claimable` `claimed_by_you` `claimed` `expired` `revoked` `not_found`) | The gift page finished checking the link, once per state shown  |
+| `gift_claim_submitted` / `_completed` / `_failed` | `gift`    | `plan`, `months`; `error_type` on failure (a `GIFT_*` code or `unknown`)         | "Claim my gift"                                                 |
+| `gift_keep_plan_clicked`                          | `billing` | `plan`                                                                           | "Keep {plan} after your gift" on the billing page during a gift |
+
 ## Intentionally not tracked
 
 - **Dialog, modal and menu opens** that always follow a tracked click. They'd count one action twice.
@@ -235,11 +243,3 @@ Every event the site sends. All events also carry `location`.
 - **OAuth provider failures.** Not observable in the browser; `oauth_clicked` without a later `signin_completed` shows abandonment.
 - **`/dev` pages.** Internal tools. They return 404 in production; previews there reuse real components, so a click on dev can still reach the dev GA property.
 - **Anything personal:** emails, names, ids, tokens, typed content.
-
-### Gifts
-
-| Event                                             | Location  | Details                                                                          | When                                                            |
-| ------------------------------------------------- | --------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `gift_viewed`                                     | `gift`    | `state` (`claimable` `claimed_by_you` `claimed` `expired` `revoked` `not_found`) | The gift page finished checking the link, once per state shown  |
-| `gift_claim_submitted` / `_completed` / `_failed` | `gift`    | `plan`, `months`; `error_type` on failure (a `GIFT_*` code or `unknown`)         | "Claim my gift"                                                 |
-| `gift_keep_plan_clicked`                          | `billing` | `plan`                                                                           | "Keep {plan} after your gift" on the billing page during a gift |
