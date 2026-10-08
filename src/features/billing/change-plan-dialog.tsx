@@ -424,11 +424,21 @@ export function ChangePlanDialog({
               preview?.kind === 'BLOCKED' && (
                 <Alert className="border-warning/40 bg-warning/5">
                   <AlertDescription className="space-y-3">
-                    {preview.reason === 'PAUSED' ? (
+                    {preview.reason === 'GIFT' && (
+                      <p>
+                        Your gift runs until{' '}
+                        {preview.currentPeriodEnd
+                          ? formatDate(preview.currentPeriodEnd)
+                          : 'it ends'}{' '}
+                        so you can change your plan after that
+                      </p>
+                    )}
+                    {preview.reason === 'PAUSED' && (
                       <p>
                         Your subscription is paused so resume it to switch plans
                       </p>
-                    ) : (
+                    )}
+                    {preview.reason === 'ENDING' && (
                       <p>
                         Your subscription is scheduled to cancel
                         {preview.currentPeriodEnd &&
@@ -436,19 +446,21 @@ export function ChangePlanDialog({
                         so keep it active to switch plans
                       </p>
                     )}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => void handleResume()}
-                      disabled={isResuming}
-                    >
-                      <Loading loading={isResuming}>
-                        {preview.reason === 'PAUSED'
-                          ? 'Resume subscription'
-                          : 'Keep subscription'}
-                      </Loading>
-                    </Button>
+                    {preview.reason !== 'GIFT' && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => void handleResume()}
+                        disabled={isResuming}
+                      >
+                        <Loading loading={isResuming}>
+                          {preview.reason === 'PAUSED'
+                            ? 'Resume subscription'
+                            : 'Keep subscription'}
+                        </Loading>
+                      </Button>
+                    )}
                   </AlertDescription>
                 </Alert>
               )}

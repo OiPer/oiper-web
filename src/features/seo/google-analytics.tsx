@@ -8,7 +8,7 @@ export function GoogleAnalytics(props: { id: string }) {
         strategy="afterInteractive"
       />
       <Script id="google-analytics" strategy="beforeInteractive">
-        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${props.id}');`}
+        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${props.id}',{page_location:location.origin+location.pathname+location.search});`}
       </Script>
     </>
   )
