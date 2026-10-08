@@ -370,7 +370,11 @@ function CurrentPlan() {
               />
             )}
             <Row
-              label={gift ? 'After your gift' : 'Plan'}
+              label={
+                gift && paidSubscription.inFreePeriod
+                  ? 'After your gift'
+                  : 'Plan'
+              }
               value={subscriptionPlanLabel(
                 paidSubscription.plan,
                 paidSubscription.billingInterval

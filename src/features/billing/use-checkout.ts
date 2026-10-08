@@ -101,13 +101,14 @@ export function useStartCheckout() {
   async function startCheckout(
     provider: 'PADDLE' | 'STRIPE',
     plan: 'PRO' | 'MAX',
-    interval: 'MONTHLY' | 'YEARLY'
+    interval: 'MONTHLY' | 'YEARLY',
+    startNow = false
   ) {
     setPendingCheckout({ plan, provider })
 
     try {
       const result = await checkoutMutation.mutateAsync({
-        body: { provider, plan, interval },
+        body: { provider, plan, interval, startNow },
       })
 
       switch (result.provider) {
@@ -145,6 +146,12 @@ export function useStartCheckout() {
             isAppErrorEnvelope(error)
               ? error.error.message
               : 'You already have a subscription — manage it from billing'
+          )
+        case 'BILLING_PLAN_CHANGE_NOT_ALLOWED':
+          return toast.error(
+            isAppErrorEnvelope(error)
+              ? error.error.message
+              : "This plan can't start now"
           )
         case 'BILLING_PROVIDER_NOT_AVAILABLE':
           return toast.error(

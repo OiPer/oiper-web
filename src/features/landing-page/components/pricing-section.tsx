@@ -224,6 +224,8 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
             onClick: () => trackUpgrade(cardPlan, 'paddle'),
           }
 
+      const canStartNow = !!gift && cardPlan === 'MAX' && gift.plan === 'PRO'
+
       return {
         cta: gift
           ? `${cardPlan === gift.plan ? 'Keep' : 'Switch to'} ${planDisplayName(cardPlan)} after your gift`
@@ -231,7 +233,24 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
         action: checkoutAction,
         submitting: isCheckoutSubmitting(cardPlan, 'PADDLE'),
         disabled: isCheckoutDisabledByOther(cardPlan, 'PADDLE'),
-        secondaryCta: buildStripeSecondaryCta(cardPlan),
+        secondaryCta: canStartNow
+          ? {
+              label: `Start ${planDisplayName(cardPlan)} now and pay today`,
+              action: {
+                type: 'button',
+                onClick: () => {
+                  logClick('upgrade', 'pricing', {
+                    plan: cardPlan.toLowerCase(),
+                    interval: intervalParam,
+                    provider: 'paddle',
+                    outcome: 'start_now',
+                  })
+                  void startCheckout('PADDLE', cardPlan, interval, true)
+                },
+              },
+              disabled: pendingCheckout !== null,
+            }
+          : buildStripeSecondaryCta(cardPlan),
       }
     }
 

@@ -137,7 +137,12 @@ function PlanHighlights(props: { plan: 'PRO' | 'MAX' }) {
 }
 
 function ClaimedView(props: {
-  gift: { plan: 'PRO' | 'MAX'; startsAt: string; endsAt: string }
+  gift: {
+    plan: 'PRO' | 'MAX'
+    startsAt: string
+    endsAt: string
+    nextPaymentAt: string | null
+  }
 }) {
   const subscriptionQuery = $api.useQuery(
     'get',
@@ -145,12 +150,10 @@ function ClaimedView(props: {
     { cache: 'no-store' },
     { retry: false }
   )
-  const subscription = subscriptionQuery.data
-  const movesPayment =
-    subscription?.plan !== undefined &&
-    subscription.plan !== 'FREE' &&
-    !subscription.cancelAtPeriodEnd &&
-    subscription.status === 'ACTIVE'
+  const isPaying =
+    subscriptionQuery.data?.plan !== undefined &&
+    subscriptionQuery.data.plan !== 'FREE' &&
+    subscriptionQuery.data.status === 'ACTIVE'
   const startsLater = new Date(props.gift.startsAt).getTime() > Date.now()
   const plan = planDisplayName(props.gift.plan)
 
@@ -160,8 +163,8 @@ function ClaimedView(props: {
         {startsLater
           ? `Your ${plan} gift starts on ${formatDate(props.gift.startsAt)}, right after the time you already have, and runs until ${formatDate(props.gift.endsAt)}.`
           : `OiPer ${plan} is on until ${formatDate(props.gift.endsAt)}. Open the desktop app, sign in, and start talking.`}
-        {movesPayment &&
-          ` Your next payment moves to ${formatDate(props.gift.endsAt)}.`}
+        {props.gift.nextPaymentAt &&
+          ` Your next payment moves to ${formatDate(props.gift.nextPaymentAt)}, so nothing is charged for the gift months.`}
       </Description>
 
       <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
@@ -176,7 +179,7 @@ function ClaimedView(props: {
         </Link>
       </div>
 
-      {!movesPayment && (
+      {!isPaying && (
         <p className="mt-10 max-w-110 text-sm leading-relaxed text-white/40">
           Want to keep {plan} after that? You can set it up any time from
           billing, and you won&apos;t pay anything until{' '}
@@ -241,7 +244,11 @@ function ClaimableView(props: { code: string; gift: GiftLookup }) {
       <PlanHighlights plan={props.gift.plan} />
 
       <div className="mt-10 flex flex-col items-center gap-4">
-        {currentUser ? (
+        {currentUser && props.gift.blocked ? (
+          <p className="max-w-110 text-base leading-relaxed text-white/70">
+            {props.gift.blocked}.
+          </p>
+        ) : currentUser ? (
           <>
             <Button
               type="button"
@@ -279,10 +286,12 @@ function ClaimableView(props: { code: string; gift: GiftLookup }) {
         )}
       </div>
 
-      <p className="mt-10 max-w-110 text-sm leading-relaxed text-white/40">
-        No card needed. When it ends you&apos;re back on the free plan, unless
-        you choose to keep {plan}.
-      </p>
+      {!(currentUser && props.gift.blocked) && (
+        <p className="mt-10 max-w-110 text-sm leading-relaxed text-white/40">
+          No card needed. When it ends you&apos;re back on the free plan, unless
+          you choose to keep {plan}.
+        </p>
+      )}
     </GiftLayout>
   )
 }
@@ -353,7 +362,12 @@ function GiftWithCode(props: { code: string }) {
   if (gift.state === 'CLAIMED_BY_YOU' && gift.startsAt && gift.endsAt) {
     return (
       <ClaimedView
-        gift={{ plan: gift.plan, startsAt: gift.startsAt, endsAt: gift.endsAt }}
+        gift={{
+          plan: gift.plan,
+          startsAt: gift.startsAt,
+          endsAt: gift.endsAt,
+          nextPaymentAt: null,
+        }}
       />
     )
   }

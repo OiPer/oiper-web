@@ -4957,7 +4957,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4997,7 +4997,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -5037,7 +5037,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -5077,7 +5077,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -5117,7 +5117,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -5157,7 +5157,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -5197,7 +5197,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -11032,6 +11032,7 @@ export interface components {
             /** Format: date-time */
             currentPeriodEnd: string | null;
             cancelAtPeriodEnd: boolean;
+            inFreePeriod: boolean;
             currencyCode: string | null;
             nextPayment: {
                 amount: string;
@@ -11128,6 +11129,11 @@ export interface components {
             plan: "PRO" | "MAX";
             /** @enum {string} */
             interval: "MONTHLY" | "YEARLY";
+            /**
+             * @description During a gift: start this higher plan now and pay today instead of when the gift ends
+             * @default false
+             */
+            startNow: boolean;
         };
         UsageAccountView: {
             /** @enum {string} */
@@ -11199,6 +11205,11 @@ export interface components {
             startsAt: string;
             /** Format: date-time */
             endsAt: string;
+            /**
+             * Format: date-time
+             * @description When the account already pays: the new date of its next payment
+             */
+            nextPaymentAt: string | null;
         };
         ClaimGiftBody: {
             code: string;
@@ -11214,6 +11225,8 @@ export interface components {
             startsAt: string | null;
             /** Format: date-time */
             endsAt: string | null;
+            /** @description For a signed-in visitor, why this account can't claim the gift right now */
+            blocked: string | null;
         };
         LookupGiftBody: {
             code: string;
