@@ -226,8 +226,8 @@ function GiftPlanCard(props: {
         </div>
 
         <p className="text-muted-foreground pt-3 text-sm">
-          Want to keep {plan}? Set it up now and you won&apos;t pay anything
-          until {endsAt}.
+          Want to keep {plan}? Set it up now and your first payment comes when
+          your gift ends on {endsAt}.
         </p>
       </div>
 

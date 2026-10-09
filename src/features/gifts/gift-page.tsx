@@ -175,7 +175,7 @@ function ClaimedView(props: {
       {!isPaying && (
         <p className="mt-10 max-w-110 text-sm leading-relaxed text-white/40">
           Want to keep {plan} after that? You can set it up any time from
-          billing, and you won&apos;t pay anything until{' '}
+          billing, and your first payment comes when your gift ends on{' '}
           {formatDate(props.gift.endsAt)}.
         </p>
       )}

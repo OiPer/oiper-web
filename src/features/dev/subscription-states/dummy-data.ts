@@ -329,7 +329,7 @@ export const CURRENT_PLAN_STATES: CurrentPlanCardState[] = [
         { label: 'After your gift', value: 'Free' },
       ],
       footnote:
-        "Want to keep Pro? Set it up now and you won't pay anything until November 9 2026.",
+        'Want to keep Pro? Set it up now and your first payment comes when your gift ends on November 9 2026.',
       buttons: [
         { label: 'Keep Pro after your gift', variant: 'outline' },
         { label: 'Change plan' },
@@ -346,7 +346,7 @@ export const CURRENT_PLAN_STATES: CurrentPlanCardState[] = [
         { label: 'After your gift', value: 'Free' },
       ],
       footnote:
-        "Want to keep Pro? Set it up now and you won't pay anything until November 9 2026.",
+        'Want to keep Pro? Set it up now and your first payment comes when your gift ends on November 9 2026.',
       buttons: [
         {
           label: 'Keep Pro after your gift',
@@ -1330,7 +1330,7 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
       kind: 'claimed',
       text: 'OiPer Pro is on until January 9 2027. Open the desktop app, sign in, and start talking.',
       keepNote:
-        "Want to keep Pro after that? You can set it up any time from billing, and you won't pay anything until January 9 2027.",
+        'Want to keep Pro after that? You can set it up any time from billing, and your first payment comes when your gift ends on January 9 2027.',
     },
   },
   {
@@ -1341,7 +1341,7 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
       kind: 'claimed',
       text: 'Your Pro gift starts on January 9 2027, right after the time you already have, and runs until February 9 2027.',
       keepNote:
-        "Want to keep Pro after that? You can set it up any time from billing, and you won't pay anything until February 9 2027.",
+        'Want to keep Pro after that? You can set it up any time from billing, and your first payment comes when your gift ends on February 9 2027.',
     },
   },
   {
