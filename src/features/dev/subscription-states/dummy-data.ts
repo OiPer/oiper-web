@@ -257,6 +257,26 @@ export const PRICING_CARD_STATES: PricingCardState[] = [
     },
   },
   {
+    title: 'Pro · on a Pro gift',
+    description:
+      "The gift's plan reads Current Plan on both intervals, like a subscriber's.",
+    entryNote: 'On a gift',
+    card: {
+      ...PRO_MONTHLY_CARD,
+      cta: cta({ label: 'Current Plan', variant: 'outline', disabled: true }),
+    },
+  },
+  {
+    title: 'Max · on a Pro gift',
+    description:
+      'Switch opens the change dialog, which shows the gift block with End gift.',
+    entryNote: 'On a gift',
+    card: {
+      ...MAX_MONTHLY_CARD,
+      cta: cta({ label: 'Switch', variant: 'outline' }),
+    },
+  },
+  {
     title: 'Max · Switch locked',
     description: 'A plan change was just confirmed and is still landing.',
     card: {
@@ -284,7 +304,12 @@ export type CurrentPlanCardState = {
     pausedAlert?: boolean
     checkoutProcessing?: boolean
     note?: 'free' | 'setting-up'
+    endedNote?: string
+    rowsBefore?: { label: string; value: string }[]
+    planRowLabel?: string
     planLabel: string
+    rowsAfter?: { label: string; value: string }[]
+    footnote?: string
     status?: string
     scheduledChange?: { date: string; planLabel: string }
     payment?: { label: string; date: string; amount: string }
@@ -293,6 +318,78 @@ export type CurrentPlanCardState = {
 }
 
 export const CURRENT_PLAN_STATES: CurrentPlanCardState[] = [
+  {
+    title: 'Gift · nothing set up',
+    description:
+      'Claimed a gift and pays nothing. Keep opens the $0-today checkout; Change plan opens the dialog, which shows the gift block.',
+    card: {
+      planLabel: 'Pro',
+      rowsAfter: [
+        { label: 'Gift from OiPer', value: 'Until November 9 2026' },
+        { label: 'After your gift', value: 'Free' },
+      ],
+      footnote:
+        "Want to keep Pro? Set it up now and you won't pay anything until November 9 2026.",
+      buttons: [
+        { label: 'Keep Pro after your gift', variant: 'outline' },
+        { label: 'Change plan' },
+      ],
+    },
+  },
+  {
+    title: 'Gift · opening checkout',
+    description: 'Keep was pressed and the Paddle checkout is opening.',
+    card: {
+      planLabel: 'Pro',
+      rowsAfter: [
+        { label: 'Gift from OiPer', value: 'Until November 9 2026' },
+        { label: 'After your gift', value: 'Free' },
+      ],
+      footnote:
+        "Want to keep Pro? Set it up now and you won't pay anything until November 9 2026.",
+      buttons: [
+        {
+          label: 'Keep Pro after your gift',
+          variant: 'outline',
+          loading: true,
+        },
+        { label: 'Change plan', disabled: true },
+      ],
+    },
+  },
+  {
+    title: 'Gift · keeping Pro after it',
+    description:
+      'Paid $0 at checkout. The plan starts and is first charged when the gift ends.',
+    card: {
+      rowsBefore: [
+        { label: 'Gift from OiPer', value: 'Pro until November 9 2026' },
+      ],
+      planRowLabel: 'After your gift',
+      planLabel: 'Pro · Monthly',
+      status: 'Active',
+      payment: {
+        label: 'Next payment',
+        date: 'November 9 2026',
+        amount: '$8.70',
+      },
+      buttons: [
+        { label: 'Manage subscription', variant: 'outline' },
+        { label: 'Change plan' },
+      ],
+    },
+  },
+  {
+    title: 'Gift ended',
+    description:
+      'For 30 days after a gift ends with nothing set up, a line sits above the Free note.',
+    card: {
+      note: 'free',
+      endedNote:
+        'Your Pro gift ended on October 2 2026. Thanks for giving it a try.',
+      planLabel: '',
+    },
+  },
   {
     title: 'Loading',
     description: 'The subscription query has not resolved yet.',
@@ -578,8 +675,9 @@ export type ChangePlanState = {
     | { kind: 'error'; message: string }
     | {
         kind: 'blocked'
-        reason: 'ENDING' | 'PAUSED'
+        reason: 'ENDING' | 'PAUSED' | 'GIFT'
         periodEnd?: string
+        giftEndCharge?: string
         resumeLoading?: boolean
       }
     | { kind: 'preview'; rows: SummaryRowFixture[] }
@@ -722,6 +820,45 @@ export const CHANGE_PLAN_STATES: ChangePlanState[] = [
     description: 'Resume subscription unlocks plan changes.',
     options: FOUR_OPTIONS('PRO-YEARLY', 'PRO-MONTHLY'),
     summary: { kind: 'blocked', reason: 'PAUSED' },
+    confirmLabel: 'Confirm change',
+    confirmDisabled: true,
+  },
+  {
+    title: 'Blocked · on a gift',
+    description:
+      'A gift blocks plan changes like a pause. End gift puts them on Free and closes the dialog.',
+    entryNote: 'Pricing Switch or Billing',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: { kind: 'blocked', reason: 'GIFT', periodEnd: 'November 9 2026' },
+    confirmLabel: 'Confirm change',
+    confirmDisabled: true,
+  },
+  {
+    title: 'Blocked · gift with a plan to follow',
+    description:
+      'Ending the gift starts the plan set to follow it, so the line says what is charged today.',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'blocked',
+      reason: 'GIFT',
+      periodEnd: 'November 9 2026',
+      giftEndCharge: '$8.70',
+    },
+    confirmLabel: 'Confirm change',
+    confirmDisabled: true,
+  },
+  {
+    title: 'Blocked · ending gift',
+    description:
+      'End gift spins while the gift ends (and the plan is charged).',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'blocked',
+      reason: 'GIFT',
+      periodEnd: 'November 9 2026',
+      giftEndCharge: '$8.70',
+      resumeLoading: true,
+    },
     confirmLabel: 'Confirm change',
     confirmDisabled: true,
   },
@@ -980,6 +1117,22 @@ export type ToastFixture = {
 export const TOAST_STATES: ToastFixture[] = [
   {
     type: 'success',
+    message: 'Your gift has ended',
+    when: 'End gift succeeded',
+  },
+  {
+    type: 'error',
+    message:
+      "We couldn't charge your card, so your gift is still on. Update your payment method and try again",
+    when: 'End gift could not charge the plan set to follow the gift',
+  },
+  {
+    type: 'error',
+    message: "Couldn't end your gift",
+    when: 'End gift failed for any other reason',
+  },
+  {
+    type: 'success',
     message: 'Payment received — setting up your subscription',
     when: 'Checkout return while the webhook lands',
   },
@@ -1064,5 +1217,151 @@ export const TOAST_STATES: ToastFixture[] = [
     type: 'error',
     message: 'You already have a subscription — manage it from billing',
     when: 'Checkout started twice',
+  },
+]
+
+export const GIFT_FEATURES = [
+  '3-5x Faster Speed',
+  '180 Min/Day Transcription',
+  'Custom Dictionary',
+  'Custom Formatting Prompts',
+]
+
+export type GiftPageState = {
+  title: string
+  description: string
+  view:
+    | { kind: 'opening' }
+    | {
+        kind: 'claimable'
+        heading: string
+        message?: string
+        viewer: 'visitor' | 'signed-in'
+        claiming?: boolean
+        error?: string
+        blocked?: string
+      }
+    | { kind: 'claimed'; text: string; keepNote?: string }
+    | {
+        kind: 'unavailable'
+        reason: 'NOT_FOUND' | 'CLAIMED' | 'EXPIRED' | 'REVOKED'
+      }
+}
+
+const GIFT_MESSAGE = 'Thanks for trying OiPer early. Enjoy!'
+
+export const GIFT_PAGE_STATES: GiftPageState[] = [
+  {
+    title: 'Opening',
+    description: 'Reading the code from the link and checking it.',
+    view: { kind: 'opening' },
+  },
+  {
+    title: 'Visitor',
+    description:
+      'Not signed in. Both actions open the auth modal and come back here.',
+    view: {
+      kind: 'claimable',
+      heading: '3 months of OiPer Pro, on us.',
+      message: GIFT_MESSAGE,
+      viewer: 'visitor',
+    },
+  },
+  {
+    title: 'Signed in',
+    description: 'One click to claim. No message was set on this link.',
+    view: {
+      kind: 'claimable',
+      heading: 'A year of OiPer Max, on us.',
+      viewer: 'signed-in',
+    },
+  },
+  {
+    title: 'Claiming',
+    description: 'The claim request is in flight.',
+    view: {
+      kind: 'claimable',
+      heading: '3 months of OiPer Pro, on us.',
+      message: GIFT_MESSAGE,
+      viewer: 'signed-in',
+      claiming: true,
+    },
+  },
+  {
+    title: 'Claim failed',
+    description:
+      'The server message shows under the button, e.g. email not verified.',
+    view: {
+      kind: 'claimable',
+      heading: '3 months of OiPer Pro, on us.',
+      message: GIFT_MESSAGE,
+      viewer: 'signed-in',
+      error: 'Verify your email address first, then claim your gift',
+    },
+  },
+  {
+    title: 'Has a subscription',
+    description:
+      'Active, set to cancel, paused or past due. Told before any button; no footnote.',
+    view: {
+      kind: 'claimable',
+      heading: '3 months of OiPer Pro, on us.',
+      message: GIFT_MESSAGE,
+      viewer: 'signed-in',
+      blocked:
+        "You already have a subscription, so this gift can't be added to your account. The link still works for someone else, so feel free to pass it on",
+    },
+  },
+  {
+    title: 'Another gift running',
+    description: 'A gift of a different plan is still on.',
+    view: {
+      kind: 'claimable',
+      heading: 'A month of OiPer Max, on us.',
+      viewer: 'signed-in',
+      blocked:
+        'Your Pro gift is still running. You can claim this one after it ends',
+    },
+  },
+  {
+    title: "It's yours",
+    description: 'Just claimed, or a gift already on this account.',
+    view: {
+      kind: 'claimed',
+      text: 'OiPer Pro is on until January 9 2027. Open the desktop app, sign in, and start talking.',
+      keepNote:
+        "Want to keep Pro after that? You can set it up any time from billing, and you won't pay anything until January 9 2027.",
+    },
+  },
+  {
+    title: "It's yours · starts later",
+    description:
+      'A second gift of the same plan starts when the running one ends.',
+    view: {
+      kind: 'claimed',
+      text: 'Your Pro gift starts on January 9 2027, right after the time you already have, and runs until February 9 2027.',
+      keepNote:
+        "Want to keep Pro after that? You can set it up any time from billing, and you won't pay anything until February 9 2027.",
+    },
+  },
+  {
+    title: 'Already claimed',
+    description: 'Someone else claimed this link.',
+    view: { kind: 'unavailable', reason: 'CLAIMED' },
+  },
+  {
+    title: 'Expired',
+    description: 'Past the claim deadline (12 months by default).',
+    view: { kind: 'unavailable', reason: 'EXPIRED' },
+  },
+  {
+    title: 'Withdrawn',
+    description: 'Revoked by script before it was claimed.',
+    view: { kind: 'unavailable', reason: 'REVOKED' },
+  },
+  {
+    title: 'Broken link',
+    description: 'Unknown, mistyped or missing code.',
+    view: { kind: 'unavailable', reason: 'NOT_FOUND' },
   },
 ]

@@ -298,7 +298,7 @@ function UnavailableView(props: { title: string; description: string }) {
   )
 }
 
-const UNAVAILABLE_COPY = {
+export const UNAVAILABLE_COPY = {
   NOT_FOUND: {
     title: "This gift link doesn't work.",
     description:
