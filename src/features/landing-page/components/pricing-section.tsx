@@ -10,6 +10,7 @@ import {
   useCheckoutQueryParam,
   usePollUntilPlanChangeLands,
   useStartCheckout,
+  type ActiveSubscription,
   type PlanChangeTarget,
 } from '@/features/billing/use-checkout'
 import {
@@ -20,11 +21,7 @@ import {
 import { logClick, logSelect, logView } from '@/lib/analytics'
 import { $api } from '@/lib/api/client'
 import type { components } from '@/lib/api/schema'
-import {
-  formatCurrencyFromCents,
-  formatDate,
-  planDisplayName,
-} from '@/lib/format'
+import { formatCurrencyFromCents, planDisplayName } from '@/lib/format'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
@@ -224,39 +221,31 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
             onClick: () => trackUpgrade(cardPlan, 'paddle'),
           }
 
-      const canStartNow = !!gift && cardPlan !== gift.plan
+      if (gift) return deriveSubscriberCta(cardPlan, gift.plan, null)
 
       return {
-        cta: gift
-          ? `${cardPlan === gift.plan ? 'Keep' : 'Switch to'} ${planDisplayName(cardPlan)} after your gift`
-          : `Upgrade to ${planDisplayName(cardPlan)}`,
+        cta: `Upgrade to ${planDisplayName(cardPlan)}`,
         action: checkoutAction,
         submitting: isCheckoutSubmitting(cardPlan, 'PADDLE'),
         disabled: isCheckoutDisabledByOther(cardPlan, 'PADDLE'),
-        secondaryCta: canStartNow
-          ? {
-              label: `Start ${planDisplayName(cardPlan)} now (ends your gift)`,
-              action: {
-                type: 'button',
-                onClick: () => {
-                  logClick('upgrade', 'pricing', {
-                    plan: cardPlan.toLowerCase(),
-                    interval: intervalParam,
-                    provider: 'paddle',
-                    outcome: 'start_now',
-                  })
-                  void startCheckout('PADDLE', cardPlan, interval, true)
-                },
-              },
-              disabled: pendingCheckout !== null,
-            }
-          : buildStripeSecondaryCta(cardPlan),
+        secondaryCta: buildStripeSecondaryCta(cardPlan),
       }
     }
 
     const sub = subscription!
 
-    if (sub.plan === cardPlan && sub.billingInterval === interval) {
+    return deriveSubscriberCta(cardPlan, sub.plan, sub.billingInterval)
+  }
+
+  function deriveSubscriberCta(
+    cardPlan: 'PRO' | 'MAX',
+    currentPlan: 'PRO' | 'MAX' | 'FREE',
+    currentInterval: 'MONTHLY' | 'YEARLY' | null
+  ): PlanCardCta {
+    if (
+      currentPlan === cardPlan &&
+      (currentInterval === null || currentInterval === interval)
+    ) {
       return {
         cta: 'Current Plan',
         action: { type: 'button', onClick: () => undefined },
@@ -281,6 +270,30 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     }
   }
 
+  const dialogSubscription: ActiveSubscription | null =
+    isLapsed && gift
+      ? {
+          plan: gift.plan,
+          interval: 'MONTHLY',
+          status: 'ACTIVE',
+          currentPeriodEnd: gift.endsAt,
+          cancelAtPeriodEnd: false,
+          nextPayment: null,
+          currencyCode: null,
+        }
+      : subscription &&
+          (subscription.plan === 'PRO' || subscription.plan === 'MAX')
+        ? {
+            plan: subscription.plan,
+            interval: subscription.billingInterval ?? 'MONTHLY',
+            status: subscription.status,
+            currentPeriodEnd: subscription.currentPeriodEnd,
+            cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+            nextPayment: subscription.nextPayment,
+            currencyCode: subscription.currencyCode,
+          }
+        : null
+
   const proCta = pro && derivePlanCardCta('PRO')
   const maxCta = max && derivePlanCardCta('MAX')
 
@@ -300,9 +313,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
             Simple pricing.
           </h2>
           <p className="mt-5 text-base leading-relaxed text-white/50">
-            {gift && isLapsed
-              ? `Your ${planDisplayName(gift.plan)} gift runs until ${formatDate(gift.endsAt)}. Pick a plan now and you won't pay anything until then.`
-              : 'Choose the plan that works best for you. No hidden fees.'}
+            Choose the plan that works best for you. No hidden fees.
           </p>
 
           <div className="mt-8">
@@ -369,33 +380,23 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
         </div>
       </Wrapper>
 
-      {subscriptionQuery.data &&
-        (subscriptionQuery.data.plan === 'PRO' ||
-          subscriptionQuery.data.plan === 'MAX') && (
-          <ChangePlanDialog
-            location="pricing"
-            open={!!changePlanTarget}
-            onOpenChange={(open) => {
-              if (!open) setChangePlanTarget(null)
-            }}
-            initialTarget={changePlanTarget}
-            plans={props.plans}
-            currentSubscription={{
-              plan: subscriptionQuery.data.plan,
-              interval: subscriptionQuery.data.billingInterval ?? 'MONTHLY',
-              status: subscriptionQuery.data.status,
-              currentPeriodEnd: subscriptionQuery.data.currentPeriodEnd,
-              cancelAtPeriodEnd: subscriptionQuery.data.cancelAtPeriodEnd,
-              nextPayment: subscriptionQuery.data.nextPayment,
-              currencyCode: subscriptionQuery.data.currencyCode,
-            }}
-            onChangeSubmitted={(target) => {
-              setPendingTarget(target)
-              setChangePlanTarget(null)
-            }}
-            refetchSubscription={() => subscriptionQuery.refetch()}
-          />
-        )}
+      {dialogSubscription && (
+        <ChangePlanDialog
+          location="pricing"
+          open={!!changePlanTarget}
+          onOpenChange={(open) => {
+            if (!open) setChangePlanTarget(null)
+          }}
+          initialTarget={changePlanTarget}
+          plans={props.plans}
+          currentSubscription={dialogSubscription}
+          onChangeSubmitted={(target) => {
+            setPendingTarget(target)
+            setChangePlanTarget(null)
+          }}
+          refetchSubscription={() => subscriptionQuery.refetch()}
+        />
+      )}
     </section>
   )
 }

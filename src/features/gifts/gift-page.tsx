@@ -137,12 +137,7 @@ function PlanHighlights(props: { plan: 'PRO' | 'MAX' }) {
 }
 
 function ClaimedView(props: {
-  gift: {
-    plan: 'PRO' | 'MAX'
-    startsAt: string
-    endsAt: string
-    nextPaymentAt: string | null
-  }
+  gift: { plan: 'PRO' | 'MAX'; startsAt: string; endsAt: string }
 }) {
   const subscriptionQuery = $api.useQuery(
     'get',
@@ -163,8 +158,6 @@ function ClaimedView(props: {
         {startsLater
           ? `Your ${plan} gift starts on ${formatDate(props.gift.startsAt)}, right after the time you already have, and runs until ${formatDate(props.gift.endsAt)}.`
           : `OiPer ${plan} is on until ${formatDate(props.gift.endsAt)}. Open the desktop app, sign in, and start talking.`}
-        {props.gift.nextPaymentAt &&
-          ` Your next payment moves to ${formatDate(props.gift.nextPaymentAt)}, so nothing is charged for the gift months.`}
       </Description>
 
       <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
@@ -362,12 +355,7 @@ function GiftWithCode(props: { code: string }) {
   if (gift.state === 'CLAIMED_BY_YOU' && gift.startsAt && gift.endsAt) {
     return (
       <ClaimedView
-        gift={{
-          plan: gift.plan,
-          startsAt: gift.startsAt,
-          endsAt: gift.endsAt,
-          nextPaymentAt: null,
-        }}
+        gift={{ plan: gift.plan, startsAt: gift.startsAt, endsAt: gift.endsAt }}
       />
     )
   }

@@ -6937,7 +6937,7 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Ends the account's running and queued gifts now so it can switch plans. A payment the gift moved goes back to its original date */
+                /** @description Ends the account's running and queued gifts now so it can change plans. A plan set to start after the gift starts and is charged now */
                 200: {
                     headers: {
                         [name: string]: unknown;
@@ -6971,7 +6971,14 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                code: "GIFT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "BILLING";
+                                /** @enum {string} */
+                                code: "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7004,7 +7011,14 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                code: "GIFT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "BILLING";
+                                /** @enum {string} */
+                                code: "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7037,7 +7051,14 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                code: "GIFT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "BILLING";
+                                /** @enum {string} */
+                                code: "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7070,7 +7091,14 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                code: "GIFT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "BILLING";
+                                /** @enum {string} */
+                                code: "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7103,7 +7131,14 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                code: "GIFT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "BILLING";
+                                /** @enum {string} */
+                                code: "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7136,7 +7171,14 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                code: "GIFT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "BILLING";
+                                /** @enum {string} */
+                                code: "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7169,7 +7211,14 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                code: "GIFT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "BILLING";
+                                /** @enum {string} */
+                                code: "BILLING_PAYMENT_FAILED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7250,7 +7299,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT" | "GIFT_SUBSCRIPTION_NEEDS_ATTENTION";
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7290,7 +7339,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT" | "GIFT_SUBSCRIPTION_NEEDS_ATTENTION";
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7330,7 +7379,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT" | "GIFT_SUBSCRIPTION_NEEDS_ATTENTION";
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7370,7 +7419,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT" | "GIFT_SUBSCRIPTION_NEEDS_ATTENTION";
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7410,7 +7459,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT" | "GIFT_SUBSCRIPTION_NEEDS_ATTENTION";
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7450,7 +7499,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT" | "GIFT_SUBSCRIPTION_NEEDS_ATTENTION";
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
                                 message: string;
                                 details?: unknown;
                             };
@@ -7490,7 +7539,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "GIFT";
                                 /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT" | "GIFT_SUBSCRIPTION_NEEDS_ATTENTION";
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
                                 message: string;
                                 details?: unknown;
                             };
@@ -11342,9 +11391,14 @@ export interface components {
             /** @enum {string} */
             kind: "BLOCKED";
             /** @enum {string} */
-            reason: "ENDING" | "PAUSED" | "GIFT" | "GIFT_ENDS";
+            reason: "ENDING" | "PAUSED" | "GIFT";
             /** Format: date-time */
             currentPeriodEnd: string | null;
+            /** @description GIFT only: what ending the gift charges today, when a plan is set to start after it */
+            giftEndCharge?: {
+                amount: string;
+                currencyCode: string;
+            } | null;
         } | {
             /** @enum {string} */
             kind: "SCHEDULED";
@@ -11379,7 +11433,6 @@ export interface components {
                 dueAt: string;
             } | null;
             regularAmount: string | null;
-            endsGift?: boolean;
         };
         CheckoutSessionResponse: {
             /** @enum {string} */
@@ -11398,11 +11451,6 @@ export interface components {
             plan: "PRO" | "MAX";
             /** @enum {string} */
             interval: "MONTHLY" | "YEARLY";
-            /**
-             * @description During a gift: start this higher plan now and pay today instead of when the gift ends
-             * @default false
-             */
-            startNow: boolean;
         };
         UsageAccountView: {
             /** @enum {string} */
@@ -11468,11 +11516,8 @@ export interface components {
             } | null;
         };
         EndGiftsResponse: {
-            /**
-             * Format: date-time
-             * @description When the account pays: its next payment, moved back to before the gift
-             */
-            nextPaymentAt: string | null;
+            /** @enum {boolean} */
+            ended: true;
         };
         ClaimedGift: {
             /** @enum {string} */
@@ -11481,11 +11526,6 @@ export interface components {
             startsAt: string;
             /** Format: date-time */
             endsAt: string;
-            /**
-             * Format: date-time
-             * @description When the account already pays: the new date of its next payment
-             */
-            nextPaymentAt: string | null;
         };
         ClaimGiftBody: {
             code: string;

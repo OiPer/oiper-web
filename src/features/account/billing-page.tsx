@@ -13,11 +13,11 @@ import {
   useOpenBillingPortal,
   usePollUntilPlanChangeLands,
   useResumeSubscription,
+  useStartCheckout,
   type ActiveSubscription,
   type PaidSubscriptionView,
   type PlanChangeTarget,
 } from '@/features/billing/use-checkout'
-import { ANCHOR_PRICING } from '@/features/landing-page/constants/links'
 import { logClick, logComplete, logError } from '@/lib/analytics'
 import { $api } from '@/lib/api/client'
 import { isAppErrorEnvelope } from '@/lib/api/error'
@@ -29,7 +29,6 @@ import {
   planDisplayName,
   subscriptionPlanLabel,
 } from '@/lib/format'
-import Link from 'next/link'
 import { useState, type ReactNode } from 'react'
 import { toast } from 'sonner'
 
@@ -202,9 +201,16 @@ function ChangePlanButton(props: {
   )
 }
 
-function GiftPlanCard(props: { gift: CurrentGift }) {
+function GiftPlanCard(props: {
+  gift: CurrentGift
+  plans: PricingPlan[] | undefined
+  refetchSubscription: () => Promise<{
+    data?: components['schemas']['SubscriptionAccountView'] | undefined
+  }>
+}) {
   const plan = planDisplayName(props.gift.plan)
   const endsAt = formatDate(props.gift.endsAt)
+  const { startCheckout, pendingCheckout } = useStartCheckout()
 
   return (
     <SectionCard id="current-plan" className="gap-4">
@@ -220,24 +226,42 @@ function GiftPlanCard(props: { gift: CurrentGift }) {
         </div>
 
         <p className="text-muted-foreground pt-3 text-sm">
-          Want to keep {plan}? Pick a plan now and you won&apos;t pay anything
+          Want to keep {plan}? Set it up now and you won&apos;t pay anything
           until {endsAt}.
         </p>
       </div>
 
       <div className="flex flex-wrap items-center justify-end gap-2 border-t px-(--x-padding) py-4">
-        <Button asChild>
-          <Link
-            href={ANCHOR_PRICING}
-            onClick={() =>
-              logClick('gift_keep_plan', 'billing', {
-                plan: props.gift.plan.toLowerCase(),
-              })
-            }
-          >
+        <Button
+          variant="outline"
+          disabled={!!pendingCheckout}
+          onClick={() => {
+            logClick('gift_keep_plan', 'billing', {
+              plan: props.gift.plan.toLowerCase(),
+            })
+            void startCheckout('PADDLE', props.gift.plan, 'MONTHLY')
+          }}
+        >
+          <Loading loading={!!pendingCheckout}>
             Keep {plan} after your gift
-          </Link>
+          </Loading>
         </Button>
+
+        <ChangePlanButton
+          plans={props.plans}
+          subscription={{
+            plan: props.gift.plan,
+            interval: 'MONTHLY',
+            status: 'ACTIVE',
+            currentPeriodEnd: props.gift.endsAt,
+            cancelAtPeriodEnd: false,
+            nextPayment: null,
+            currencyCode: null,
+          }}
+          isBusy={!!pendingCheckout}
+          onChangeSubmitted={() => undefined}
+          refetchSubscription={props.refetchSubscription}
+        />
       </div>
     </SectionCard>
   )
@@ -310,7 +334,13 @@ function CurrentPlan() {
   }
 
   if (subscription && !paidSubscription && gift) {
-    return <GiftPlanCard gift={gift} />
+    return (
+      <GiftPlanCard
+        gift={gift}
+        plans={pricingQuery.data?.plans}
+        refetchSubscription={() => subscriptionQuery.refetch()}
+      />
+    )
   }
 
   if (subscription && !paidSubscription) {

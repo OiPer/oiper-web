@@ -332,18 +332,18 @@ export function ChangePlanDialog({
 
   async function handleEndGift() {
     try {
-      const result = await endGiftMutation.mutateAsync({})
+      await endGiftMutation.mutateAsync({})
 
       logComplete('gift_end', location)
-      toast.success(
-        result.nextPaymentAt
-          ? `Your gift has ended. Your next payment is back to ${formatDate(result.nextPaymentAt)}`
-          : 'Your gift has ended',
-        { id: 'gift-end' }
-      )
+      toast.success('Your gift has ended', { id: 'gift-end' })
       void queryClient.invalidateQueries()
-      void refetchSubscription()
-      setPreviewRefresh((count) => count + 1)
+
+      const refreshed = await refetchSubscription()
+      const hasPaidPlan =
+        refreshed.data?.plan === 'PRO' || refreshed.data?.plan === 'MAX'
+
+      if (hasPaidPlan) setPreviewRefresh((count) => count + 1)
+      else handleOpenChange(false)
     } catch (error) {
       logError('gift_end', location, {
         error_type: isAppErrorEnvelope(error) ? error.error.code : 'unknown',
@@ -459,21 +459,16 @@ export function ChangePlanDialog({
                   <AlertDescription className="space-y-3">
                     {preview.reason === 'GIFT' && (
                       <p>
-                        Your gift runs until{' '}
+                        You&apos;re on a gift until{' '}
                         {preview.currentPeriodEnd
                           ? formatDate(preview.currentPeriodEnd)
                           : 'it ends'}{' '}
-                        so you can change your plan after that
+                        so end it to switch plans
+                        {preview.giftEndCharge &&
+                          `. Your plan after the gift then starts today for ${formatCurrencyFromCents(Number(preview.giftEndCharge.amount), preview.giftEndCharge.currencyCode)}`}
                       </p>
                     )}
-                    {preview.reason === 'GIFT_ENDS' && (
-                      <p>
-                        Your gift doesn&apos;t include this plan. End your gift
-                        to switch now. Your next payment goes back to the date
-                        it had before the gift
-                      </p>
-                    )}
-                    {preview.reason === 'GIFT_ENDS' && (
+                    {preview.reason === 'GIFT' && (
                       <Button
                         type="button"
                         variant="outline"
@@ -482,7 +477,7 @@ export function ChangePlanDialog({
                         disabled={endGiftMutation.isPending}
                       >
                         <Loading loading={endGiftMutation.isPending}>
-                          End my gift
+                          End gift
                         </Loading>
                       </Button>
                     )}
@@ -571,10 +566,6 @@ export function ChangePlanDialog({
                       previewRows.currencyCode
                     )}
                   />
-                )}
-
-                {previewRows.kind === 'IMMEDIATE' && previewRows.endsGift && (
-                  <SummaryRow label="Your gift" value="Ends now" />
                 )}
 
                 {previewRows.kind === 'IMMEDIATE' &&
