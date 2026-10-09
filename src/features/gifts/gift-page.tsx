@@ -352,7 +352,11 @@ function GiftWithCode(props: { code: string }) {
 
   const gift = lookupQuery.data
 
-  if (gift.state === 'CLAIMED_BY_YOU' && gift.startsAt && gift.endsAt) {
+  if (gift.state === 'CLAIMED_BY_YOU') {
+    if (!gift.startsAt || !gift.endsAt) {
+      throw new Error('A gift claimed by this account came without dates')
+    }
+
     return (
       <ClaimedView
         gift={{ plan: gift.plan, startsAt: gift.startsAt, endsAt: gift.endsAt }}
@@ -362,10 +366,6 @@ function GiftWithCode(props: { code: string }) {
 
   if (gift.state === 'CLAIMABLE') {
     return <ClaimableView code={props.code} gift={gift} />
-  }
-
-  if (gift.state === 'CLAIMED_BY_YOU') {
-    return <UnavailableView {...UNAVAILABLE_COPY.CLAIMED} />
   }
 
   return <UnavailableView {...UNAVAILABLE_COPY[gift.state]} />

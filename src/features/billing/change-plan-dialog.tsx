@@ -336,7 +336,9 @@ export function ChangePlanDialog({
 
       logComplete('gift_end', location)
       toast.success('Your gift has ended', { id: 'gift-end' })
-      void queryClient.invalidateQueries()
+      void queryClient.invalidateQueries({
+        queryKey: ['get', '/v1/account/gifts'],
+      })
 
       const refreshed = await refetchSubscription()
       const hasPaidPlan =
