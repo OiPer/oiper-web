@@ -6917,6 +6917,274 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/account/gifts/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    "x-csrf-token": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Ends the account's running and queued gifts now so it can switch plans. A payment the gift moved goes back to its original date */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["EndGiftsResponse"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Upstream provider request failed */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/account/gifts/claim": {
         parameters: {
             query?: never;
@@ -11074,7 +11342,7 @@ export interface components {
             /** @enum {string} */
             kind: "BLOCKED";
             /** @enum {string} */
-            reason: "ENDING" | "PAUSED" | "GIFT";
+            reason: "ENDING" | "PAUSED" | "GIFT" | "GIFT_ENDS";
             /** Format: date-time */
             currentPeriodEnd: string | null;
         } | {
@@ -11111,6 +11379,7 @@ export interface components {
                 dueAt: string;
             } | null;
             regularAmount: string | null;
+            endsGift?: boolean;
         };
         CheckoutSessionResponse: {
             /** @enum {string} */
@@ -11197,6 +11466,13 @@ export interface components {
                 /** Format: date-time */
                 endedAt: string;
             } | null;
+        };
+        EndGiftsResponse: {
+            /**
+             * Format: date-time
+             * @description When the account pays: its next payment, moved back to before the gift
+             */
+            nextPaymentAt: string | null;
         };
         ClaimedGift: {
             /** @enum {string} */

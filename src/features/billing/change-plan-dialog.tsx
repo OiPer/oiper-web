@@ -33,6 +33,7 @@ import {
   subscriptionPlanLabel,
 } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -212,6 +213,10 @@ export function ChangePlanDialog({
   const { resumeSubscription, isResuming } =
     useResumeSubscription(refetchSubscription)
 
+  const queryClient = useQueryClient()
+  const endGiftMutation = useAccountMutation('post', '/v1/account/gifts/end')
+  const [previewRefresh, setPreviewRefresh] = useState(0)
+
   const selected =
     options.find((entry) => optionKey(entry) === selectedKey) ?? null
   const isCurrentSelected =
@@ -260,6 +265,7 @@ export function ChangePlanDialog({
     selectedKey,
     currentSubscription.cancelAtPeriodEnd,
     currentSubscription.status,
+    previewRefresh,
   ])
 
   function handleOpenChange(nextOpen: boolean) {
@@ -321,6 +327,33 @@ export function ChangePlanDialog({
       toast.error(describePlanChangeError(error, "Couldn't change your plan"), {
         id: 'plan-change',
       })
+    }
+  }
+
+  async function handleEndGift() {
+    try {
+      const result = await endGiftMutation.mutateAsync({})
+
+      logComplete('gift_end', location)
+      toast.success(
+        result.nextPaymentAt
+          ? `Your gift has ended. Your next payment is back to ${formatDate(result.nextPaymentAt)}`
+          : 'Your gift has ended',
+        { id: 'gift-end' }
+      )
+      void queryClient.invalidateQueries()
+      void refetchSubscription()
+      setPreviewRefresh((count) => count + 1)
+    } catch (error) {
+      logError('gift_end', location, {
+        error_type: isAppErrorEnvelope(error) ? error.error.code : 'unknown',
+      })
+      toast.error(
+        isAppErrorEnvelope(error)
+          ? error.error.message
+          : "Couldn't end your gift",
+        { id: 'gift-end' }
+      )
     }
   }
 
@@ -433,6 +466,26 @@ export function ChangePlanDialog({
                         so you can change your plan after that
                       </p>
                     )}
+                    {preview.reason === 'GIFT_ENDS' && (
+                      <p>
+                        Your gift doesn&apos;t include this plan. End your gift
+                        to switch now. Your next payment goes back to the date
+                        it had before the gift
+                      </p>
+                    )}
+                    {preview.reason === 'GIFT_ENDS' && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => void handleEndGift()}
+                        disabled={endGiftMutation.isPending}
+                      >
+                        <Loading loading={endGiftMutation.isPending}>
+                          End my gift
+                        </Loading>
+                      </Button>
+                    )}
                     {preview.reason === 'PAUSED' && (
                       <p>
                         Your subscription is paused so resume it to switch plans
@@ -446,7 +499,8 @@ export function ChangePlanDialog({
                         so keep it active to switch plans
                       </p>
                     )}
-                    {preview.reason !== 'GIFT' && (
+                    {(preview.reason === 'PAUSED' ||
+                      preview.reason === 'ENDING') && (
                       <Button
                         type="button"
                         variant="outline"
@@ -517,6 +571,10 @@ export function ChangePlanDialog({
                       previewRows.currencyCode
                     )}
                   />
+                )}
+
+                {previewRows.kind === 'IMMEDIATE' && previewRows.endsGift && (
+                  <SummaryRow label="Your gift" value="Ends now" />
                 )}
 
                 {previewRows.kind === 'IMMEDIATE' &&

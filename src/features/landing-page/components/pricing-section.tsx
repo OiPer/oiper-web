@@ -224,7 +224,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
             onClick: () => trackUpgrade(cardPlan, 'paddle'),
           }
 
-      const canStartNow = !!gift && cardPlan === 'MAX' && gift.plan === 'PRO'
+      const canStartNow = !!gift && cardPlan !== gift.plan
 
       return {
         cta: gift
@@ -235,7 +235,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
         disabled: isCheckoutDisabledByOther(cardPlan, 'PADDLE'),
         secondaryCta: canStartNow
           ? {
-              label: `Start ${planDisplayName(cardPlan)} now and pay today`,
+              label: `Start ${planDisplayName(cardPlan)} now (ends your gift)`,
               action: {
                 type: 'button',
                 onClick: () => {

@@ -224,11 +224,12 @@ Every event the site sends. All events also carry `location`.
 
 ### Gifts
 
-| Event                                             | Location  | Details                                                                          | When                                                            |
-| ------------------------------------------------- | --------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `gift_viewed`                                     | `gift`    | `state` (`claimable` `claimed_by_you` `claimed` `expired` `revoked` `not_found`) | The gift page finished checking the link, once per state shown  |
-| `gift_claim_submitted` / `_completed` / `_failed` | `gift`    | `plan`, `months`; `error_type` on failure (a `GIFT_*` code or `unknown`)         | "Claim my gift"                                                 |
-| `gift_keep_plan_clicked`                          | `billing` | `plan`                                                                           | "Keep {plan} after your gift" on the billing page during a gift |
+| Event                                             | Location            | Details                                                                          | When                                                                                 |
+| ------------------------------------------------- | ------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `gift_viewed`                                     | `gift`              | `state` (`claimable` `claimed_by_you` `claimed` `expired` `revoked` `not_found`) | The gift page finished checking the link, once per state shown                       |
+| `gift_claim_submitted` / `_completed` / `_failed` | `gift`              | `plan`, `months`; `error_type` on failure (a `GIFT_*` code or `unknown`)         | "Claim my gift"                                                                      |
+| `gift_keep_plan_clicked`                          | `billing`           | `plan`                                                                           | "Keep {plan} after your gift" on the billing page during a gift                      |
+| `gift_end_completed` / `_failed`                  | `billing` `pricing` | `error_type` on failure                                                          | "End my gift" in the change plan dialog, to switch to a plan the gift does not cover |
 
 ## Intentionally not tracked
 
