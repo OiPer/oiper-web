@@ -228,8 +228,8 @@ function GiftPlanCard(props: {
         </div>
 
         <p className="text-muted-foreground pt-1 text-sm">
-          If you want to keep {plan} afterwards you can set it up now and your
-          first payment will be on {endsAt}.
+          Continue with {plan} after your gift ends by setting up your
+          subscription in advance.
         </p>
       </div>
 
@@ -244,9 +244,7 @@ function GiftPlanCard(props: {
             void startCheckout('PADDLE', props.gift.plan, 'MONTHLY')
           }}
         >
-          <Loading loading={!!pendingCheckout}>
-            Keep {plan} after your gift
-          </Loading>
+          <Loading loading={!!pendingCheckout}>Keep {plan} after Gift</Loading>
         </Button>
 
         <ChangePlanButton

@@ -330,9 +330,9 @@ export const CURRENT_PLAN_STATES: CurrentPlanCardState[] = [
         { label: 'After your gift', value: 'Free' },
       ],
       footnote:
-        'If you want to keep Pro afterwards you can set it up now and your first payment will be on November 9 2026.',
+        'Continue with Pro after your gift ends by setting up your subscription in advance.',
       buttons: [
-        { label: 'Keep Pro after your gift', variant: 'outline' },
+        { label: 'Keep Pro after Gift', variant: 'outline' },
         { label: 'Change plan' },
       ],
     },
@@ -347,10 +347,10 @@ export const CURRENT_PLAN_STATES: CurrentPlanCardState[] = [
         { label: 'After your gift', value: 'Free' },
       ],
       footnote:
-        'If you want to keep Pro afterwards you can set it up now and your first payment will be on November 9 2026.',
+        'Continue with Pro after your gift ends by setting up your subscription in advance.',
       buttons: [
         {
-          label: 'Keep Pro after your gift',
+          label: 'Keep Pro after Gift',
           variant: 'outline',
           loading: true,
         },
