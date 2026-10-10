@@ -1,3 +1,4 @@
+import type { GiftOffer } from '@/features/gifts/gift-page'
 import type { PlanCardCta } from '@/features/landing-page/components/plan-card'
 
 export type PricingFeature = { label: string; detail: string | null }
@@ -1220,12 +1221,33 @@ export const TOAST_STATES: ToastFixture[] = [
   },
 ]
 
-export const GIFT_FEATURES = [
+const GIFT_FEATURES = [
   '3-5x Faster Speed',
   '180 Min/Day Transcription',
   'Custom Dictionary',
   'Custom Formatting Prompts',
 ]
+
+const PRO_OFFER: GiftOffer = {
+  plan: 'PRO',
+  months: 3,
+  message: 'For the long emails you keep putting off.',
+  forOneEmail: false,
+  features: GIFT_FEATURES,
+}
+
+const MAX_OFFER: GiftOffer = {
+  plan: 'MAX',
+  months: 12,
+  message: null,
+  forOneEmail: false,
+  features: GIFT_FEATURES,
+}
+
+const DAY = 24 * 60 * 60 * 1000
+function daysFromNow(days: number) {
+  return new Date(Date.now() + days * DAY).toISOString()
+}
 
 export type GiftPageState = {
   title: string
@@ -1233,22 +1255,25 @@ export type GiftPageState = {
   view:
     | { kind: 'opening' }
     | {
-        kind: 'claimable'
-        heading: string
-        message?: string
-        viewer: 'visitor' | 'signed-in'
+        kind: 'offer'
+        offer: GiftOffer
+        viewerEmail: string | null
         claiming?: boolean
         error?: string
         blocked?: string
       }
-    | { kind: 'claimed'; text: string; keepNote?: string }
+    | {
+        kind: 'claimed'
+        plan: 'PRO' | 'MAX'
+        startsAt: string
+        endsAt: string
+        showKeepNote: boolean
+      }
     | {
         kind: 'unavailable'
         reason: 'NOT_FOUND' | 'CLAIMED' | 'EXPIRED' | 'REVOKED'
       }
 }
-
-const GIFT_MESSAGE = 'Thanks for trying OiPer early. Enjoy!'
 
 export const GIFT_PAGE_STATES: GiftPageState[] = [
   {
@@ -1260,30 +1285,30 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
     title: 'Visitor',
     description:
       'Not signed in. Both actions open the auth modal and come back here.',
+    view: { kind: 'offer', offer: PRO_OFFER, viewerEmail: null },
+  },
+  {
+    title: 'Visitor · one email',
+    description:
+      'The link was made for one email. The page hints at it but never shows the address.',
     view: {
-      kind: 'claimable',
-      heading: '3 months of OiPer Pro, on us.',
-      message: GIFT_MESSAGE,
-      viewer: 'visitor',
+      kind: 'offer',
+      offer: { ...PRO_OFFER, forOneEmail: true },
+      viewerEmail: null,
     },
   },
   {
     title: 'Signed in',
     description: 'One click to claim. No message was set on this link.',
-    view: {
-      kind: 'claimable',
-      heading: 'A year of OiPer Max, on us.',
-      viewer: 'signed-in',
-    },
+    view: { kind: 'offer', offer: MAX_OFFER, viewerEmail: 'sam@example.com' },
   },
   {
     title: 'Claiming',
     description: 'The claim request is in flight.',
     view: {
-      kind: 'claimable',
-      heading: '3 months of OiPer Pro, on us.',
-      message: GIFT_MESSAGE,
-      viewer: 'signed-in',
+      kind: 'offer',
+      offer: PRO_OFFER,
+      viewerEmail: 'sam@example.com',
       claiming: true,
     },
   },
@@ -1292,10 +1317,9 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
     description:
       'The server message shows under the button, e.g. email not verified.',
     view: {
-      kind: 'claimable',
-      heading: '3 months of OiPer Pro, on us.',
-      message: GIFT_MESSAGE,
-      viewer: 'signed-in',
+      kind: 'offer',
+      offer: PRO_OFFER,
+      viewerEmail: 'sam@example.com',
       error: 'Verify your email address first, then claim your gift',
     },
   },
@@ -1304,10 +1328,9 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
     description:
       'Active, set to cancel, paused or past due. Told before any button; no footnote.',
     view: {
-      kind: 'claimable',
-      heading: '3 months of OiPer Pro, on us.',
-      message: GIFT_MESSAGE,
-      viewer: 'signed-in',
+      kind: 'offer',
+      offer: PRO_OFFER,
+      viewerEmail: 'sam@example.com',
       blocked:
         "You already have a subscription, so this gift can't be added to your account. The link still works for someone else, so feel free to pass it on",
     },
@@ -1316,11 +1339,22 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
     title: 'Another gift running',
     description: 'A gift of a different plan is still on.',
     view: {
-      kind: 'claimable',
-      heading: 'A month of OiPer Max, on us.',
-      viewer: 'signed-in',
+      kind: 'offer',
+      offer: { ...MAX_OFFER, months: 1 },
+      viewerEmail: 'sam@example.com',
       blocked:
         'Your Pro gift is still running. You can claim this one after it ends',
+    },
+  },
+  {
+    title: 'Different email',
+    description: 'Signed in with an email the link was not made for.',
+    view: {
+      kind: 'offer',
+      offer: { ...PRO_OFFER, forOneEmail: true },
+      viewerEmail: 'sam@example.com',
+      blocked:
+        'This gift was sent to a different email address. Sign in with that email to claim it',
     },
   },
   {
@@ -1328,9 +1362,10 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
     description: 'Just claimed, or a gift already on this account.',
     view: {
       kind: 'claimed',
-      text: 'OiPer Pro is on until January 9 2027. Open the desktop app, sign in, and start talking.',
-      keepNote:
-        'Want to keep Pro after that? You can set it up any time from billing, and your first payment comes when your gift ends on January 9 2027.',
+      plan: 'PRO',
+      startsAt: daysFromNow(0),
+      endsAt: daysFromNow(91),
+      showKeepNote: true,
     },
   },
   {
@@ -1339,9 +1374,10 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
       'A second gift of the same plan starts when the running one ends.',
     view: {
       kind: 'claimed',
-      text: 'Your Pro gift starts on January 9 2027, right after the time you already have, and runs until February 9 2027.',
-      keepNote:
-        'Want to keep Pro after that? You can set it up any time from billing, and your first payment comes when your gift ends on February 9 2027.',
+      plan: 'PRO',
+      startsAt: daysFromNow(30),
+      endsAt: daysFromNow(61),
+      showKeepNote: true,
     },
   },
   {

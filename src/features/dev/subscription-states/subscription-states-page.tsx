@@ -412,12 +412,24 @@ function GiftLinkStates() {
 
       <Group title="Claim">
         <GiftPageGrid
-          titles={['Visitor', 'Signed in', 'Claiming', 'Claim failed']}
+          titles={[
+            'Visitor',
+            'Visitor · one email',
+            'Signed in',
+            'Claiming',
+            'Claim failed',
+          ]}
         />
       </Group>
 
       <Group title="Can't claim">
-        <GiftPageGrid titles={['Has a subscription', 'Another gift running']} />
+        <GiftPageGrid
+          titles={[
+            'Has a subscription',
+            'Another gift running',
+            'Different email',
+          ]}
+        />
       </Group>
 
       <Group title="Claimed">

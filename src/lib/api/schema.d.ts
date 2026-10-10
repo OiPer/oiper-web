@@ -4957,7 +4957,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -4997,7 +4997,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -5037,7 +5037,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -5077,7 +5077,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -5117,7 +5117,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -5157,7 +5157,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -5197,7 +5197,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "BILLING";
                                 /** @enum {string} */
-                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED" | "BILLING_PLAN_CHANGE_NOT_ALLOWED";
+                                code: "BILLING_PROVIDER_NOT_AVAILABLE" | "BILLING_ALREADY_SUBSCRIBED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -6917,6 +6917,327 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/account/gifts/claim": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    "x-csrf-token": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ClaimGiftBody"];
+                };
+            };
+            responses: {
+                /** @description The gift is now on the account. Claiming a gift that is already yours returns it again */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ClaimedGift"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_NOT_FOR_THIS_ACCOUNT" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_NOT_FOR_THIS_ACCOUNT" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_NOT_FOR_THIS_ACCOUNT" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_NOT_FOR_THIS_ACCOUNT" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_NOT_FOR_THIS_ACCOUNT" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_NOT_FOR_THIS_ACCOUNT" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+                /** @description Upstream provider request failed */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "CORE";
+                                /** @enum {string} */
+                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "USER";
+                                /** @enum {string} */
+                                code: "USER_ACCOUNT_NOT_FOUND";
+                                message: string;
+                                details?: unknown;
+                            } | {
+                                /** @enum {string} */
+                                type: "GIFT";
+                                /** @enum {string} */
+                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_NOT_FOR_THIS_ACCOUNT" | "GIFT_PLAN_CONFLICT";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: components["schemas"]["RequestId"];
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/account/gifts/end": {
         parameters: {
             query?: never;
@@ -7219,327 +7540,6 @@ export interface paths {
                                 type: "BILLING";
                                 /** @enum {string} */
                                 code: "BILLING_PAYMENT_FAILED";
-                                message: string;
-                                details?: unknown;
-                            };
-                            requestId: components["schemas"]["RequestId"];
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/account/gifts/claim": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    "x-csrf-token": string;
-                };
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["ClaimGiftBody"];
-                };
-            };
-            responses: {
-                /** @description The gift is now on the account. Claiming a gift that is already yours returns it again */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ClaimedGift"];
-                    };
-                };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                /** @enum {string} */
-                                type: "VALIDATION";
-                                /** @enum {string} */
-                                code: "VALIDATION_REQUEST_INVALID";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "CORE";
-                                /** @enum {string} */
-                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "USER";
-                                /** @enum {string} */
-                                code: "USER_ACCOUNT_NOT_FOUND";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "GIFT";
-                                /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
-                                message: string;
-                                details?: unknown;
-                            };
-                            requestId: components["schemas"]["RequestId"];
-                        };
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                /** @enum {string} */
-                                type: "VALIDATION";
-                                /** @enum {string} */
-                                code: "VALIDATION_REQUEST_INVALID";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "CORE";
-                                /** @enum {string} */
-                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "USER";
-                                /** @enum {string} */
-                                code: "USER_ACCOUNT_NOT_FOUND";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "GIFT";
-                                /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
-                                message: string;
-                                details?: unknown;
-                            };
-                            requestId: components["schemas"]["RequestId"];
-                        };
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                /** @enum {string} */
-                                type: "VALIDATION";
-                                /** @enum {string} */
-                                code: "VALIDATION_REQUEST_INVALID";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "CORE";
-                                /** @enum {string} */
-                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "USER";
-                                /** @enum {string} */
-                                code: "USER_ACCOUNT_NOT_FOUND";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "GIFT";
-                                /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
-                                message: string;
-                                details?: unknown;
-                            };
-                            requestId: components["schemas"]["RequestId"];
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                /** @enum {string} */
-                                type: "VALIDATION";
-                                /** @enum {string} */
-                                code: "VALIDATION_REQUEST_INVALID";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "CORE";
-                                /** @enum {string} */
-                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "USER";
-                                /** @enum {string} */
-                                code: "USER_ACCOUNT_NOT_FOUND";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "GIFT";
-                                /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
-                                message: string;
-                                details?: unknown;
-                            };
-                            requestId: components["schemas"]["RequestId"];
-                        };
-                    };
-                };
-                /** @description Conflict */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                /** @enum {string} */
-                                type: "VALIDATION";
-                                /** @enum {string} */
-                                code: "VALIDATION_REQUEST_INVALID";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "CORE";
-                                /** @enum {string} */
-                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "USER";
-                                /** @enum {string} */
-                                code: "USER_ACCOUNT_NOT_FOUND";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "GIFT";
-                                /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
-                                message: string;
-                                details?: unknown;
-                            };
-                            requestId: components["schemas"]["RequestId"];
-                        };
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                /** @enum {string} */
-                                type: "VALIDATION";
-                                /** @enum {string} */
-                                code: "VALIDATION_REQUEST_INVALID";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "CORE";
-                                /** @enum {string} */
-                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "USER";
-                                /** @enum {string} */
-                                code: "USER_ACCOUNT_NOT_FOUND";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "GIFT";
-                                /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
-                                message: string;
-                                details?: unknown;
-                            };
-                            requestId: components["schemas"]["RequestId"];
-                        };
-                    };
-                };
-                /** @description Upstream provider request failed */
-                502: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                /** @enum {string} */
-                                type: "VALIDATION";
-                                /** @enum {string} */
-                                code: "VALIDATION_REQUEST_INVALID";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "CORE";
-                                /** @enum {string} */
-                                code: "CORE_UNAUTHORIZED" | "CORE_INTERNAL_ERROR";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "USER";
-                                /** @enum {string} */
-                                code: "USER_ACCOUNT_NOT_FOUND";
-                                message: string;
-                                details?: unknown;
-                            } | {
-                                /** @enum {string} */
-                                type: "GIFT";
-                                /** @enum {string} */
-                                code: "GIFT_NOT_FOUND" | "GIFT_ALREADY_CLAIMED" | "GIFT_EXPIRED" | "GIFT_REVOKED" | "GIFT_EMAIL_NOT_VERIFIED" | "GIFT_PLAN_CONFLICT";
                                 message: string;
                                 details?: unknown;
                             };
@@ -11515,10 +11515,6 @@ export interface components {
                 endedAt: string;
             } | null;
         };
-        EndGiftsResponse: {
-            /** @enum {boolean} */
-            ended: true;
-        };
         ClaimedGift: {
             /** @enum {string} */
             plan: "PRO" | "MAX";
@@ -11529,6 +11525,10 @@ export interface components {
         };
         ClaimGiftBody: {
             code: string;
+        };
+        EndGiftsResponse: {
+            /** @enum {boolean} */
+            ended: true;
         };
         GiftLookup: {
             /** @enum {string} */
@@ -11541,6 +11541,8 @@ export interface components {
             startsAt: string | null;
             /** Format: date-time */
             endsAt: string | null;
+            /** @description Only an account with the email the gift was made for can claim it. The email itself is never sent */
+            forOneEmail: boolean;
             /** @description For a signed-in visitor, why this account can't claim the gift right now */
             blocked: string | null;
         };
