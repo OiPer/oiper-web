@@ -170,12 +170,12 @@ function Confetti() {
 }
 
 const SHEEN_MOTION = {
-  initial: { x: '-50%' },
-  animate: { x: '50%' },
+  animate: { x: '22%' },
   transition: {
     duration: 2.6,
     delay: 1,
     repeat: Infinity,
+    repeatType: 'mirror',
     repeatDelay: 4.5,
     ease: [0.45, 0, 0.2, 1],
   },
@@ -248,13 +248,13 @@ function GiftPass(props: {
           </p>
         </div>
 
-        {!reduceMotion && (
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute -top-1/2 -left-1/2 size-[200%] bg-[linear-gradient(115deg,transparent_43%,rgba(255,255,255,0.04)_47%,rgba(255,255,255,0.1)_49%,rgba(255,255,255,0.24)_49.6%,rgba(255,255,255,0.24)_50.2%,rgba(255,255,255,0.1)_50.8%,rgba(255,255,255,0.04)_52.5%,rgba(255,255,255,0.11)_53.2%,rgba(255,255,255,0.04)_53.9%,transparent_57%)] mix-blend-screen"
-            {...SHEEN_MOTION}
-          />
-        )}
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute -top-1/2 -left-1/2 size-[200%] bg-[linear-gradient(115deg,transparent_43%,rgba(255,255,255,0.04)_47%,rgba(255,255,255,0.1)_49%,rgba(255,255,255,0.24)_49.6%,rgba(255,255,255,0.24)_50.2%,rgba(255,255,255,0.1)_50.8%,rgba(255,255,255,0.04)_52.5%,rgba(255,255,255,0.11)_53.2%,rgba(255,255,255,0.04)_53.9%,transparent_57%)] mix-blend-screen"
+          style={{ opacity: reduceMotion ? 0.45 : 1 }}
+          initial={{ x: '-22%' }}
+          {...(reduceMotion ? {} : SHEEN_MOTION)}
+        />
       </div>
     </div>
   )
