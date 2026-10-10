@@ -1225,7 +1225,6 @@ const GIFT_FEATURES = [
   '3-5x Faster Speed',
   '180 Min/Day Transcription',
   'Custom Dictionary',
-  'Custom Formatting Prompts',
 ]
 
 const PRO_OFFER: GiftOffer = {

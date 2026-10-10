@@ -172,42 +172,76 @@ function GiftPass(props: {
   plan: PaidPlan
   months: number
   message: string | null
+  features: string[]
 }) {
   const reduceMotion = useReducedMotion()
 
   return (
-    <div className="relative mt-10 w-full max-w-90 overflow-hidden rounded-2xl border border-white/12 bg-[linear-gradient(145deg,rgba(255,255,255,0.09),rgba(255,255,255,0.02))] text-left shadow-[0_24px_80px_-24px_rgba(255,255,255,0.18)]">
+    <div className="relative mt-10 w-full max-w-96 overflow-hidden rounded-2xl border border-white/12 bg-[linear-gradient(160deg,#1c1c1c,#101010_60%)] text-left shadow-[0_30px_90px_-30px_rgba(255,255,255,0.22)]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.09)_1px,transparent_1px)] mask-[radial-gradient(ellipse_at_100%_0%,black,transparent_60%)] bg-size-[14px_14px]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(255,255,255,0.1),transparent_50%)]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-24 -right-24 size-64 rounded-full border border-white/6"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-12 -right-12 size-40 rounded-full border border-white/8"
+      />
+
       {!reduceMotion && (
         <motion.div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 w-1/3 bg-[linear-gradient(100deg,transparent,rgba(255,255,255,0.12),transparent)]"
+          className="pointer-events-none absolute inset-y-0 w-1/3 bg-[linear-gradient(100deg,transparent,rgba(255,255,255,0.08),transparent)]"
           initial={{ x: '-120%' }}
           animate={{ x: '360%' }}
           transition={{
             duration: 2.4,
             delay: 0.8,
             repeat: Infinity,
-            repeatDelay: 4,
+            repeatDelay: 5,
             ease: 'easeInOut',
           }}
         />
       )}
 
-      <div className="flex items-start justify-between gap-4 px-6 pt-6">
-        <OiPerLogoText className="text-[1.35rem]" />
-        <p className="text-sm text-white/50">
-          {capitalize(describeLength(props.months))}
+      <div className="relative px-7 pt-7 pb-6">
+        <div className="flex items-center justify-between gap-4">
+          <OiPerLogoText className="text-[1.25rem]" />
+          <p className="text-sm text-white/50">
+            {capitalize(describeLength(props.months))}
+          </p>
+        </div>
+
+        <p className="mt-10 text-xs font-medium tracking-[0.2em] text-white/40 uppercase">
+          Gift plan
         </p>
+        <p className="mt-1.5 text-3xl font-semibold tracking-[-0.03em]">
+          {planDisplayName(props.plan)}
+        </p>
+
+        {props.features.length > 0 && (
+          <ul className="mt-6 flex flex-col gap-2.5 border-t border-white/8 pt-5 text-sm text-white/70">
+            {props.features.map((feature) => (
+              <li key={feature} className="flex items-center gap-2.5">
+                <CheckIcon className="size-4 shrink-0 text-white/40" />
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
-      <p className="px-6 pt-8 pb-6 text-4xl font-semibold tracking-[-0.03em]">
-        {planDisplayName(props.plan)}
-      </p>
-
       {props.message && (
-        <div className="relative border-t border-dashed border-white/15 px-6 py-4">
-          <span className="absolute top-0 -left-2.5 size-5 -translate-y-1/2 rounded-full bg-[#0a0a0a]" />
-          <span className="absolute top-0 -right-2.5 size-5 -translate-y-1/2 rounded-full bg-[#0a0a0a]" />
+        <div className="relative border-t border-dashed border-white/15 bg-white/2 px-7 py-4">
+          <span className="absolute top-0 -left-2.5 size-5 -translate-y-1/2 rounded-full border border-white/12 bg-[#0a0a0a]" />
+          <span className="absolute top-0 -right-2.5 size-5 -translate-y-1/2 rounded-full border border-white/12 bg-[#0a0a0a]" />
           <p className="text-sm text-white/60">{props.message}</p>
         </div>
       )}
@@ -318,18 +352,8 @@ export function GiftOfferView(props: {
         plan={offer.plan}
         months={offer.months}
         message={offer.message}
+        features={offer.features}
       />
-
-      {offer.features.length > 0 && (
-        <ul className="mt-8 grid gap-x-8 gap-y-2.5 text-left text-sm text-white/70 sm:grid-cols-2">
-          {offer.features.map((feature) => (
-            <li key={feature} className="flex items-start gap-2.5">
-              <CheckIcon className="mt-0.5 size-4 shrink-0 text-white/40" />
-              <span>{feature}</span>
-            </li>
-          ))}
-        </ul>
-      )}
 
       <div className="mt-10 flex flex-col items-center gap-4">
         {props.blocked && (
@@ -519,7 +543,7 @@ function ClaimableGift(props: { code: string; gift: GiftLookup }) {
           entry.plan === props.gift.plan && entry.interval === 'MONTHLY'
       )
       ?.features.filter((feature) => !feature.label.startsWith('Everything'))
-      .slice(0, 4)
+      .slice(0, 3)
       .map((feature) => feature.label) ?? []
 
   async function handleClaim() {
