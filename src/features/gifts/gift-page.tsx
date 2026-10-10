@@ -250,40 +250,40 @@ function GiftPass(props: {
 
 function GiftShell(props: {
   contained?: boolean
-  eyebrow?: string
+  byline?: string
   title: string
   children?: ReactNode
 }) {
   return (
-    <main
+    <section
       className={cn(
-        'relative isolate flex flex-col items-center overflow-hidden bg-[#0a0a0a] px-6 pt-36 pb-16 text-center text-white',
-        props.contained ? 'min-h-160 rounded-xl border' : 'min-h-screen'
+        'relative isolate flex flex-col items-center justify-center overflow-hidden bg-[#0a0a0a] px-6 py-20 text-center text-white',
+        props.contained
+          ? 'min-h-160 rounded-xl border'
+          : '-mt-20 min-h-svh py-28'
       )}
     >
       <Backdrop />
 
-      <NavigationLink href={HOME} location="gift" destination="home">
-        <OiPerLogoText className="text-[1.75rem]" />
-      </NavigationLink>
-
-      <div className="flex w-full flex-1 flex-col items-center justify-center pt-16">
-        {props.eyebrow && (
-          <p className="text-sm font-medium text-white/50">{props.eyebrow}</p>
+      <h1
+        className={cn(
+          'max-w-120 text-2xl sm:text-3xl',
+          props.byline
+            ? 'leading-none font-bold tracking-[-0.01em] uppercase'
+            : 'font-semibold tracking-[-0.02em]'
         )}
+      >
+        {props.title}
+      </h1>
 
-        <h1
-          className={cn(
-            props.eyebrow && 'mt-3',
-            'max-w-120 text-2xl font-semibold tracking-[-0.02em] sm:text-3xl'
-          )}
-        >
-          {props.title}
-        </h1>
+      {props.byline && (
+        <p className="mt-2 text-xs leading-none font-medium tracking-[0.2em] text-white/40 uppercase">
+          {props.byline}
+        </p>
+      )}
 
-        {props.children}
-      </div>
-    </main>
+      {props.children}
+    </section>
   )
 }
 
@@ -310,14 +310,16 @@ const primaryButtonClass =
 
 export function GiftOpeningView(props: { contained?: boolean }) {
   return (
-    <main
+    <section
       className={cn(
         'flex items-center justify-center bg-[#0a0a0a] text-white/60',
-        props.contained ? 'min-h-160 rounded-xl border' : 'min-h-screen'
+        props.contained
+          ? 'min-h-160 rounded-xl border'
+          : '-mt-20 min-h-svh py-28'
       )}
     >
       <Spinner className="size-6" />
-    </main>
+    </section>
   )
 }
 
@@ -344,7 +346,7 @@ export function GiftOfferView(props: {
   return (
     <GiftShell
       contained={props.contained}
-      eyebrow="From the OiPer team"
+      byline="From the OiPer team"
       title="A Gift for You"
     >
       <Description>
