@@ -433,7 +433,7 @@ function GiftLinkStates() {
       </Group>
 
       <Group title="Claimed">
-        <GiftPageGrid titles={["It's yours", "It's yours · starts later"]} />
+        <GiftPageGrid titles={["It's yours"]} />
       </Group>
 
       <Group title="Link problems">

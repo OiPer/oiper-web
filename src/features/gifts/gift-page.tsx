@@ -8,7 +8,8 @@ import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/features/auth/auth-context'
 import { buildAuthUrl } from '@/features/auth/auth-form-utils'
 import { useAccountMutation } from '@/features/auth/web-session'
-import { DOWNLOAD_URL, HOME } from '@/features/landing-page/constants/links'
+import { DownloadButton } from '@/features/download/download-button'
+import { HOME } from '@/features/landing-page/constants/links'
 import { logComplete, logError, logSubmit, logView } from '@/lib/analytics'
 import { $api } from '@/lib/api/client'
 import { getAppErrorCode, isAppErrorEnvelope } from '@/lib/api/error'
@@ -222,7 +223,7 @@ function GiftPass(props: {
         <p className="mt-10 text-xs font-medium tracking-[0.2em] text-white/40 uppercase">
           Gift plan
         </p>
-        <p className="mt-1.5 text-3xl font-semibold tracking-[-0.03em]">
+        <p className="mt-1.5 text-3xl font-semibold tracking-[-0.01em] uppercase">
           {planDisplayName(props.plan)}
         </p>
 
@@ -307,7 +308,7 @@ function Footnote(props: { children: ReactNode }) {
 const textLinkClass = 'text-sm underline underline-offset-4 hover:text-white/80'
 
 const primaryButtonClass =
-  'h-12 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90'
+  'h-10 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90'
 
 export function GiftOpeningView(props: { contained?: boolean }) {
   return (
@@ -420,29 +421,24 @@ export function GiftOfferView(props: {
 
 export function GiftClaimedView(props: {
   plan: PaidPlan
-  startsAt: string
   endsAt: string
   showKeepNote: boolean
   celebrate: boolean
   contained?: boolean
 }) {
   const plan = planDisplayName(props.plan)
-  const startsLater = new Date(props.startsAt).getTime() > Date.now()
 
   return (
     <GiftShell contained={props.contained} title="It's yours">
       {props.celebrate && <Confetti />}
 
       <Description>
-        {startsLater
-          ? `Your ${plan} gift starts on ${formatDate(props.startsAt)} right after your current one and runs until ${formatDate(props.endsAt)}`
-          : `You have OiPer ${plan} until ${formatDate(props.endsAt)} and can start using it in the desktop app right away`}
+        You have OiPer {plan} until {formatDate(props.endsAt)} and can start
+        using it in the desktop app right away
       </Description>
 
-      <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-        <Button asChild className={primaryButtonClass}>
-          <Link href={DOWNLOAD_URL}>Download OiPer</Link>
-        </Button>
+      <div className="mt-10 flex flex-col items-center gap-4">
+        <DownloadButton location="gift" className={primaryButtonClass} />
         <Link href="/account/billing" className={textLinkClass}>
           See it in billing
         </Link>
@@ -517,7 +513,6 @@ function ClaimedGift(props: { gift: ClaimedGift; celebrate: boolean }) {
   return (
     <GiftClaimedView
       plan={props.gift.plan}
-      startsAt={props.gift.startsAt}
       endsAt={props.gift.endsAt}
       showKeepNote={!isPaying}
       celebrate={props.celebrate}

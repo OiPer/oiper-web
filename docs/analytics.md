@@ -159,12 +159,12 @@ Every event the site sends. All events also carry `location`.
 
 ### Downloads
 
-| Event                     | Location                                              | Details                                                                  | When                                                        |
-| ------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
-| `download_clicked`        | `hero` `header` `footer` `pricing` `download_section` | `platform` (absent on the fallback link shown before the OS is detected) | Any download button or build link                           |
-| `other_platforms_clicked` | `hero`                                                | —                                                                        | "Other platforms" links under the hero download button      |
-| `mac_build_selected`      | `mac_download_dialog`                                 | `platform`                                                               | Switching between Apple Silicon and Intel in the Mac dialog |
-| `download_started`        | `mac_download_dialog`                                 | `platform`                                                               | "Yes, download" in the Mac dialog                           |
+| Event                     | Location                                                     | Details                                                                  | When                                                        |
+| ------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| `download_clicked`        | `hero` `header` `footer` `pricing` `download_section` `gift` | `platform` (absent on the fallback link shown before the OS is detected) | Any download button or build link                           |
+| `other_platforms_clicked` | `hero`                                                       | —                                                                        | "Other platforms" links under the hero download button      |
+| `mac_build_selected`      | `mac_download_dialog`                                        | `platform`                                                               | Switching between Apple Silicon and Intel in the Mac dialog |
+| `download_started`        | `mac_download_dialog`                                        | `platform`                                                               | "Yes, download" in the Mac dialog                           |
 
 ### Navigation and content
 
@@ -227,7 +227,7 @@ Every event the site sends. All events also carry `location`.
 | Event                                             | Location            | Details                                                                          | When                                                                                         |
 | ------------------------------------------------- | ------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | `gift_viewed`                                     | `gift`              | `state` (`claimable` `claimed_by_you` `claimed` `expired` `revoked` `not_found`) | The gift page finished checking the link, once per state shown                               |
-| `gift_claim_submitted` / `_completed` / `_failed` | `gift`              | `plan`, `months`; `error_type` on failure (a `GIFT_*` code or `unknown`)         | "Claim my gift"                                                                              |
+| `gift_claim_submitted` / `_completed` / `_failed` | `gift`              | `plan`, `months`; `error_type` on failure (a `GIFT_*` code or `unknown`)         | "Claim gift"                                                                                 |
 | `gift_keep_plan_clicked`                          | `billing`           | `plan`                                                                           | "Keep {plan} after your gift" on the billing page during a gift                              |
 | `gift_end_completed` / `_failed`                  | `billing` `pricing` | `error_type` on failure                                                          | "End gift" in the change plan dialog, which a gift blocks like a pause or a scheduled cancel |
 

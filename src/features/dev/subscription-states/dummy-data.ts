@@ -1264,7 +1264,6 @@ export type GiftPageState = {
     | {
         kind: 'claimed'
         plan: 'PRO' | 'MAX'
-        startsAt: string
         endsAt: string
         showKeepNote: boolean
       }
@@ -1336,13 +1335,12 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
   },
   {
     title: 'Another gift running',
-    description: 'A gift of a different plan is still on.',
+    description: 'This account already has a gift running.',
     view: {
       kind: 'offer',
       offer: { ...MAX_OFFER, months: 1 },
       viewerEmail: 'sam@example.com',
-      blocked:
-        'Your Pro gift is still running. You can claim this one after it ends',
+      blocked: "You're already on a gift plan",
     },
   },
   {
@@ -1362,20 +1360,7 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
     view: {
       kind: 'claimed',
       plan: 'PRO',
-      startsAt: daysFromNow(0),
       endsAt: daysFromNow(91),
-      showKeepNote: true,
-    },
-  },
-  {
-    title: "It's yours · starts later",
-    description:
-      'A second gift of the same plan starts when the running one ends.',
-    view: {
-      kind: 'claimed',
-      plan: 'PRO',
-      startsAt: daysFromNow(30),
-      endsAt: daysFromNow(61),
       showKeepNote: true,
     },
   },

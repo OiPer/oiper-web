@@ -19,7 +19,6 @@ export function GiftPagePreview(props: { view: GiftPageState['view'] }) {
     return (
       <GiftClaimedView
         plan={view.plan}
-        startsAt={view.startsAt}
         endsAt={view.endsAt}
         showKeepNote={view.showKeepNote}
         celebrate={false}
