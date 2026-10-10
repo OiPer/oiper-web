@@ -4,6 +4,7 @@ import { OiPerLogoText } from '@/components/logo-text'
 import { NavigationLink } from '@/components/navigation-link'
 import { Loading } from '@/components/shared/loading'
 import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/features/auth/auth-context'
 import { buildAuthUrl } from '@/features/auth/auth-form-utils'
 import { useAccountMutation } from '@/features/auth/web-session'
@@ -167,7 +168,11 @@ function Confetti() {
   )
 }
 
-function GiftPass(props: { plan: PaidPlan; months: number; note: string }) {
+function GiftPass(props: {
+  plan: PaidPlan
+  months: number
+  message: string | null
+}) {
   const reduceMotion = useReducedMotion()
 
   return (
@@ -195,15 +200,17 @@ function GiftPass(props: { plan: PaidPlan; months: number; note: string }) {
         </p>
       </div>
 
-      <p className="px-6 pt-8 text-4xl font-semibold tracking-[-0.03em]">
+      <p className="px-6 pt-8 pb-6 text-4xl font-semibold tracking-[-0.03em]">
         {planDisplayName(props.plan)}
       </p>
 
-      <div className="relative mt-6 border-t border-dashed border-white/15 px-6 py-4">
-        <span className="absolute top-0 -left-2.5 size-5 -translate-y-1/2 rounded-full bg-[#0a0a0a]" />
-        <span className="absolute top-0 -right-2.5 size-5 -translate-y-1/2 rounded-full bg-[#0a0a0a]" />
-        <p className="text-sm text-white/50">{props.note}</p>
-      </div>
+      {props.message && (
+        <div className="relative border-t border-dashed border-white/15 px-6 py-4">
+          <span className="absolute top-0 -left-2.5 size-5 -translate-y-1/2 rounded-full bg-[#0a0a0a]" />
+          <span className="absolute top-0 -right-2.5 size-5 -translate-y-1/2 rounded-full bg-[#0a0a0a]" />
+          <p className="text-sm text-white/60">{props.message}</p>
+        </div>
+      )}
     </div>
   )
 }
@@ -236,7 +243,7 @@ function GiftShell(props: {
       <h1
         className={cn(
           props.eyebrow ? 'mt-3' : 'mt-12',
-          'max-w-160 text-4xl font-semibold tracking-[-0.03em] sm:text-5xl'
+          'max-w-140 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl'
         )}
       >
         {props.title}
@@ -269,14 +276,23 @@ const primaryButtonClass =
   'h-12 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90'
 
 export function GiftOpeningView(props: { contained?: boolean }) {
-  return <GiftShell contained={props.contained} title="Unwrapping…" />
+  return (
+    <main
+      className={cn(
+        'flex items-center justify-center bg-[#0a0a0a] text-white/60',
+        props.contained ? 'min-h-160 rounded-xl border' : 'min-h-screen'
+      )}
+    >
+      <Spinner className="size-6" />
+    </main>
+  )
 }
 
 export type GiftOffer = {
   plan: PaidPlan
   months: number
   message: string | null
-  forOneEmail: boolean
+  forEmail: string | null
   features: string[]
 }
 
@@ -296,17 +312,12 @@ export function GiftOfferView(props: {
     <GiftShell
       contained={props.contained}
       eyebrow="For you, from the OiPer team"
-      title={`${capitalize(describeLength(offer.months))} of OiPer ${plan}, on us.`}
+      title={`${capitalize(describeLength(offer.months))} of OiPer ${plan}, on us`}
     >
-      <Description>
-        Everything in {plan}, wrapped up and waiting. No strings, just good
-        things to say.
-      </Description>
-
       <GiftPass
         plan={offer.plan}
         months={offer.months}
-        note={offer.message ?? 'Ready whenever you are.'}
+        message={offer.message}
       />
 
       {offer.features.length > 0 && (
@@ -335,25 +346,25 @@ export function GiftOfferView(props: {
               onClick={props.onClaim}
               className={primaryButtonClass}
             >
-              <Loading loading={props.claiming}>Unwrap my gift</Loading>
+              <Loading loading={props.claiming}>Claim gift</Loading>
             </Button>
             <p className="text-sm text-white/40">
-              It&apos;ll go to {props.viewerEmail}
+              It will be added to {props.viewerEmail}
             </p>
           </>
         )}
 
         {!props.blocked && !props.viewerEmail && (
           <>
-            {offer.forOneEmail && (
-              <p className="max-w-110 text-sm leading-relaxed text-white/60">
-                This gift was made for one email address, so use that one to
-                sign up or sign in.
+            {offer.forEmail && (
+              <p className="max-w-110 text-base leading-relaxed text-white/70">
+                This gift is for {offer.forEmail}, so please use that email to
+                sign up or sign in
               </p>
             )}
             <Button asChild className={primaryButtonClass}>
               <Link href={authUrl('signup')} scroll={false}>
-                Create a free account to unwrap it
+                Create a free account to claim
               </Link>
             </Button>
             <Link
@@ -375,8 +386,8 @@ export function GiftOfferView(props: {
 
       {!props.blocked && (
         <Footnote>
-          No card, no catch. When it ends you&apos;re simply back on the free
-          plan, unless you&apos;d like to keep {plan}.
+          No card needed. When the gift ends you go back to the free plan unless
+          you choose to keep {plan}
         </Footnote>
       )}
     </GiftShell>
@@ -395,13 +406,13 @@ export function GiftClaimedView(props: {
   const startsLater = new Date(props.startsAt).getTime() > Date.now()
 
   return (
-    <GiftShell contained={props.contained} title="It's yours.">
+    <GiftShell contained={props.contained} title="It's yours">
       {props.celebrate && <Confetti />}
 
       <Description>
         {startsLater
-          ? `Saved for later: your ${plan} gift starts on ${formatDate(props.startsAt)}, right after the time you already have, and runs until ${formatDate(props.endsAt)}.`
-          : `OiPer ${plan} is on until ${formatDate(props.endsAt)}. Open the app, sign in, and say something nice.`}
+          ? `Your ${plan} gift starts on ${formatDate(props.startsAt)} right after your current one and runs until ${formatDate(props.endsAt)}`
+          : `You have OiPer ${plan} until ${formatDate(props.endsAt)} and can start using it in the desktop app right away`}
       </Description>
 
       <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
@@ -415,9 +426,8 @@ export function GiftClaimedView(props: {
 
       {props.showKeepNote && (
         <Footnote>
-          Want to keep {plan} after that? You can set it up any time from
-          billing, and your first payment comes when your gift ends on{' '}
-          {formatDate(props.endsAt)}.
+          If you want to keep {plan} afterwards you can set it up in billing and
+          your first payment will be on {formatDate(props.endsAt)}
         </Footnote>
       )}
     </GiftShell>
@@ -426,24 +436,24 @@ export function GiftClaimedView(props: {
 
 export const UNAVAILABLE_COPY = {
   NOT_FOUND: {
-    title: "We couldn't find this gift.",
+    title: "We couldn't find this gift",
     description:
-      "Check that you opened the whole link. If it still won't open, reply to the message it came in and we'll help.",
+      "Please check that you opened the full link, and if it still doesn't work reply to the message it came in and we'll help",
   },
   CLAIMED: {
-    title: 'This gift already found its person.',
+    title: 'This gift has already been claimed',
     description:
-      "Each gift link opens once. If it was meant for you, reply to the message it came in and we'll sort it out.",
+      "Each gift can be claimed once, so if it was meant for you please reply to the message it came in and we'll help",
   },
   EXPIRED: {
-    title: 'This gift is no longer open.',
+    title: 'This gift has expired',
     description:
-      "The time to claim it has passed. If that doesn't seem right, reply to the message it came in and we'll help.",
+      'The time to claim it has passed, so if you think this is a mistake please reply to the message it came in',
   },
   REVOKED: {
-    title: 'This gift is no longer available.',
+    title: 'This gift is no longer available',
     description:
-      "It was withdrawn. If that doesn't seem right, reply to the message it came in.",
+      'If you think this is a mistake please reply to the message it came in',
   },
 } as const
 
@@ -546,7 +556,7 @@ function ClaimableGift(props: { code: string; gift: GiftLookup }) {
         plan: props.gift.plan,
         months: props.gift.months,
         message: props.gift.message,
-        forOneEmail: props.gift.forOneEmail,
+        forEmail: props.gift.forEmail,
         features,
       }}
       viewerEmail={currentUser?.email ?? null}

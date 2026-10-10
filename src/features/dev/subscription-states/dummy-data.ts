@@ -1231,8 +1231,8 @@ const GIFT_FEATURES = [
 const PRO_OFFER: GiftOffer = {
   plan: 'PRO',
   months: 3,
-  message: 'For the long emails you keep putting off.',
-  forOneEmail: false,
+  message: 'We hope OiPer makes your days a little easier',
+  forEmail: null,
   features: GIFT_FEATURES,
 }
 
@@ -1240,7 +1240,7 @@ const MAX_OFFER: GiftOffer = {
   plan: 'MAX',
   months: 12,
   message: null,
-  forOneEmail: false,
+  forEmail: null,
   features: GIFT_FEATURES,
 }
 
@@ -1290,10 +1290,10 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
   {
     title: 'Visitor · one email',
     description:
-      'The link was made for one email. The page hints at it but never shows the address.',
+      'The link was made for one email, and the page says which one.',
     view: {
       kind: 'offer',
-      offer: { ...PRO_OFFER, forOneEmail: true },
+      offer: { ...PRO_OFFER, forEmail: 'alex@example.com' },
       viewerEmail: null,
     },
   },
@@ -1351,10 +1351,10 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
     description: 'Signed in with an email the link was not made for.',
     view: {
       kind: 'offer',
-      offer: { ...PRO_OFFER, forOneEmail: true },
+      offer: { ...PRO_OFFER, forEmail: 'alex@example.com' },
       viewerEmail: 'sam@example.com',
       blocked:
-        'This gift was sent to a different email address. Sign in with that email to claim it',
+        'This gift is for alex@example.com. Sign in with that email to claim it',
     },
   },
   {

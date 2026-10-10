@@ -11541,8 +11541,8 @@ export interface components {
             startsAt: string | null;
             /** Format: date-time */
             endsAt: string | null;
-            /** @description Only an account with the email the gift was made for can claim it. The email itself is never sent */
-            forOneEmail: boolean;
+            /** @description While claimable, the email the gift was made for. Only an account with that verified email can claim it */
+            forEmail: string | null;
             /** @description For a signed-in visitor, why this account can't claim the gift right now */
             blocked: string | null;
         };
