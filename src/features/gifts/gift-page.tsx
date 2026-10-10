@@ -212,7 +212,7 @@ function GiftPass(props: {
         />
       )}
 
-      <div className="relative px-7 pt-7 pb-6">
+      <div className="relative px-7 pt-7 pb-8.5">
         <div className="flex items-center justify-between gap-4">
           <OiPerLogoText className="text-[1.25rem]" />
           <p className="text-sm text-white/50">
@@ -228,7 +228,7 @@ function GiftPass(props: {
         </p>
 
         {props.features.length > 0 && (
-          <ul className="mt-6 flex flex-col gap-2.5 border-t border-white/8 pt-5 text-sm text-white/70">
+          <ul className="mt-8 flex flex-col gap-3 text-sm text-white/70">
             {props.features.map((feature) => (
               <li key={feature} className="flex items-center gap-2.5">
                 <CheckIcon className="size-4 shrink-0 text-white/40" />
@@ -239,13 +239,11 @@ function GiftPass(props: {
         )}
       </div>
 
-      {props.message && (
-        <div className="relative border-t border-dashed border-white/15 bg-white/2 px-7 py-4">
-          <span className="absolute top-0 -left-2.5 size-5 -translate-y-1/2 rounded-full border border-white/12 bg-[#0a0a0a]" />
-          <span className="absolute top-0 -right-2.5 size-5 -translate-y-1/2 rounded-full border border-white/12 bg-[#0a0a0a]" />
-          <p className="text-sm text-white/60">{props.message}</p>
-        </div>
-      )}
+      <div className="relative border-t border-dashed border-white/15 bg-white/2 px-7 py-4">
+        <p className="text-center text-sm text-white/60">
+          {props.message ?? "Speak freely, it's on us"}
+        </p>
+      </div>
     </div>
   )
 }
@@ -259,32 +257,32 @@ function GiftShell(props: {
   return (
     <main
       className={cn(
-        'relative isolate flex flex-col items-center justify-center overflow-hidden bg-[#0a0a0a] px-6 py-16 text-center text-white',
+        'relative isolate flex flex-col items-center overflow-hidden bg-[#0a0a0a] px-6 pt-36 pb-16 text-center text-white',
         props.contained ? 'min-h-160 rounded-xl border' : 'min-h-screen'
       )}
     >
       <Backdrop />
 
       <NavigationLink href={HOME} location="gift" destination="home">
-        <OiPerLogoText className="text-[2rem]" />
+        <OiPerLogoText className="text-[1.75rem]" />
       </NavigationLink>
 
-      {props.eyebrow && (
-        <p className="mt-12 text-sm font-medium text-white/50">
-          {props.eyebrow}
-        </p>
-      )}
-
-      <h1
-        className={cn(
-          props.eyebrow ? 'mt-3' : 'mt-12',
-          'max-w-140 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl'
+      <div className="flex w-full flex-1 flex-col items-center justify-center pt-16">
+        {props.eyebrow && (
+          <p className="text-sm font-medium text-white/50">{props.eyebrow}</p>
         )}
-      >
-        {props.title}
-      </h1>
 
-      {props.children}
+        <h1
+          className={cn(
+            props.eyebrow && 'mt-3',
+            'max-w-120 text-2xl font-semibold tracking-[-0.02em] sm:text-3xl'
+          )}
+        >
+          {props.title}
+        </h1>
+
+        {props.children}
+      </div>
     </main>
   )
 }
@@ -346,9 +344,14 @@ export function GiftOfferView(props: {
   return (
     <GiftShell
       contained={props.contained}
-      eyebrow="For you, from the OiPer team"
-      title={`${capitalize(describeLength(offer.months))} of OiPer ${plan}, on us`}
+      eyebrow="From the OiPer team"
+      title="A Gift for You"
     >
+      <Description>
+        Enjoy {describeLength(offer.months)} of OiPer {plan} on us and start
+        using it in the desktop app as soon as you claim it
+      </Description>
+
       <GiftPass
         plan={offer.plan}
         months={offer.months}
@@ -383,7 +386,7 @@ export function GiftOfferView(props: {
           <>
             {offer.forEmail && (
               <p className="max-w-110 text-base leading-relaxed text-white/70">
-                This gift is for {offer.forEmail}, so please use that email to
+                This gift is for {offer.forEmail} so please use that email to
                 sign up or sign in
               </p>
             )}
@@ -411,8 +414,8 @@ export function GiftOfferView(props: {
 
       {!props.blocked && (
         <Footnote>
-          No card needed. When the gift ends you go back to the free plan unless
-          you choose to keep {plan}
+          No card needed and when the gift ends you simply go back to the free
+          plan unless you choose to keep {plan}
         </Footnote>
       )}
     </GiftShell>
@@ -429,7 +432,7 @@ export function GiftClaimedView(props: {
   const plan = planDisplayName(props.plan)
 
   return (
-    <GiftShell contained={props.contained} title="It's yours">
+    <GiftShell contained={props.contained} title="It's Yours">
       {props.celebrate && <Confetti />}
 
       <Description>
@@ -454,27 +457,25 @@ export function GiftClaimedView(props: {
   )
 }
 
+const EXPIRED_COPY = {
+  title: 'Gift Expired',
+  description:
+    "The time to claim this gift has passed but if you think that's a mistake just reply to the message it came in",
+}
+
 export const UNAVAILABLE_COPY = {
   NOT_FOUND: {
-    title: "We couldn't find this gift",
+    title: 'Gift not Found',
     description:
-      "Please check that you opened the full link, and if it still doesn't work reply to the message it came in and we'll help",
+      "Make sure you opened the full link but if it still doesn't work just reply to the message it came in",
   },
   CLAIMED: {
-    title: 'This gift has already been claimed',
+    title: 'Gift already Claimed',
     description:
-      "Each gift can be claimed once, so if it was meant for you please reply to the message it came in and we'll help",
+      'This gift was already claimed but if you think it was meant for you just reply to the message it came in',
   },
-  EXPIRED: {
-    title: 'This gift has expired',
-    description:
-      'The time to claim it has passed, so if you think this is a mistake please reply to the message it came in',
-  },
-  REVOKED: {
-    title: 'This gift is no longer available',
-    description:
-      'If you think this is a mistake please reply to the message it came in',
-  },
+  EXPIRED: EXPIRED_COPY,
+  REVOKED: EXPIRED_COPY,
 } as const
 
 export function GiftUnavailableView(props: {

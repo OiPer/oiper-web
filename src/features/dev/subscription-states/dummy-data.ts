@@ -1230,7 +1230,7 @@ const GIFT_FEATURES = [
 const PRO_OFFER: GiftOffer = {
   plan: 'PRO',
   months: 3,
-  message: 'We hope OiPer makes your days a little easier',
+  message: null,
   forEmail: null,
   features: GIFT_FEATURES,
 }
@@ -1284,6 +1284,19 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
     description:
       'Not signed in. Both actions open the auth modal and come back here.',
     view: { kind: 'offer', offer: PRO_OFFER, viewerEmail: null },
+  },
+  {
+    title: 'Visitor · long message',
+    description: 'A long personal message, to see how the card handles it.',
+    view: {
+      kind: 'offer',
+      offer: {
+        ...PRO_OFFER,
+        message:
+          'Thank you for all the feedback you sent us over the last few months, it shaped a lot of what OiPer is today and we would love for you to keep using it on us',
+      },
+      viewerEmail: null,
+    },
   },
   {
     title: 'Visitor · one email',
@@ -1371,13 +1384,9 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
   },
   {
     title: 'Expired',
-    description: 'Past the claim deadline (12 months by default).',
+    description:
+      'Past the claim deadline (12 months by default), or revoked by script before it was claimed.',
     view: { kind: 'unavailable', reason: 'EXPIRED' },
-  },
-  {
-    title: 'Withdrawn',
-    description: 'Revoked by script before it was claimed.',
-    view: { kind: 'unavailable', reason: 'REVOKED' },
   },
   {
     title: 'Broken link',

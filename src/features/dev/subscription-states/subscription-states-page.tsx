@@ -414,6 +414,7 @@ function GiftLinkStates() {
         <GiftPageGrid
           titles={[
             'Visitor',
+            'Visitor · long message',
             'Visitor · one email',
             'Signed in',
             'Claiming',
@@ -437,9 +438,7 @@ function GiftLinkStates() {
       </Group>
 
       <Group title="Link problems">
-        <GiftPageGrid
-          titles={['Already claimed', 'Expired', 'Withdrawn', 'Broken link']}
-        />
+        <GiftPageGrid titles={['Already claimed', 'Expired', 'Broken link']} />
       </Group>
     </div>
   )
