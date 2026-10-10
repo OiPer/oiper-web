@@ -46,7 +46,16 @@ export function CurrentPlanCardPreview(props: {
   const { card } = props
   const isAccessEnding = card.payment?.label === 'Access ends'
 
-  if (card.note) return <PlanNote variant={card.note} />
+  if (card.note) {
+    return (
+      <div>
+        {card.endedNote && (
+          <p className="text-muted-foreground mb-4 text-sm">{card.endedNote}</p>
+        )}
+        <PlanNote variant={card.note} />
+      </div>
+    )
+  }
 
   if (card.loading) return <Skeleton className="h-40 w-full rounded-xl" />
 
@@ -91,7 +100,13 @@ export function CurrentPlanCardPreview(props: {
 
         {!card.loading && card.error !== 'none' && (
           <div className="divide-y">
-            <Row label="Plan" value={card.planLabel} />
+            {card.rowsBefore?.map((row) => (
+              <Row key={row.label} label={row.label} value={row.value} />
+            ))}
+            <Row label={card.planRowLabel ?? 'Plan'} value={card.planLabel} />
+            {card.rowsAfter?.map((row) => (
+              <Row key={row.label} label={row.label} value={row.value} />
+            ))}
             {card.status && <Row label="Status" value={card.status} />}
             {card.scheduledChange && (
               <DateValueRow
@@ -111,6 +126,10 @@ export function CurrentPlanCardPreview(props: {
                 />
               ))}
           </div>
+        )}
+
+        {card.footnote && (
+          <p className="text-muted-foreground pt-1 text-sm">{card.footnote}</p>
         )}
       </div>
 
