@@ -202,7 +202,7 @@ void (async () => {
   }
 
   for (const [os, icon] of Object.entries(platformIcons)) {
-    for (const [suffix, color] of [['mid', '#6366f1']]) {
+    for (const [suffix, color] of [['ink', '#0a0a0a']]) {
       const svg = `<svg viewBox="${icon.viewBox}" xmlns="http://www.w3.org/2000/svg"><path fill="${color}" fill-rule="evenodd" d="${icon.path}"/></svg>`
 
       await sharp(Buffer.from(svg))
