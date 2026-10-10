@@ -155,12 +155,6 @@ function DialogBody(props: { state: ChangePlanState; isDesktop: boolean }) {
             <Alert className="border-warning/40 bg-warning/5">
               <AlertDescription className="space-y-3">
                 <p>
-                  {blocked.reason === 'GIFT' &&
-                    `You're on a gift until ${blocked.periodEnd} so end it to switch plans${
-                      blocked.giftEndCharge
-                        ? `. Your plan after the gift then starts today for ${blocked.giftEndCharge}`
-                        : ''
-                    }`}
                   {blocked.reason === 'PAUSED' &&
                     'Your subscription is paused so resume it to switch plans'}
                   {blocked.reason === 'ENDING' &&
@@ -175,7 +169,6 @@ function DialogBody(props: { state: ChangePlanState; isDesktop: boolean }) {
                   disabled={blocked.resumeLoading}
                 >
                   <Loading loading={!!blocked.resumeLoading}>
-                    {blocked.reason === 'GIFT' && 'End gift'}
                     {blocked.reason === 'PAUSED' && 'Resume subscription'}
                     {blocked.reason === 'ENDING' && 'Keep subscription'}
                   </Loading>

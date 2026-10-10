@@ -129,7 +129,7 @@ export function CurrentPlanCardPreview(props: {
         )}
 
         {card.footnote && (
-          <p className="text-muted-foreground pt-3 text-sm">{card.footnote}</p>
+          <p className="text-muted-foreground pt-1 text-sm">{card.footnote}</p>
         )}
       </div>
 

@@ -165,6 +165,7 @@ function ResumeButton(props: {
 function ChangePlanButton(props: {
   plans: PricingPlan[] | undefined
   subscription: ActiveSubscription
+  giftOnly: boolean
   isBusy: boolean
   onChangeSubmitted: (target: PlanChangeTarget) => void
   refetchSubscription: () => Promise<{
@@ -191,6 +192,7 @@ function ChangePlanButton(props: {
         onOpenChange={setOpen}
         plans={props.plans}
         currentSubscription={props.subscription}
+        giftOnly={props.giftOnly}
         onChangeSubmitted={(target) => {
           props.onChangeSubmitted(target)
           setOpen(false)
@@ -225,9 +227,9 @@ function GiftPlanCard(props: {
           <Row label="After your gift" value="Free" />
         </div>
 
-        <p className="text-muted-foreground pt-3 text-sm">
-          Want to keep {plan}? Set it up now and your first payment comes when
-          your gift ends on {endsAt}.
+        <p className="text-muted-foreground pt-1 text-sm">
+          If you want to keep {plan} afterwards you can set it up now and your
+          first payment will be on {endsAt}.
         </p>
       </div>
 
@@ -258,6 +260,7 @@ function GiftPlanCard(props: {
             nextPayment: null,
             currencyCode: null,
           }}
+          giftOnly
           isBusy={!!pendingCheckout}
           onChangeSubmitted={() => undefined}
           refetchSubscription={props.refetchSubscription}
@@ -471,6 +474,7 @@ function CurrentPlan() {
                 nextPayment: paidSubscription.nextPayment,
                 currencyCode: paidSubscription.currencyCode,
               }}
+              giftOnly={false}
               isBusy={!!pendingTarget}
               onChangeSubmitted={setPendingTarget}
               refetchSubscription={() => subscriptionQuery.refetch()}

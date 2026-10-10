@@ -2,6 +2,7 @@
 
 import { IntervalToggle } from '@/components/shared/interval-toggle'
 import { LayoutGroup } from 'framer-motion'
+import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { ChangePlanPreview } from './change-plan-preview'
 import { CurrentPlanCardPreview } from './current-plan-card-preview'
@@ -323,12 +324,24 @@ function ChangePlanStates() {
         />
       </Group>
 
-      <Group title="Blocked by a gift">
+      <Group title="During a gift · nothing set up after it">
         <ChangePlanGrid
           titles={[
-            'Blocked · on a gift',
-            'Blocked · gift with a plan to follow',
-            'Blocked · ending gift',
+            'Gift · same or smaller plan',
+            'Gift · bigger plan',
+            'Gift · smaller plan on a Max gift',
+          ]}
+        />
+      </Group>
+
+      <Group title="During a gift · plan set to follow">
+        <ChangePlanGrid
+          titles={[
+            'Gift · plan set to follow · swap',
+            'Gift · plan set to follow · bigger plan',
+            'Gift · plan set to follow · confirming',
+            'Gift · plan set to follow · card declined',
+            'Gift · plan set to follow · cancelling',
           ]}
         />
       </Group>
@@ -354,7 +367,7 @@ function ChangePlanStates() {
           {byGroup(CHANGE_PLAN_STATES, [
             'Upgrade · charged today',
             'Blocked · paused',
-            'Blocked · gift with a plan to follow',
+            'Gift · bigger plan',
           ]).map((state) => (
             <ChangePlanMobileTile key={state.title} state={state} />
           ))}
@@ -469,7 +482,7 @@ export const DEV_SECTIONS = [
     slug: 'change-plan',
     title: 'Change plan dialog',
     description:
-      'One dialog with two entry points, including the gift block. Under md it renders as a bottom sheet.',
+      'One dialog with two entry points, including plan changes during a gift. Under md it renders as a bottom sheet.',
     Component: ChangePlanStates,
   },
   {
@@ -525,14 +538,15 @@ export function DevSectionPage(props: { slug: string }) {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-14 md:px-6">
       <div className="space-y-2">
-        <Link
-          href="/dev"
-          className="text-muted-foreground text-sm underline underline-offset-4"
-        >
-          ← All dev views
-        </Link>
         <h1 className="text-xl font-semibold tracking-tight">
-          {section.title}
+          <Link
+            href="/dev"
+            aria-label={`${section.title}, back to all dev views`}
+            className="inline-flex items-center gap-2 hover:opacity-80"
+          >
+            <ArrowLeft className="size-5" />
+            {section.title}
+          </Link>
         </h1>
         <p className="text-muted-foreground max-w-2xl text-sm leading-relaxed">
           {section.description}

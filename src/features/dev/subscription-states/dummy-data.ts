@@ -270,7 +270,7 @@ export const PRICING_CARD_STATES: PricingCardState[] = [
   {
     title: 'Max · on a Pro gift',
     description:
-      'Switch opens the change dialog, which shows the gift block with End gift.',
+      'Switch opens the change dialog, which ends the gift today and charges Max today.',
     entryNote: 'On a gift',
     card: {
       ...MAX_MONTHLY_CARD,
@@ -322,7 +322,7 @@ export const CURRENT_PLAN_STATES: CurrentPlanCardState[] = [
   {
     title: 'Gift · nothing set up',
     description:
-      'Claimed a gift and pays nothing. Keep opens the $0-today checkout; Change plan opens the dialog, which shows the gift block.',
+      'Claimed a gift and pays nothing. Keep opens the $0-today checkout. Change plan opens the dialog: the same or a smaller plan starts after the gift, a bigger plan ends it today.',
     card: {
       planLabel: 'Pro',
       rowsAfter: [
@@ -330,7 +330,7 @@ export const CURRENT_PLAN_STATES: CurrentPlanCardState[] = [
         { label: 'After your gift', value: 'Free' },
       ],
       footnote:
-        'Want to keep Pro? Set it up now and your first payment comes when your gift ends on November 9 2026.',
+        'If you want to keep Pro afterwards you can set it up now and your first payment will be on November 9 2026.',
       buttons: [
         { label: 'Keep Pro after your gift', variant: 'outline' },
         { label: 'Change plan' },
@@ -347,7 +347,7 @@ export const CURRENT_PLAN_STATES: CurrentPlanCardState[] = [
         { label: 'After your gift', value: 'Free' },
       ],
       footnote:
-        'Want to keep Pro? Set it up now and your first payment comes when your gift ends on November 9 2026.',
+        'If you want to keep Pro afterwards you can set it up now and your first payment will be on November 9 2026.',
       buttons: [
         {
           label: 'Keep Pro after your gift',
@@ -676,9 +676,8 @@ export type ChangePlanState = {
     | { kind: 'error'; message: string }
     | {
         kind: 'blocked'
-        reason: 'ENDING' | 'PAUSED' | 'GIFT'
+        reason: 'ENDING' | 'PAUSED'
         periodEnd?: string
-        giftEndCharge?: string
         resumeLoading?: boolean
       }
     | { kind: 'preview'; rows: SummaryRowFixture[] }
@@ -805,6 +804,156 @@ export const CHANGE_PLAN_STATES: ChangePlanState[] = [
     confirmLabel: 'Confirm change',
   },
   {
+    title: 'Gift · same or smaller plan',
+    description:
+      'Nothing set up after the gift yet. The gift keeps running and the pick starts when it ends, through the $0-today checkout.',
+    entryNote: 'On a Pro gift',
+    options: FOUR_OPTIONS('', 'PRO-MONTHLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Pro · Monthly' },
+        {
+          label: 'Due today',
+          detail: 'Your gift keeps running',
+          value: '$0',
+        },
+        {
+          label: 'First payment',
+          detail: 'When your gift ends on November 9 2026 plus any tax',
+          value: '$7.99',
+        },
+      ],
+    },
+    confirmLabel: 'Continue to checkout',
+  },
+  {
+    title: 'Gift · bigger plan',
+    description:
+      'Nothing set up after the gift yet. Checkout charges today and the gift ends once the payment goes through.',
+    entryNote: 'On a Pro gift',
+    options: FOUR_OPTIONS('', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Max · Monthly' },
+        { label: 'Gift ends', value: 'Today' },
+        {
+          label: 'Charged today',
+          detail: 'Plus any tax, shown at checkout',
+          value: '$14.99',
+        },
+      ],
+    },
+    confirmLabel: 'Continue to checkout',
+  },
+  {
+    title: 'Gift · smaller plan on a Max gift',
+    description:
+      'Nothing set up after a Max gift. Pro does not end the gift: Max keeps running and Pro starts when it ends, through the $0-today checkout.',
+    entryNote: 'On a Max gift',
+    options: FOUR_OPTIONS('', 'PRO-MONTHLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Pro · Monthly' },
+        {
+          label: 'Due today',
+          detail: 'Your gift keeps running',
+          value: '$0',
+        },
+        {
+          label: 'First payment',
+          detail: 'When your gift ends on November 9 2026 plus any tax',
+          value: '$7.99',
+        },
+      ],
+    },
+    confirmLabel: 'Continue to checkout',
+  },
+  {
+    title: 'Gift · plan set to follow · swap',
+    description:
+      'Pro Monthly is set to start after the gift. Another interval or a smaller plan takes its place, still starting when the gift ends.',
+    entryNote: 'On a Pro gift with Pro set to follow',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'PRO-YEARLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Pro · Yearly' },
+        {
+          label: 'Due today',
+          detail: 'Your gift keeps running',
+          value: '$0',
+        },
+        {
+          label: 'First payment',
+          detail: 'When your gift ends on November 9 2026',
+          value: '$74.99',
+        },
+      ],
+    },
+    confirmLabel: 'Confirm change',
+  },
+  {
+    title: 'Gift · plan set to follow · bigger plan',
+    description:
+      'Pro Monthly is set to start after the gift. Max ends the gift and starts now, charged today. If the card fails nothing changes.',
+    entryNote: 'On a Pro gift with Pro set to follow',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Max · Monthly' },
+        { label: 'Gift ends', value: 'Today' },
+        { label: 'Charged today', value: '$14.99' },
+      ],
+    },
+    confirmLabel: 'Confirm change',
+  },
+  {
+    title: 'Gift · plan set to follow · confirming',
+    description:
+      'Confirm spins while the plan is swapped or, for a bigger plan, charged.',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Max · Monthly' },
+        { label: 'Gift ends', value: 'Today' },
+        { label: 'Charged today', value: '$14.99' },
+      ],
+    },
+    confirmLabel: 'Confirm change',
+    confirmLoading: true,
+  },
+  {
+    title: 'Gift · plan set to follow · card declined',
+    description:
+      'The bigger plan could not be charged. Nothing changed and the gift is still on.',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'error',
+      message:
+        "We couldn't charge your card, so your plan wasn't changed and your gift is still on. Update your payment method and try again",
+    },
+    confirmLabel: 'Confirm change',
+    confirmDisabled: true,
+  },
+  {
+    title: 'Gift · plan set to follow · cancelling',
+    description:
+      'The plan set to start after the gift is set to cancel, so it has to be kept first, like any scheduled cancel.',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'blocked',
+      reason: 'ENDING',
+      periodEnd: 'November 9 2026',
+    },
+    confirmLabel: 'Confirm change',
+    confirmDisabled: true,
+  },
+  {
     title: 'Blocked · cancelling',
     description: 'Keep subscription reverses the cancellation first.',
     options: FOUR_OPTIONS('MAX-YEARLY', 'PRO-MONTHLY'),
@@ -821,45 +970,6 @@ export const CHANGE_PLAN_STATES: ChangePlanState[] = [
     description: 'Resume subscription unlocks plan changes.',
     options: FOUR_OPTIONS('PRO-YEARLY', 'PRO-MONTHLY'),
     summary: { kind: 'blocked', reason: 'PAUSED' },
-    confirmLabel: 'Confirm change',
-    confirmDisabled: true,
-  },
-  {
-    title: 'Blocked · on a gift',
-    description:
-      'A gift blocks plan changes like a pause. End gift puts them on Free and closes the dialog.',
-    entryNote: 'Pricing Switch or Billing',
-    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
-    summary: { kind: 'blocked', reason: 'GIFT', periodEnd: 'November 9 2026' },
-    confirmLabel: 'Confirm change',
-    confirmDisabled: true,
-  },
-  {
-    title: 'Blocked · gift with a plan to follow',
-    description:
-      'Ending the gift starts the plan set to follow it, so the line says what is charged today.',
-    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
-    summary: {
-      kind: 'blocked',
-      reason: 'GIFT',
-      periodEnd: 'November 9 2026',
-      giftEndCharge: '$8.70',
-    },
-    confirmLabel: 'Confirm change',
-    confirmDisabled: true,
-  },
-  {
-    title: 'Blocked · ending gift',
-    description:
-      'End gift spins while the gift ends (and the plan is charged).',
-    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
-    summary: {
-      kind: 'blocked',
-      reason: 'GIFT',
-      periodEnd: 'November 9 2026',
-      giftEndCharge: '$8.70',
-      resumeLoading: true,
-    },
     confirmLabel: 'Confirm change',
     confirmDisabled: true,
   },
@@ -1118,19 +1228,20 @@ export type ToastFixture = {
 export const TOAST_STATES: ToastFixture[] = [
   {
     type: 'success',
-    message: 'Your gift has ended',
-    when: 'End gift succeeded',
+    message:
+      'Max is starting and your gift ends — this can take a few seconds to show up',
+    when: 'Bigger plan confirmed with a plan set to follow the gift',
+  },
+  {
+    type: 'success',
+    message: 'Pro will start when your gift ends',
+    when: 'Plan set to follow the gift swapped',
   },
   {
     type: 'error',
     message:
-      "We couldn't charge your card, so your gift is still on. Update your payment method and try again",
-    when: 'End gift could not charge the plan set to follow the gift',
-  },
-  {
-    type: 'error',
-    message: "Couldn't end your gift",
-    when: 'End gift failed for any other reason',
+      "We couldn't charge your card, so your plan wasn't changed and your gift is still on. Update your payment method and try again",
+    when: 'Bigger plan during a gift could not be charged',
   },
   {
     type: 'success',

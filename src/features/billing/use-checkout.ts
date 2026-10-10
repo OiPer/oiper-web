@@ -95,7 +95,12 @@ export function useStartCheckout() {
         if (!landed(subscription)) toast.info(STILL_PROCESSING_MESSAGE)
       })
       .catch(() => toast.info(STILL_PROCESSING_MESSAGE))
-      .finally(() => setPendingCheckout(null))
+      .finally(() => {
+        setPendingCheckout(null)
+        void queryClient.invalidateQueries({
+          queryKey: ['get', '/v1/account/gifts'],
+        })
+      })
   }
 
   async function startCheckout(
@@ -268,6 +273,7 @@ export function usePollUntilPlanChangeLands(
     plan: 'PRO' | 'MAX'
     interval: 'MONTHLY' | 'YEARLY'
   } | null>(null)
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     if (!pendingTarget) return
@@ -290,6 +296,9 @@ export function usePollUntilPlanChangeLands(
       if (!landed(result)) toast.info(STILL_PROCESSING_MESSAGE)
 
       setPendingTarget(null)
+      void queryClient.invalidateQueries({
+        queryKey: ['get', '/v1/account/gifts'],
+      })
     })
 
     return () => controller.abort()

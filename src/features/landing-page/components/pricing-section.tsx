@@ -390,6 +390,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
           initialTarget={changePlanTarget}
           plans={props.plans}
           currentSubscription={dialogSubscription}
+          giftOnly={isLapsed && !!gift}
           onChangeSubmitted={(target) => {
             setPendingTarget(target)
             setChangePlanTarget(null)

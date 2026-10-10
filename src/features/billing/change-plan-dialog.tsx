@@ -17,6 +17,7 @@ import {
 import {
   findCatalogEntry,
   useResumeSubscription,
+  useStartCheckout,
   type ActiveSubscription,
   type PlanCatalogEntry,
   type PlanChangeTarget,
@@ -33,7 +34,6 @@ import {
   subscriptionPlanLabel,
 } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -155,6 +155,7 @@ interface ChangePlanDialogProps {
   onOpenChange: (open: boolean) => void
   plans: PricingPlan[] | undefined
   currentSubscription: ActiveSubscription
+  giftOnly: boolean
   initialTarget?: PlanChangeTarget | null
   onChangeSubmitted: (target: PlanChangeTarget) => void
   refetchSubscription: () => Promise<{
@@ -168,6 +169,7 @@ export function ChangePlanDialog({
   onOpenChange,
   plans,
   currentSubscription,
+  giftOnly,
   initialTarget,
   onChangeSubmitted,
   refetchSubscription,
@@ -181,12 +183,23 @@ export function ChangePlanDialog({
     initialTarget && optionKeys.has(optionKey(initialTarget))
       ? optionKey(initialTarget)
       : null
+  function isCurrentEntry(entry: PlanChangeTarget) {
+    if (giftOnly) return false
+
+    return (
+      entry.plan === currentSubscription.plan &&
+      entry.interval === currentSubscription.interval
+    )
+  }
+
+  const giftPlanOption = options.find(
+    (entry) =>
+      entry.plan === currentSubscription.plan && entry.interval === 'MONTHLY'
+  )
   const defaultOption =
-    options.find(
-      (entry) =>
-        entry.plan !== currentSubscription.plan ||
-        entry.interval !== currentSubscription.interval
-    ) ?? options[0]
+    (giftOnly
+      ? giftPlanOption
+      : options.find((entry) => !isCurrentEntry(entry))) ?? options[0]
   const defaultKey =
     initialKey ?? (defaultOption ? optionKey(defaultOption) : null)
   const [selectedKey, setSelectedKey] = useState(defaultKey)
@@ -213,16 +226,11 @@ export function ChangePlanDialog({
   const { resumeSubscription, isResuming } =
     useResumeSubscription(refetchSubscription)
 
-  const queryClient = useQueryClient()
-  const endGiftMutation = useAccountMutation('post', '/v1/account/gifts/end')
-  const [previewRefresh, setPreviewRefresh] = useState(0)
+  const { startCheckout } = useStartCheckout()
 
   const selected =
     options.find((entry) => optionKey(entry) === selectedKey) ?? null
-  const isCurrentSelected =
-    !!selected &&
-    selected.plan === currentSubscription.plan &&
-    selected.interval === currentSubscription.interval
+  const isCurrentSelected = !!selected && isCurrentEntry(selected)
   const previewTarget = isCurrentSelected ? null : selected
 
   useEffect(() => {
@@ -265,7 +273,6 @@ export function ChangePlanDialog({
     selectedKey,
     currentSubscription.cancelAtPeriodEnd,
     currentSubscription.status,
-    previewRefresh,
   ])
 
   function handleOpenChange(nextOpen: boolean) {
@@ -295,6 +302,11 @@ export function ChangePlanDialog({
       return
     }
 
+    if (preview?.kind === 'GIFT' && preview.viaCheckout) {
+      handleOpenChange(false)
+      return await startCheckout('PADDLE', selected.plan, selected.interval)
+    }
+
     try {
       await changeMutation.mutateAsync({
         body: {
@@ -302,6 +314,22 @@ export function ChangePlanDialog({
           targetInterval: selected.interval,
         },
       })
+
+      if (preview?.kind === 'GIFT') {
+        logComplete('plan_change', location, {
+          plan: selected.plan.toLowerCase(),
+          interval: selected.interval.toLowerCase(),
+          outcome: preview.endsGiftNow ? 'immediate' : 'after_gift',
+        })
+        toast.success(
+          preview.endsGiftNow
+            ? `${planDisplayName(selected.plan)} is starting and your gift ends — this can take a few seconds to show up`
+            : `${planDisplayName(selected.plan)} will start when your gift ends`,
+          { id: 'plan-change' }
+        )
+        onChangeSubmitted(selected)
+        return handleOpenChange(false)
+      }
 
       const isScheduled = preview?.kind === 'SCHEDULED'
       logComplete('plan_change', location, {
@@ -330,35 +358,6 @@ export function ChangePlanDialog({
     }
   }
 
-  async function handleEndGift() {
-    try {
-      await endGiftMutation.mutateAsync({})
-
-      logComplete('gift_end', location)
-      toast.success('Your gift has ended', { id: 'gift-end' })
-      void queryClient.invalidateQueries({
-        queryKey: ['get', '/v1/account/gifts'],
-      })
-
-      const refreshed = await refetchSubscription()
-      const hasPaidPlan =
-        refreshed.data?.plan === 'PRO' || refreshed.data?.plan === 'MAX'
-
-      if (hasPaidPlan) setPreviewRefresh((count) => count + 1)
-      else handleOpenChange(false)
-    } catch (error) {
-      logError('gift_end', location, {
-        error_type: isAppErrorEnvelope(error) ? error.error.code : 'unknown',
-      })
-      toast.error(
-        isAppErrorEnvelope(error)
-          ? error.error.message
-          : "Couldn't end your gift",
-        { id: 'gift-end' }
-      )
-    }
-  }
-
   async function handleResume() {
     try {
       const resumed = await resumeSubscription()
@@ -383,12 +382,18 @@ export function ChangePlanDialog({
     }
   }
 
-  const previewRows = preview && preview.kind !== 'BLOCKED' ? preview : null
+  const previewRows =
+    preview && preview.kind !== 'BLOCKED' && preview.kind !== 'GIFT'
+      ? preview
+      : null
   const todayRow = previewRows ? describeTodayCharge(previewRows) : null
+  const giftPreview = preview?.kind === 'GIFT' ? preview : null
 
-  const confirmLabel = previewRows
-    ? getConfirmLabel(previewRows.kind)
-    : 'Confirm change'
+  const confirmLabel = giftPreview?.viaCheckout
+    ? 'Continue to checkout'
+    : previewRows
+      ? getConfirmLabel(previewRows.kind)
+      : 'Confirm change'
 
   return (
     <ResponsiveDialog open={open} onOpenChange={handleOpenChange}>
@@ -411,10 +416,7 @@ export function ChangePlanDialog({
               <PlanOption
                 key={optionKey(entry)}
                 entry={entry}
-                isCurrent={
-                  entry.plan === currentSubscription.plan &&
-                  entry.interval === currentSubscription.interval
-                }
+                isCurrent={isCurrentEntry(entry)}
               />
             ))}
           </RadioGroup>
@@ -459,30 +461,6 @@ export function ChangePlanDialog({
               preview?.kind === 'BLOCKED' && (
                 <Alert className="border-warning/40 bg-warning/5">
                   <AlertDescription className="space-y-3">
-                    {preview.reason === 'GIFT' && (
-                      <p>
-                        You&apos;re on a gift until{' '}
-                        {preview.currentPeriodEnd
-                          ? formatDate(preview.currentPeriodEnd)
-                          : 'it ends'}{' '}
-                        so end it to switch plans
-                        {preview.giftEndCharge &&
-                          `. Your plan after the gift then starts today for ${formatCurrencyFromCents(Number(preview.giftEndCharge.amount), preview.giftEndCharge.currencyCode)}`}
-                      </p>
-                    )}
-                    {preview.reason === 'GIFT' && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => void handleEndGift()}
-                        disabled={endGiftMutation.isPending}
-                      >
-                        <Loading loading={endGiftMutation.isPending}>
-                          End gift
-                        </Loading>
-                      </Button>
-                    )}
                     {preview.reason === 'PAUSED' && (
                       <p>
                         Your subscription is paused so resume it to switch plans
@@ -534,6 +512,55 @@ export function ChangePlanDialog({
                   {describePreviewError(previewError)}
                 </AlertDescription>
               </Alert>
+            )}
+
+            {previewTarget && !isPreviewPending && giftPreview && (
+              <div className="divide-y rounded-lg border">
+                <SummaryRow
+                  label="New plan"
+                  value={subscriptionPlanLabel(
+                    previewTarget.plan,
+                    previewTarget.interval
+                  )}
+                />
+
+                {giftPreview.endsGiftNow ? (
+                  <>
+                    <SummaryRow label="Gift ends" value="Today" />
+                    <SummaryRow
+                      label="Charged today"
+                      detail={
+                        giftPreview.viaCheckout
+                          ? 'Plus any tax, shown at checkout'
+                          : undefined
+                      }
+                      value={formatCurrencyFromCents(
+                        Number(giftPreview.payment.amount),
+                        giftPreview.currencyCode
+                      )}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <SummaryRow
+                      label="Due today"
+                      detail="Your gift keeps running"
+                      value={formatCurrencyFromCents(
+                        0,
+                        giftPreview.currencyCode
+                      )}
+                    />
+                    <SummaryRow
+                      label="First payment"
+                      detail={`When your gift ends on ${formatDate(giftPreview.payment.dueAt)}${giftPreview.viaCheckout ? ' plus any tax' : ''}`}
+                      value={formatCurrencyFromCents(
+                        Number(giftPreview.payment.amount),
+                        giftPreview.currencyCode
+                      )}
+                    />
+                  </>
+                )}
+              </div>
             )}
 
             {previewTarget && !isPreviewPending && previewRows && (
