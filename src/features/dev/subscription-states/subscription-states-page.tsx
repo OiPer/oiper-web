@@ -426,8 +426,8 @@ function GiftLinkStates() {
       <Group title="Can't claim">
         <GiftPageGrid
           titles={[
-            'Has a subscription',
-            'Another gift running',
+            'Has a subscription or gift',
+            'Has a subscription · one email',
             'Different email',
           ]}
         />

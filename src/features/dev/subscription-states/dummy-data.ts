@@ -1335,25 +1335,26 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
     },
   },
   {
-    title: 'Has a subscription',
+    title: 'Has a subscription or gift',
     description:
-      'Active, set to cancel, paused or past due. Told before any button; no footnote.',
+      'A subscription that is active, set to cancel, paused or past due, or a gift still running. Told before any button; no footnote.',
     view: {
       kind: 'offer',
       offer: PRO_OFFER,
       viewerEmail: 'sam@example.com',
       blocked:
-        "You already have a subscription, so this gift can't be added to your account. The link still works for someone else, so feel free to pass it on",
+        "This gift can't be added since you already have a plan but you're welcome to share the link with someone else",
     },
   },
   {
-    title: 'Another gift running',
-    description: 'This account already has a gift running.',
+    title: 'Has a subscription · one email',
+    description:
+      'Same, on a link made for this email: no suggestion to pass it on.',
     view: {
       kind: 'offer',
-      offer: { ...MAX_OFFER, months: 1 },
+      offer: { ...PRO_OFFER, forEmail: 'sam@example.com' },
       viewerEmail: 'sam@example.com',
-      blocked: "You're already on a gift plan",
+      blocked: "This gift can't be added since you already have a plan",
     },
   },
   {
@@ -1363,8 +1364,7 @@ export const GIFT_PAGE_STATES: GiftPageState[] = [
       kind: 'offer',
       offer: { ...PRO_OFFER, forEmail: 'alex@example.com' },
       viewerEmail: 'sam@example.com',
-      blocked:
-        'This gift is for alex@example.com. Sign in with that email to claim it',
+      blocked: 'To claim this gift please sign in as alex@example.com',
     },
   },
   {

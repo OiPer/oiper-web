@@ -178,7 +178,7 @@ function GiftPass(props: {
   const reduceMotion = useReducedMotion()
 
   return (
-    <div className="relative mt-10 w-full max-w-96 overflow-hidden rounded-2xl border border-white/12 bg-[linear-gradient(160deg,#1c1c1c,#101010_60%)] text-left shadow-[0_30px_90px_-30px_rgba(255,255,255,0.22)]">
+    <div className="relative mt-12 w-full max-w-96 overflow-hidden rounded-2xl border border-white/12 bg-[linear-gradient(160deg,#1c1c1c,#101010_60%)] text-left shadow-[0_30px_90px_-30px_rgba(255,255,255,0.22)]">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.09)_1px,transparent_1px)] mask-[radial-gradient(ellipse_at_100%_0%,black,transparent_60%)] bg-size-[14px_14px]"
@@ -240,7 +240,7 @@ function GiftPass(props: {
       </div>
 
       <div className="relative border-t border-dashed border-white/15 bg-white/2 px-7 py-4">
-        <p className="text-center text-sm text-white/60">
+        <p className="text-center text-sm text-pretty text-white/60">
           {props.message ?? "Speak freely, it's on us"}
         </p>
       </div>
@@ -260,14 +260,14 @@ function GiftShell(props: {
         'relative isolate flex flex-col items-center justify-center overflow-hidden bg-[#0a0a0a] px-6 py-20 text-center text-white',
         props.contained
           ? 'min-h-160 rounded-xl border'
-          : '-mt-20 min-h-svh py-28'
+          : '-mt-20 min-h-svh px-[4%] pt-32 pb-28'
       )}
     >
       <Backdrop />
 
       <h1
         className={cn(
-          'max-w-120 text-2xl sm:text-3xl',
+          'max-w-120 text-2xl text-pretty sm:text-3xl',
           props.byline
             ? 'leading-none font-bold tracking-[-0.01em] uppercase'
             : 'font-semibold tracking-[-0.02em]'
@@ -289,7 +289,7 @@ function GiftShell(props: {
 
 function Description(props: { children: ReactNode }) {
   return (
-    <p className="mt-5 max-w-110 text-base leading-relaxed text-white/50">
+    <p className="mt-5 max-w-110 text-base leading-relaxed text-pretty text-white/50">
       {props.children}
     </p>
   )
@@ -297,7 +297,7 @@ function Description(props: { children: ReactNode }) {
 
 function Footnote(props: { children: ReactNode }) {
   return (
-    <p className="mt-10 max-w-110 text-sm leading-relaxed text-white/40">
+    <p className="mt-10 max-w-110 text-sm leading-relaxed text-pretty text-white/40">
       {props.children}
     </p>
   )
@@ -306,7 +306,7 @@ function Footnote(props: { children: ReactNode }) {
 const textLinkClass = 'text-sm underline underline-offset-4 hover:text-white/80'
 
 const primaryButtonClass =
-  'h-10 rounded-md bg-white px-5 text-sm font-medium text-[#0a0a0a] hover:bg-white/90'
+  'h-13 rounded-md bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90'
 
 export function GiftOpeningView(props: { contained?: boolean }) {
   return (
@@ -315,7 +315,7 @@ export function GiftOpeningView(props: { contained?: boolean }) {
         'flex items-center justify-center bg-[#0a0a0a] text-white/60',
         props.contained
           ? 'min-h-160 rounded-xl border'
-          : '-mt-20 min-h-svh py-28'
+          : '-mt-20 min-h-svh pt-32 pb-28'
       )}
     >
       <Spinner className="size-6" />
@@ -341,7 +341,6 @@ export function GiftOfferView(props: {
   contained?: boolean
 }) {
   const { offer } = props
-  const plan = planDisplayName(offer.plan)
 
   return (
     <GiftShell
@@ -349,11 +348,6 @@ export function GiftOfferView(props: {
       byline="From the OiPer team"
       title="A Gift for You"
     >
-      <Description>
-        Enjoy {describeLength(offer.months)} of OiPer {plan} on us and start
-        using it in the desktop app as soon as you claim it
-      </Description>
-
       <GiftPass
         plan={offer.plan}
         months={offer.months}
@@ -363,33 +357,27 @@ export function GiftOfferView(props: {
 
       <div className="mt-10 flex flex-col items-center gap-4">
         {props.blocked && (
-          <p className="max-w-110 text-base leading-relaxed text-white/70">
+          <p className="max-w-110 text-base leading-relaxed text-pretty text-white/70">
             {props.blocked}.
           </p>
         )}
 
         {!props.blocked && props.viewerEmail && (
-          <>
-            <Button
-              type="button"
-              disabled={props.claiming}
-              onClick={props.onClaim}
-              className={primaryButtonClass}
-            >
-              <Loading loading={props.claiming}>Claim gift</Loading>
-            </Button>
-            <p className="text-sm text-white/40">
-              It will be added to {props.viewerEmail}
-            </p>
-          </>
+          <Button
+            type="button"
+            disabled={props.claiming}
+            onClick={props.onClaim}
+            className={cn(primaryButtonClass, 'px-12')}
+          >
+            <Loading loading={props.claiming}>Claim Gift</Loading>
+          </Button>
         )}
 
         {!props.blocked && !props.viewerEmail && (
           <>
             {offer.forEmail && (
-              <p className="max-w-110 text-base leading-relaxed text-white/70">
-                This gift is for {offer.forEmail} so please use that email to
-                sign up or sign in
+              <p className="max-w-110 text-base leading-relaxed text-pretty text-white/70">
+                To claim this gift please sign up or sign in as {offer.forEmail}
               </p>
             )}
             <Button asChild className={primaryButtonClass}>
@@ -408,7 +396,10 @@ export function GiftOfferView(props: {
         )}
 
         {props.error && (
-          <p role="alert" className="max-w-110 text-sm text-red-300">
+          <p
+            role="alert"
+            className="max-w-110 text-sm text-pretty text-red-300"
+          >
             {props.error}
           </p>
         )}
@@ -417,7 +408,7 @@ export function GiftOfferView(props: {
       {!props.blocked && (
         <Footnote>
           No card needed and when the gift ends you simply go back to the free
-          plan unless you choose to keep {plan}
+          plan unless you choose to keep it
         </Footnote>
       )}
     </GiftShell>
@@ -501,32 +492,14 @@ export function GiftUnavailableView(props: {
   )
 }
 
-function ClaimedGift(props: { gift: ClaimedGift; celebrate: boolean }) {
-  const subscriptionQuery = $api.useQuery(
-    'get',
-    '/v1/account/subscription',
-    { cache: 'no-store' },
-    { retry: false }
-  )
-  const isPaying =
-    subscriptionQuery.data?.plan !== undefined &&
-    subscriptionQuery.data.plan !== 'FREE' &&
-    subscriptionQuery.data.status === 'ACTIVE'
-
-  return (
-    <GiftClaimedView
-      plan={props.gift.plan}
-      endsAt={props.gift.endsAt}
-      showKeepNote={!isPaying}
-      celebrate={props.celebrate}
-    />
-  )
-}
-
-function ClaimableGift(props: { code: string; gift: GiftLookup }) {
+function ClaimableGift(props: {
+  code: string
+  gift: GiftLookup
+  features: string[]
+  isPaying: boolean
+}) {
   const { currentUser } = useAuth()
   const queryClient = useQueryClient()
-  const pricingQuery = $api.useQuery('get', '/v1/pricing')
   const claimMutation = useAccountMutation('post', '/v1/account/gifts/claim')
   const [claimed, setClaimed] = useState<ClaimedGift | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -534,15 +507,6 @@ function ClaimableGift(props: { code: string; gift: GiftLookup }) {
     plan: props.gift.plan.toLowerCase(),
     months: props.gift.months,
   }
-  const features =
-    pricingQuery.data?.plans
-      .find(
-        (entry) =>
-          entry.plan === props.gift.plan && entry.interval === 'MONTHLY'
-      )
-      ?.features.filter((feature) => !feature.label.startsWith('Everything'))
-      .slice(0, 3)
-      .map((feature) => feature.label) ?? []
 
   async function handleClaim() {
     setErrorMessage(null)
@@ -570,7 +534,16 @@ function ClaimableGift(props: { code: string; gift: GiftLookup }) {
     }
   }
 
-  if (claimed) return <ClaimedGift gift={claimed} celebrate />
+  if (claimed) {
+    return (
+      <GiftClaimedView
+        plan={claimed.plan}
+        endsAt={claimed.endsAt}
+        showKeepNote={!props.isPaying}
+        celebrate
+      />
+    )
+  }
 
   return (
     <GiftOfferView
@@ -579,7 +552,7 @@ function ClaimableGift(props: { code: string; gift: GiftLookup }) {
         months: props.gift.months,
         message: props.gift.message,
         forEmail: props.gift.forEmail,
-        features,
+        features: props.features,
       }}
       viewerEmail={currentUser?.email ?? null}
       blocked={currentUser ? props.gift.blocked : null}
@@ -592,48 +565,90 @@ function ClaimableGift(props: { code: string; gift: GiftLookup }) {
 
 function GiftWithCode(props: { code: string }) {
   const { currentUser, isLoading: isAuthLoading } = useAuth()
+  const viewerId = currentUser?.id ?? null
+  const [checkedFor, setCheckedFor] = useState<string | null | undefined>(
+    undefined
+  )
   const lookupQuery = $api.useQuery(
     'post',
     '/v1/gifts/lookup',
     { body: { code: props.code } },
-    { retry: false, enabled: !isAuthLoading }
+    { retry: false, enabled: false }
+  )
+  const pricingQuery = $api.useQuery('get', '/v1/pricing')
+  const subscriptionQuery = $api.useQuery(
+    'get',
+    '/v1/account/subscription',
+    { cache: 'no-store' },
+    { retry: false, enabled: currentUser !== null }
   )
   const { refetch } = lookupQuery
-  const state = lookupQuery.isError
-    ? 'NOT_FOUND'
-    : (lookupQuery.data?.state ?? null)
+  const ready =
+    !isAuthLoading &&
+    checkedFor === viewerId &&
+    !pricingQuery.isPending &&
+    (currentUser === null || !subscriptionQuery.isPending)
+  const state = !ready
+    ? null
+    : lookupQuery.isError
+      ? 'NOT_FOUND'
+      : (lookupQuery.data?.state ?? null)
 
   useEffect(() => {
-    if (!isAuthLoading) void refetch()
-  }, [currentUser?.id, isAuthLoading, refetch])
+    if (isAuthLoading) return
+
+    void refetch().then(() => setCheckedFor(viewerId))
+  }, [viewerId, isAuthLoading, refetch])
 
   useEffect(() => {
     if (state) logView('gift', 'gift', { state: state.toLowerCase() })
   }, [state])
 
-  if (isAuthLoading || lookupQuery.isPending) return <GiftOpeningView />
+  if (!ready) return <GiftOpeningView />
 
   if (lookupQuery.isError || !lookupQuery.data) {
     return <GiftUnavailableView reason="NOT_FOUND" />
   }
 
   const gift = lookupQuery.data
+  const isPaying =
+    subscriptionQuery.data?.plan !== undefined &&
+    subscriptionQuery.data.plan !== 'FREE' &&
+    subscriptionQuery.data.status === 'ACTIVE'
 
   if (gift.state === 'CLAIMED_BY_YOU') {
-    if (!gift.startsAt || !gift.endsAt) {
-      throw new Error('A gift claimed by this account came without dates')
+    if (!gift.endsAt) {
+      throw new Error('A gift claimed by this account came without an end date')
     }
 
     return (
-      <ClaimedGift
-        gift={{ plan: gift.plan, startsAt: gift.startsAt, endsAt: gift.endsAt }}
+      <GiftClaimedView
+        plan={gift.plan}
+        endsAt={gift.endsAt}
+        showKeepNote={!isPaying}
         celebrate={false}
       />
     )
   }
 
   if (gift.state === 'CLAIMABLE') {
-    return <ClaimableGift code={props.code} gift={gift} />
+    const features =
+      pricingQuery.data?.plans
+        .find(
+          (entry) => entry.plan === gift.plan && entry.interval === 'MONTHLY'
+        )
+        ?.features.filter((feature) => !feature.label.startsWith('Everything'))
+        .slice(0, 3)
+        .map((feature) => feature.label) ?? []
+
+    return (
+      <ClaimableGift
+        code={props.code}
+        gift={gift}
+        features={features}
+        isPaying={isPaying}
+      />
+    )
   }
 
   return <GiftUnavailableView reason={gift.state} />
