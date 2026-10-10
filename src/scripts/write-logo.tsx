@@ -111,8 +111,7 @@ void (async () => {
   const lemonada = await fetch(ttfUrl).then((r) => r.arrayBuffer())
 
   for (const { name, fillColor } of [
-    { name: 'black', fillColor: '#0a0a0a' },
-    { name: 'white', fillColor: '#ffffff' },
+    { name: 'indigo', fillColor: '#6366f1' },
   ]) {
     const textPng = await sharp(
       Buffer.from(
@@ -203,10 +202,7 @@ void (async () => {
   }
 
   for (const [os, icon] of Object.entries(platformIcons)) {
-    for (const [suffix, color] of [
-      ['ink', '#0a0a0a'],
-      ['light', '#f1f5f9'],
-    ]) {
+    for (const [suffix, color] of [['mid', '#6366f1']]) {
       const svg = `<svg viewBox="${icon.viewBox}" xmlns="http://www.w3.org/2000/svg"><path fill="${color}" fill-rule="evenodd" d="${icon.path}"/></svg>`
 
       await sharp(Buffer.from(svg))
