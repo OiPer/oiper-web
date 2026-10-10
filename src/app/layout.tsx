@@ -32,7 +32,7 @@ const firaCode = Fira_Code({
 const title = 'OiPer: Private Voice Dictation for Windows, Mac & Linux'
 
 const description =
-  'Hold a hotkey, speak, and your words appear in any app. OiPer is fast, private voice-to-text that runs locally on Windows, macOS and Linux. Free to use.'
+  'Hold a hotkey, speak, and your words appear in any app. Everything runs locally on Windows, macOS and Linux — fast, private, and free forever.'
 
 export const viewport: Viewport = {
   themeColor: '#0a0a0a',

@@ -33,7 +33,7 @@ export default async function Page() {
               '@type': 'SoftwareApplication',
               name: 'OiPer',
               description:
-                'Private voice dictation for Windows, macOS and Linux. Hold a hotkey, speak, and your words appear in any app. Transcription runs locally by default.',
+                'Hold a hotkey, speak, and your words appear in any app. OiPer runs locally by default on Windows, macOS and Linux, and the app is free forever.',
               url: joinUrl(env.BASE_URL),
               downloadUrl: joinUrl(env.BASE_URL, DOWNLOAD_URL),
               image: joinUrl(env.BASE_URL, '/opengraph-image'),

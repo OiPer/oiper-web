@@ -2,6 +2,7 @@
 
 import { NavigationLink } from '@/components/navigation-link'
 import { DownloadButton } from '@/features/download/download-button'
+import { SubscribeForm } from '@/features/notifications/subscribe-form'
 import { OiPerLogoBackground } from '@oiper/logo'
 import {
   BookOpen,
@@ -113,11 +114,14 @@ export function FooterSection() {
               Download OiPer and start transcribing privately in under a minute.
               No account required.
             </p>
-            <DownloadButton
-              location="footer"
-              className="mt-10 h-13 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
-              iconClassName="size-5"
-            />
+            <div className="mt-10 flex w-80 max-w-full flex-col gap-3">
+              <DownloadButton
+                location="footer"
+                className="h-13 rounded-md bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+                iconClassName="size-5"
+              />
+              <SubscribeForm location="footer" />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-12 sm:gap-20">

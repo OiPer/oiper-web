@@ -28,12 +28,12 @@ export const APP_PAGES = {
     seo: {
       title: 'Create account',
       description:
-        'Create your OiPer account to use hosted transcription and manage your plan. Local dictation stays free and needs no account.',
+        'Create your OiPer account to use hosted transcription and manage your plan. The app is free forever on your machine — no account needed.',
     },
     og: {
       title: 'Create Account',
       description:
-        'Create an account for hosted transcription while local dictation in the app stays free',
+        'Create an account for hosted transcription while the app stays free on your machine',
       screenshot: 4,
     },
   },
@@ -114,6 +114,19 @@ export const APP_PAGES = {
       screenshot: 1,
     },
   },
+  '/account/notifications': {
+    seo: {
+      title: 'Notifications',
+      description:
+        'Choose which emails OiPer sends you, like release notes for every new version.',
+    },
+    og: {
+      title: 'Notifications',
+      description:
+        'Choose which OiPer emails land in your inbox, from release notes to account updates',
+      screenshot: 1,
+    },
+  },
   '/account/usage': {
     seo: {
       title: 'Usage',
@@ -142,7 +155,7 @@ export const SITE_PAGES = {
     og: {
       title: 'Download OiPer',
       description:
-        'Get the free private dictation app for Windows, macOS and Linux and start talking in minutes',
+        'Free download for Windows, macOS and Linux — hold a hotkey, speak, and your words appear in any app',
       screenshot: 2,
     },
   },

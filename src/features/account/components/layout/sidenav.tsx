@@ -51,6 +51,20 @@ export const sidebarItems = [
     href: '/account/usage',
     items: [],
   },
+  {
+    label: 'Notifications',
+    href: '/account/notifications',
+    items: [
+      {
+        label: 'Email',
+        href: '/account/notifications#email-notifications',
+      },
+      {
+        label: 'Recent emails',
+        href: '/account/notifications#recent-emails',
+      },
+    ],
+  },
 ] as const
 
 function searchSidebarItems(searchTerm: string) {

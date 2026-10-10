@@ -13,7 +13,7 @@ export function GET() {
   const body = [
     '# OiPer',
     '',
-    '> OiPer is a desktop voice dictation app for Windows, macOS and Linux. Hold a global hotkey, speak, release, and the transcribed text is typed into whatever app has focus.',
+    '> OiPer is a desktop app for Windows, macOS and Linux that types what you say: hold a global hotkey, speak, release, and your words appear in whatever app has focus.',
     '',
     '- Transcription runs locally with Whisper models on your CPU or GPU by default; audio stays on your device.',
     "- Cloud transcription is optional: bring your own provider and API key, or use OiPer's hosted models on a paid plan.",

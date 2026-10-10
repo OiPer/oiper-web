@@ -54,8 +54,9 @@ export function FeaturesSection() {
             Everything you need.
           </h2>
           <p className="mt-5 text-base leading-relaxed text-white/50">
-            OiPer is voice dictation that is minimal, private, and built for
-            speed. Every feature serves a purpose and gets out of your way.
+            OiPer is minimal, private, and built for speed. Hold a hotkey,
+            speak, and your words appear in any app. Every feature serves a
+            purpose and gets out of your way.
           </p>
         </div>
 

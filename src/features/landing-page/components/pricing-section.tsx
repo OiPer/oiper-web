@@ -10,6 +10,7 @@ import {
   useCheckoutQueryParam,
   usePollUntilPlanChangeLands,
   useStartCheckout,
+  type ActiveSubscription,
   type PlanChangeTarget,
 } from '@/features/billing/use-checkout'
 import {
@@ -67,6 +68,13 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     { enabled: !!currentUser, retry: false, staleTime: 30_000 }
   )
 
+  const giftsQuery = $api.useQuery(
+    'get',
+    '/v1/account/gifts',
+    subscriptionRequest,
+    { enabled: !!currentUser, retry: false, staleTime: 30_000 }
+  )
+  const gift = currentUser ? (giftsQuery.data?.current ?? null) : null
   const { pendingTarget, setPendingTarget } = usePollUntilPlanChangeLands(
     subscriptionQuery.refetch
   )
@@ -99,7 +107,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
   const isStatusUnknown =
     !isMounted ||
     isAuthLoading ||
-    (!!currentUser && subscriptionQuery.isPending)
+    (!!currentUser && (subscriptionQuery.isPending || giftsQuery.isPending))
 
   useCheckoutQueryParam(
     props.plans,
@@ -213,6 +221,8 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
             onClick: () => trackUpgrade(cardPlan, 'paddle'),
           }
 
+      if (gift) return deriveSubscriberCta(cardPlan, gift.plan, null)
+
       return {
         cta: `Upgrade to ${planDisplayName(cardPlan)}`,
         action: checkoutAction,
@@ -224,7 +234,18 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
 
     const sub = subscription!
 
-    if (sub.plan === cardPlan && sub.billingInterval === interval) {
+    return deriveSubscriberCta(cardPlan, sub.plan, sub.billingInterval)
+  }
+
+  function deriveSubscriberCta(
+    cardPlan: 'PRO' | 'MAX',
+    currentPlan: 'PRO' | 'MAX' | 'FREE',
+    currentInterval: 'MONTHLY' | 'YEARLY' | null
+  ): PlanCardCta {
+    if (
+      currentPlan === cardPlan &&
+      (currentInterval === null || currentInterval === interval)
+    ) {
       return {
         cta: 'Current Plan',
         action: { type: 'button', onClick: () => undefined },
@@ -248,6 +269,30 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
       },
     }
   }
+
+  const dialogSubscription: ActiveSubscription | null =
+    isLapsed && gift
+      ? {
+          plan: gift.plan,
+          interval: 'MONTHLY',
+          status: 'ACTIVE',
+          currentPeriodEnd: gift.endsAt,
+          cancelAtPeriodEnd: false,
+          nextPayment: null,
+          currencyCode: null,
+        }
+      : subscription &&
+          (subscription.plan === 'PRO' || subscription.plan === 'MAX')
+        ? {
+            plan: subscription.plan,
+            interval: subscription.billingInterval ?? 'MONTHLY',
+            status: subscription.status,
+            currentPeriodEnd: subscription.currentPeriodEnd,
+            cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+            nextPayment: subscription.nextPayment,
+            currencyCode: subscription.currencyCode,
+          }
+        : null
 
   const proCta = pro && derivePlanCardCta('PRO')
   const maxCta = max && derivePlanCardCta('MAX')
@@ -295,7 +340,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
               period="Forever"
               discountPercent={0}
               discountPercentFloored={0}
-              description="Unlimited local transcription, no limits, no cost."
+              description="Unlimited transcription on your machine, no limits, no cost."
               features={free.features}
               featured={false}
               cta={{
@@ -335,33 +380,24 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
         </div>
       </Wrapper>
 
-      {subscriptionQuery.data &&
-        (subscriptionQuery.data.plan === 'PRO' ||
-          subscriptionQuery.data.plan === 'MAX') && (
-          <ChangePlanDialog
-            location="pricing"
-            open={!!changePlanTarget}
-            onOpenChange={(open) => {
-              if (!open) setChangePlanTarget(null)
-            }}
-            initialTarget={changePlanTarget}
-            plans={props.plans}
-            currentSubscription={{
-              plan: subscriptionQuery.data.plan,
-              interval: subscriptionQuery.data.billingInterval ?? 'MONTHLY',
-              status: subscriptionQuery.data.status,
-              currentPeriodEnd: subscriptionQuery.data.currentPeriodEnd,
-              cancelAtPeriodEnd: subscriptionQuery.data.cancelAtPeriodEnd,
-              nextPayment: subscriptionQuery.data.nextPayment,
-              currencyCode: subscriptionQuery.data.currencyCode,
-            }}
-            onChangeSubmitted={(target) => {
-              setPendingTarget(target)
-              setChangePlanTarget(null)
-            }}
-            refetchSubscription={() => subscriptionQuery.refetch()}
-          />
-        )}
+      {dialogSubscription && (
+        <ChangePlanDialog
+          location="pricing"
+          open={!!changePlanTarget}
+          onOpenChange={(open) => {
+            if (!open) setChangePlanTarget(null)
+          }}
+          initialTarget={changePlanTarget}
+          plans={props.plans}
+          currentSubscription={dialogSubscription}
+          giftOnly={isLapsed && !!gift}
+          onChangeSubmitted={(target) => {
+            setPendingTarget(target)
+            setChangePlanTarget(null)
+          }}
+          refetchSubscription={() => subscriptionQuery.refetch()}
+        />
+      )}
     </section>
   )
 }
