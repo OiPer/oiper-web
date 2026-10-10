@@ -169,6 +169,18 @@ function Confetti() {
   )
 }
 
+const SHEEN_MOTION = {
+  initial: { x: '-50%' },
+  animate: { x: '50%' },
+  transition: {
+    duration: 2.6,
+    delay: 1,
+    repeat: Infinity,
+    repeatDelay: 4.5,
+    ease: [0.45, 0, 0.2, 1],
+  },
+} as const
+
 function GiftPass(props: {
   plan: PaidPlan
   months: number
@@ -178,71 +190,71 @@ function GiftPass(props: {
   const reduceMotion = useReducedMotion()
 
   return (
-    <div className="relative mt-12 w-full max-w-96 overflow-hidden rounded-2xl border border-white/12 bg-[linear-gradient(160deg,#1c1c1c,#101010_60%)] text-left shadow-[0_30px_90px_-30px_rgba(255,255,255,0.22)]">
+    <div className="relative mt-12 w-full max-w-96 overflow-hidden rounded-2xl p-px text-left">
+      <div aria-hidden className="absolute inset-0 bg-white/12" />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.09)_1px,transparent_1px)] mask-[radial-gradient(ellipse_at_100%_0%,black,transparent_60%)] bg-size-[14px_14px]"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(255,255,255,0.1),transparent_50%)]"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-24 -right-24 size-64 rounded-full border border-white/6"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-12 -right-12 size-40 rounded-full border border-white/8"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_0%,rgba(255,255,255,0.55),transparent)]"
       />
 
-      {!reduceMotion && (
-        <motion.div
+      <div className="relative overflow-hidden rounded-[15px] bg-[linear-gradient(160deg,#1c1c1c,#101010_60%)]">
+        <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 w-1/3 bg-[linear-gradient(100deg,transparent,rgba(255,255,255,0.08),transparent)]"
-          initial={{ x: '-120%' }}
-          animate={{ x: '360%' }}
-          transition={{
-            duration: 2.4,
-            delay: 0.8,
-            repeat: Infinity,
-            repeatDelay: 5,
-            ease: 'easeInOut',
-          }}
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.09)_1px,transparent_1px)] mask-[radial-gradient(ellipse_at_100%_0%,black,transparent_60%)] bg-size-[14px_14px]"
         />
-      )}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(255,255,255,0.1),transparent_50%)]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-24 -right-24 size-64 rounded-full border border-white/6"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-12 -right-12 size-40 rounded-full border border-white/8"
+        />
 
-      <div className="relative px-7 pt-7 pb-8.5">
-        <div className="flex items-center justify-between gap-4">
-          <OiPerLogoText className="text-[1.25rem]" />
-          <p className="text-sm text-white/50">
-            {capitalize(describeLength(props.months))}
+        <div className="relative px-7 pt-7 pb-8.5">
+          <div className="flex items-center justify-between gap-4">
+            <OiPerLogoText className="text-[1.25rem]" />
+            <p className="text-sm text-white/50">
+              {capitalize(describeLength(props.months))}
+            </p>
+          </div>
+
+          <p className="mt-10 text-xs font-medium tracking-[0.2em] text-white/40 uppercase">
+            Gift plan
+          </p>
+          <p className="mt-1.5 text-3xl font-semibold tracking-[-0.01em] uppercase">
+            {planDisplayName(props.plan)}
+          </p>
+
+          {props.features.length > 0 && (
+            <ul className="mt-8 flex flex-col gap-3 text-sm text-white/70">
+              {props.features.map((feature) => (
+                <li key={feature} className="flex items-center gap-2.5">
+                  <CheckIcon className="size-4 shrink-0 text-white/40" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="relative border-t border-dashed border-white/15 bg-white/2 px-7 py-4">
+          <p className="text-center text-sm text-pretty text-white/60">
+            {props.message ?? "Speak freely, it's on us"}
           </p>
         </div>
 
-        <p className="mt-10 text-xs font-medium tracking-[0.2em] text-white/40 uppercase">
-          Gift plan
-        </p>
-        <p className="mt-1.5 text-3xl font-semibold tracking-[-0.01em] uppercase">
-          {planDisplayName(props.plan)}
-        </p>
-
-        {props.features.length > 0 && (
-          <ul className="mt-8 flex flex-col gap-3 text-sm text-white/70">
-            {props.features.map((feature) => (
-              <li key={feature} className="flex items-center gap-2.5">
-                <CheckIcon className="size-4 shrink-0 text-white/40" />
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
+        {!reduceMotion && (
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute -top-1/2 -left-1/2 size-[200%] bg-[linear-gradient(115deg,transparent_43%,rgba(255,255,255,0.04)_47%,rgba(255,255,255,0.1)_49%,rgba(255,255,255,0.24)_49.6%,rgba(255,255,255,0.24)_50.2%,rgba(255,255,255,0.1)_50.8%,rgba(255,255,255,0.04)_52.5%,rgba(255,255,255,0.11)_53.2%,rgba(255,255,255,0.04)_53.9%,transparent_57%)] mix-blend-screen"
+            {...SHEEN_MOTION}
+          />
         )}
-      </div>
-
-      <div className="relative border-t border-dashed border-white/15 bg-white/2 px-7 py-4">
-        <p className="text-center text-sm text-pretty text-white/60">
-          {props.message ?? "Speak freely, it's on us"}
-        </p>
       </div>
     </div>
   )
@@ -367,9 +379,11 @@ export function GiftOfferView(props: {
             type="button"
             disabled={props.claiming}
             onClick={props.onClaim}
-            className={cn(primaryButtonClass, 'px-12')}
+            className={primaryButtonClass}
           >
-            <Loading loading={props.claiming}>Claim Gift</Loading>
+            <Loading loading={props.claiming}>
+              Claim OiPer {planDisplayName(offer.plan)}
+            </Loading>
           </Button>
         )}
 
