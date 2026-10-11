@@ -12,6 +12,18 @@ import { isAppErrorEnvelope } from '@/lib/api/error'
 
 const unsubscribeRequest = { cache: 'no-store' } as const
 
+const buttonClass =
+  'mt-10 h-12 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90'
+
+const INVALID_LINK_CODES = new Set([
+  'NOTIFICATION_UNSUBSCRIBE_TOKEN_INVALID',
+  'VALIDATION_REQUEST_INVALID',
+])
+
+function isInvalidLinkError(error: unknown): boolean {
+  return isAppErrorEnvelope(error) && INVALID_LINK_CODES.has(error.error.code)
+}
+
 function useUnsubscribeContent(props: { token: string }) {
   const params = {
     params: { path: { token: props.token } },
@@ -47,7 +59,25 @@ function useUnsubscribeContent(props: { token: string }) {
     return { title: 'Checking your link…', description: '', action: null }
   }
 
-  if (stateQuery.isError || unsubscribeMutation.isError) {
+  if (stateQuery.isError && !isInvalidLinkError(stateQuery.error)) {
+    return {
+      title: 'Something went wrong.',
+      description:
+        "We couldn't check your unsubscribe link just now. Try again in a moment.",
+      action: (
+        <Button
+          type="button"
+          disabled={stateQuery.isFetching}
+          onClick={() => void stateQuery.refetch()}
+          className={buttonClass}
+        >
+          <Loading loading={stateQuery.isFetching}>Try again</Loading>
+        </Button>
+      ),
+    }
+  }
+
+  if (stateQuery.isError || isInvalidLinkError(unsubscribeMutation.error)) {
     return {
       title: 'This link is invalid.',
       description:
@@ -68,14 +98,15 @@ function useUnsubscribeContent(props: { token: string }) {
 
   return {
     title: `Unsubscribe from “${topic}”?`,
-    description:
-      "You'll stop getting these emails. Account emails like receipts aren't affected.",
+    description: unsubscribeMutation.isError
+      ? "That didn't go through, so you're still subscribed. Try again in a moment."
+      : "You'll stop getting these emails. Account emails like receipts aren't affected.",
     action: (
       <Button
         type="button"
         disabled={unsubscribeMutation.isPending}
         onClick={() => void handleUnsubscribe()}
-        className="mt-10 h-12 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+        className={buttonClass}
       >
         <Loading loading={unsubscribeMutation.isPending}>Unsubscribe</Loading>
       </Button>
