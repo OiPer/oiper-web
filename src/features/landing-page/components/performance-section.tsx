@@ -9,7 +9,7 @@ const benchmarks = [
   { name: 'OiPer (Local)', value: '1x', score: 100, highlight: true },
   { name: 'Whisper.cpp (GPU)', value: '1.49x slower', score: 67 },
   { name: 'Whisper.cpp (CPU)', value: '1.87x slower', score: 53 },
-  { name: 'Cloud API (Major API)', value: '3.46x slower', score: 29 },
+  { name: 'Cloud API (Major API)', value: '3.5x slower', score: 29 },
 ]
 
 const highlights = [
