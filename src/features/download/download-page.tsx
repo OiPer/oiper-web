@@ -21,19 +21,25 @@ import { findAsset, OS_LABELS, PACKAGES, type OS } from './platforms'
 const VISIBLE_VERSIONS = 7
 const OSES = Object.keys(OS_LABELS) as OS[]
 
-function getBuilds(release: Release) {
-  return PACKAGES.flatMap((pkg) => {
+function getBuilds(release: Release, platform?: OS) {
+  const builds = PACKAGES.flatMap((pkg) => {
     const asset = findAsset(release.assets, pkg)
     return asset ? [{ pkg, asset }] : []
   })
+
+  return builds.toSorted(
+    (a, b) => Number(b.pkg.os === platform) - Number(a.pkg.os === platform)
+  )
 }
 
 export function DownloadPage({
   releases,
   version,
+  platform,
 }: {
   releases: Release[]
   version?: string
+  platform?: OS
 }) {
   const latest = findLatest(releases)
   const selected = releases.find((release) => release.version === version)
@@ -102,6 +108,7 @@ export function DownloadPage({
                 latest={release === latest}
                 open={release === (selected ?? latest)}
                 pinned={release === selected}
+                platform={platform}
               />
             ))}
 
@@ -116,6 +123,7 @@ export function DownloadPage({
                       key={release.version}
                       release={release}
                       latest={release === latest}
+                      platform={platform}
                     />
                   ))}
                 </div>
@@ -146,13 +154,15 @@ function VersionRow({
   latest,
   open = false,
   pinned = false,
+  platform,
 }: {
   release: Release
   latest: boolean
   open?: boolean
   pinned?: boolean
+  platform?: OS
 }) {
-  const builds = getBuilds(release)
+  const builds = getBuilds(release, platform)
   const platforms = OSES.filter((os) => builds.some(({ pkg }) => pkg.os === os))
 
   return (

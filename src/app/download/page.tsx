@@ -1,5 +1,6 @@
 import { getReleases, type Release } from '@/features/changelog/github-releases'
 import { DownloadPage } from '@/features/download/download-page'
+import { OS_LABELS, type OS } from '@/features/download/platforms'
 import { DOWNLOAD_URL, HOME } from '@/features/landing-page/constants/links'
 import { ogCopy } from '@/features/seo/app-pages'
 import { breadcrumbs, JsonLd } from '@/features/seo/json-ld'
@@ -29,11 +30,15 @@ export const metadata: Metadata = {
 }
 
 interface PageProps {
-  searchParams: Promise<{ version?: string | string[] }>
+  searchParams: Promise<{
+    version?: string | string[]
+    platform?: string | string[]
+  }>
 }
 
 export default async function Page({ searchParams }: PageProps) {
-  const { version } = await searchParams
+  const { version, platform } = await searchParams
+  const os = Array.isArray(platform) ? platform[0] : platform
 
   let releases: Release[] = []
   try {
@@ -54,6 +59,11 @@ export default async function Page({ searchParams }: PageProps) {
       <DownloadPage
         releases={releases}
         version={Array.isArray(version) ? version[0] : version}
+        platform={
+          os !== undefined && Object.hasOwn(OS_LABELS, os)
+            ? (os as OS)
+            : undefined
+        }
       />
     </>
   )
