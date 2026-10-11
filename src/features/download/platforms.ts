@@ -99,3 +99,23 @@ export function macDownloadProps(id: Package['id'], altUrl?: string | null) {
       altUrl === undefined ? `${DOWNLOAD_URL}/${alt}` : (altUrl ?? undefined),
   }
 }
+
+export function countBuilds(release: { assets: { name: string }[] }) {
+  return PACKAGES.filter((pkg) => findAsset(release.assets, pkg)).length
+}
+
+export function pickDownloadRelease<
+  T extends { prerelease: boolean; assets: { name: string }[] },
+>(releases: T[]) {
+  const stable = releases.filter((release) => !release.prerelease)
+  const candidates = stable.length > 0 ? stable : releases
+  let best: T | undefined
+
+  for (const release of candidates) {
+    if (best === undefined || countBuilds(release) > countBuilds(best)) {
+      best = release
+    }
+  }
+
+  return best
+}

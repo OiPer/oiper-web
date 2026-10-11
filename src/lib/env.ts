@@ -46,6 +46,21 @@ const envSchema = z
         .optional()
     ),
     GOOGLE_SITE_VERIFICATION: optionalValue,
+    EMAIL_TRACKING_PUBLIC_KEYS: z
+      .string()
+      .trim()
+      .regex(
+        /^[A-Za-z0-9_-]{1,32}:[A-Za-z0-9+/=]+(,[A-Za-z0-9_-]{1,32}:[A-Za-z0-9+/=]+)*$/
+      )
+      .transform(
+        (value) =>
+          new Map(
+            value.split(',').map((entry) => {
+              const [kid, key] = entry.split(':')
+              return [kid, key] as const
+            })
+          )
+      ),
   })
   .transform((value) => ({
     ...value,
@@ -64,4 +79,6 @@ export const env = envSchema.parse({
   PADDLE_CLIENT_TOKEN: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
   GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
   GOOGLE_SITE_VERIFICATION: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  EMAIL_TRACKING_PUBLIC_KEYS:
+    process.env.NEXT_PUBLIC_EMAIL_TRACKING_PUBLIC_KEYS,
 })

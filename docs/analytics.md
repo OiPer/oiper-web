@@ -59,22 +59,26 @@ Forms follow one pattern: `logSubmit` after validation → `logComplete` when th
 
 `location` answers _where in the product_ the action happened. Use a short, stable, snake_case value:
 
-| Location              | Where                                                                   |
-| --------------------- | ----------------------------------------------------------------------- |
-| `hero`                | Homepage hero                                                           |
-| `header`              | Site header (nav bar)                                                   |
-| `footer`              | Site footer                                                             |
-| `landing`             | The homepage as a whole                                                 |
-| `pricing`             | Pricing section on the homepage                                         |
-| `faq`                 | FAQ section                                                             |
-| `download_section`    | `/download` page                                                        |
-| `mac_download_dialog` | Mac "not signed by Apple" dialog                                        |
-| `auth`                | Sign in, sign up, reset password and verification forms (modal or page) |
-| `billing`             | `/account/billing`                                                      |
-| `settings`            | `/account/settings`                                                     |
-| `security`            | `/account/security`                                                     |
-| `account`             | Account area header                                                     |
-| `not_found`           | The 404 page                                                            |
+| Location              | Where                                                                        |
+| --------------------- | ---------------------------------------------------------------------------- |
+| `hero`                | Homepage hero                                                                |
+| `header`              | Site header (nav bar)                                                        |
+| `footer`              | Site footer                                                                  |
+| `landing`             | The homepage as a whole                                                      |
+| `pricing`             | Pricing section on the homepage                                              |
+| `faq`                 | FAQ section                                                                  |
+| `download_section`    | `/download` page                                                             |
+| `guide`               | Guide pages: `/linux`, `/windows`, `/mac`, `/use-cases/*`, `/alternatives/*` |
+| `mac_download_dialog` | Mac "not signed by Apple" dialog                                             |
+| `auth`                | Sign in, sign up, reset password and verification forms (modal or page)      |
+| `billing`             | `/account/billing`                                                           |
+| `settings`            | `/account/settings`                                                          |
+| `security`            | `/account/security`                                                          |
+| `notifications`       | `/account/notifications`                                                     |
+| `unsubscribe`         | `/unsubscribe` page linked from emails                                       |
+| `gift`                | `/gift` page opened from a gift link                                         |
+| `account`             | Account area header                                                          |
+| `not_found`           | The 404 page                                                                 |
 
 Reserved for future use: `features`, `navigation`, `mobile_menu`.
 
@@ -156,20 +160,20 @@ Every event the site sends. All events also carry `location`.
 
 ### Downloads
 
-| Event                     | Location                                              | Details                                                                  | When                                                        |
-| ------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
-| `download_clicked`        | `hero` `header` `footer` `pricing` `download_section` | `platform` (absent on the fallback link shown before the OS is detected) | Any download button or build link                           |
-| `other_platforms_clicked` | `hero`                                                | —                                                                        | "Other platforms" links under the hero download button      |
-| `mac_build_selected`      | `mac_download_dialog`                                 | `platform`                                                               | Switching between Apple Silicon and Intel in the Mac dialog |
-| `download_started`        | `mac_download_dialog`                                 | `platform`                                                               | "Yes, download" in the Mac dialog                           |
+| Event                     | Location                                                             | Details                                                                  | When                                                        |
+| ------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| `download_clicked`        | `hero` `header` `footer` `pricing` `download_section` `guide` `gift` | `platform` (absent on the fallback link shown before the OS is detected) | Any download button or build link                           |
+| `other_platforms_clicked` | `hero`                                                               | —                                                                        | "Other platforms" links under the hero download button      |
+| `mac_build_selected`      | `mac_download_dialog`                                                | `platform`                                                               | Switching between Apple Silicon and Intel in the Mac dialog |
+| `download_started`        | `mac_download_dialog`                                                | `platform`                                                               | "Yes, download" in the Mac dialog                           |
 
 ### Navigation and content
 
-| Event                | Location                                                | Details                                                                                                                                                                                                   | When                                                                                                                                                    |
-| -------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `navigation_clicked` | `footer` `header` `auth` `download_section` `not_found` | `destination` as a stable id, never a path: `features` `performance` `privacy` `languages` `pricing` `faq` `docs` `resources` `changelog` `privacy_policy` `terms_of_service` `home` `account` `download` | Internal links: footer, logos, the header "Account" item, "What's new" on the download page, Terms and Privacy on the auth pages, links on the 404 page |
-| `pricing_viewed`     | `landing`                                               | —                                                                                                                                                                                                         | Pricing section scrolls into view, once per page view                                                                                                   |
-| `faq_opened`         | `faq`                                                   | `question`: `offline` `free` `platforms` `audio_privacy` `apps` `hardware`                                                                                                                                | Opening an FAQ question                                                                                                                                 |
+| Event                | Location                                                                             | Details                                                                                                                                                                                                                                                                                        | When                                                                                                                                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigation_clicked` | `footer` `header` `auth` `download_section` `guide` `not_found` `unsubscribe` `gift` | `destination` as a stable id, never a path: `features` `performance` `privacy` `languages` `pricing` `faq` `docs` `resources` `changelog` `privacy_policy` `terms_of_service` `home` `account` `download` `linux` `windows` `mac` `coding` `wispr_flow_alternative` `superwhisper_alternative` | Internal links: footer, logos, the header "Account" item, "What's new" on the download page, Terms and Privacy on the auth pages, links on the 404 page, the download and docs links on guide pages |
+| `pricing_viewed`     | `landing`                                                                            | —                                                                                                                                                                                                                                                                                              | Pricing section scrolls into view, once per page view                                                                                                                                               |
+| `faq_opened`         | `faq`                                                                                | `question`: `offline` `free` `platforms` `audio_privacy` `apps` `hardware`                                                                                                                                                                                                                     | Opening an FAQ question                                                                                                                                                                             |
 
 ### Sign in and sign up
 
@@ -190,15 +194,15 @@ Every event the site sends. All events also carry `location`.
 
 ### Pricing, checkout and plans
 
-| Event                                          | Location                                     | Details                                                                                                                                                                       | When                                                                       |
-| ---------------------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `billing_interval_selected`                    | `pricing`                                    | `interval`: `monthly` `yearly`                                                                                                                                                | Monthly/yearly toggle                                                      |
-| `upgrade_clicked`                              | `pricing`                                    | `plan`: `pro` `max`, `interval`, `provider`: `paddle` `stripe`                                                                                                                | Any upgrade button, signed in or out                                       |
-| `checkout_failed`                              | `pricing`                                    | `plan`, `interval`, `provider`, `error_type` (`billing_already_subscribed` `billing_provider_not_available` `unknown`)                                                        | Checkout couldn't open                                                     |
-| `checkout_completed`                           | `pricing` (Paddle) `billing` (Stripe return) | `plan` (Paddle only), `provider`                                                                                                                                              | Payment went through                                                       |
-| `checkout_closed`                              | `pricing`                                    | `plan` (Paddle only), `provider`                                                                                                                                              | Left checkout without paying (Paddle overlay closed, Stripe cancel return) |
-| `plan_change_clicked`                          | `pricing` `billing`                          | `plan`, `interval` (pricing only)                                                                                                                                             | "Switch" on pricing or "Change plan" on billing                            |
-| `plan_change_completed` / `plan_change_failed` | `pricing` `billing`                          | `plan`, `interval`, `outcome` (`scheduled` `immediate`), `error_type` (`billing_plan_change_not_allowed` `billing_payment_failed` `billing_subscription_not_found` `unknown`) | Confirm in the change-plan dialog                                          |
+| Event                                          | Location                                     | Details                                                                                                                                                                                    | When                                                                       |
+| ---------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| `billing_interval_selected`                    | `pricing`                                    | `interval`: `monthly` `yearly`                                                                                                                                                             | Monthly/yearly toggle                                                      |
+| `upgrade_clicked`                              | `pricing`                                    | `plan`: `pro` `max`, `interval`, `provider`: `paddle` `stripe`                                                                                                                             | Any upgrade button, signed in or out                                       |
+| `checkout_failed`                              | `pricing`                                    | `plan`, `interval`, `provider`, `error_type` (`billing_already_subscribed` `billing_provider_not_available` `unknown`)                                                                     | Checkout couldn't open                                                     |
+| `checkout_completed`                           | `pricing` (Paddle) `billing` (Stripe return) | `plan` (Paddle only), `provider`                                                                                                                                                           | Payment went through                                                       |
+| `checkout_closed`                              | `pricing`                                    | `plan` (Paddle only), `provider`                                                                                                                                                           | Left checkout without paying (Paddle overlay closed, Stripe cancel return) |
+| `plan_change_clicked`                          | `pricing` `billing`                          | `plan`, `interval` (pricing only)                                                                                                                                                          | "Switch" on pricing or "Change plan" on billing                            |
+| `plan_change_completed` / `plan_change_failed` | `pricing` `billing`                          | `plan`, `interval`, `outcome` (`scheduled` `immediate` `after_gift`), `error_type` (`billing_plan_change_not_allowed` `billing_payment_failed` `billing_subscription_not_found` `unknown`) | Confirm in the change-plan dialog                                          |
 
 ### Account
 
@@ -210,6 +214,23 @@ Every event the site sends. All events also carry `location`.
 | `avatar_update_completed` / `_failed`                 | `settings`          | `error_type` (`unsupported_format` `too_large` `read_failed` `save_failed`) | Avatar upload                   |
 | `account_deletion_completed` / `_failed`              | `settings`          | `error_type`                                                                | Delete account                  |
 
+### Email notifications
+
+| Event                                                  | Location        | Details                                                                                                  | When                                                                                           |
+| ------------------------------------------------------ | --------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `email_subscribe_submitted` / `_completed` / `_failed` | `footer`        | `error_type`                                                                                             | Release updates form in the footer; the server answers the same for new and existing addresses |
+| `email_preferences_update_completed` / `_failed`       | `notifications` | `topic` (`product_releases`), `subscribed`, `error_type` (`notification_preferences_conflict` `unknown`) | A topic toggle on the notifications page                                                       |
+| `email_unsubscribe_all_completed` / `_failed`          | `notifications` | `error_type`                                                                                             | "Unsubscribe from all" on the notifications page                                               |
+| `email_unsubscribe_completed` / `_failed`              | `unsubscribe`   | `error_type` (`notification_unsubscribe_token_invalid` `unknown`)                                        | "Unsubscribe" on the page linked from emails                                                   |
+
+### Gifts
+
+| Event                                             | Location  | Details                                                                          | When                                                           |
+| ------------------------------------------------- | --------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `gift_viewed`                                     | `gift`    | `state` (`claimable` `claimed_by_you` `claimed` `expired` `revoked` `not_found`) | The gift page finished checking the link, once per state shown |
+| `gift_claim_submitted` / `_completed` / `_failed` | `gift`    | `plan`, `months`; `error_type` on failure (a `GIFT_*` code or `unknown`)         | "Claim gift"                                                   |
+| `gift_keep_plan_clicked`                          | `billing` | `plan`                                                                           | "Keep {plan} after Gift" on the billing page during a gift     |
+
 ## Intentionally not tracked
 
 - **Dialog, modal and menu opens** that always follow a tracked click. They'd count one action twice.
@@ -217,7 +238,7 @@ Every event the site sends. All events also carry `location`.
 - **External links** (GitHub, Support, the Apple guide). GA4's outbound click tracking covers them.
 - **Docs UI** (sidebar, search, table of contents). It's fumadocs internals, and page views already show which docs pages people read and in what order.
 - **Navigation inside the account area** (sidenav, account header menu) **and changelog pagination.** Page views cover the destination.
-- **Exploratory UI state:** radio changes in the change-plan dialog (the final choice is captured on confirm), expanding versions and "Show older versions" on the download page.
+- **Exploratory UI state:** radio changes in the change-plan dialog (the final choice is captured on confirm).
 - **Decorative interactions:** carousel, animated headline, globe and canvases, hovers, tooltips.
 - **Payment failures inside Paddle or Stripe.** They happen on the provider's side and reach us only through server webhooks.
 - **OAuth provider failures.** Not observable in the browser; `oauth_clicked` without a later `signin_completed` shows abandonment.

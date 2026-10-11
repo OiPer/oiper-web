@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'OiPer',
     short_name: 'OiPer',
     description:
-      'Private voice dictation for Windows, macOS and Linux. Hold a hotkey, speak, and your words appear in any app.',
+      'Hold a hotkey, speak, and your words appear in any app. Private by default on Windows, macOS and Linux.',
     start_url: '/',
     scope: '/',
     display: 'standalone',

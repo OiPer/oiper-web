@@ -5,7 +5,7 @@ export type PlanChangePreview =
   components['schemas']['ChangeSubscriptionPlanPreview']
 export type NonBlockedPlanChangePreview = Exclude<
   PlanChangePreview,
-  { kind: 'BLOCKED' }
+  { kind: 'BLOCKED' } | { kind: 'GIFT' }
 >
 
 export function describeTodayCharge(preview: NonBlockedPlanChangePreview) {

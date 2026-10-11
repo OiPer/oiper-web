@@ -1,14 +1,14 @@
-import { SubscriptionStatesPage } from '@/features/dev/subscription-states/subscription-states-page'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import type { ReactNode } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Subscription states',
+  title: 'Dev views',
   robots: { index: false, follow: false },
 }
 
-export default function DevSubscriptionStatesRoute() {
+export default function DevLayout(props: { children: ReactNode }) {
   if (process.env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
 
-  return <SubscriptionStatesPage />
+  return props.children
 }

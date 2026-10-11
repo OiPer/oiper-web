@@ -67,6 +67,9 @@ importers:
       input-otp:
         specifier: ^1.4.2
         version: 1.4.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      jose:
+        specifier: ^6.2.12
+        version: 6.2.12
       lucide-react:
         specifier: ^0
         version: 0.577.0(react@19.2.4)
@@ -7262,10 +7265,10 @@ packages:
       }
     hasBin: true
 
-  jose@6.2.0:
+  jose@6.2.12:
     resolution:
       {
-        integrity: sha512-xsfE1TcSCbUdo6U07tR0mvhg0flGxU8tPLbF03mirl2ukGQENhUg4ubGYQnhVH0b5stLlPM+WOqDkEl1R1y5sQ==,
+        integrity: sha512-9NiFmJEex0sy2Dk58j2UGBSHgUs2ypF9eZSu4L6vjOX3Dp96Sw1F3uL+H+D1sx02jZZdzUT0HgvCy59CuvXcWw==,
       }
 
   jpeg-exif@1.1.4:
@@ -11284,7 +11287,7 @@ snapshots:
       express: 5.2.1(supports-color@10.2.2)
       express-rate-limit: 8.3.0(express@5.2.1(supports-color@10.2.2))
       hono: 4.12.5
-      jose: 6.2.0
+      jose: 6.2.12
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
       raw-body: 3.0.2
@@ -15023,7 +15026,7 @@ snapshots:
 
   jiti@2.7.0: {}
 
-  jose@6.2.0: {}
+  jose@6.2.12: {}
 
   jpeg-exif@1.1.4: {}
 

@@ -9,6 +9,7 @@ import { AuthProvider } from '@/features/auth/auth-context'
 import { PublicAuthModalClientNoSSR } from '@/features/auth/public-auth-modal-client'
 import { DetectOSScript } from '@/features/download/download-button'
 import { MacDownloadDialog } from '@/features/download/mac-download-dialog'
+import { EmailClickReporter } from '@/features/notifications/email-click-reporter'
 import { ServiceWorker } from '@/features/pwa/service-worker'
 import { ogCopy } from '@/features/seo/app-pages'
 import { GoogleAnalytics } from '@/features/seo/google-analytics'
@@ -32,7 +33,7 @@ const firaCode = Fira_Code({
 const title = 'OiPer: Private Voice Dictation for Windows, Mac & Linux'
 
 const description =
-  'Hold a hotkey, speak, and your words appear in any app. OiPer is fast, private voice-to-text that runs locally on Windows, macOS and Linux. Free to use.'
+  'Hold a hotkey, speak, and your words appear in any app. Everything runs locally on Windows, macOS and Linux — fast, private, and free forever.'
 
 export const viewport: Viewport = {
   themeColor: '#0a0a0a',
@@ -135,6 +136,7 @@ export default function Layout({ children }: PropsWithChildren) {
               <PublicAuthModalClientNoSSR />
               <MacDownloadDialog />
               <ServiceWorker />
+              <EmailClickReporter />
               <Toaster richColors />
             </AuthProvider>
           </QueryProvider>

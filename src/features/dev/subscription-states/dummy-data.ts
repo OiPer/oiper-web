@@ -1,3 +1,4 @@
+import type { GiftOffer } from '@/features/gifts/gift-page'
 import type { PlanCardCta } from '@/features/landing-page/components/plan-card'
 
 export type PricingFeature = { label: string; detail: string | null }
@@ -108,7 +109,7 @@ const FREE_CARD = {
   period: 'Forever',
   discountPercent: 0,
   discountPercentFloored: 0,
-  description: 'Unlimited local transcription, no limits, no cost.',
+  description: 'Unlimited transcription on your machine, no limits, no cost.',
   features: FREE_FEATURES,
   featured: false,
 }
@@ -257,6 +258,26 @@ export const PRICING_CARD_STATES: PricingCardState[] = [
     },
   },
   {
+    title: 'Pro · on a Pro gift',
+    description:
+      "The gift's plan reads Current Plan on both intervals, like a subscriber's.",
+    entryNote: 'On a gift',
+    card: {
+      ...PRO_MONTHLY_CARD,
+      cta: cta({ label: 'Current Plan', variant: 'outline', disabled: true }),
+    },
+  },
+  {
+    title: 'Max · on a Pro gift',
+    description:
+      'Switch opens the change dialog, which ends the gift today and charges Max today.',
+    entryNote: 'On a gift',
+    card: {
+      ...MAX_MONTHLY_CARD,
+      cta: cta({ label: 'Switch', variant: 'outline' }),
+    },
+  },
+  {
     title: 'Max · Switch locked',
     description: 'A plan change was just confirmed and is still landing.',
     card: {
@@ -284,7 +305,12 @@ export type CurrentPlanCardState = {
     pausedAlert?: boolean
     checkoutProcessing?: boolean
     note?: 'free' | 'setting-up'
+    endedNote?: string
+    rowsBefore?: { label: string; value: string }[]
+    planRowLabel?: string
     planLabel: string
+    rowsAfter?: { label: string; value: string }[]
+    footnote?: string
     status?: string
     scheduledChange?: { date: string; planLabel: string }
     payment?: { label: string; date: string; amount: string }
@@ -293,6 +319,78 @@ export type CurrentPlanCardState = {
 }
 
 export const CURRENT_PLAN_STATES: CurrentPlanCardState[] = [
+  {
+    title: 'Gift · nothing set up',
+    description:
+      'Claimed a gift and pays nothing. Keep opens the $0-today checkout. Change plan opens the dialog: the same or a smaller plan starts after the gift, a bigger plan ends it today.',
+    card: {
+      planLabel: 'Pro',
+      rowsAfter: [
+        { label: 'Gift from OiPer', value: 'Until November 9 2026' },
+        { label: 'After your gift', value: 'Free' },
+      ],
+      footnote:
+        'Continue with Pro after your gift ends by setting up your subscription in advance.',
+      buttons: [
+        { label: 'Keep Pro after Gift', variant: 'outline' },
+        { label: 'Change plan' },
+      ],
+    },
+  },
+  {
+    title: 'Gift · opening checkout',
+    description: 'Keep was pressed and the Paddle checkout is opening.',
+    card: {
+      planLabel: 'Pro',
+      rowsAfter: [
+        { label: 'Gift from OiPer', value: 'Until November 9 2026' },
+        { label: 'After your gift', value: 'Free' },
+      ],
+      footnote:
+        'Continue with Pro after your gift ends by setting up your subscription in advance.',
+      buttons: [
+        {
+          label: 'Keep Pro after Gift',
+          variant: 'outline',
+          loading: true,
+        },
+        { label: 'Change plan', disabled: true },
+      ],
+    },
+  },
+  {
+    title: 'Gift · keeping Pro after it',
+    description:
+      'Paid $0 at checkout. The plan starts and is first charged when the gift ends.',
+    card: {
+      rowsBefore: [
+        { label: 'Gift from OiPer', value: 'Pro until November 9 2026' },
+      ],
+      planRowLabel: 'After your gift',
+      planLabel: 'Pro · Monthly',
+      status: 'Active',
+      payment: {
+        label: 'Next payment',
+        date: 'November 9 2026',
+        amount: '$8.70',
+      },
+      buttons: [
+        { label: 'Manage subscription', variant: 'outline' },
+        { label: 'Change plan' },
+      ],
+    },
+  },
+  {
+    title: 'Gift ended',
+    description:
+      'For 30 days after a gift ends with nothing set up, a line sits above the Free note.',
+    card: {
+      note: 'free',
+      endedNote:
+        'Your Pro gift ended on October 2 2026. Thanks for giving it a try.',
+      planLabel: '',
+    },
+  },
   {
     title: 'Loading',
     description: 'The subscription query has not resolved yet.',
@@ -706,6 +804,156 @@ export const CHANGE_PLAN_STATES: ChangePlanState[] = [
     confirmLabel: 'Confirm change',
   },
   {
+    title: 'Gift · same or smaller plan',
+    description:
+      'Nothing set up after the gift yet. The gift keeps running and the pick starts when it ends, through the $0-today checkout.',
+    entryNote: 'On a Pro gift',
+    options: FOUR_OPTIONS('', 'PRO-MONTHLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Pro · Monthly' },
+        {
+          label: 'Due today',
+          detail: 'Your gift keeps running',
+          value: '$0',
+        },
+        {
+          label: 'First payment',
+          detail: 'When your gift ends on November 9 2026 plus any tax',
+          value: '$7.99',
+        },
+      ],
+    },
+    confirmLabel: 'Continue to checkout',
+  },
+  {
+    title: 'Gift · bigger plan',
+    description:
+      'Nothing set up after the gift yet. Checkout charges today and the gift ends once the payment goes through.',
+    entryNote: 'On a Pro gift',
+    options: FOUR_OPTIONS('', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Max · Monthly' },
+        { label: 'Gift ends', value: 'Today' },
+        {
+          label: 'Charged today',
+          detail: 'Plus any tax, shown at checkout',
+          value: '$14.99',
+        },
+      ],
+    },
+    confirmLabel: 'Continue to checkout',
+  },
+  {
+    title: 'Gift · smaller plan on a Max gift',
+    description:
+      'Nothing set up after a Max gift. Pro does not end the gift: Max keeps running and Pro starts when it ends, through the $0-today checkout.',
+    entryNote: 'On a Max gift',
+    options: FOUR_OPTIONS('', 'PRO-MONTHLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Pro · Monthly' },
+        {
+          label: 'Due today',
+          detail: 'Your gift keeps running',
+          value: '$0',
+        },
+        {
+          label: 'First payment',
+          detail: 'When your gift ends on November 9 2026 plus any tax',
+          value: '$7.99',
+        },
+      ],
+    },
+    confirmLabel: 'Continue to checkout',
+  },
+  {
+    title: 'Gift · plan set to follow · swap',
+    description:
+      'Pro Monthly is set to start after the gift. Another interval or a smaller plan takes its place, still starting when the gift ends.',
+    entryNote: 'On a Pro gift with Pro set to follow',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'PRO-YEARLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Pro · Yearly' },
+        {
+          label: 'Due today',
+          detail: 'Your gift keeps running',
+          value: '$0',
+        },
+        {
+          label: 'First payment',
+          detail: 'When your gift ends on November 9 2026',
+          value: '$74.99',
+        },
+      ],
+    },
+    confirmLabel: 'Confirm change',
+  },
+  {
+    title: 'Gift · plan set to follow · bigger plan',
+    description:
+      'Pro Monthly is set to start after the gift. Max ends the gift and starts now, charged today. If the card fails nothing changes.',
+    entryNote: 'On a Pro gift with Pro set to follow',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Max · Monthly' },
+        { label: 'Gift ends', value: 'Today' },
+        { label: 'Charged today', value: '$14.99' },
+      ],
+    },
+    confirmLabel: 'Confirm change',
+  },
+  {
+    title: 'Gift · plan set to follow · confirming',
+    description:
+      'Confirm spins while the plan is swapped or, for a bigger plan, charged.',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'preview',
+      rows: [
+        { label: 'New plan', value: 'Max · Monthly' },
+        { label: 'Gift ends', value: 'Today' },
+        { label: 'Charged today', value: '$14.99' },
+      ],
+    },
+    confirmLabel: 'Confirm change',
+    confirmLoading: true,
+  },
+  {
+    title: 'Gift · plan set to follow · card declined',
+    description:
+      'The bigger plan could not be charged. Nothing changed and the gift is still on.',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'error',
+      message:
+        "We couldn't charge your card, so your plan wasn't changed and your gift is still on. Update your payment method and try again",
+    },
+    confirmLabel: 'Confirm change',
+    confirmDisabled: true,
+  },
+  {
+    title: 'Gift · plan set to follow · cancelling',
+    description:
+      'The plan set to start after the gift is set to cancel, so it has to be kept first, like any scheduled cancel.',
+    options: FOUR_OPTIONS('PRO-MONTHLY', 'MAX-MONTHLY'),
+    summary: {
+      kind: 'blocked',
+      reason: 'ENDING',
+      periodEnd: 'November 9 2026',
+    },
+    confirmLabel: 'Confirm change',
+    confirmDisabled: true,
+  },
+  {
     title: 'Blocked · cancelling',
     description: 'Keep subscription reverses the cancellation first.',
     options: FOUR_OPTIONS('MAX-YEARLY', 'PRO-MONTHLY'),
@@ -980,6 +1228,23 @@ export type ToastFixture = {
 export const TOAST_STATES: ToastFixture[] = [
   {
     type: 'success',
+    message:
+      'Max is starting and your gift ends — this can take a few seconds to show up',
+    when: 'Bigger plan confirmed with a plan set to follow the gift',
+  },
+  {
+    type: 'success',
+    message: 'Pro will start when your gift ends',
+    when: 'Plan set to follow the gift swapped',
+  },
+  {
+    type: 'error',
+    message:
+      "We couldn't charge your card, so your plan wasn't changed and your gift is still on. Update your payment method and try again",
+    when: 'Bigger plan during a gift could not be charged',
+  },
+  {
+    type: 'success',
     message: 'Payment received — setting up your subscription',
     when: 'Checkout return while the webhook lands',
   },
@@ -1064,5 +1329,179 @@ export const TOAST_STATES: ToastFixture[] = [
     type: 'error',
     message: 'You already have a subscription — manage it from billing',
     when: 'Checkout started twice',
+  },
+]
+
+const GIFT_FEATURES = [
+  '3-5x Faster Speed',
+  '180 Min/Day Transcription',
+  'Custom Dictionary',
+]
+
+const PRO_OFFER: GiftOffer = {
+  plan: 'PRO',
+  months: 3,
+  message: null,
+  forEmail: null,
+  features: GIFT_FEATURES,
+}
+
+const MAX_OFFER: GiftOffer = {
+  plan: 'MAX',
+  months: 12,
+  message: null,
+  forEmail: null,
+  features: GIFT_FEATURES,
+}
+
+const DAY = 24 * 60 * 60 * 1000
+function daysFromNow(days: number) {
+  return new Date(Date.now() + days * DAY).toISOString()
+}
+
+export type GiftPageState = {
+  title: string
+  description: string
+  view:
+    | { kind: 'opening' }
+    | {
+        kind: 'offer'
+        offer: GiftOffer
+        viewerEmail: string | null
+        claiming?: boolean
+        error?: string
+        blocked?: string
+      }
+    | {
+        kind: 'claimed'
+        plan: 'PRO' | 'MAX'
+        endsAt: string
+        showKeepNote: boolean
+      }
+    | {
+        kind: 'unavailable'
+        reason: 'NOT_FOUND' | 'CLAIMED' | 'EXPIRED' | 'REVOKED'
+      }
+}
+
+export const GIFT_PAGE_STATES: GiftPageState[] = [
+  {
+    title: 'Opening',
+    description: 'Reading the code from the link and checking it.',
+    view: { kind: 'opening' },
+  },
+  {
+    title: 'Visitor',
+    description:
+      'Not signed in. Both actions open the auth modal and come back here.',
+    view: { kind: 'offer', offer: PRO_OFFER, viewerEmail: null },
+  },
+  {
+    title: 'Visitor · long message',
+    description: 'A long personal message, to see how the card handles it.',
+    view: {
+      kind: 'offer',
+      offer: {
+        ...PRO_OFFER,
+        message:
+          'Thank you for all the feedback you sent us over the last few months, it shaped a lot of what OiPer is today and we would love for you to keep using it on us',
+      },
+      viewerEmail: null,
+    },
+  },
+  {
+    title: 'Visitor · one email',
+    description:
+      'The link was made for one email, and the page says which one.',
+    view: {
+      kind: 'offer',
+      offer: { ...PRO_OFFER, forEmail: 'alex@example.com' },
+      viewerEmail: null,
+    },
+  },
+  {
+    title: 'Signed in',
+    description: 'One click to claim. No message was set on this link.',
+    view: { kind: 'offer', offer: MAX_OFFER, viewerEmail: 'sam@example.com' },
+  },
+  {
+    title: 'Claiming',
+    description: 'The claim request is in flight.',
+    view: {
+      kind: 'offer',
+      offer: PRO_OFFER,
+      viewerEmail: 'sam@example.com',
+      claiming: true,
+    },
+  },
+  {
+    title: 'Claim failed',
+    description:
+      'The server message shows under the button, e.g. email not verified.',
+    view: {
+      kind: 'offer',
+      offer: PRO_OFFER,
+      viewerEmail: 'sam@example.com',
+      error: 'Verify your email address first, then claim your gift',
+    },
+  },
+  {
+    title: 'Has a subscription or gift',
+    description:
+      'A subscription that is active, set to cancel, paused or past due, or a gift still running. Told before any button; no footnote.',
+    view: {
+      kind: 'offer',
+      offer: PRO_OFFER,
+      viewerEmail: 'sam@example.com',
+      blocked:
+        "This gift can't be added since you already have a plan but you're welcome to share the link with someone else",
+    },
+  },
+  {
+    title: 'Has a subscription · one email',
+    description:
+      'Same, on a link made for this email: no suggestion to pass it on.',
+    view: {
+      kind: 'offer',
+      offer: { ...PRO_OFFER, forEmail: 'sam@example.com' },
+      viewerEmail: 'sam@example.com',
+      blocked: "This gift can't be added since you already have a plan",
+    },
+  },
+  {
+    title: 'Different email',
+    description: 'Signed in with an email the link was not made for.',
+    view: {
+      kind: 'offer',
+      offer: { ...PRO_OFFER, forEmail: 'alex@example.com' },
+      viewerEmail: 'sam@example.com',
+      blocked: 'To claim this gift please sign in as alex@example.com',
+    },
+  },
+  {
+    title: "It's yours",
+    description: 'Just claimed, or a gift already on this account.',
+    view: {
+      kind: 'claimed',
+      plan: 'PRO',
+      endsAt: daysFromNow(91),
+      showKeepNote: true,
+    },
+  },
+  {
+    title: 'Already claimed',
+    description: 'Someone else claimed this link.',
+    view: { kind: 'unavailable', reason: 'CLAIMED' },
+  },
+  {
+    title: 'Expired',
+    description:
+      'Past the claim deadline (12 months by default), or revoked by script before it was claimed.',
+    view: { kind: 'unavailable', reason: 'EXPIRED' },
+  },
+  {
+    title: 'Broken link',
+    description: 'Unknown, mistyped or missing code.',
+    view: { kind: 'unavailable', reason: 'NOT_FOUND' },
   },
 ]

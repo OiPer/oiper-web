@@ -28,12 +28,12 @@ export const APP_PAGES = {
     seo: {
       title: 'Create account',
       description:
-        'Create your OiPer account to use hosted transcription and manage your plan. Local dictation stays free and needs no account.',
+        'Create your OiPer account to use hosted transcription and manage your plan. The app is free forever on your machine — no account needed.',
     },
     og: {
       title: 'Create Account',
       description:
-        'Create an account for hosted transcription while local dictation in the app stays free',
+        'Create an account for hosted transcription while the app stays free on your machine',
       screenshot: 4,
     },
   },
@@ -114,6 +114,19 @@ export const APP_PAGES = {
       screenshot: 1,
     },
   },
+  '/account/notifications': {
+    seo: {
+      title: 'Notifications',
+      description:
+        'Choose which emails OiPer sends you, like release notes for every new version.',
+    },
+    og: {
+      title: 'Notifications',
+      description:
+        'Choose which OiPer emails land in your inbox, from release notes to account updates',
+      screenshot: 1,
+    },
+  },
   '/account/usage': {
     seo: {
       title: 'Usage',
@@ -142,8 +155,56 @@ export const SITE_PAGES = {
     og: {
       title: 'Download OiPer',
       description:
-        'Get the free private dictation app for Windows, macOS and Linux and start talking in minutes',
+        'Free download for Windows, macOS and Linux — hold a hotkey, speak, and your words appear in any app',
       screenshot: 2,
+    },
+  },
+  '/linux': {
+    og: {
+      title: 'OiPer for Linux',
+      description:
+        'Private voice typing for X11 and Wayland that types your words into any Linux app',
+      screenshot: 1,
+    },
+  },
+  '/windows': {
+    og: {
+      title: 'OiPer for Windows',
+      description:
+        'Offline dictation for Windows that types your words into any app on your PC',
+      screenshot: 2,
+    },
+  },
+  '/mac': {
+    og: {
+      title: 'OiPer for Mac',
+      description:
+        'Offline dictation for Apple Silicon and Intel Macs that types your words into any app',
+      screenshot: 3,
+    },
+  },
+  '/use-cases/coding': {
+    og: {
+      title: 'Voice to Code',
+      description:
+        'Dictate prompts into Claude Code and Cursor and spell every library name right',
+      screenshot: 5,
+    },
+  },
+  '/alternatives/wispr-flow': {
+    og: {
+      title: 'vs Wispr Flow',
+      description:
+        'A private Wispr Flow alternative that works offline and runs on Linux too',
+      screenshot: 1,
+    },
+  },
+  '/alternatives/superwhisper': {
+    og: {
+      title: 'vs Superwhisper',
+      description:
+        'Offline Whisper dictation that works the same on Windows and macOS and Linux',
+      screenshot: 4,
     },
   },
   '/resources/changelog': {

@@ -2,6 +2,8 @@
 
 import { NavigationLink } from '@/components/navigation-link'
 import { DownloadButton } from '@/features/download/download-button'
+import { GUIDES } from '@/features/guides/guides'
+import { SubscribeForm } from '@/features/notifications/subscribe-form'
 import { OiPerLogoBackground } from '@oiper/logo'
 import {
   BookOpen,
@@ -113,14 +115,17 @@ export function FooterSection() {
               Download OiPer and start transcribing privately in under a minute.
               No account required.
             </p>
-            <DownloadButton
-              location="footer"
-              className="mt-10 h-13 rounded bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
-              iconClassName="size-5"
-            />
+            <div className="mt-10 flex w-80 max-w-full flex-col gap-3">
+              <DownloadButton
+                location="footer"
+                className="h-13 rounded-md bg-white px-8 text-base font-medium text-[#0a0a0a] hover:bg-white/90"
+                iconClassName="size-5"
+              />
+              <SubscribeForm location="footer" />
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-12 sm:gap-20">
+          <div className="grid grid-cols-2 gap-12 sm:grid-cols-3 sm:gap-20">
             <div>
               <p className="text-sm font-medium text-white/60">Product</p>
               <ul className="mt-6 space-y-3">
@@ -133,6 +138,23 @@ export function FooterSection() {
                       className="text-sm text-white/35 hover:text-white/80"
                     >
                       {link.label}
+                    </NavigationLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-white/60">Guides</p>
+              <ul className="mt-6 space-y-3">
+                {Object.entries(GUIDES).map(([path, guide]) => (
+                  <li key={path}>
+                    <NavigationLink
+                      href={path}
+                      location="footer"
+                      destination={guide.destination}
+                      className="text-sm text-white/35 hover:text-white/80"
+                    >
+                      {guide.label}
                     </NavigationLink>
                   </li>
                 ))}

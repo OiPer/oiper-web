@@ -155,11 +155,12 @@ function DialogBody(props: { state: ChangePlanState; isDesktop: boolean }) {
             <Alert className="border-warning/40 bg-warning/5">
               <AlertDescription className="space-y-3">
                 <p>
-                  {blocked.reason === 'PAUSED'
-                    ? 'Your subscription is paused so resume it to switch plans'
-                    : `Your subscription is scheduled to cancel${
-                        blocked.periodEnd ? ` on ${blocked.periodEnd}` : ''
-                      } so keep it active to switch plans`}
+                  {blocked.reason === 'PAUSED' &&
+                    'Your subscription is paused so resume it to switch plans'}
+                  {blocked.reason === 'ENDING' &&
+                    `Your subscription is scheduled to cancel${
+                      blocked.periodEnd ? ` on ${blocked.periodEnd}` : ''
+                    } so keep it active to switch plans`}
                 </p>
                 <Button
                   type="button"
@@ -168,9 +169,8 @@ function DialogBody(props: { state: ChangePlanState; isDesktop: boolean }) {
                   disabled={blocked.resumeLoading}
                 >
                   <Loading loading={!!blocked.resumeLoading}>
-                    {blocked.reason === 'PAUSED'
-                      ? 'Resume subscription'
-                      : 'Keep subscription'}
+                    {blocked.reason === 'PAUSED' && 'Resume subscription'}
+                    {blocked.reason === 'ENDING' && 'Keep subscription'}
                   </Loading>
                 </Button>
               </AlertDescription>

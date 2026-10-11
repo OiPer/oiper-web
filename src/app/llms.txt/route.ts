@@ -1,5 +1,6 @@
 import { docsSource } from '@/features/docs/docs-source'
 import { resourcesSource } from '@/features/docs/resources-source'
+import { GUIDES } from '@/features/guides/guides'
 import { env } from '@/lib/env'
 import { joinUrl } from '@/lib/url'
 
@@ -13,7 +14,7 @@ export function GET() {
   const body = [
     '# OiPer',
     '',
-    '> OiPer is a desktop voice dictation app for Windows, macOS and Linux. Hold a global hotkey, speak, release, and the transcribed text is typed into whatever app has focus.',
+    '> OiPer is a desktop app for Windows, macOS and Linux that types what you say: hold a global hotkey, speak, release, and your words appear in whatever app has focus.',
     '',
     '- Transcription runs locally with Whisper models on your CPU or GPU by default; audio stays on your device.',
     "- Cloud transcription is optional: bring your own provider and API key, or use OiPer's hosted models on a paid plan.",
@@ -26,6 +27,13 @@ export function GET() {
     `- [Home](${joinUrl(env.BASE_URL)}): Features, privacy, languages, and pricing.`,
     `- [Download](${joinUrl(env.BASE_URL, '/download')}): Installers for Windows, macOS (Apple Silicon and Intel) and Linux (AppImage, .deb, .rpm).`,
     `- [Changelog](${joinUrl(env.BASE_URL, '/resources/changelog')}): Every desktop release, newest first.`,
+    '',
+    '## Guides',
+    '',
+    ...Object.entries(GUIDES).map(
+      ([path, guide]) =>
+        `- [${guide.heading}](${joinUrl(env.BASE_URL, path)}): ${guide.description}`
+    ),
     '',
     '## Documentation',
     '',

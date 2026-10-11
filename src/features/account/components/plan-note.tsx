@@ -31,17 +31,8 @@ export function PlanNote(props: { variant: 'free' | 'setting-up' }) {
     return (
       <SectionCard className="text-muted-foreground gap-3 px-(--x-padding) pb-4 leading-relaxed sm:pb-6">
         <p>
-          You&apos;re on the free plan. It never expires and everything runs on
-          your own computer
-        </p>
-
-        <p>
-          We also provide cloud resources because speech to text takes heavy
-          computing. If you enjoy OiPer and want to use your voice more every
-          day, <PricingLink>a paid plan</PricingLink> lets you offload that work
-          to us, and <PricingLink>every plan</PricingLink> comes with a simple
-          monthly or yearly price you can{' '}
-          <PricingLink>start in under a minute</PricingLink>
+          You&apos;re on the free plan with no time limit and can{' '}
+          <PricingLink>upgrade</PricingLink> whenever you&apos;re ready
         </p>
       </SectionCard>
     )

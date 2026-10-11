@@ -23,24 +23,3 @@ export function StateTile(props: {
     </div>
   )
 }
-
-export function StateSection(props: {
-  id: string
-  title: string
-  description: string
-  children: ReactNode
-}) {
-  return (
-    <section id={props.id} className="flex flex-col gap-6">
-      <div className="space-y-1">
-        <h2 className="text-base font-semibold tracking-tight">
-          {props.title}
-        </h2>
-        <p className="text-muted-foreground max-w-3xl text-sm leading-relaxed">
-          {props.description}
-        </p>
-      </div>
-      {props.children}
-    </section>
-  )
-}

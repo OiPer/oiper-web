@@ -1,5 +1,9 @@
-import { findLatest, getReleases } from '@/features/changelog/github-releases'
-import { findAsset, PACKAGES } from '@/features/download/platforms'
+import { getRecentReleases } from '@/features/changelog/github-releases'
+import {
+  findAsset,
+  PACKAGES,
+  pickDownloadRelease,
+} from '@/features/download/platforms'
 import { DOWNLOAD_URL } from '@/features/landing-page/constants/links'
 import { NextResponse } from 'next/server'
 
@@ -14,8 +18,8 @@ export async function GET(
   if (!pkg) return NextResponse.redirect(fallback)
 
   try {
-    const latest = findLatest(await getReleases())
-    const asset = latest && findAsset(latest.assets, pkg)
+    const release = pickDownloadRelease(await getRecentReleases())
+    const asset = release && findAsset(release.assets, pkg)
     return NextResponse.redirect(asset ? asset.url : fallback)
   } catch {
     return NextResponse.redirect(fallback)
