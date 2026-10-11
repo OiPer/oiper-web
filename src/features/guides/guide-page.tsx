@@ -1,6 +1,8 @@
 import { OiPerLogoText } from '@/components/logo-text'
 import { NavigationLink } from '@/components/navigation-link'
 import { Wrapper } from '@/components/wrapper'
+import { docsSource } from '@/features/docs/docs-source'
+import { resourcesSource } from '@/features/docs/resources-source'
 import { DownloadButton } from '@/features/download/download-button'
 import { OSIcon } from '@/features/download/os-icons'
 import { OS_LABELS } from '@/features/download/platforms'
@@ -59,6 +61,17 @@ function Section(props: { title: string; intro: string; children: ReactNode }) {
   )
 }
 
+function linkTitle(href: string) {
+  const [, section, ...slugs] = href.split('/')
+  let page = undefined
+
+  if (section === 'docs') page = docsSource.getPage(slugs)
+  if (section === 'resources') page = resourcesSource.getPage(slugs)
+  if (!page) throw new Error(`Guide links to a missing page: ${href}`)
+
+  return page.data.title
+}
+
 export function GuidePage({ path }: { path: GuidePath }) {
   const guide: Guide = GUIDES[path]
   const blocks: { title: string; intro: string; children: ReactNode }[] = [
@@ -78,14 +91,13 @@ export function GuidePage({ path }: { path: GuidePath }) {
               {item.docs && (
                 <NavigationLink
                   href={item.docs}
-                  aria-label={`Learn more: ${item.title}`}
                   location="guide"
                   destination={
                     item.docs.startsWith(DOCS_URL) ? 'docs' : 'resources'
                   }
                   className="mt-3 inline-block text-sm text-white/70 underline underline-offset-4 hover:text-white"
                 >
-                  Learn more
+                  Read about {linkTitle(item.docs)}
                 </NavigationLink>
               )}
             </div>
@@ -104,7 +116,9 @@ export function GuidePage({ path }: { path: GuidePath }) {
           <table className="w-full text-sm sm:text-base">
             <thead>
               <tr className="border-b border-white/10 text-white/90">
-                <th className="py-4 pr-4 font-medium" />
+                <th className="py-4 pr-4 font-medium">
+                  <span className="sr-only">Feature</span>
+                </th>
                 <th className="py-4 pr-4 font-medium">OiPer</th>
                 <th className="py-4 font-medium">
                   {guide.comparison.competitor}
