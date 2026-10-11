@@ -415,41 +415,6 @@ export const GUIDES = {
         ],
       },
       {
-        title: 'Which Wispr Flow alternative are you looking for?',
-        intro: 'The searches that bring people here, answered.',
-        items: [
-          {
-            title: 'A free Wispr Flow alternative',
-            text: 'Local transcription in OiPer is free and unlimited. There is no weekly word cap, no trial and no account to create.',
-          },
-          {
-            title: 'A local, offline Wispr Flow alternative',
-            text: 'OiPer runs Whisper on your own CPU or GPU, so dictation works without internet and your audio never leaves your device.',
-            docs: '/docs/desktop/models',
-          },
-          {
-            title: 'A Wispr Flow alternative for Linux and Ubuntu',
-            text: 'Install the .deb on Ubuntu and Debian, the .rpm on Fedora, or the AppImage anywhere. Both X11 and Wayland are supported.',
-            docs: '/docs/desktop/installation',
-          },
-          {
-            title: 'A free Wispr Flow alternative for Windows',
-            text: 'OiPer installs on Windows with a standard installer and uses your graphics card for local transcription when one is available.',
-            docs: '/docs/desktop/installation',
-          },
-          {
-            title: 'A Wispr Flow alternative for Mac',
-            text: 'OiPer runs on Apple Silicon and Intel Macs from macOS 10.15, with local models on both.',
-            docs: '/docs/desktop/installation',
-          },
-          {
-            title: 'A Wispr Flow alternative for coding',
-            text: 'Dictate prompts into Claude Code, Cursor and VS Code, spell library names right with the dictionary, and let auto submit send the prompt.',
-            docs: '/docs/desktop/dictionary',
-          },
-        ],
-      },
-      {
         title: 'What carries over from Wispr Flow',
         intro: 'The features you rely on have a direct equivalent.',
         items: [
@@ -648,36 +613,6 @@ export const GUIDES = {
           {
             title: 'One app across every computer',
             text: 'Use the same app, profiles, dictionary and snippets on a Windows PC at work, a Mac at home and a Linux laptop.',
-          },
-        ],
-      },
-      {
-        title: 'Which Superwhisper alternative are you looking for?',
-        intro: 'The searches that bring people here, answered.',
-        items: [
-          {
-            title: 'A Superwhisper alternative for Windows',
-            text: 'OiPer runs local Whisper on Windows with a standard installer and uses your graphics card when one is available.',
-            docs: '/docs/desktop/installation',
-          },
-          {
-            title: 'A Superwhisper alternative for Linux',
-            text: 'Install the .deb on Ubuntu and Debian, the .rpm on Fedora, or the AppImage anywhere. Both X11 and Wayland are supported.',
-            docs: '/docs/desktop/installation',
-          },
-          {
-            title: 'A free Superwhisper alternative',
-            text: 'Local transcription, your own API keys, translation, profiles, dictionary and snippets are all available without paying.',
-          },
-          {
-            title: 'A Superwhisper alternative for Mac',
-            text: 'OiPer runs on Apple Silicon and Intel Macs from macOS 10.15, with local models on both.',
-            docs: '/docs/desktop/installation',
-          },
-          {
-            title: 'A local, private Superwhisper alternative',
-            text: 'Speech is transcribed on-device and your history, audio and settings stay in one folder on your computer.',
-            docs: '/resources/security',
           },
         ],
       },

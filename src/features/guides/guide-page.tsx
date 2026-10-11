@@ -148,7 +148,7 @@ export function GuidePage({ path }: { path: GuidePath }) {
   })
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
+    <main className="min-h-screen overflow-hidden bg-[#0a0a0a] text-pretty text-white">
       <JsonLd
         data={{
           '@graph': [
