@@ -388,6 +388,10 @@ export function ChangePlanDialog({
       : null
   const todayRow = previewRows ? describeTodayCharge(previewRows) : null
   const giftPreview = preview?.kind === 'GIFT' ? preview : null
+  const giftChargesToday =
+    !!giftPreview &&
+    (giftPreview.endsGiftNow ||
+      new Date(giftPreview.payment.dueAt).getTime() <= Date.now())
 
   const confirmLabel = giftPreview?.viaCheckout
     ? 'Continue to checkout'
@@ -524,9 +528,11 @@ export function ChangePlanDialog({
                   )}
                 />
 
-                {giftPreview.endsGiftNow ? (
+                {giftChargesToday ? (
                   <>
-                    <SummaryRow label="Gift ends" value="Today" />
+                    {giftPreview.endsGiftNow && (
+                      <SummaryRow label="Gift ends" value="Today" />
+                    )}
                     <SummaryRow
                       label="Charged today"
                       detail={
