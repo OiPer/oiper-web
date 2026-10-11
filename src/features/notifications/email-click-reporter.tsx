@@ -2,21 +2,29 @@
 
 import { api } from '@/lib/api/client'
 import { env } from '@/lib/env'
-import { importSPKI, jwtVerify } from 'jose'
+import { importSPKI, jwtVerify, type JWSHeaderParameters } from 'jose'
 import { useEffect } from 'react'
 
 const EMAIL_TOKEN_PARAM = 'e'
 const EMAIL_TRACKING_AUDIENCE = 'email-tracking'
 const BUTTON_PATTERN = /^[a-z0-9_]{1,64}$/
 
+async function emailTrackingPublicKey(header: JWSHeaderParameters) {
+  const key = header.kid
+    ? env.EMAIL_TRACKING_PUBLIC_KEYS.get(header.kid)
+    : undefined
+
+  if (!key) throw new Error(`Unknown email tracking key id ${header.kid}`)
+
+  return await importSPKI(
+    `-----BEGIN PUBLIC KEY-----\n${key}\n-----END PUBLIC KEY-----`,
+    'EdDSA'
+  )
+}
+
 async function isOurEmailToken(token: string): Promise<boolean> {
   try {
-    const key = await importSPKI(
-      `-----BEGIN PUBLIC KEY-----\n${env.EMAIL_TRACKING_PUBLIC_KEY}\n-----END PUBLIC KEY-----`,
-      'EdDSA'
-    )
-
-    await jwtVerify(token, key, {
+    await jwtVerify(token, emailTrackingPublicKey, {
       algorithms: ['EdDSA'],
       audience: EMAIL_TRACKING_AUDIENCE,
     })
