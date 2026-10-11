@@ -506,6 +506,25 @@ export function GiftUnavailableView(props: {
   )
 }
 
+function GiftLoadErrorView(props: { retrying: boolean; onRetry: () => void }) {
+  return (
+    <GiftShell title="Gift didn't Load">
+      <Description>
+        Something went wrong on our side while opening your gift, so try again
+        in a moment
+      </Description>
+      <Button
+        type="button"
+        disabled={props.retrying}
+        onClick={props.onRetry}
+        className={cn('mt-10', primaryButtonClass)}
+      >
+        <Loading loading={props.retrying}>Try again</Loading>
+      </Button>
+    </GiftShell>
+  )
+}
+
 function ClaimableGift(props: {
   code: string
   gift: GiftLookup
@@ -602,9 +621,12 @@ function GiftWithCode(props: { code: string }) {
     checkedFor === viewerId &&
     !pricingQuery.isPending &&
     (currentUser === null || !subscriptionQuery.isPending)
+  const notFound =
+    getAppErrorCode<'post', '/v1/gifts/lookup'>(lookupQuery.error) ===
+    'GIFT_NOT_FOUND'
   const state = !ready
     ? null
-    : lookupQuery.isError
+    : notFound
       ? 'NOT_FOUND'
       : (lookupQuery.data?.state ?? null)
 
@@ -620,8 +642,15 @@ function GiftWithCode(props: { code: string }) {
 
   if (!ready) return <GiftOpeningView />
 
+  if (notFound) return <GiftUnavailableView reason="NOT_FOUND" />
+
   if (lookupQuery.isError || !lookupQuery.data) {
-    return <GiftUnavailableView reason="NOT_FOUND" />
+    return (
+      <GiftLoadErrorView
+        retrying={lookupQuery.isFetching}
+        onRetry={() => void refetch()}
+      />
+    )
   }
 
   const gift = lookupQuery.data
