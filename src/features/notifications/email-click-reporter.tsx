@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 
 const EMAIL_TOKEN_PARAM = 'e'
 const EMAIL_TRACKING_AUDIENCE = 'email-tracking'
-const BUTTON_PATTERN = /^[a-z0-9_]{1,64}$/
+const LINK_PATTERN = /^[a-z0-9_]{1,64}$/
 
 async function emailTrackingPublicKey(header: JWSHeaderParameters) {
   const key = header.kid
@@ -35,10 +35,10 @@ async function isOurEmailToken(token: string): Promise<boolean> {
   }
 }
 
-async function reportEmailClick(token: string, button: string | null) {
+async function reportEmailClick(token: string, link: string | null) {
   if (!(await isOurEmailToken(token))) return
 
-  await api.POST('/v1/email/clicks', { body: { token, button } })
+  await api.POST('/v1/email/clicks', { body: { token, link } })
 }
 
 export function EmailClickReporter() {
@@ -49,12 +49,12 @@ export function EmailClickReporter() {
     if (!token) return
 
     const content = url.searchParams.get('utm_content')
-    const button = content && BUTTON_PATTERN.test(content) ? content : null
+    const link = content && LINK_PATTERN.test(content) ? content : null
 
     url.searchParams.delete(EMAIL_TOKEN_PARAM)
     window.history.replaceState(null, '', url.pathname + url.search + url.hash)
 
-    void reportEmailClick(token, button)
+    void reportEmailClick(token, link)
   }, [])
 
   return null

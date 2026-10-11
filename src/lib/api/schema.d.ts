@@ -11297,7 +11297,7 @@ export interface components {
         };
         EmailClickBody: {
             token: string;
-            button: string | null;
+            link: string | null;
         };
         NotificationSubscribeBody: {
             email: string;
