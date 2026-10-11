@@ -2,7 +2,7 @@ import { OiPerLogoText } from '@/components/logo-text'
 import { NavigationLink } from '@/components/navigation-link'
 import { buttonVariants } from '@/components/ui/button'
 import { Wrapper } from '@/components/wrapper'
-import { findLatest, type Release } from '@/features/changelog/github-releases'
+import type { Release } from '@/features/changelog/github-releases'
 import { AuthNavActions } from '@/features/landing-page/components/auth-nav-actions'
 import { FooterSection } from '@/features/landing-page/components/footer-section'
 import {
@@ -10,37 +10,33 @@ import {
   GITHUB_REPO,
   HOME,
 } from '@/features/landing-page/constants/links'
-import { formatPaddedDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { ArrowUpRight, ChevronDown } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { BuildLink, Separator } from './build-link'
 import { DownloadButton } from './download-button'
 import { OSIcon } from './os-icons'
 import { findAsset, OS_LABELS, PACKAGES, type OS } from './platforms'
 
-const VISIBLE_VERSIONS = 7
 const OSES = Object.keys(OS_LABELS) as OS[]
 
-function getBuilds(release: Release) {
-  return PACKAGES.flatMap((pkg) => {
+function getBuilds(release: Release, platform?: OS) {
+  const builds = PACKAGES.flatMap((pkg) => {
     const asset = findAsset(release.assets, pkg)
     return asset ? [{ pkg, asset }] : []
   })
+
+  return builds.toSorted(
+    (a, b) => Number(b.pkg.os === platform) - Number(a.pkg.os === platform)
+  )
 }
 
 export function DownloadPage({
-  releases,
-  version,
+  release,
+  platform,
 }: {
-  releases: Release[]
-  version?: string
+  release?: Release
+  platform?: OS
 }) {
-  const latest = findLatest(releases)
-  const selected = releases.find((release) => release.version === version)
-  const ordered = selected
-    ? [selected, ...releases.filter((release) => release !== selected)]
-    : releases
-
   return (
     <main className="bg-background text-foreground min-h-screen overflow-hidden">
       <Wrapper>
@@ -73,14 +69,12 @@ export function DownloadPage({
             )}
             iconClassName="size-5"
           />
-          {latest && (
+          {release && (
             <p className="text-muted-foreground mt-6 flex items-center gap-3 text-sm">
-              Version {latest.version.replace(/^v/, '')}
-              <Separator />
-              {formatPaddedDate(latest.publishedAt)}
+              Version {release.version.replace(/^v/, '')}
               <Separator />
               <NavigationLink
-                href={`${CHANGELOG_URL}#${latest.anchor}`}
+                href={`${CHANGELOG_URL}#${release.anchor}`}
                 location="download_section"
                 destination="changelog"
                 className="text-foreground underline-offset-4 hover:underline"
@@ -93,34 +87,9 @@ export function DownloadPage({
       </Wrapper>
 
       <Wrapper className="pb-40">
-        {latest ? (
-          <div className="mx-auto flex max-w-3xl flex-col gap-2">
-            {ordered.slice(0, VISIBLE_VERSIONS).map((release) => (
-              <VersionRow
-                key={release.version}
-                release={release}
-                latest={release === latest}
-                open={release === (selected ?? latest)}
-                pinned={release === selected}
-              />
-            ))}
-
-            {ordered.length > VISIBLE_VERSIONS && (
-              <details className="group/older">
-                <summary className="text-muted-foreground hover:text-foreground flex cursor-pointer list-none justify-center pt-10 pb-2 text-sm group-open/older:hidden [&::-webkit-details-marker]:hidden">
-                  Show {ordered.length - VISIBLE_VERSIONS} older versions
-                </summary>
-                <div className="flex flex-col gap-2 pt-2">
-                  {ordered.slice(VISIBLE_VERSIONS).map((release) => (
-                    <VersionRow
-                      key={release.version}
-                      release={release}
-                      latest={release === latest}
-                    />
-                  ))}
-                </div>
-              </details>
-            )}
+        {release ? (
+          <div className="mx-auto max-w-3xl">
+            <VersionRow release={release} platform={platform} />
           </div>
         ) : (
           <p className="text-muted-foreground mt-12">
@@ -143,63 +112,24 @@ export function DownloadPage({
 
 function VersionRow({
   release,
-  latest,
-  open = false,
-  pinned = false,
+  platform,
 }: {
   release: Release
-  latest: boolean
-  open?: boolean
-  pinned?: boolean
+  platform?: OS
 }) {
-  const builds = getBuilds(release)
+  const builds = getBuilds(release, platform)
   const platforms = OSES.filter((os) => builds.some(({ pkg }) => pkg.os === os))
 
   return (
-    <details
-      open={open}
-      className="group/version hover:bg-muted/50 open:bg-muted/50 border-border rounded-2xl border-b"
-    >
-      <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 [&::-webkit-details-marker]:hidden">
-        <span className="w-24 font-medium">
-          <span className="relative">
-            {release.version}
-            {pinned && (
-              <svg
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                role="img"
-                aria-label="Pinned from link"
-                className="absolute -top-1 left-full ml-0.5 size-3.5"
-              >
-                <title>Pinned from link</title>
-                <path d="M16.432 4.079a1.25 1.25 0 0 0-2.033.391l-1.76 4.105a4.25 4.25 0 0 0-4.215 1.07L7.067 11a.75.75 0 0 0 0 1.06l2.142 2.143l-5.74 5.739a.75.75 0 1 0 1.061 1.06l5.74-5.739l2.141 2.142a.75.75 0 0 0 1.06 0l1.358-1.356a4.25 4.25 0 0 0 1.069-4.217l4.105-1.76a1.25 1.25 0 0 0 .392-2.032z" />
-              </svg>
-            )}
-          </span>
-        </span>
-        <span className="text-muted-foreground flex flex-1 items-center gap-3 text-sm tabular-nums">
-          {formatPaddedDate(release.publishedAt)}
-          {latest && (
-            <>
-              <Separator />
-              Latest
-            </>
-          )}
-          {release.prerelease && (
-            <>
-              <Separator />
-              Pre-release
-            </>
-          )}
-        </span>
+    <div className="bg-muted/50 border-border rounded-2xl border-b">
+      <div className="flex items-center gap-4 px-5 py-4">
+        <span className="flex-1 font-medium">{release.version}</span>
         <span className="text-muted-foreground hidden items-center gap-2.5 sm:flex">
           {platforms.map((os) => (
             <OSIcon key={os} os={os} className="size-3.5" />
           ))}
         </span>
-        <ChevronDown className="text-muted-foreground size-4 group-open/version:rotate-180" />
-      </summary>
+      </div>
 
       <div className="px-2 pb-3">
         {builds.length > 0 ? (
@@ -235,6 +165,6 @@ function VersionRow({
           <ArrowUpRight className="size-3.5" />
         </a>
       </div>
-    </details>
+    </div>
   )
 }

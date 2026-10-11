@@ -59,25 +59,26 @@ Forms follow one pattern: `logSubmit` after validation → `logComplete` when th
 
 `location` answers _where in the product_ the action happened. Use a short, stable, snake_case value:
 
-| Location              | Where                                                                   |
-| --------------------- | ----------------------------------------------------------------------- |
-| `hero`                | Homepage hero                                                           |
-| `header`              | Site header (nav bar)                                                   |
-| `footer`              | Site footer                                                             |
-| `landing`             | The homepage as a whole                                                 |
-| `pricing`             | Pricing section on the homepage                                         |
-| `faq`                 | FAQ section                                                             |
-| `download_section`    | `/download` page                                                        |
-| `mac_download_dialog` | Mac "not signed by Apple" dialog                                        |
-| `auth`                | Sign in, sign up, reset password and verification forms (modal or page) |
-| `billing`             | `/account/billing`                                                      |
-| `settings`            | `/account/settings`                                                     |
-| `security`            | `/account/security`                                                     |
-| `notifications`       | `/account/notifications`                                                |
-| `unsubscribe`         | `/unsubscribe` page linked from emails                                  |
-| `gift`                | `/gift` page opened from a gift link                                    |
-| `account`             | Account area header                                                     |
-| `not_found`           | The 404 page                                                            |
+| Location              | Where                                                                        |
+| --------------------- | ---------------------------------------------------------------------------- |
+| `hero`                | Homepage hero                                                                |
+| `header`              | Site header (nav bar)                                                        |
+| `footer`              | Site footer                                                                  |
+| `landing`             | The homepage as a whole                                                      |
+| `pricing`             | Pricing section on the homepage                                              |
+| `faq`                 | FAQ section                                                                  |
+| `download_section`    | `/download` page                                                             |
+| `guide`               | Guide pages: `/linux`, `/windows`, `/mac`, `/use-cases/*`, `/alternatives/*` |
+| `mac_download_dialog` | Mac "not signed by Apple" dialog                                             |
+| `auth`                | Sign in, sign up, reset password and verification forms (modal or page)      |
+| `billing`             | `/account/billing`                                                           |
+| `settings`            | `/account/settings`                                                          |
+| `security`            | `/account/security`                                                          |
+| `notifications`       | `/account/notifications`                                                     |
+| `unsubscribe`         | `/unsubscribe` page linked from emails                                       |
+| `gift`                | `/gift` page opened from a gift link                                         |
+| `account`             | Account area header                                                          |
+| `not_found`           | The 404 page                                                                 |
 
 Reserved for future use: `features`, `navigation`, `mobile_menu`.
 
@@ -159,20 +160,20 @@ Every event the site sends. All events also carry `location`.
 
 ### Downloads
 
-| Event                     | Location                                                     | Details                                                                  | When                                                        |
-| ------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
-| `download_clicked`        | `hero` `header` `footer` `pricing` `download_section` `gift` | `platform` (absent on the fallback link shown before the OS is detected) | Any download button or build link                           |
-| `other_platforms_clicked` | `hero`                                                       | —                                                                        | "Other platforms" links under the hero download button      |
-| `mac_build_selected`      | `mac_download_dialog`                                        | `platform`                                                               | Switching between Apple Silicon and Intel in the Mac dialog |
-| `download_started`        | `mac_download_dialog`                                        | `platform`                                                               | "Yes, download" in the Mac dialog                           |
+| Event                     | Location                                                             | Details                                                                  | When                                                        |
+| ------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| `download_clicked`        | `hero` `header` `footer` `pricing` `download_section` `guide` `gift` | `platform` (absent on the fallback link shown before the OS is detected) | Any download button or build link                           |
+| `other_platforms_clicked` | `hero`                                                               | —                                                                        | "Other platforms" links under the hero download button      |
+| `mac_build_selected`      | `mac_download_dialog`                                                | `platform`                                                               | Switching between Apple Silicon and Intel in the Mac dialog |
+| `download_started`        | `mac_download_dialog`                                                | `platform`                                                               | "Yes, download" in the Mac dialog                           |
 
 ### Navigation and content
 
-| Event                | Location                                                                     | Details                                                                                                                                                                                                   | When                                                                                                                                                    |
-| -------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `navigation_clicked` | `footer` `header` `auth` `download_section` `not_found` `unsubscribe` `gift` | `destination` as a stable id, never a path: `features` `performance` `privacy` `languages` `pricing` `faq` `docs` `resources` `changelog` `privacy_policy` `terms_of_service` `home` `account` `download` | Internal links: footer, logos, the header "Account" item, "What's new" on the download page, Terms and Privacy on the auth pages, links on the 404 page |
-| `pricing_viewed`     | `landing`                                                                    | —                                                                                                                                                                                                         | Pricing section scrolls into view, once per page view                                                                                                   |
-| `faq_opened`         | `faq`                                                                        | `question`: `offline` `free` `platforms` `audio_privacy` `apps` `hardware`                                                                                                                                | Opening an FAQ question                                                                                                                                 |
+| Event                | Location                                                                             | Details                                                                                                                                                                                                                                                                                        | When                                                                                                                                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigation_clicked` | `footer` `header` `auth` `download_section` `guide` `not_found` `unsubscribe` `gift` | `destination` as a stable id, never a path: `features` `performance` `privacy` `languages` `pricing` `faq` `docs` `resources` `changelog` `privacy_policy` `terms_of_service` `home` `account` `download` `linux` `windows` `mac` `coding` `wispr_flow_alternative` `superwhisper_alternative` | Internal links: footer, logos, the header "Account" item, "What's new" on the download page, Terms and Privacy on the auth pages, links on the 404 page, the download and docs links on guide pages |
+| `pricing_viewed`     | `landing`                                                                            | —                                                                                                                                                                                                                                                                                              | Pricing section scrolls into view, once per page view                                                                                                                                               |
+| `faq_opened`         | `faq`                                                                                | `question`: `offline` `free` `platforms` `audio_privacy` `apps` `hardware`                                                                                                                                                                                                                     | Opening an FAQ question                                                                                                                                                                             |
 
 ### Sign in and sign up
 
@@ -237,7 +238,7 @@ Every event the site sends. All events also carry `location`.
 - **External links** (GitHub, Support, the Apple guide). GA4's outbound click tracking covers them.
 - **Docs UI** (sidebar, search, table of contents). It's fumadocs internals, and page views already show which docs pages people read and in what order.
 - **Navigation inside the account area** (sidenav, account header menu) **and changelog pagination.** Page views cover the destination.
-- **Exploratory UI state:** radio changes in the change-plan dialog (the final choice is captured on confirm), expanding versions and "Show older versions" on the download page.
+- **Exploratory UI state:** radio changes in the change-plan dialog (the final choice is captured on confirm).
 - **Decorative interactions:** carousel, animated headline, globe and canvases, hovers, tooltips.
 - **Payment failures inside Paddle or Stripe.** They happen on the provider's side and reach us only through server webhooks.
 - **OAuth provider failures.** Not observable in the browser; `oauth_clicked` without a later `signin_completed` shows abandonment.

@@ -36,23 +36,21 @@ What's in place, what's left to do, and how to check it. Research baseline: 2026
 - [ ] Set the [environment variables](#environment-variables) in Netlify for prod and dev. `NEXT_PUBLIC_BASE_URL` is required: the build fails without it.
 - [ ] **Search Console:** add a Domain property for `oiper.com` (DNS TXT covers all subdomains) and submit `https://oiper.com/sitemap.xml`.
 - [ ] **Bing Webmaster Tools:** import from Search Console. ChatGPT search uses Bing's index.
-- [ ] **Consent:** decide whether EU/UK visitors get a cookie banner before GA loads. The privacy policy already discloses GA.
-- [ ] **Testimonials:** the three homepage quotes look like placeholders, and AI search already repeats them as real reviews. Replace them with real, attributable quotes or remove the section.
-- [ ] **Speed claim:** pick one number and use it everywhere. The site and docs currently say 1 s, 1.5 s and "3.5x faster". A benchmarks page that shows the method would back it up.
+- [x] **Speed claim:** one number everywhere: "3.5x faster" than cloud APIs on the homepage, 1.5 s for 30 s of English audio in the internal docs. A benchmarks page that shows the method would back it up.
 
 ### Later: content that wins search (biggest impact)
 
-Competitors rank with these page types. OiPer has none yet.
+Competitors rank with these page types. The guide pages live in `src/features/guides/guides.ts`; their download buttons link to `/download?platform=…`, which lists that platform's builds first.
 
-- [ ] `/alternatives/wispr-flow` and `/alternatives/superwhisper`: an honest comparison of platforms, offline use, price and speed.
-- [ ] `/linux` and `/windows`: few polished dictation apps exist for these, and most results are GitHub repos.
-- [ ] `/use-cases/coding`: dictating into VS Code, Cursor and the Claude Code terminal, using snippets and the dictionary for jargon.
+- [x] `/alternatives/wispr-flow` and `/alternatives/superwhisper`: an honest comparison of platforms, offline use, price and speed.
+- [x] `/linux`, `/windows` and `/mac`: few polished dictation apps exist for these, and most results are GitHub repos.
+- [x] `/use-cases/coding`: dictating into VS Code, Cursor and the Claude Code terminal, using snippets and the dictionary for jargon.
 - [ ] `/benchmarks`: method, hardware and results.
 
 ### Later: off-site (AI assistants recommend brands that others mention)
 
-- [ ] Add GitHub topics to `OiPer/desktop` (`speech-to-text`, `dictation`, `voice-typing`, `whisper`, `wispr-flow-alternative`, `tauri`) and a README with features, platforms and a link to oiper.com.
-- [ ] Clean up the GitHub org: archive the unrelated `todo*` and `media-*` repos, and check that `oiper-web` is meant to be public.
+- [x] Add GitHub topics to `OiPer/desktop` (`speech-to-text`, `dictation`, `voice-typing`, `whisper`, `wispr-flow-alternative`, `tauri`) and a README with features, platforms and a link to oiper.com.
+- [x] Clean up the GitHub org: archive the unrelated `todo*` and `media-*` repos, and check that `oiper-web` is meant to be public.
 - [ ] List OiPer on Product Hunt and AlternativeTo (as an alternative to Wispr Flow, Superwhisper and Dragon).
 - [ ] Give honest answers in relevant Reddit threads (r/linux, r/software, r/ChatGPTCoding), open PRs to "awesome" dictation/Whisper lists, and post a short demo video.
 - [ ] Create X, LinkedIn and YouTube profiles and add them to `sameAs` in `src/app/layout.tsx`.
@@ -60,8 +58,8 @@ Competitors rank with these page types. OiPer has none yet.
 ### Later: smaller fixes
 
 - [ ] Render the pricing cards on the server: move `useSearchParams` in `pricing-section.tsx` into a small child component.
-- [ ] Trim the `/download` page DOM (about 6,700 nodes) and cache the GitHub releases fetch.
-- [ ] `/resources/changelog?cursor=<unknown>` returns a `noindex` page with status 200 instead of 404.
+- [x] `/download` shows one release: the newest of the last 10 with the most builds, or the release named by `?version=` (the latest when that version does not exist). The `/download/<platform>` links use the same release.
+- [x] `/resources/changelog?cursor=<unknown>` returns 200 with `noindex`. Intended: the root layout streams before the page can call `notFound()`, and Next marks streamed 404s `noindex`, so they are never indexed. A real 404 would need a GitHub fetch in the proxy.
 
 ## What the code does now
 

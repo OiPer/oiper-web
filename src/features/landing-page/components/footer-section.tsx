@@ -2,6 +2,7 @@
 
 import { NavigationLink } from '@/components/navigation-link'
 import { DownloadButton } from '@/features/download/download-button'
+import { GUIDES } from '@/features/guides/guides'
 import { SubscribeForm } from '@/features/notifications/subscribe-form'
 import { OiPerLogoBackground } from '@oiper/logo'
 import {
@@ -124,7 +125,7 @@ export function FooterSection() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-12 sm:gap-20">
+          <div className="grid grid-cols-2 gap-12 sm:grid-cols-3 sm:gap-20">
             <div>
               <p className="text-sm font-medium text-white/60">Product</p>
               <ul className="mt-6 space-y-3">
@@ -137,6 +138,23 @@ export function FooterSection() {
                       className="text-sm text-white/35 hover:text-white/80"
                     >
                       {link.label}
+                    </NavigationLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-white/60">Guides</p>
+              <ul className="mt-6 space-y-3">
+                {Object.entries(GUIDES).map(([path, guide]) => (
+                  <li key={path}>
+                    <NavigationLink
+                      href={path}
+                      location="footer"
+                      destination={guide.destination}
+                      className="text-sm text-white/35 hover:text-white/80"
+                    >
+                      {guide.label}
                     </NavigationLink>
                   </li>
                 ))}

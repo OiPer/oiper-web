@@ -1,5 +1,6 @@
 import { docsSource } from '@/features/docs/docs-source'
 import { resourcesSource } from '@/features/docs/resources-source'
+import { GUIDES } from '@/features/guides/guides'
 import { env } from '@/lib/env'
 import { joinUrl } from '@/lib/url'
 
@@ -26,6 +27,13 @@ export function GET() {
     `- [Home](${joinUrl(env.BASE_URL)}): Features, privacy, languages, and pricing.`,
     `- [Download](${joinUrl(env.BASE_URL, '/download')}): Installers for Windows, macOS (Apple Silicon and Intel) and Linux (AppImage, .deb, .rpm).`,
     `- [Changelog](${joinUrl(env.BASE_URL, '/resources/changelog')}): Every desktop release, newest first.`,
+    '',
+    '## Guides',
+    '',
+    ...Object.entries(GUIDES).map(
+      ([path, guide]) =>
+        `- [${guide.heading}](${joinUrl(env.BASE_URL, path)}): ${guide.description}`
+    ),
     '',
     '## Documentation',
     '',

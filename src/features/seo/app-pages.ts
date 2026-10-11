@@ -159,6 +159,54 @@ export const SITE_PAGES = {
       screenshot: 2,
     },
   },
+  '/linux': {
+    og: {
+      title: 'OiPer for Linux',
+      description:
+        'Private voice typing for X11 and Wayland that types your words into any Linux app',
+      screenshot: 1,
+    },
+  },
+  '/windows': {
+    og: {
+      title: 'OiPer for Windows',
+      description:
+        'Offline dictation for Windows that types your words into any app on your PC',
+      screenshot: 2,
+    },
+  },
+  '/mac': {
+    og: {
+      title: 'OiPer for Mac',
+      description:
+        'Offline dictation for Apple Silicon and Intel Macs that types your words into any app',
+      screenshot: 3,
+    },
+  },
+  '/use-cases/coding': {
+    og: {
+      title: 'Voice to Code',
+      description:
+        'Dictate prompts into Claude Code and Cursor and spell every library name right',
+      screenshot: 5,
+    },
+  },
+  '/alternatives/wispr-flow': {
+    og: {
+      title: 'vs Wispr Flow',
+      description:
+        'A private Wispr Flow alternative that works offline and runs on Linux too',
+      screenshot: 1,
+    },
+  },
+  '/alternatives/superwhisper': {
+    og: {
+      title: 'vs Superwhisper',
+      description:
+        'Offline Whisper dictation that works the same on Windows and macOS and Linux',
+      screenshot: 4,
+    },
+  },
   '/resources/changelog': {
     og: {
       title: "What's New",
