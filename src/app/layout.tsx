@@ -9,6 +9,7 @@ import { AuthProvider } from '@/features/auth/auth-context'
 import { PublicAuthModalClientNoSSR } from '@/features/auth/public-auth-modal-client'
 import { DetectOSScript } from '@/features/download/download-button'
 import { MacDownloadDialog } from '@/features/download/mac-download-dialog'
+import { EmailClickReporter } from '@/features/notifications/email-click-reporter'
 import { ServiceWorker } from '@/features/pwa/service-worker'
 import { ogCopy } from '@/features/seo/app-pages'
 import { GoogleAnalytics } from '@/features/seo/google-analytics'
@@ -135,6 +136,7 @@ export default function Layout({ children }: PropsWithChildren) {
               <PublicAuthModalClientNoSSR />
               <MacDownloadDialog />
               <ServiceWorker />
+              <EmailClickReporter />
               <Toaster richColors />
             </AuthProvider>
           </QueryProvider>

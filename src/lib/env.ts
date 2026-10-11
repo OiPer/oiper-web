@@ -46,6 +46,7 @@ const envSchema = z
         .optional()
     ),
     GOOGLE_SITE_VERIFICATION: optionalValue,
+    EMAIL_TRACKING_PUBLIC_KEY: z.string().trim().min(1),
   })
   .transform((value) => ({
     ...value,
@@ -64,4 +65,5 @@ export const env = envSchema.parse({
   PADDLE_CLIENT_TOKEN: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
   GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
   GOOGLE_SITE_VERIFICATION: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  EMAIL_TRACKING_PUBLIC_KEY: process.env.NEXT_PUBLIC_EMAIL_TRACKING_PUBLIC_KEY,
 })

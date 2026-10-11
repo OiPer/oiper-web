@@ -7238,6 +7238,62 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/email/clicks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["EmailClickBody"];
+                };
+            };
+            responses: {
+                /** @description Records a click that reached the website; the response is the same for valid and invalid tokens */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: {
+                                /** @enum {string} */
+                                type: "VALIDATION";
+                                /** @enum {string} */
+                                code: "VALIDATION_REQUEST_INVALID";
+                                message: string;
+                                details?: unknown;
+                            };
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/gifts/lookup": {
         parameters: {
             query?: never;
@@ -11238,6 +11294,10 @@ export interface components {
         NotificationAcceptedResponse: {
             /** @enum {boolean} */
             accepted: true;
+        };
+        EmailClickBody: {
+            token: string;
+            button: string | null;
         };
         NotificationSubscribeBody: {
             email: string;
