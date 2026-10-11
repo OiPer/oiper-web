@@ -42,17 +42,17 @@ What's in place, what's left to do, and how to check it. Research baseline: 2026
 
 ### Later: content that wins search (biggest impact)
 
-Competitors rank with these page types. OiPer has none yet.
+Competitors rank with these page types. The guide pages live in `src/features/guides/guides.ts`; their download buttons link to `/download?platform=…`, which lists that platform's builds first.
 
-- [ ] `/alternatives/wispr-flow` and `/alternatives/superwhisper`: an honest comparison of platforms, offline use, price and speed.
-- [ ] `/linux` and `/windows`: few polished dictation apps exist for these, and most results are GitHub repos.
-- [ ] `/use-cases/coding`: dictating into VS Code, Cursor and the Claude Code terminal, using snippets and the dictionary for jargon.
+- [x] `/alternatives/wispr-flow` and `/alternatives/superwhisper`: an honest comparison of platforms, offline use, price and speed.
+- [x] `/linux`, `/windows` and `/mac`: few polished dictation apps exist for these, and most results are GitHub repos.
+- [x] `/use-cases/coding`: dictating into VS Code, Cursor and the Claude Code terminal, using snippets and the dictionary for jargon.
 - [ ] `/benchmarks`: method, hardware and results.
 
 ### Later: off-site (AI assistants recommend brands that others mention)
 
-- [ ] Add GitHub topics to `OiPer/desktop` (`speech-to-text`, `dictation`, `voice-typing`, `whisper`, `wispr-flow-alternative`, `tauri`) and a README with features, platforms and a link to oiper.com.
-- [ ] Clean up the GitHub org: archive the unrelated `todo*` and `media-*` repos, and check that `oiper-web` is meant to be public.
+- [x] Add GitHub topics to `OiPer/desktop` (`speech-to-text`, `dictation`, `voice-typing`, `whisper`, `wispr-flow-alternative`, `tauri`) and a README with features, platforms and a link to oiper.com.
+- [x] Clean up the GitHub org: archive the unrelated `todo*` and `media-*` repos, and check that `oiper-web` is meant to be public.
 - [ ] List OiPer on Product Hunt and AlternativeTo (as an alternative to Wispr Flow, Superwhisper and Dragon).
 - [ ] Give honest answers in relevant Reddit threads (r/linux, r/software, r/ChatGPTCoding), open PRs to "awesome" dictation/Whisper lists, and post a short demo video.
 - [ ] Create X, LinkedIn and YouTube profiles and add them to `sameAs` in `src/app/layout.tsx`.
