@@ -33,6 +33,25 @@ const notificationsQueryKey = $api.queryOptions(
   notificationsRequest
 ).queryKey
 
+function LoadError(props: { retrying: boolean; onRetry: () => void }) {
+  return (
+    <div className="flex items-center justify-between gap-6 px-(--x-padding) py-4">
+      <p className="text-muted-foreground text-sm">
+        {"Couldn't load this right now."}
+      </p>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        disabled={props.retrying}
+        onClick={props.onRetry}
+      >
+        <Loading loading={props.retrying}>Try again</Loading>
+      </Button>
+    </div>
+  )
+}
+
 const WORKFLOW_LABELS: Record<string, string> = {
   'account.welcome': 'Welcome to OiPer',
   'subscription.subscribed': 'Subscription confirmation',
@@ -192,6 +211,11 @@ function EmailPreferences() {
               />
             </div>
           ))
+        ) : notificationsQuery.isError ? (
+          <LoadError
+            retrying={notificationsQuery.isFetching}
+            onRetry={() => void notificationsQuery.refetch()}
+          />
         ) : (
           <div className="flex items-center justify-between gap-6 px-(--x-padding) py-4">
             <Skeleton className="h-10 w-64" />
@@ -248,7 +272,12 @@ function RecentEmails() {
       />
 
       <div className="divide-y border-t">
-        {activityQuery.data === undefined ? (
+        {activityQuery.data === undefined && activityQuery.isError ? (
+          <LoadError
+            retrying={activityQuery.isFetching}
+            onRetry={() => void activityQuery.refetch()}
+          />
+        ) : activityQuery.data === undefined ? (
           <div className="px-(--x-padding) py-4">
             <Skeleton className="h-5 w-full" />
           </div>
