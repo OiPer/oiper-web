@@ -10100,7 +10100,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "NOTIFICATION";
                                 /** @enum {string} */
-                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                code: "NOTIFICATION_WEBHOOK_REJECTED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -10126,7 +10126,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "NOTIFICATION";
                                 /** @enum {string} */
-                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                code: "NOTIFICATION_WEBHOOK_REJECTED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -10152,7 +10152,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "NOTIFICATION";
                                 /** @enum {string} */
-                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                code: "NOTIFICATION_WEBHOOK_REJECTED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -10178,7 +10178,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "NOTIFICATION";
                                 /** @enum {string} */
-                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                code: "NOTIFICATION_WEBHOOK_REJECTED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -10204,7 +10204,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "NOTIFICATION";
                                 /** @enum {string} */
-                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                code: "NOTIFICATION_WEBHOOK_REJECTED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -10230,7 +10230,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "NOTIFICATION";
                                 /** @enum {string} */
-                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                code: "NOTIFICATION_WEBHOOK_REJECTED";
                                 message: string;
                                 details?: unknown;
                             };
@@ -10256,7 +10256,7 @@ export interface paths {
                                 /** @enum {string} */
                                 type: "NOTIFICATION";
                                 /** @enum {string} */
-                                code: "NOTIFICATION_WEBHOOK_REJECTED" | "NOTIFICATION_WEBHOOK_NOT_CONFIGURED";
+                                code: "NOTIFICATION_WEBHOOK_REJECTED";
                                 message: string;
                                 details?: unknown;
                             };
