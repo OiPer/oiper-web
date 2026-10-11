@@ -238,7 +238,7 @@ Every event the site sends. All events also carry `location`.
 - **External links** (GitHub, Support, the Apple guide). GA4's outbound click tracking covers them.
 - **Docs UI** (sidebar, search, table of contents). It's fumadocs internals, and page views already show which docs pages people read and in what order.
 - **Navigation inside the account area** (sidenav, account header menu) **and changelog pagination.** Page views cover the destination.
-- **Exploratory UI state:** radio changes in the change-plan dialog (the final choice is captured on confirm), expanding versions and "Show older versions" on the download page.
+- **Exploratory UI state:** radio changes in the change-plan dialog (the final choice is captured on confirm).
 - **Decorative interactions:** carousel, animated headline, globe and canvases, hovers, tooltips.
 - **Payment failures inside Paddle or Stripe.** They happen on the provider's side and reach us only through server webhooks.
 - **OAuth provider failures.** Not observable in the browser; `oauth_clicked` without a later `signin_completed` shows abandonment.
