@@ -1,5 +1,6 @@
 import { docsSource } from '@/features/docs/docs-source'
 import { resourcesSource } from '@/features/docs/resources-source'
+import { GUIDES } from '@/features/guides/guides'
 import {
   CHANGELOG_URL,
   DOWNLOAD_URL,
@@ -14,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     HOME,
     DOWNLOAD_URL,
     CHANGELOG_URL,
+    ...Object.keys(GUIDES),
     ...docsSource.getPages().map((page) => page.url),
     ...resourcesSource.getPages().map((page) => page.url),
   ]
