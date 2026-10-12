@@ -3,8 +3,6 @@ import { CHANGELOG_URL } from '@/features/landing-page/constants/links'
 import { env } from '@/lib/env'
 import { joinUrl } from '@/lib/url'
 
-export const revalidate = 3600
-
 function escape(value: string) {
   return value
     .replace(/&/g, '&amp;')
@@ -14,7 +12,17 @@ function escape(value: string) {
 }
 
 export async function GET() {
-  const releases = await getRecentReleases()
+  let releases: Awaited<ReturnType<typeof getRecentReleases>>
+
+  try {
+    releases = await getRecentReleases()
+  } catch {
+    return new Response('Releases are unavailable, try again later.', {
+      status: 503,
+      headers: { 'Retry-After': '600' },
+    })
+  }
+
   const url = joinUrl(env.BASE_URL, CHANGELOG_URL)
 
   const items = releases.map((release) => {
