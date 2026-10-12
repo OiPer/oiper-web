@@ -1,6 +1,7 @@
 ## Project
 
 - DO NOT build the entire project by yourself.
+- Track meaningful user actions with the helpers in `src/lib/analytics.ts` and follow `docs/analytics.md` (one action = one event, mandatory `location`, no personal data). Add every new event to the inventory there.
 
 ## Styling
 

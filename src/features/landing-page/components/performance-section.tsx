@@ -9,7 +9,7 @@ const benchmarks = [
   { name: 'OiPer (Local)', value: '1x', score: 100, highlight: true },
   { name: 'Whisper.cpp (GPU)', value: '1.49x slower', score: 67 },
   { name: 'Whisper.cpp (CPU)', value: '1.87x slower', score: 53 },
-  { name: 'Cloud API (Major API)', value: '3.46x slower', score: 29 },
+  { name: 'Cloud API (Major API)', value: '3.5x slower', score: 29 },
 ]
 
 const highlights = [
@@ -22,7 +22,7 @@ export function PerformanceSection() {
   return (
     <section
       id="performance"
-      className="relative overflow-hidden border-b border-white/[0.06] bg-[#0a0a0a] py-32 sm:py-40"
+      className="relative overflow-hidden border-b border-white/6 bg-[#0a0a0a] py-32 sm:py-40"
     >
       <PerformanceCanvas />
 
@@ -32,7 +32,7 @@ export function PerformanceSection() {
             <h2 className="text-4xl font-semibold tracking-[-0.03em] text-white sm:text-[3.25rem]">
               Speed that feels instant.
             </h2>
-            <p className="mt-5 max-w-110 text-base leading-relaxed text-white/40">
+            <p className="mt-5 max-w-110 text-base leading-relaxed text-white/50">
               Local processing means no network round-trips. OiPer transcribes
               up to 3.5x faster than cloud APIs, entirely on your device.
             </p>
@@ -52,8 +52,8 @@ export function PerformanceSection() {
             </div>
           </div>
 
-          <div className="relative self-center rounded-xl border border-white/[0.06] bg-white/[0.02] px-6 py-7">
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
+          <div className="relative self-center rounded-xl border border-white/6 bg-white/2 px-6 py-7">
+            <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/8 to-transparent" />
 
             <p className="text-[10px] font-medium tracking-widest text-white/25 uppercase">
               Benchmark / 30s English Audio
@@ -65,7 +65,7 @@ export function PerformanceSection() {
                 return (
                   <div
                     key={b.name}
-                    className={`py-3 ${i !== benchmarks.length - 1 ? 'border-b border-white/[0.04]' : ''}`}
+                    className={`py-3 ${i !== benchmarks.length - 1 ? 'border-b border-white/4' : ''}`}
                   >
                     <div className="flex items-center justify-between">
                       <span
@@ -87,7 +87,7 @@ export function PerformanceSection() {
                         {isWinner ? (
                           <span className="flex items-center gap-2">
                             {b.value}
-                            <span className="rounded border border-white/[0.1] bg-white/[0.03] px-1.5 py-0.5 text-[9px] font-semibold tracking-wider text-white/40 uppercase">
+                            <span className="rounded border border-white/10 bg-white/3 px-1.5 py-0.5 text-[9px] font-semibold tracking-wider text-white/40 uppercase">
                               Baseline
                             </span>
                           </span>
@@ -96,7 +96,7 @@ export function PerformanceSection() {
                         )}
                       </span>
                     </div>
-                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.04]">
+                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/4">
                       <motion.div
                         className="h-full rounded-full bg-white/30"
                         initial={{ width: 0 }}

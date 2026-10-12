@@ -2,7 +2,7 @@
 
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
 import { Button } from '@/components/ui/button'
-import { DialogFooter, DialogHeader } from '@/components/ui/dialog'
+import { logSelect, logStart } from '@/lib/analytics'
 import { ChevronDown } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
@@ -20,12 +20,14 @@ export function MacDownloadDialog() {
   useEffect(() => {
     function onClick(event: MouseEvent) {
       if (event.button !== 0 || event.metaKey || event.ctrlKey) return
+
       const link = (event.target as Element).closest<HTMLAnchorElement>(
         'a[data-mac-build]'
       )
       if (!link) return
 
       event.preventDefault()
+
       const current = link.dataset.macBuild as MacBuild
       const other = current === 'macos' ? 'macos-intel' : 'macos'
       setUrls({ [current]: link.href, [other]: link.dataset.macAlt })
@@ -42,7 +44,7 @@ export function MacDownloadDialog() {
   return (
     <ResponsiveDialog open={open} onOpenChange={setOpen}>
       <ResponsiveDialog.Content>
-        <DialogHeader className="text-left">
+        <ResponsiveDialog.Header>
           <ResponsiveDialog.Title>
             Mac build not signed by Apple
           </ResponsiveDialog.Title>
@@ -54,7 +56,13 @@ export function MacDownloadDialog() {
                 aria-label="Mac build"
                 value={build}
                 disabled={builds.length < 2}
-                onChange={(event) => setBuild(event.target.value as MacBuild)}
+                onChange={(event) => {
+                  const next = event.target.value as MacBuild
+                  setBuild(next)
+                  logSelect('mac_build', 'mac_download_dialog', {
+                    platform: next,
+                  })
+                }}
                 className="focus-visible:ring-ring/50 field-sizing-content cursor-pointer appearance-none bg-transparent pr-4 outline-none focus-visible:ring-2 disabled:cursor-default disabled:pr-0"
               >
                 {builds.map((b) => (
@@ -83,20 +91,26 @@ export function MacDownloadDialog() {
             </a>
             .
           </ResponsiveDialog.Description>
-        </DialogHeader>
+        </ResponsiveDialog.Header>
 
-        <DialogFooter className="group-data-[vaul-drawer-direction=bottom]/drawer-content:flex-col-reverse">
+        <ResponsiveDialog.Footer>
           <ResponsiveDialog.Close asChild>
             <Button variant="outline" type="button">
               Cancel
             </Button>
           </ResponsiveDialog.Close>
           <Button variant="destructive" asChild>
-            <a href={urls[build]} onClick={() => setOpen(false)}>
+            <a
+              href={urls[build]}
+              onClick={() => {
+                setOpen(false)
+                logStart('download', 'mac_download_dialog', { platform: build })
+              }}
+            >
               Yes, download
             </a>
           </Button>
-        </DialogFooter>
+        </ResponsiveDialog.Footer>
       </ResponsiveDialog.Content>
     </ResponsiveDialog>
   )

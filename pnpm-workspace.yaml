@@ -3,6 +3,8 @@ packages:
 
 allowBuilds:
   esbuild: true
+  onnxruntime-node: false
+  protobufjs: false
   msw: true
   sharp: true
   unrs-resolver: true

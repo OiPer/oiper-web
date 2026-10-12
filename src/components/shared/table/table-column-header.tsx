@@ -41,7 +41,7 @@ export function DataTableColumnHeader<TData, TValue>({
         size="sm"
         onClick={() => column.toggleSorting()}
         className={cn(
-          'text-foreground/80 hover:text-foreground gap-0.5 !px-0 hover:!bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0',
+          'text-foreground/80 hover:text-foreground gap-0.5 px-0! hover:bg-transparent! focus-visible:ring-0 focus-visible:ring-offset-0',
           { 'text-foreground': isSorting }
         )}
       >

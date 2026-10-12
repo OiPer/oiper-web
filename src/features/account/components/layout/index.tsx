@@ -32,9 +32,7 @@ export function AccountLayoutClientWrapper({
     )
   }, [currentUser, isLoading, pathname, router, searchParams])
 
-  if (isLoading || !currentUser) {
-    return <AccountLayoutLoading />
-  }
+  if (isLoading || !currentUser) return <AccountLayoutLoading />
 
   return <Sidenav>{children}</Sidenav>
 }

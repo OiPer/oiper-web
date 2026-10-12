@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
@@ -31,13 +32,9 @@ export function snapbounce<T extends (...args: any[]) => any>(
   let timeout: NodeJS.Timeout | null = null
 
   function cb(this: any, ...args: Parameters<T>): void {
-    if (!timeout) {
-      func.apply(this, args)
-    }
+    if (!timeout) func.apply(this, args)
 
-    if (timeout) {
-      clearTimeout(timeout)
-    }
+    if (timeout) clearTimeout(timeout)
 
     timeout = setTimeout(() => {
       timeout = null

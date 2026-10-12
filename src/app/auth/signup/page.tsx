@@ -1,11 +1,8 @@
 import { AuthPageShell } from '@/features/auth/auth-page-shell'
 import { SignUpForm } from '@/features/auth/signup-form'
-import type { Metadata } from 'next'
+import { appPageMetadata } from '@/features/seo/app-pages'
 
-export const metadata: Metadata = {
-  title: 'Create account',
-  description: 'Create your OiPer account.',
-}
+export const metadata = appPageMetadata('/auth/signup')
 
 export default function SignUpPage() {
   return (

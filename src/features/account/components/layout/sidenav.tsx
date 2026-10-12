@@ -44,13 +44,24 @@ export const sidebarItems = [
         label: 'Current Plan',
         href: '/account/billing#current-plan',
       },
+    ],
+  },
+  {
+    label: 'Usage',
+    href: '/account/usage',
+    items: [],
+  },
+  {
+    label: 'Notifications',
+    href: '/account/notifications',
+    items: [
       {
-        label: 'Payment Method',
-        href: '/account/billing#payment-method',
+        label: 'Email',
+        href: '/account/notifications#email-notifications',
       },
       {
-        label: 'Invoices',
-        href: '/account/billing#invoice-history',
+        label: 'Recent emails',
+        href: '/account/notifications#recent-emails',
       },
     ],
   },
@@ -65,9 +76,7 @@ function searchSidebarItems(searchTerm: string) {
     ...(includeChildren ? (item.items ?? []) : []),
   ])
 
-  if (!trimmedSearchTerm) {
-    return flattenedItems
-  }
+  if (!trimmedSearchTerm) return flattenedItems
 
   return flattenedItems.filter((item) =>
     [item.label, item.href].some((value) =>

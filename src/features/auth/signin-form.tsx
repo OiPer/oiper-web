@@ -1,8 +1,8 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/features/auth/auth-context'
+import { logClick, logComplete, logError, logSubmit } from '@/lib/analytics'
+import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -10,9 +10,13 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
-import { AuthInput, AuthPasswordInput } from './auth-form-input'
+import {
+  AuthFormError,
+  AuthInput,
+  AuthPasswordInput,
+  AuthSubmitButton,
+} from './auth-form-input'
 import { buildAuthUrl, getCallbackUrl } from './auth-form-utils'
-import { getAuthErrorMessage } from './workos-auth-error'
 
 const signInSchema = z.object({
   email: z.string().trim().email('Enter a valid email address'),
@@ -51,8 +55,9 @@ export function SignInForm({ mode }: SignInFormProps) {
     additionalParams: { email },
   })
 
-  async function onSubmit(values: SignInSchema) {
+  async function handleSignIn(values: SignInSchema) {
     setErrorMessage(null)
+    logSubmit('signin', 'auth', { mode })
 
     try {
       const result = await signIn({
@@ -61,6 +66,7 @@ export function SignInForm({ mode }: SignInFormProps) {
       })
 
       if ('type' in result && result.type === 'email_verification') {
+        logComplete('signin', 'auth', { mode, outcome: 'email_verification' })
         return router.push(
           buildAuthUrl({
             mode,
@@ -77,12 +83,28 @@ export function SignInForm({ mode }: SignInFormProps) {
       }
 
       if ('authenticated' in result && !result.authenticated) {
-        return setErrorMessage('Something went wrong!')
+        logError('signin', 'auth', { mode, error_type: 'not_authenticated' })
+        return setErrorMessage('Something went wrong')
       }
 
+      logComplete('signin', 'auth', { mode })
       router.push(callbackUrl)
     } catch (error) {
-      setErrorMessage(getAuthErrorMessage(error))
+      const code = getAppErrorCode<'post', '/v1/auth/web/sign-in/password'>(
+        error
+      )
+      logError('signin', 'auth', { mode, error_type: code ?? 'unknown' })
+
+      switch (code) {
+        case 'AUTH_INVALID_CREDENTIALS':
+          return setErrorMessage('Invalid credentials')
+        case 'AUTH_AUTH_METHOD_NOT_ALLOWED':
+          return setErrorMessage(
+            'This account must sign in with a different method'
+          )
+        default:
+          return setErrorMessage('Something went wrong')
+      }
     }
   }
 
@@ -94,7 +116,7 @@ export function SignInForm({ mode }: SignInFormProps) {
       description="Sign in to your account to continue."
     >
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSignIn)}
         className="flex flex-col gap-4"
       >
         <AuthInput
@@ -110,6 +132,7 @@ export function SignInForm({ mode }: SignInFormProps) {
             <p className="text-sm font-medium text-white">Password</p>
             <Link
               href={forgotHref}
+              onClick={() => logClick('forgot_password', 'auth')}
               className="text-xs text-white/65 underline underline-offset-[5px] hover:text-white"
               scroll={false}
             >
@@ -124,19 +147,11 @@ export function SignInForm({ mode }: SignInFormProps) {
           />
         </div>
 
-        {errorMessage ? (
-          <p className="rounded-md border border-red-300/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
-            {errorMessage}
-          </p>
-        ) : null}
+        <AuthFormError message={errorMessage} />
 
-        <Button
-          type="submit"
-          className="h-9 bg-white text-black hover:bg-white/90"
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? <Spinner /> : 'Sign in'}
-        </Button>
+        <AuthSubmitButton loading={form.formState.isSubmitting}>
+          Sign in
+        </AuthSubmitButton>
       </form>
     </AuthCard>
   )

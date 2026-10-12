@@ -66,17 +66,19 @@ export function Sidenav({ children }: React.PropsWithChildren) {
                   </Button>
                 </ResponsiveDialog.Trigger>
 
-                <ResponsiveDialog.Content hideHandler>
-                  <div className="flex flex-col gap-1">
+                <ResponsiveDialog.Content>
+                  <ResponsiveDialog.Header>
                     <ResponsiveDialog.Title>
                       Account Menu
                     </ResponsiveDialog.Title>
                     <ResponsiveDialog.Description>
                       Navigate through your account settings
                     </ResponsiveDialog.Description>
-                  </div>
+                  </ResponsiveDialog.Header>
 
-                  <SidenavItems />
+                  <ResponsiveDialog.Body>
+                    <SidenavItems />
+                  </ResponsiveDialog.Body>
                 </ResponsiveDialog.Content>
               </ResponsiveDialog>
             </div>

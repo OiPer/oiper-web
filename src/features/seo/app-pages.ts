@@ -1,0 +1,573 @@
+import type { Metadata } from 'next'
+
+export const OG_SIZE = { width: 1200, height: 630 }
+
+type Og = {
+  title: string
+  description: string
+  screenshot: 1 | 2 | 3 | 4 | 5
+}
+
+type Seo = { title: string; description: string }
+
+export const APP_PAGES = {
+  '/auth/signin': {
+    seo: {
+      title: 'Sign in',
+      description:
+        'Sign in to your OiPer account to manage your plan, billing, usage, and the desktop app connected to it.',
+    },
+    og: {
+      title: 'Sign In',
+      description:
+        'Sign in to pick up where you left off and manage your plan, usage and connected desktop app',
+      screenshot: 1,
+    },
+  },
+  '/auth/signup': {
+    seo: {
+      title: 'Create account',
+      description:
+        'Create your OiPer account to use hosted transcription and manage your plan. The app is free forever on your machine — no account needed.',
+    },
+    og: {
+      title: 'Create Account',
+      description:
+        'Create an account for hosted transcription while the app stays free on your machine',
+      screenshot: 4,
+    },
+  },
+  '/auth/forgot-password': {
+    seo: {
+      title: 'Reset password',
+      description:
+        'Reset the password for your OiPer account and get back to dictating.',
+    },
+    og: {
+      title: 'Reset Password',
+      description:
+        'Reset your password and get back into your OiPer account in less than a minute',
+      screenshot: 1,
+    },
+  },
+  '/auth/verify-email': {
+    seo: {
+      title: 'Verify your email',
+      description:
+        'Confirm your email address to finish setting up your OiPer account.',
+    },
+    og: {
+      title: 'Verify Email',
+      description:
+        'Confirm your email address to finish setting up your OiPer account and get started',
+      screenshot: 1,
+    },
+  },
+  '/auth/desktop': {
+    seo: {
+      title: 'Connect OiPer Desktop',
+      description:
+        'Sign in on the web to connect the OiPer desktop app to your account.',
+    },
+    og: {
+      title: 'Connect Desktop',
+      description:
+        'Sign in on the web to connect the OiPer desktop app to your account in one step',
+      screenshot: 2,
+    },
+  },
+  '/account/settings': {
+    seo: {
+      title: 'Account settings',
+      description:
+        'Manage your OiPer account name, profile picture, and preferences in one place.',
+    },
+    og: {
+      title: 'Account Settings',
+      description:
+        'Manage your account name and profile picture and keep your OiPer details up to date',
+      screenshot: 1,
+    },
+  },
+  '/account/billing': {
+    seo: {
+      title: 'Billing',
+      description:
+        'See your OiPer plan and change, renew, or cancel your subscription.',
+    },
+    og: {
+      title: 'Billing',
+      description:
+        'See your current OiPer plan and change, renew or cancel your subscription whenever you like',
+      screenshot: 4,
+    },
+  },
+  '/account/security': {
+    seo: {
+      title: 'Security',
+      description: 'Manage the password and security of your OiPer account.',
+    },
+    og: {
+      title: 'Account Security',
+      description:
+        'Keep your OiPer account safe by managing your password and security settings',
+      screenshot: 1,
+    },
+  },
+  '/account/notifications': {
+    seo: {
+      title: 'Notifications',
+      description:
+        'Choose which emails OiPer sends you, like release notes for every new version.',
+    },
+    og: {
+      title: 'Notifications',
+      description:
+        'Choose which OiPer emails land in your inbox, from release notes to account updates',
+      screenshot: 1,
+    },
+  },
+  '/account/usage': {
+    seo: {
+      title: 'Usage',
+      description:
+        'See how much cloud transcription you have used on your OiPer plan this period.',
+    },
+    og: {
+      title: 'Usage',
+      description:
+        'See how much cloud transcription you have used on your plan and when your usage resets',
+      screenshot: 4,
+    },
+  },
+} satisfies Record<string, { seo: Seo; og: Og }>
+
+export const SITE_PAGES = {
+  '/': {
+    og: {
+      title: 'Type at Speech Speed',
+      description:
+        'Hold a hotkey and speak while OiPer types your words into any app on your computer',
+      screenshot: 1,
+    },
+  },
+  '/download': {
+    og: {
+      title: 'Download OiPer',
+      description:
+        'Free download for Windows, macOS and Linux — hold a hotkey, speak, and your words appear in any app',
+      screenshot: 2,
+    },
+  },
+  '/tools/speech-to-text': {
+    og: {
+      title: 'Free Speech to Text',
+      description:
+        'Record or upload audio and get a transcript in your browser without uploading a thing',
+      screenshot: 3,
+    },
+  },
+  '/pricing': {
+    og: {
+      title: 'OiPer Pricing',
+      description:
+        'Free and unlimited on your own computer, with your own API key or hosted cloud models',
+      screenshot: 4,
+    },
+  },
+  '/linux': {
+    og: {
+      title: 'OiPer for Linux',
+      description:
+        'Private voice typing for X11 and Wayland that types your words into any Linux app',
+      screenshot: 1,
+    },
+  },
+  '/windows': {
+    og: {
+      title: 'OiPer for Windows',
+      description:
+        'Offline dictation for Windows that types your words into any app on your PC',
+      screenshot: 2,
+    },
+  },
+  '/mac': {
+    og: {
+      title: 'OiPer for Mac',
+      description:
+        'Offline dictation for Apple Silicon and Intel Macs that types your words into any app',
+      screenshot: 3,
+    },
+  },
+  '/use-cases/coding': {
+    og: {
+      title: 'Voice to Code',
+      description:
+        'Dictate prompts into Claude Code and Cursor and spell every library name right',
+      screenshot: 5,
+    },
+  },
+  '/alternatives': {
+    og: {
+      title: 'Compare OiPer',
+      description:
+        'Honest comparisons with Wispr Flow, Superwhisper, Dragon and other dictation apps',
+      screenshot: 1,
+    },
+  },
+  '/alternatives/wispr-flow': {
+    og: {
+      title: 'vs Wispr Flow',
+      description:
+        'A private Wispr Flow alternative that works offline and runs on Linux too',
+      screenshot: 1,
+    },
+  },
+  '/alternatives/superwhisper': {
+    og: {
+      title: 'vs Superwhisper',
+      description:
+        'Offline Whisper dictation that works the same on Windows and macOS and Linux',
+      screenshot: 4,
+    },
+  },
+  '/whisper-desktop-app': {
+    og: {
+      title: 'Whisper Desktop App',
+      description:
+        'Run Whisper locally on Windows and macOS and Linux and type what you say into any app',
+      screenshot: 4,
+    },
+  },
+  '/offline-speech-to-text': {
+    og: {
+      title: 'Offline Speech to Text',
+      description:
+        'Private dictation that runs on your own computer and keeps working with the Wi-Fi off',
+      screenshot: 2,
+    },
+  },
+  '/free-dictation-software': {
+    og: {
+      title: 'Free Dictation',
+      description:
+        'Unlimited local dictation on Windows and macOS and Linux with no account and no word limit',
+      screenshot: 1,
+    },
+  },
+  '/bring-your-own-api-key': {
+    og: {
+      title: 'Your Own API Key',
+      description:
+        'Dictate with your own OpenAI or Groq key and keep it on your machine, never sent to OiPer',
+      screenshot: 4,
+    },
+  },
+  '/alternatives/macwhisper': {
+    og: {
+      title: 'vs MacWhisper',
+      description:
+        'A MacWhisper alternative that brings local Whisper dictation to Windows and Linux too',
+      screenshot: 2,
+    },
+  },
+  '/alternatives/voiceink': {
+    og: {
+      title: 'vs VoiceInk',
+      description:
+        'A VoiceInk alternative with local on-device dictation on Windows, Linux and Intel Macs',
+      screenshot: 3,
+    },
+  },
+  '/alternatives/aqua-voice': {
+    og: {
+      title: 'vs Aqua Voice',
+      description:
+        'A private Aqua Voice alternative that transcribes on your device and works offline',
+      screenshot: 4,
+    },
+  },
+  '/alternatives/handy': {
+    og: {
+      title: 'vs Handy',
+      description:
+        'Free local dictation like Handy, plus profiles, AI formatting and cloud models with your key',
+      screenshot: 5,
+    },
+  },
+  '/alternatives/dragon': {
+    og: {
+      title: 'vs Dragon',
+      description:
+        'Free dictation for Windows and Mac and Linux that runs locally with no license to buy',
+      screenshot: 5,
+    },
+  },
+  '/alternatives/windows-voice-typing': {
+    og: {
+      title: 'vs Win Voice Typing',
+      description:
+        'Offline voice typing for Windows that works in more languages than Win+H',
+      screenshot: 2,
+    },
+  },
+  '/alternatives/apple-dictation': {
+    og: {
+      title: 'vs Apple Dictation',
+      description:
+        'Local dictation on Apple Silicon and Intel Macs with formatting and translation built in',
+      screenshot: 3,
+    },
+  },
+  '/use-cases/claude-code': {
+    og: {
+      title: 'Voice for Claude Code',
+      description:
+        'Speak prompts into Claude Code in any terminal and send them hands-free with auto submit',
+      screenshot: 5,
+    },
+  },
+  '/use-cases/accessibility': {
+    og: {
+      title: 'Dictation for RSI',
+      description:
+        'Write by speaking in any app when typing is painful or slow with free local dictation',
+      screenshot: 2,
+    },
+  },
+  '/linux/wayland': {
+    og: {
+      title: 'Wayland Voice Typing',
+      description:
+        'Dictate into any app on GNOME and KDE and Hyprland with the right typing tool for your compositor',
+      screenshot: 1,
+    },
+  },
+  '/linux/ubuntu': {
+    og: {
+      title: 'OiPer for Ubuntu',
+      description:
+        'Offline voice typing for Ubuntu 24.04 and 26.04 that types into any app on GNOME Wayland',
+      screenshot: 4,
+    },
+  },
+  '/resources/changelog': {
+    og: {
+      title: "What's New",
+      description:
+        'Every OiPer release in one place with the new features and fixes that shipped in each version',
+      screenshot: 3,
+    },
+  },
+  '/docs': {
+    og: {
+      title: 'OiPer Docs',
+      description:
+        'Guides and reference for the OiPer desktop app and the snippets library in one place',
+      screenshot: 2,
+    },
+  },
+  '/docs/desktop': {
+    og: {
+      title: 'OiPer Desktop',
+      description:
+        'Voice to text that runs on your own machine and types your words straight into any app',
+      screenshot: 2,
+    },
+  },
+  '/docs/desktop/quickstart': {
+    og: {
+      title: 'Quickstart',
+      description:
+        'Set up OiPer and finish your first dictation in just a few minutes from a fresh install',
+      screenshot: 2,
+    },
+  },
+  '/docs/desktop/installation': {
+    og: {
+      title: 'Installation',
+      description:
+        'Install OiPer on your computer and grant the permissions it needs to type for you',
+      screenshot: 2,
+    },
+  },
+  '/docs/desktop/models': {
+    og: {
+      title: 'Models',
+      description:
+        'Choose between local Whisper models on your own hardware or a cloud provider you trust',
+      screenshot: 4,
+    },
+  },
+  '/docs/desktop/profiles': {
+    og: {
+      title: 'Profiles',
+      description:
+        'Give every kind of dictation its own hotkey, language and transcription mode',
+      screenshot: 2,
+    },
+  },
+  '/docs/desktop/dictionary': {
+    og: {
+      title: 'Dictionary',
+      description:
+        'Teach OiPer the names and terms it keeps getting wrong so it spells them right',
+      screenshot: 1,
+    },
+  },
+  '/docs/desktop/formatting': {
+    og: {
+      title: 'Formatting',
+      description:
+        'Clean up, rewrite or translate your words before OiPer types them into the app',
+      screenshot: 3,
+    },
+  },
+  '/docs/desktop/snippets': {
+    og: {
+      title: 'Snippets',
+      description:
+        'Turn short spoken phrases into longer text that OiPer expands for you as you dictate',
+      screenshot: 5,
+    },
+  },
+  '/docs/desktop/history': {
+    og: {
+      title: 'History',
+      description:
+        'Look back at your past dictations and replay the audio whenever you need it',
+      screenshot: 1,
+    },
+  },
+  '/docs/desktop/settings': {
+    og: {
+      title: 'Settings',
+      description:
+        'Tune how OiPer starts, which microphone it listens to and how your text gets inserted',
+      screenshot: 2,
+    },
+  },
+  '/docs/desktop/troubleshooting': {
+    og: {
+      title: 'Troubleshooting',
+      description:
+        'Quick fixes for silent hotkeys and slow transcription so you can get back to dictating',
+      screenshot: 2,
+    },
+  },
+  '/docs/snippets': {
+    og: {
+      title: 'Snippets Library',
+      description:
+        'Apply configured snippets to any string from TypeScript or Rust with the same rules in both',
+      screenshot: 5,
+    },
+  },
+  '/docs/snippets/configuration': {
+    og: {
+      title: 'Configuration',
+      description:
+        'The snippet config format with its literal and regex matchers and the rules it enforces',
+      screenshot: 5,
+    },
+  },
+  '/docs/snippets/matching': {
+    og: {
+      title: 'Matching',
+      description:
+        'How snippets are matched against your input and which one wins when several could apply',
+      screenshot: 5,
+    },
+  },
+  '/docs/snippets/rust': {
+    og: {
+      title: 'Rust API',
+      description:
+        'Parse a snippet config and apply it to any string straight from your Rust code',
+      screenshot: 5,
+    },
+  },
+  '/docs/snippets/typescript': {
+    og: {
+      title: 'TypeScript API',
+      description:
+        'Parse a snippet config and apply it to any string straight from your TypeScript code',
+      screenshot: 5,
+    },
+  },
+  '/resources': {
+    og: {
+      title: 'Resources',
+      description:
+        'Policies and reference material that explain how OiPer works and how it handles your data',
+      screenshot: 1,
+    },
+  },
+  '/resources/privacy-policy': {
+    og: {
+      title: 'Privacy Policy',
+      description:
+        'What data OiPer handles, what stays on your device and how you can delete it at any time',
+      screenshot: 1,
+    },
+  },
+  '/resources/security': {
+    og: {
+      title: 'Security',
+      description:
+        'Where OiPer stores its files, how credentials are kept and what ever leaves your device',
+      screenshot: 1,
+    },
+  },
+  '/resources/terms-of-service': {
+    og: {
+      title: 'Terms of Service',
+      description:
+        'The terms for using OiPer Desktop, the website and the hosted transcription services',
+      screenshot: 1,
+    },
+  },
+  '/resources/refund-policy': {
+    og: {
+      title: 'Refund Policy',
+      description:
+        'A 14-day money-back guarantee on every Pro and Max payment, and how to ask for a refund',
+      screenshot: 1,
+    },
+  },
+} satisfies Record<string, { og: Og }>
+
+export type AppPagePath = keyof typeof APP_PAGES
+
+export function ogCopy(path: string): Og {
+  if (Object.hasOwn(APP_PAGES, path)) return APP_PAGES[path as AppPagePath].og
+  if (Object.hasOwn(SITE_PAGES, path)) {
+    return SITE_PAGES[path as keyof typeof SITE_PAGES].og
+  }
+
+  throw new Error(`Missing OG copy for ${path} in app-pages.ts`)
+}
+
+export function appPageMetadata(path: AppPagePath): Metadata {
+  const { seo, og } = APP_PAGES[path]
+  const image = { url: `/og${path}`, ...OG_SIZE, alt: og.title }
+
+  return {
+    title: seo.title,
+    description: seo.description,
+    openGraph: {
+      type: 'website',
+      siteName: 'OiPer',
+      url: path,
+      title: og.title,
+      description: og.description,
+      images: [image],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: og.title,
+      description: og.description,
+      images: [image],
+    },
+  }
+}

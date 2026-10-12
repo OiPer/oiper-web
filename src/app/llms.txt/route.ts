@@ -1,0 +1,59 @@
+import { docsSource } from '@/features/docs/docs-source'
+import { resourcesSource } from '@/features/docs/resources-source'
+import { GUIDES } from '@/features/guides/guides'
+import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
+
+export const dynamic = 'force-static'
+
+function link(page: ReturnType<typeof docsSource.getPages>[number]) {
+  return `- [${page.data.title}](${joinUrl(env.BASE_URL, page.url)}): ${page.data.description}`
+}
+
+export function GET() {
+  const body = [
+    '# OiPer',
+    '',
+    '> OiPer is a desktop app for Windows, macOS and Linux that types what you say: hold a global hotkey, speak, release, and your words appear in whatever app has focus.',
+    '',
+    '- Transcription runs locally with Whisper models on your CPU or GPU by default; audio stays on your device.',
+    "- Cloud transcription is optional: bring your own provider and API key, or use OiPer's hosted models on a paid plan.",
+    '- Local transcription is free and unlimited.',
+    '- Optional AI formatting cleans up, rewrites, or translates the transcript before it is inserted.',
+    '- Dictionary, snippets, profiles, and history help tailor dictation to how you work.',
+    '',
+    '## Product',
+    '',
+    `- [Home](${joinUrl(env.BASE_URL)}): Features, privacy, languages, and pricing.`,
+    `- [Download](${joinUrl(env.BASE_URL, '/download')}): Installers for Windows, macOS (Apple Silicon and Intel) and Linux (AppImage, .deb, .rpm).`,
+    `- [Pricing](${joinUrl(env.BASE_URL, '/pricing')}): Free unlimited local transcription, your own API key at no extra cost, or Pro and Max plans for hosted models.`,
+    `- [Alternatives](${joinUrl(env.BASE_URL, '/alternatives')}): Honest comparisons with other dictation apps, including where each one is the better fit.`,
+    `- [Free speech to text](${joinUrl(env.BASE_URL, '/tools/speech-to-text')}): Record or upload audio and transcribe it with Whisper inside the browser; audio is never uploaded.`,
+    `- [Changelog](${joinUrl(env.BASE_URL, '/resources/changelog')}): Every desktop release, newest first.`,
+    '',
+    '## Guides',
+    '',
+    ...Object.entries(GUIDES).map(
+      ([path, guide]) =>
+        `- [${guide.heading}](${joinUrl(env.BASE_URL, path)}): ${guide.description}`
+    ),
+    '',
+    '## Documentation',
+    '',
+    ...docsSource.getPages().map(link),
+    '',
+    '## Policies',
+    '',
+    ...resourcesSource.getPages().map(link),
+    '',
+    '## Contact',
+    '',
+    '- Email: support@oiper.com',
+    '- GitHub: https://github.com/OiPer/desktop',
+    '',
+  ].join('\n')
+
+  return new Response(body, {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  })
+}

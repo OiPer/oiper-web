@@ -1,9 +1,9 @@
 'use client'
 
+import { Loading } from '@/components/shared/loading'
 import { ResponsiveDialog } from '@/components/shared/responsive-dialog'
 import { Button } from '@/components/ui/button'
-import { DialogFooter } from '@/components/ui/dialog'
-import { Spinner } from '@/components/ui/spinner'
+import { logComplete, logError } from '@/lib/analytics'
 import { Slot } from 'radix-ui'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -42,9 +42,7 @@ export function AccountAvatarModal({
       const reader = new FileReader()
 
       reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          return resolve(reader.result)
-        }
+        if (typeof reader.result === 'string') return resolve(reader.result)
 
         reject(new Error('Could not read avatar file'))
       }
@@ -65,10 +63,14 @@ export function AccountAvatarModal({
     if (!file) return
 
     if (!allow.includes(file.type)) {
+      logError('avatar_update', 'settings', {
+        error_type: 'unsupported_format',
+      })
       return toast.error('Unsupported image format')
     }
 
     if (file.size > maxSize * 1024 * 1024) {
+      logError('avatar_update', 'settings', { error_type: 'too_large' })
       return toast.error(`Avatar must stay under ${maxSize}MB`)
     }
 
@@ -79,15 +81,11 @@ export function AccountAvatarModal({
   function clearSelection() {
     setSelectedFile(null)
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   function handleOpenChange(nextOpen: boolean) {
-    if (!nextOpen) {
-      clearSelection()
-    }
+    if (!nextOpen) clearSelection()
 
     setOpen(nextOpen)
   }
@@ -95,11 +93,25 @@ export function AccountAvatarModal({
   async function handleSaveAvatar() {
     if (!selectedFile) return
 
+    let dataUrl: string
+
     try {
-      const dataUrl = await readFileAsDataUrl(selectedFile)
+      dataUrl = await readFileAsDataUrl(selectedFile)
+    } catch {
+      logError('avatar_update', 'settings', { error_type: 'read_failed' })
+      return toast.error(
+        "Couldn't save your avatar — try picking the file again"
+      )
+    }
+
+    try {
       await onSave(dataUrl)
+      logComplete('avatar_update', 'settings')
       handleOpenChange(false)
-    } catch {}
+    } catch {
+      logError('avatar_update', 'settings', { error_type: 'save_failed' })
+      toast.error("Couldn't save your avatar — try picking the file again")
+    }
   }
 
   return (
@@ -116,14 +128,14 @@ export function AccountAvatarModal({
 
       <ResponsiveDialog open={open} onOpenChange={handleOpenChange}>
         <ResponsiveDialog.Content>
-          <div className="space-y-1">
+          <ResponsiveDialog.Header>
             <ResponsiveDialog.Title>Update Avatar</ResponsiveDialog.Title>
             <ResponsiveDialog.Description>
               Use a clean square image for your Oiper account profile.
             </ResponsiveDialog.Description>
-          </div>
+          </ResponsiveDialog.Header>
 
-          <div className="space-y-4">
+          <ResponsiveDialog.Body className="space-y-4">
             <div className="flex justify-center">
               <div className="bg-muted relative size-44 overflow-hidden rounded-2xl border">
                 {selectedFile ? (
@@ -144,23 +156,23 @@ export function AccountAvatarModal({
               PNG, JPG, and WebP work best. Keep it under {maxSize}MB for a
               sharp, fast-loading profile image.
             </div>
+          </ResponsiveDialog.Body>
 
-            <DialogFooter className="gap-2">
-              <ResponsiveDialog.Close asChild>
-                <Button variant="outline" type="button" disabled={isSaving}>
-                  Cancel
-                </Button>
-              </ResponsiveDialog.Close>
-
-              <Button
-                type="button"
-                onClick={() => void handleSaveAvatar()}
-                disabled={!selectedFile || isSaving}
-              >
-                {isSaving ? <Spinner /> : 'Save Avatar'}
+          <ResponsiveDialog.Footer>
+            <ResponsiveDialog.Close asChild>
+              <Button variant="outline" type="button" disabled={isSaving}>
+                Cancel
               </Button>
-            </DialogFooter>
-          </div>
+            </ResponsiveDialog.Close>
+
+            <Button
+              type="button"
+              onClick={() => void handleSaveAvatar()}
+              disabled={!selectedFile || isSaving}
+            >
+              <Loading loading={isSaving}>Save Avatar</Loading>
+            </Button>
+          </ResponsiveDialog.Footer>
         </ResponsiveDialog.Content>
       </ResponsiveDialog>
     </Fragment>
