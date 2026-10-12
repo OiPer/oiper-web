@@ -18,20 +18,20 @@ export function BuildLink({
   url,
   macAltUrl,
   size,
+  location = 'download_section',
 }: {
   pkg: Package
   url: string
   macAltUrl: string | null
   size: number
+  location?: string
 }) {
   return (
     <a
       href={url}
       {...macDownloadProps(pkg.id, macAltUrl)}
       className="group/build flex items-center gap-4 px-4 py-3.5"
-      onClick={() =>
-        logClick('download', 'download_section', { platform: pkg.id })
-      }
+      onClick={() => logClick('download', location, { platform: pkg.id })}
     >
       <OSIcon os={pkg.os} className="text-muted-foreground size-4 shrink-0" />
       <span className="min-w-0 flex-1 text-sm font-medium">

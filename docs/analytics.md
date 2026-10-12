@@ -69,6 +69,7 @@ Forms follow one pattern: `logSubmit` after validation → `logComplete` when th
 | `pricing_page`        | The `/pricing` page as a whole                                               |
 | `faq`                 | FAQ section                                                                  |
 | `download_section`    | `/download` page                                                             |
+| `changelog`           | `/resources/changelog` page                                                  |
 | `guide`               | Guide pages: `/linux`, `/windows`, `/mac`, `/use-cases/*`, `/alternatives/*` |
 | `alternatives`        | `/alternatives` hub page                                                     |
 | `speech_to_text`      | `/tools/speech-to-text` page and its tool                                    |
@@ -163,12 +164,12 @@ Every event the site sends. All events also carry `location`.
 
 ### Downloads
 
-| Event                     | Location                                                             | Details                                                                  | When                                                        |
-| ------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
-| `download_clicked`        | `hero` `header` `footer` `pricing` `download_section` `guide` `gift` | `platform` (absent on the fallback link shown before the OS is detected) | Any download button or build link                           |
-| `other_platforms_clicked` | `hero`                                                               | —                                                                        | "Other platforms" links under the hero download button      |
-| `mac_build_selected`      | `mac_download_dialog`                                                | `platform`                                                               | Switching between Apple Silicon and Intel in the Mac dialog |
-| `download_started`        | `mac_download_dialog`                                                | `platform`                                                               | "Yes, download" in the Mac dialog                           |
+| Event                     | Location                                                                         | Details                                                                  | When                                                        |
+| ------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| `download_clicked`        | `hero` `header` `footer` `pricing` `download_section` `changelog` `guide` `gift` | `platform` (absent on the fallback link shown before the OS is detected) | Any download button or build link                           |
+| `other_platforms_clicked` | `hero`                                                                           | —                                                                        | "Other platforms" links under the hero download button      |
+| `mac_build_selected`      | `mac_download_dialog`                                                            | `platform`                                                               | Switching between Apple Silicon and Intel in the Mac dialog |
+| `download_started`        | `mac_download_dialog`                                                            | `platform`                                                               | "Yes, download" in the Mac dialog                           |
 
 ### Navigation and content
 
