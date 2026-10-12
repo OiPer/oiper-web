@@ -115,7 +115,3 @@ export function formatPercentage(value: number, digits = 0) {
     maximumFractionDigits: digits,
   }).format(value)}%`
 }
-
-export function formatSavePercent(exact: number, floored: number) {
-  return exact === floored ? `${floored}%` : `${floored}%+`
-}

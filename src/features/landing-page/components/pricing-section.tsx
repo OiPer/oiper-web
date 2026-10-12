@@ -116,12 +116,24 @@ function Pricing(props: {
     (plan) => plan.plan === 'MAX' && plan.interval === interval
   )
 
-  const periodLabel = interval === 'MONTHLY' ? '/ month' : '/ year'
   const intervalParam = interval === 'MONTHLY' ? 'monthly' : 'yearly'
+
+  function monthlyPrice(plan: PricingPlan) {
+    if (interval === 'MONTHLY') {
+      return formatCurrencyFromCents(plan.priceAmountCents)
+    }
+
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(plan.priceAmountCents / 1200)
+  }
 
   const bestYearlyPlan = props.plans
     .filter((plan) => plan.interval === 'YEARLY')
-    .sort((a, b) => b.discountPercentFloored - a.discountPercentFloored)[0]
+    .sort((a, b) => b.discountPercent - a.discountPercent)[0]
 
   const subscription = subscriptionQuery.data
   const isLapsed =
@@ -355,7 +367,7 @@ function Pricing(props: {
                 })
               }}
               variant="landing"
-              yearlySavePercent={bestYearlyPlan?.discountPercentFloored}
+              yearlySavePercent={bestYearlyPlan?.discountPercent}
             />
           </div>
         </div>
@@ -367,7 +379,6 @@ function Pricing(props: {
               price={formatCurrencyFromCents(free.priceAmountCents)}
               period="Forever"
               discountPercent={0}
-              discountPercentFloored={0}
               description="Unlimited transcription on your machine, no limits, no cost."
               features={free.features}
               featured={false}
@@ -381,10 +392,9 @@ function Pricing(props: {
           {pro && proCta && (
             <PlanCard
               displayName={pro.displayName}
-              price={formatCurrencyFromCents(pro.priceAmountCents)}
-              period={periodLabel}
+              price={monthlyPrice(pro)}
+              period="/ month"
               discountPercent={pro.discountPercent}
-              discountPercentFloored={pro.discountPercentFloored}
               description="Managed cloud transcription with a daily allowance."
               features={pro.features}
               featured={true}
@@ -395,10 +405,9 @@ function Pricing(props: {
           {max && maxCta && (
             <PlanCard
               displayName={max.displayName}
-              price={formatCurrencyFromCents(max.priceAmountCents)}
-              period={periodLabel}
+              price={monthlyPrice(max)}
+              period="/ month"
               discountPercent={max.discountPercent}
-              discountPercentFloored={max.discountPercentFloored}
               description="Unlimited managed cloud transcription, subject to abuse protection."
               features={max.features}
               featured={false}
