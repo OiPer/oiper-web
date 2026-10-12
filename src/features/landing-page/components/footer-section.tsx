@@ -21,11 +21,11 @@ import {
   ANCHOR_FEATURES,
   ANCHOR_LANGUAGES,
   ANCHOR_PERFORMANCE,
-  ANCHOR_PRICING,
   ANCHOR_PRIVACY,
   CHANGELOG_URL,
   DOCS_URL,
   GITHUB_REPO,
+  PRICING_URL,
   PRIVACY_POLICY_URL,
   RESOURCES_URL,
   TERMS_OF_SERVICE_URL,
@@ -40,7 +40,7 @@ const productLinks = [
   },
   { label: 'Privacy', href: ANCHOR_PRIVACY, destination: 'privacy' },
   { label: 'Languages', href: ANCHOR_LANGUAGES, destination: 'languages' },
-  { label: 'Pricing', href: ANCHOR_PRICING, destination: 'pricing' },
+  { label: 'Pricing', href: PRICING_URL, destination: 'pricing' },
   { label: 'FAQ', href: ANCHOR_FAQ, destination: 'faq' },
 ]
 

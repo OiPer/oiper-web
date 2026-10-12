@@ -5,6 +5,7 @@ import {
   CHANGELOG_URL,
   DOWNLOAD_URL,
   HOME,
+  PRICING_URL,
 } from '@/features/landing-page/constants/links'
 import { env } from '@/lib/env'
 import { joinUrl } from '@/lib/url'
@@ -14,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const paths = [
     HOME,
     DOWNLOAD_URL,
+    PRICING_URL,
     CHANGELOG_URL,
     ...Object.keys(GUIDES),
     ...docsSource.getPages().map((page) => page.url),

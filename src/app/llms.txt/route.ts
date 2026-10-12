@@ -26,6 +26,7 @@ export function GET() {
     '',
     `- [Home](${joinUrl(env.BASE_URL)}): Features, privacy, languages, and pricing.`,
     `- [Download](${joinUrl(env.BASE_URL, '/download')}): Installers for Windows, macOS (Apple Silicon and Intel) and Linux (AppImage, .deb, .rpm).`,
+    `- [Pricing](${joinUrl(env.BASE_URL, '/pricing')}): Free unlimited local transcription, your own API key at no extra cost, or Pro and Max plans for hosted models.`,
     `- [Changelog](${joinUrl(env.BASE_URL, '/resources/changelog')}): Every desktop release, newest first.`,
     '',
     '## Guides',

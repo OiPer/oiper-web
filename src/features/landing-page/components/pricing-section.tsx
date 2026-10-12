@@ -33,20 +33,29 @@ type PricingPlan = components['schemas']['PricingPlan']
 
 const subscriptionRequest = { cache: 'no-store' } as const
 
-export function PricingSection(props: { plans: PricingPlan[] }) {
+type Location = 'landing' | 'pricing_page'
+
+export function PricingSection(props: {
+  plans: PricingPlan[]
+  location: Location
+}) {
   return (
-    <Suspense fallback={<Pricing plans={props.plans} searchParams={null} />}>
-      <PricingWithSearchParams plans={props.plans} />
+    <Suspense fallback={<Pricing {...props} searchParams={null} />}>
+      <PricingWithSearchParams {...props} />
     </Suspense>
   )
 }
 
-function PricingWithSearchParams(props: { plans: PricingPlan[] }) {
-  return <Pricing plans={props.plans} searchParams={useSearchParams()} />
+function PricingWithSearchParams(props: {
+  plans: PricingPlan[]
+  location: Location
+}) {
+  return <Pricing {...props} searchParams={useSearchParams()} />
 }
 
 function Pricing(props: {
   plans: PricingPlan[]
+  location: Location
   searchParams: ReadonlyURLSearchParams | null
 }) {
   const { currentUser, isLoading: isAuthLoading } = useAuth()
@@ -65,7 +74,7 @@ function Pricing(props: {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting) return
-        logView('pricing', 'landing')
+        logView('pricing', props.location)
         observer.disconnect()
       },
       { threshold: 0.3 }
@@ -73,7 +82,7 @@ function Pricing(props: {
 
     observer.observe(section)
     return () => observer.disconnect()
-  }, [])
+  }, [props.location])
 
   const [changePlanTarget, setChangePlanTarget] =
     useState<PlanChangeTarget | null>(null)
@@ -131,7 +140,7 @@ function Pricing(props: {
     props.searchParams,
     props.plans,
     !!currentUser && !isStatusUnknown,
-    '/',
+    pathname,
     (target) => {
       setInterval(target.interval)
       document.getElementById('pricing')?.scrollIntoView()

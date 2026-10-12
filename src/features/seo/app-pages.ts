@@ -159,6 +159,14 @@ export const SITE_PAGES = {
       screenshot: 2,
     },
   },
+  '/pricing': {
+    og: {
+      title: 'OiPer Pricing',
+      description:
+        'Free and unlimited on your own computer, with your own API key or hosted cloud models',
+      screenshot: 4,
+    },
+  },
   '/linux': {
     og: {
       title: 'OiPer for Linux',

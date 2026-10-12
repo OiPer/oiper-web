@@ -25,7 +25,7 @@ export function LandingPage(props: {
       <TestimonialsSection />
       <LanguagesSection />
       <PrivacySection />
-      <PricingSection plans={props.plans} />
+      <PricingSection plans={props.plans} location="landing" />
       <FaqSection />
       <FooterSection />
     </main>
