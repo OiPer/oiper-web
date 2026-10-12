@@ -1,7 +1,6 @@
 'use client'
 
 import type { components } from '@/lib/api/schema'
-import { Suspense } from 'react'
 import { FaqSection } from './components/faq-section'
 import { FeaturesSection } from './components/features-section'
 import { FooterSection } from './components/footer-section'
@@ -26,9 +25,7 @@ export function LandingPage(props: {
       <TestimonialsSection />
       <LanguagesSection />
       <PrivacySection />
-      <Suspense fallback={null}>
-        <PricingSection plans={props.plans} />
-      </Suspense>
+      <PricingSection plans={props.plans} />
       <FaqSection />
       <FooterSection />
     </main>
