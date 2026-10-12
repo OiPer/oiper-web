@@ -1,7 +1,12 @@
 import { HOME, PRICING_URL } from '@/features/landing-page/constants/links'
 import { PRICING_FAQ, PricingPage } from '@/features/pricing/pricing-page'
 import { ogCopy } from '@/features/seo/app-pages'
-import { breadcrumbs, JsonLd, ORGANIZATION_ID } from '@/features/seo/json-ld'
+import {
+  breadcrumbs,
+  JsonLd,
+  ORGANIZATION_ID,
+  SOFTWARE_ID,
+} from '@/features/seo/json-ld'
 import { api } from '@/lib/api/client'
 import { env } from '@/lib/env'
 import { joinUrl } from '@/lib/url'
@@ -55,6 +60,7 @@ export default async function Page() {
             ]),
             {
               '@type': 'SoftwareApplication',
+              '@id': SOFTWARE_ID,
               name: 'OiPer',
               url: joinUrl(env.BASE_URL),
               applicationCategory: 'UtilitiesApplication',

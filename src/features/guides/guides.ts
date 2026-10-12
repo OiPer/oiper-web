@@ -1,4 +1,4 @@
-import type { OS } from '@/features/download/platforms'
+import type { Package } from '@/features/download/platforms'
 
 type Item = { title: string; text: string; docs?: string }
 
@@ -10,7 +10,7 @@ export type Guide = {
   heading: string
   intro: string
   updated: string
-  platform?: OS
+  platform?: Package['id']
   sections: { title: string; intro: string; items: Item[] }[]
   comparison?: {
     title: string
@@ -3096,7 +3096,7 @@ export const GUIDES = {
     heading: 'Speech to text for Ubuntu',
     intro:
       'Ubuntu LTS releases do not include voice typing. OiPer adds it: hold a hotkey, speak, and your words are typed into any Ubuntu app. Transcription runs locally with Whisper models, so it works offline and needs no account.',
-    platform: 'linux',
+    platform: 'linux-deb',
     sections: [
       {
         title: 'Install on Ubuntu',

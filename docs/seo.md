@@ -43,6 +43,13 @@ Research behind these is in [`docs/seo-research/`](seo-research): how AI assista
 - [x] Every guide shows a visible "Updated" date and `dateModified`; comparison titles carry the year
 - [x] Fixed an overclaim: the dictionary applies only in cloud and OiPer modes, never local Whisper. Every page now says so
 - [x] Footer groups guides into Guides, Compare and Use cases so every page is linked from every page
+- [x] `sitemap.xml` carries `lastmod`: each guide's `updated` date, and each docs and policy page's last git commit (fumadocs `lastModified`). Pages without a real date get none
+- [x] Docs and policy pages show "Last updated" and set `dateModified`
+- [x] Guide pages describe themselves fully in structured data (description, image, language, site, publisher) and point at the app with `about`
+- [x] One `SoftwareApplication` with `@id` `/#software` shared by home, pricing and the guides; home adds `softwareVersion` (latest release) and five screenshots
+- [x] Changelog RSS feed at `/resources/changelog/feed.xml`, linked from the changelog page
+- [x] `robots.txt` blocks `/download/` so crawlers don't fetch installers (the `/download` page stays crawlable)
+- [x] Platform guides link straight to the installer (`/download/<platform>`, `.deb` on `/linux/ubuntu`) instead of `/download?platform=`
 
 ### Must do (you)
 
@@ -56,6 +63,8 @@ Research behind these is in [`docs/seo-research/`](seo-research): how AI assista
 - [ ] Confirm a fact the new pages state: using your own API key needs no account and no paid plan
 - [ ] **Desktop app bug** found while writing `/linux/wayland`: on GNOME Wayland, if `wtype` is installed OiPer tries it first, it fails (GNOME doesn't support it), and there's no fallback to `dotool`/`ydotool`. Fix the fallback in `injection_linux.rs`
 - [ ] Recheck `/linux/ubuntu` once Ubuntu 26.10 ships (expected Oct 15): it describes the Myna voice typing feature as "aimed at 26.10"
+
+- [ ] Home page `<h1>` ("Type at the speed of speech.") has no search words. Pick wording that names dictation or voice to text
 
 ### Biggest levers left (ranked)
 
@@ -125,6 +134,9 @@ curl -s -o /dev/null -w "%{http_code}\n" https://dev.oiper.com/docs/nope      # 
 curl -s https://oiper.com/ | grep -o 'rel="canonical" href="[^"]*"'           # https://oiper.com
 curl -s https://oiper.com/ | grep -c 'id="pricing"'                          # > 0: pricing cards are server-rendered
 curl -s https://oiper.com/sitemap.xml | grep -c '<loc>'                       # 48 or more
+curl -s https://oiper.com/sitemap.xml | grep -c '<lastmod>'                   # > 40: guides and docs have dates
+curl -s https://oiper.com/resources/changelog/feed.xml | grep -c '<item>'     # > 0: RSS feed works
+curl -s https://oiper.com/robots.txt | grep 'Disallow: /download/'            # installers blocked
 curl -sI https://desktop.oiper.com/docs | grep -i location                    # 301 to oiper.com (after the Netlify change)
 ```
 

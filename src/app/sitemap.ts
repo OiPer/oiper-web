@@ -13,17 +13,24 @@ import { joinUrl } from '@/lib/url'
 import type { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const paths = [
-    HOME,
-    DOWNLOAD_URL,
-    PRICING_URL,
-    '/tools/speech-to-text',
-    CHANGELOG_URL,
-    ALTERNATIVES_URL,
-    ...Object.keys(GUIDES),
-    ...docsSource.getPages().map((page) => page.url),
-    ...resourcesSource.getPages().map((page) => page.url),
+  const pages: { path: string; lastModified?: string | Date }[] = [
+    { path: HOME },
+    { path: DOWNLOAD_URL },
+    { path: PRICING_URL },
+    { path: '/tools/speech-to-text' },
+    { path: CHANGELOG_URL },
+    { path: ALTERNATIVES_URL },
+    ...Object.entries(GUIDES).map(([path, guide]) => ({
+      path,
+      lastModified: guide.updated,
+    })),
+    ...[...docsSource.getPages(), ...resourcesSource.getPages()].map(
+      (page) => ({ path: page.url, lastModified: page.data.lastModified })
+    ),
   ]
 
-  return paths.map((path) => ({ url: joinUrl(env.BASE_URL, path) }))
+  return pages.map((page) => ({
+    url: joinUrl(env.BASE_URL, page.path),
+    lastModified: page.lastModified,
+  }))
 }

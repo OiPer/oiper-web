@@ -11,6 +11,7 @@ import {
   detectPackage,
   macDownloadProps,
   OS_LABELS,
+  PACKAGES,
   type OS,
   type Package,
 } from './platforms'
@@ -83,16 +84,35 @@ export function DownloadButton({
   className,
   iconClassName = 'size-4',
   compact = false,
+  platform,
 }: {
   location: string
   className?: string
   iconClassName?: string
   compact?: boolean
+  platform?: Package['id']
 }) {
   const buttonClassName = cn(
     'inline-flex items-center justify-center gap-2.5',
     className
   )
+
+  if (platform) {
+    const pkg = PACKAGES.find((item) => item.id === platform)
+    if (!pkg) throw new Error(`Unknown download platform: ${platform}`)
+
+    return (
+      <a
+        href={`${DOWNLOAD_URL}/${platform}`}
+        {...macDownloadProps(platform)}
+        className={buttonClassName}
+        onClick={() => logClick('download', location, { platform })}
+      >
+        <OSIcon os={pkg.os} className={iconClassName} />
+        Download for {OS_LABELS[pkg.os]}
+      </a>
+    )
+  }
 
   return (
     <>

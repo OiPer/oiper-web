@@ -39,7 +39,10 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      types: { 'application/rss+xml': `${CHANGELOG_URL}/feed.xml` },
+    },
     openGraph: {
       url,
       siteName: 'OiPer',
