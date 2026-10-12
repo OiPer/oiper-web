@@ -1,8 +1,13 @@
 import { BuildLink } from '@/features/download/build-link'
 import { getBuilds } from '@/features/download/download-page'
 import { OSIcon } from '@/features/download/os-icons'
-import { formatDate } from '@/lib/format'
-import { DocsBody, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page'
+import { formatPaddedDate } from '@/lib/format'
+import {
+  DocsBody,
+  DocsDescription,
+  DocsPage,
+  DocsTitle,
+} from 'fumadocs-ui/layouts/docs/page'
 import { ArrowDown, ArrowUp, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import type { Release } from './github-releases'
@@ -73,22 +78,31 @@ export function ChangelogPage({
       footer={{ enabled: false }}
     >
       <DocsTitle>Changelog</DocsTitle>
+      <DocsDescription>
+        Every OiPer Desktop release, newest first: new features, fixes, and
+        improvements, with installers for Windows, macOS and Linux.
+      </DocsDescription>
       <DocsBody>
         {releases.map((release) => (
           <section
             key={release.version}
-            className="border-border mt-10 border-t pt-10 first:mt-0 first:border-t-0 first:pt-0"
+            className="before:via-border relative mt-8 grid gap-x-6 pt-8 before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-linear-to-r before:from-transparent before:to-transparent first:mt-0 first:pt-0 first:before:hidden lg:grid-cols-[7rem_1fr]"
           >
-            <h2 id={release.anchor} className="mt-0! mb-1! scroll-mt-8">
-              <a href={`#${release.anchor}`}>{release.version}</a>
-            </h2>
-            <p className="text-muted-foreground mt-0! text-sm">
-              <time dateTime={release.publishedAt}>
-                {formatDate(release.publishedAt)}
-              </time>
-            </p>
-            <ReleaseNotes notes={release.notes} />
-            <ReleaseDownloads release={release} />
+            <div className="lg:sticky lg:top-8 lg:self-start">
+              <h2 id={release.anchor} className="mt-0! mb-1! scroll-mt-8">
+                <a href={`#${release.anchor}`}>{release.version}</a>
+              </h2>
+              <p className="text-muted-foreground -ms-px mt-0! text-sm">
+                <time dateTime={release.publishedAt}>
+                  {formatPaddedDate(release.publishedAt)}
+                </time>
+              </p>
+            </div>
+
+            <div className="min-w-0 lg:[&>*:first-child]:mt-0">
+              <ReleaseNotes notes={release.notes} />
+              <ReleaseDownloads release={release} />
+            </div>
           </section>
         ))}
 
