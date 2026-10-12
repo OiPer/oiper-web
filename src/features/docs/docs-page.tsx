@@ -12,7 +12,6 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
-  PageLastUpdate,
 } from 'fumadocs-ui/layouts/docs/page'
 import { createRelativeLink } from 'fumadocs-ui/mdx'
 import type { Metadata } from 'next'
@@ -60,6 +59,19 @@ export function DocumentationPage({ source, slug }: DocumentationPageProps) {
         }}
       />
       <DocsTitle>{page.data.title}</DocsTitle>
+
+      {page.data.lastModified && (
+        <p className="text-fd-muted-foreground -mt-4 text-xs">
+          Last updated{' '}
+          <time dateTime={page.data.lastModified.toISOString()}>
+            {page.data.lastModified.toLocaleDateString('en-US', {
+              dateStyle: 'medium',
+              timeZone: 'UTC',
+            })}
+          </time>
+        </p>
+      )}
+
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
         <MdxContent
@@ -68,10 +80,6 @@ export function DocumentationPage({ source, slug }: DocumentationPageProps) {
           })}
         />
       </DocsBody>
-
-      {page.data.lastModified && (
-        <PageLastUpdate date={page.data.lastModified} />
-      )}
     </DocsPage>
   )
 }
