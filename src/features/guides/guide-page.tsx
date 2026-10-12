@@ -15,6 +15,8 @@ import {
 } from '@/features/landing-page/constants/links'
 import { ogCopy } from '@/features/seo/app-pages'
 import { breadcrumbs, JsonLd } from '@/features/seo/json-ld'
+import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { GUIDES, type Guide, type GuidePath } from './guides'
@@ -166,6 +168,12 @@ export function GuidePage({ path }: { path: GuidePath }) {
       <JsonLd
         data={{
           '@graph': [
+            {
+              '@type': 'WebPage',
+              name: guide.heading,
+              url: joinUrl(env.BASE_URL, path),
+              dateModified: guide.updated,
+            },
             breadcrumbs([
               { name: 'Home', path: HOME },
               { name: guide.label, path },
@@ -206,6 +214,17 @@ export function GuidePage({ path }: { path: GuidePath }) {
           </h1>
           <p className="mt-6 text-[clamp(0.95rem,4vw,1.125rem)] leading-relaxed text-white/50">
             {guide.intro}
+          </p>
+          <p className="mt-4 text-sm text-white/35">
+            Updated{' '}
+            <time dateTime={guide.updated}>
+              {new Date(guide.updated).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: 'UTC',
+              })}
+            </time>
           </p>
           <div className="mt-10 flex flex-col items-center gap-5">
             {guide.platform ? (

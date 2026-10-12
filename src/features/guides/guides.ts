@@ -9,6 +9,7 @@ export type Guide = {
   description: string
   heading: string
   intro: string
+  updated: string
   platform?: OS
   sections: { title: string; intro: string; items: Item[] }[]
   comparison?: {
@@ -23,6 +24,7 @@ export type Guide = {
 export const GUIDES = {
   '/linux': {
     label: 'Linux',
+    updated: '2026-10-11',
     destination: 'linux',
     title: 'Local Speech to Text for Linux: On-Device Voice Typing | OiPer',
     description:
@@ -102,6 +104,7 @@ export const GUIDES = {
   },
   '/windows': {
     label: 'Windows',
+    updated: '2026-10-11',
     destination: 'windows',
     title: 'Local Speech to Text for Windows: On-Device Dictation | OiPer',
     description:
@@ -183,6 +186,7 @@ export const GUIDES = {
   },
   '/mac': {
     label: 'Mac',
+    updated: '2026-10-11',
     destination: 'mac',
     title: 'Local Speech to Text for Mac: On-Device Dictation | OiPer',
     description:
@@ -290,6 +294,7 @@ export const GUIDES = {
   },
   '/use-cases/coding': {
     label: 'Coding',
+    updated: '2026-10-11',
     destination: 'coding',
     title: 'Voice to Text for Coding: Local AI Prompt Dictation | OiPer',
     description:
@@ -371,6 +376,7 @@ export const GUIDES = {
   },
   '/alternatives/wispr-flow': {
     label: 'vs Wispr Flow',
+    updated: '2026-10-11',
     destination: 'wispr_flow_alternative',
     title: 'Free Local Wispr Flow Alternative: Windows, Mac, Linux | OiPer',
     description:
@@ -578,6 +584,7 @@ export const GUIDES = {
   },
   '/alternatives/superwhisper': {
     label: 'vs Superwhisper',
+    updated: '2026-10-11',
     destination: 'superwhisper_alternative',
     title: 'Free Superwhisper Alternative for Windows, Linux & Mac | OiPer',
     description:
