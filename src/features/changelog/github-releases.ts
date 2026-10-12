@@ -26,10 +26,13 @@ export interface Release {
 }
 
 async function fetchGitHub(url: string) {
+  const token = process.env.GITHUB_TOKEN
+
   return fetch(url, {
     headers: {
       Accept: 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     next: { revalidate: REVALIDATE_SECONDS },
   })
