@@ -4,17 +4,19 @@ import { Wrapper } from '@/components/wrapper'
 import { docsSource } from '@/features/docs/docs-source'
 import { resourcesSource } from '@/features/docs/resources-source'
 import { DownloadButton } from '@/features/download/download-button'
-import { OSIcon } from '@/features/download/os-icons'
-import { OS_LABELS } from '@/features/download/platforms'
 import { AuthNavActions } from '@/features/landing-page/components/auth-nav-actions'
 import { FooterSection } from '@/features/landing-page/components/footer-section'
-import {
-  DOCS_URL,
-  DOWNLOAD_URL,
-  HOME,
-} from '@/features/landing-page/constants/links'
+import { DOCS_URL, HOME } from '@/features/landing-page/constants/links'
 import { ogCopy } from '@/features/seo/app-pages'
-import { breadcrumbs, JsonLd } from '@/features/seo/json-ld'
+import {
+  breadcrumbs,
+  JsonLd,
+  ORGANIZATION_ID,
+  SOFTWARE_ID,
+  WEBSITE_ID,
+} from '@/features/seo/json-ld'
+import { env } from '@/lib/env'
+import { joinUrl } from '@/lib/url'
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { GUIDES, type Guide, type GuidePath } from './guides'
@@ -166,6 +168,19 @@ export function GuidePage({ path }: { path: GuidePath }) {
       <JsonLd
         data={{
           '@graph': [
+            {
+              '@type': 'WebPage',
+              '@id': joinUrl(env.BASE_URL, path),
+              name: guide.heading,
+              description: guide.description,
+              url: joinUrl(env.BASE_URL, path),
+              image: joinUrl(env.BASE_URL, path, 'opengraph-image'),
+              inLanguage: 'en',
+              dateModified: guide.updated,
+              isPartOf: { '@id': WEBSITE_ID },
+              publisher: { '@id': ORGANIZATION_ID },
+              about: { '@id': SOFTWARE_ID },
+            },
             breadcrumbs([
               { name: 'Home', path: HOME },
               { name: guide.label, path },
@@ -207,24 +222,24 @@ export function GuidePage({ path }: { path: GuidePath }) {
           <p className="mt-6 text-[clamp(0.95rem,4vw,1.125rem)] leading-relaxed text-white/50">
             {guide.intro}
           </p>
+          <p className="mt-4 text-sm text-white/35">
+            Updated{' '}
+            <time dateTime={guide.updated}>
+              {new Date(guide.updated).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: 'UTC',
+              })}
+            </time>
+          </p>
           <div className="mt-10 flex flex-col items-center gap-5">
-            {guide.platform ? (
-              <NavigationLink
-                href={`${DOWNLOAD_URL}?platform=${guide.platform}`}
-                location="guide"
-                destination="download"
-                className={DOWNLOAD_CLASS_NAME}
-              >
-                <OSIcon os={guide.platform} className="size-5" />
-                Download for {OS_LABELS[guide.platform]}
-              </NavigationLink>
-            ) : (
-              <DownloadButton
-                location="guide"
-                className={DOWNLOAD_CLASS_NAME}
-                iconClassName="size-5"
-              />
-            )}
+            <DownloadButton
+              location="guide"
+              platform={guide.platform}
+              className={DOWNLOAD_CLASS_NAME}
+              iconClassName="size-5"
+            />
             <NavigationLink
               href={DOCS_URL}
               location="guide"

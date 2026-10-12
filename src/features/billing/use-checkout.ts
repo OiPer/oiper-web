@@ -10,7 +10,7 @@ import { env } from '@/lib/env'
 import { openPaddleCheckout } from '@/lib/paddle'
 import { redirectToStripeCheckout } from '@/lib/stripe-checkout'
 import { useQueryClient } from '@tanstack/react-query'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, type ReadonlyURLSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -169,16 +169,16 @@ export function useStartCheckout() {
 }
 
 export function useCheckoutQueryParam(
+  searchParams: ReadonlyURLSearchParams | null,
   plans: PricingPlan[] | undefined,
   isReady: boolean,
   redirectTo: string,
   onSelect: (target: PlanChangeTarget) => void
 ) {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const checkoutPlan = searchParams.get('checkout')
+  const checkoutPlan = searchParams?.get('checkout') ?? null
   const checkoutInterval =
-    searchParams.get('interval') === 'yearly' ? 'YEARLY' : 'MONTHLY'
+    searchParams?.get('interval') === 'yearly' ? 'YEARLY' : 'MONTHLY'
   const loggedCancel = useRef(false)
 
   useEffect(() => {

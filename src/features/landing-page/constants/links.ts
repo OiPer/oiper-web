@@ -7,6 +7,8 @@ export const PRIVACY_POLICY_URL = '/resources/privacy-policy'
 export const TERMS_OF_SERVICE_URL = '/resources/terms-of-service'
 export const REFUND_POLICY_URL = '/resources/refund-policy'
 
+export const PRICING_URL = '/pricing'
+
 export const HOME = '/'
 
 export const ANCHOR_FEATURES = '/#features'

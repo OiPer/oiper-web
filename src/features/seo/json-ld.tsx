@@ -3,6 +3,7 @@ import { joinUrl } from '@/lib/url'
 
 export const ORGANIZATION_ID = joinUrl(env.BASE_URL, '/#organization')
 export const WEBSITE_ID = joinUrl(env.BASE_URL, '/#website')
+export const SOFTWARE_ID = joinUrl(env.BASE_URL, '/#software')
 
 export function breadcrumbs(items: { name: string; path: string }[]) {
   return {

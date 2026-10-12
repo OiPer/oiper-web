@@ -159,6 +159,22 @@ export const SITE_PAGES = {
       screenshot: 2,
     },
   },
+  '/tools/speech-to-text': {
+    og: {
+      title: 'Free Speech to Text',
+      description:
+        'Record or upload audio and get a transcript in your browser without uploading a thing',
+      screenshot: 3,
+    },
+  },
+  '/pricing': {
+    og: {
+      title: 'OiPer Pricing',
+      description:
+        'Free and unlimited on your own computer, with your own API key or hosted cloud models',
+      screenshot: 4,
+    },
+  },
   '/linux': {
     og: {
       title: 'OiPer for Linux',
@@ -191,6 +207,14 @@ export const SITE_PAGES = {
       screenshot: 5,
     },
   },
+  '/alternatives': {
+    og: {
+      title: 'Compare OiPer',
+      description:
+        'Honest comparisons with Wispr Flow, Superwhisper, Dragon and other dictation apps',
+      screenshot: 1,
+    },
+  },
   '/alternatives/wispr-flow': {
     og: {
       title: 'vs Wispr Flow',
@@ -204,6 +228,126 @@ export const SITE_PAGES = {
       title: 'vs Superwhisper',
       description:
         'Offline Whisper dictation that works the same on Windows and macOS and Linux',
+      screenshot: 4,
+    },
+  },
+  '/whisper-desktop-app': {
+    og: {
+      title: 'Whisper Desktop App',
+      description:
+        'Run Whisper locally on Windows and macOS and Linux and type what you say into any app',
+      screenshot: 4,
+    },
+  },
+  '/offline-speech-to-text': {
+    og: {
+      title: 'Offline Speech to Text',
+      description:
+        'Private dictation that runs on your own computer and keeps working with the Wi-Fi off',
+      screenshot: 2,
+    },
+  },
+  '/free-dictation-software': {
+    og: {
+      title: 'Free Dictation',
+      description:
+        'Unlimited local dictation on Windows and macOS and Linux with no account and no word limit',
+      screenshot: 1,
+    },
+  },
+  '/bring-your-own-api-key': {
+    og: {
+      title: 'Your Own API Key',
+      description:
+        'Dictate with your own OpenAI or Groq key and keep it on your machine, never sent to OiPer',
+      screenshot: 4,
+    },
+  },
+  '/alternatives/macwhisper': {
+    og: {
+      title: 'vs MacWhisper',
+      description:
+        'A MacWhisper alternative that brings local Whisper dictation to Windows and Linux too',
+      screenshot: 2,
+    },
+  },
+  '/alternatives/voiceink': {
+    og: {
+      title: 'vs VoiceInk',
+      description:
+        'A VoiceInk alternative with local on-device dictation on Windows, Linux and Intel Macs',
+      screenshot: 3,
+    },
+  },
+  '/alternatives/aqua-voice': {
+    og: {
+      title: 'vs Aqua Voice',
+      description:
+        'A private Aqua Voice alternative that transcribes on your device and works offline',
+      screenshot: 4,
+    },
+  },
+  '/alternatives/handy': {
+    og: {
+      title: 'vs Handy',
+      description:
+        'Free local dictation like Handy, plus profiles, AI formatting and cloud models with your key',
+      screenshot: 5,
+    },
+  },
+  '/alternatives/dragon': {
+    og: {
+      title: 'vs Dragon',
+      description:
+        'Free dictation for Windows and Mac and Linux that runs locally with no license to buy',
+      screenshot: 5,
+    },
+  },
+  '/alternatives/windows-voice-typing': {
+    og: {
+      title: 'vs Win Voice Typing',
+      description:
+        'Offline voice typing for Windows that works in more languages than Win+H',
+      screenshot: 2,
+    },
+  },
+  '/alternatives/apple-dictation': {
+    og: {
+      title: 'vs Apple Dictation',
+      description:
+        'Local dictation on Apple Silicon and Intel Macs with formatting and translation built in',
+      screenshot: 3,
+    },
+  },
+  '/use-cases/claude-code': {
+    og: {
+      title: 'Voice for Claude Code',
+      description:
+        'Speak prompts into Claude Code in any terminal and send them hands-free with auto submit',
+      screenshot: 5,
+    },
+  },
+  '/use-cases/accessibility': {
+    og: {
+      title: 'Dictation for RSI',
+      description:
+        'Write by speaking in any app when typing is painful or slow with free local dictation',
+      screenshot: 2,
+    },
+  },
+  '/linux/wayland': {
+    og: {
+      title: 'Wayland Voice Typing',
+      description:
+        'Dictate into any app on GNOME and KDE and Hyprland with the right typing tool for your compositor',
+      screenshot: 1,
+    },
+  },
+  '/linux/ubuntu': {
+    og: {
+      title: 'OiPer for Ubuntu',
+      description:
+        'Offline voice typing for Ubuntu 24.04 and 26.04 that types into any app on GNOME Wayland',
       screenshot: 4,
     },
   },

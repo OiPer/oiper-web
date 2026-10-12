@@ -22,11 +22,11 @@ import {
   ANCHOR_FEATURES,
   ANCHOR_LANGUAGES,
   ANCHOR_PERFORMANCE,
-  ANCHOR_PRICING,
   ANCHOR_PRIVACY,
   CHANGELOG_URL,
   DOCS_URL,
   GITHUB_REPO,
+  PRICING_URL,
   PRIVACY_POLICY_URL,
   REFUND_POLICY_URL,
   RESOURCES_URL,
@@ -42,8 +42,13 @@ const productLinks = [
   },
   { label: 'Privacy', href: ANCHOR_PRIVACY, destination: 'privacy' },
   { label: 'Languages', href: ANCHOR_LANGUAGES, destination: 'languages' },
-  { label: 'Pricing', href: ANCHOR_PRICING, destination: 'pricing' },
+  { label: 'Pricing', href: PRICING_URL, destination: 'pricing' },
   { label: 'FAQ', href: ANCHOR_FAQ, destination: 'faq' },
+  {
+    label: 'Speech to text online',
+    href: '/tools/speech-to-text',
+    destination: 'speech_to_text',
+  },
 ]
 
 const resourceLinks = [
@@ -105,6 +110,38 @@ const resourceLinks = [
   },
 ]
 
+const guideLinks = Object.entries(GUIDES).map(([href, guide]) => ({
+  href,
+  label: guide.label,
+  destination: guide.destination,
+}))
+
+const guideGroups = [
+  {
+    title: 'Guides',
+    links: guideLinks.filter(
+      (link) =>
+        !link.href.startsWith('/alternatives/') &&
+        !link.href.startsWith('/use-cases/')
+    ),
+  },
+  {
+    title: 'Compare',
+    links: [
+      {
+        href: '/alternatives',
+        label: 'All comparisons',
+        destination: 'alternatives',
+      },
+      ...guideLinks.filter((link) => link.href.startsWith('/alternatives/')),
+    ],
+  },
+  {
+    title: 'Use cases',
+    links: guideLinks.filter((link) => link.href.startsWith('/use-cases/')),
+  },
+]
+
 export function FooterSection() {
   return (
     <footer className="relative overflow-hidden border-t border-white/6 bg-[#0a0a0a]">
@@ -115,7 +152,7 @@ export function FooterSection() {
       <Wrapper className="relative pt-24 pb-12 sm:pt-32">
         <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/8 to-transparent" />
 
-        <div className="flex flex-col gap-16 lg:flex-row lg:items-start lg:justify-between">
+        <div className="flex flex-col gap-16">
           <div className="max-w-100">
             <h2 className="text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
               Ready to talk faster?
@@ -134,7 +171,7 @@ export function FooterSection() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-12 sm:grid-cols-3 sm:gap-20">
+          <div className="grid grid-cols-2 gap-12 sm:grid-cols-3 lg:grid-cols-5">
             <div>
               <p className="text-sm font-medium text-white/60">Product</p>
               <ul className="mt-6 space-y-3">
@@ -152,23 +189,27 @@ export function FooterSection() {
                 ))}
               </ul>
             </div>
-            <div>
-              <p className="text-sm font-medium text-white/60">Guides</p>
-              <ul className="mt-6 space-y-3">
-                {Object.entries(GUIDES).map(([path, guide]) => (
-                  <li key={path}>
-                    <NavigationLink
-                      href={path}
-                      location="footer"
-                      destination={guide.destination}
-                      className="text-sm text-white/35 hover:text-white/80"
-                    >
-                      {guide.label}
-                    </NavigationLink>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {guideGroups.map((group) => (
+              <div key={group.title}>
+                <p className="text-sm font-medium text-white/60">
+                  {group.title}
+                </p>
+                <ul className="mt-6 space-y-3">
+                  {group.links.map((link) => (
+                    <li key={link.href}>
+                      <NavigationLink
+                        href={link.href}
+                        location="footer"
+                        destination={link.destination}
+                        className="text-sm text-white/35 hover:text-white/80"
+                      >
+                        {link.label}
+                      </NavigationLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
             <div>
               <p className="text-sm font-medium text-white/60">Resources</p>
               <ul className="mt-6 space-y-3">

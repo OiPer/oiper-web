@@ -9,7 +9,11 @@ export default function robots(): MetadataRoute.Robots {
 
   if (env.APP_ENV === 'production') {
     return {
-      rules: { userAgent: '*', allow: '/', disallow: ['/api', '/dev'] },
+      rules: {
+        userAgent: '*',
+        allow: '/',
+        disallow: ['/api', '/dev', '/download/'],
+      },
       sitemap: joinUrl(env.BASE_URL, '/sitemap.xml'),
     }
   }

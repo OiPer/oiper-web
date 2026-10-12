@@ -22,17 +22,44 @@ import { logClick, logSelect, logView } from '@/lib/analytics'
 import { $api } from '@/lib/api/client'
 import type { components } from '@/lib/api/schema'
 import { formatCurrencyFromCents, planDisplayName } from '@/lib/format'
-import { usePathname, useSearchParams } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import {
+  usePathname,
+  useSearchParams,
+  type ReadonlyURLSearchParams,
+} from 'next/navigation'
+import { Suspense, useEffect, useRef, useState } from 'react'
 
 type PricingPlan = components['schemas']['PricingPlan']
 
 const subscriptionRequest = { cache: 'no-store' } as const
 
-export function PricingSection(props: { plans: PricingPlan[] }) {
+type Location = 'landing' | 'pricing_page'
+
+export function PricingSection(props: {
+  plans: PricingPlan[]
+  location: Location
+}) {
+  return (
+    <Suspense fallback={<Pricing {...props} searchParams={null} />}>
+      <PricingWithSearchParams {...props} />
+    </Suspense>
+  )
+}
+
+function PricingWithSearchParams(props: {
+  plans: PricingPlan[]
+  location: Location
+}) {
+  return <Pricing {...props} searchParams={useSearchParams()} />
+}
+
+function Pricing(props: {
+  plans: PricingPlan[]
+  location: Location
+  searchParams: ReadonlyURLSearchParams | null
+}) {
   const { currentUser, isLoading: isAuthLoading } = useAuth()
   const pathname = usePathname()
-  const searchParams = useSearchParams()
   const [interval, setInterval] = useState<'MONTHLY' | 'YEARLY'>('MONTHLY')
   const [isMounted, setIsMounted] = useState(false)
 
@@ -47,7 +74,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting) return
-        logView('pricing', 'landing')
+        logView('pricing', props.location)
         observer.disconnect()
       },
       { threshold: 0.3 }
@@ -55,7 +82,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
 
     observer.observe(section)
     return () => observer.disconnect()
-  }, [])
+  }, [props.location])
 
   const [changePlanTarget, setChangePlanTarget] =
     useState<PlanChangeTarget | null>(null)
@@ -110,9 +137,10 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     (!!currentUser && (subscriptionQuery.isPending || giftsQuery.isPending))
 
   useCheckoutQueryParam(
+    props.searchParams,
     props.plans,
     !!currentUser && !isStatusUnknown,
-    '/',
+    pathname,
     (target) => {
       setInterval(target.interval)
       document.getElementById('pricing')?.scrollIntoView()
@@ -128,7 +156,7 @@ export function PricingSection(props: { plans: PricingPlan[] }) {
     return buildAuthUrl({
       mode: 'modal',
       pathname,
-      searchParams: new URLSearchParams(searchParams.toString()),
+      searchParams: new URLSearchParams(props.searchParams?.toString()),
       page: 'signup',
       additionalParams: {
         checkout,

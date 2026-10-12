@@ -12,6 +12,7 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
+  PageLastUpdate,
 } from 'fumadocs-ui/layouts/docs/page'
 import { createRelativeLink } from 'fumadocs-ui/mdx'
 import type { Metadata } from 'next'
@@ -50,6 +51,7 @@ export function DocumentationPage({ source, slug }: DocumentationPageProps) {
               image: joinUrl(env.BASE_URL, '/og', page.url),
               publisher: { '@id': ORGANIZATION_ID },
               isPartOf: { '@id': WEBSITE_ID },
+              dateModified: page.data.lastModified?.toISOString(),
             },
             breadcrumbs(
               trail.map((item) => ({ name: item.data.title, path: item.url }))
@@ -66,6 +68,10 @@ export function DocumentationPage({ source, slug }: DocumentationPageProps) {
           })}
         />
       </DocsBody>
+
+      {page.data.lastModified && (
+        <PageLastUpdate date={page.data.lastModified} />
+      )}
     </DocsPage>
   )
 }

@@ -3,6 +3,7 @@ import { defineDocs } from 'fumadocs-mdx/macro'
 
 const resources = defineDocs({
   dir: 'content/resources',
+  docs: { lastModified: true },
 })
 
 export const resourcesSource = loader({
