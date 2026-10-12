@@ -383,6 +383,14 @@ export const SITE_PAGES = {
       screenshot: 1,
     },
   },
+  '/resources/refund-policy': {
+    og: {
+      title: 'Refund Policy',
+      description:
+        'A 14-day money-back guarantee on every Pro and Max payment, and how to ask for a refund',
+      screenshot: 1,
+    },
+  },
 } satisfies Record<string, { og: Og }>
 
 export type AppPagePath = keyof typeof APP_PAGES

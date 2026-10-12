@@ -3,7 +3,7 @@ title: Privacy Policy
 description: "OiPer privacy policy: what data the desktop app and website handle in local, cloud, and OiPer modes, what stays on your device, and how to delete it."
 ---
 
-Effective August 29, 2026.
+Effective October 12, 2026.
 
 OiPer is built so that the sensitive part of what we do — your voice and what you dictate —
 does not have to leave your computer. This policy describes what happens on your device, what
@@ -43,8 +43,16 @@ computer. This mode also sends contextual information about the application you 
 into — its name, window title, and text read from that window — because that context measurably
 improves accuracy on names and technical terms.
 
-We process this data to produce your transcript and return it. We do not sell it, and we do
-not use it to train models.
+We process this data to produce your transcript and return it. The hosted service runs on
+Cloudflare, sends the audio to Groq for transcription, and sends the transcript and context to
+a language model through OpenRouter for formatting. We do not store your audio, transcripts,
+or window text after returning the result. We do not sell them, and we do not use them to
+train models.
+
+For each request we keep a usage record: when it happened, how long the audio was, the model
+used, the language, your plan, and whether it succeeded. We use these records to apply your
+plan's daily limit, show your usage, and run the service. They contain none of your audio or
+text.
 
 ### Information about the app you dictate into
 
@@ -71,13 +79,31 @@ Everything the desktop app stores is on your computer and under your control:
 
 ## Account and website
 
-If you create an OiPer account we hold the information needed to run it: your email address,
-your name if you provide one, and authentication records handled by our identity provider.
-Payments for paid features are handled by our payment processor, which holds the billing
-details; we do not store your card number.
+If you create an OiPer account we hold the information needed to run it:
+
+- your email address, your name and profile picture if you provide them, and sign-in records
+  handled by our identity provider, WorkOS;
+- the computers you signed in to OiPer Desktop from: a device identifier, the device name, its
+  operating system, and when it was last used;
+- security logs of sign-ins and account changes, including IP address and browser details;
+- your plan, subscription status, gifts, and the usage records described above.
+
+Paddle, our reseller and Merchant of Record, handles payments and holds your billing details,
+including your card and billing address. We receive your subscription status and payment
+history from Paddle; we never see or store your card number.
 
 We use this information to give you access to your account and paid features, to bill you,
-and to contact you about your account.
+to keep your account secure, and to contact you about your account.
+
+### Emails
+
+We send account emails, such as a welcome message and confirmations, and, if you subscribe,
+product updates such as release notes. Emails are delivered through Amazon Web Services.
+
+Our emails record when you open them and which links you click, using an image and links
+unique to each email. We use this to understand which emails are useful. Blocking images in
+your mail app stops open tracking. You can unsubscribe from product updates with the link in
+any email or from your account's notification settings.
 
 ### Website analytics
 
@@ -87,6 +113,36 @@ receives your IP address and browser details from your browser. It runs only on 
 never in OiPer Desktop, and it never sees your audio or transcripts. You can block it with a
 browser content blocker or Google's
 [opt-out add-on](https://tools.google.com/dlpage/gaoptout).
+
+### Deleting your account
+
+You can delete your account from your account settings. This cancels any subscription, signs
+out all your desktop sessions, and stops all emails. We keep the records we need to meet tax,
+accounting, and legal obligations, and to prevent fraud and abuse. To have the rest of your
+personal information erased, write to [support@oiper.com](mailto:support@oiper.com).
+
+## Service providers
+
+We share personal information only with the providers that run parts of OiPer for us, and
+only what each one needs:
+
+| Provider             | What it does                                                    |
+| -------------------- | --------------------------------------------------------------- |
+| WorkOS               | Sign-in and account identity                                    |
+| Paddle               | Payments, invoices, tax, and refunds, as our Merchant of Record |
+| Cloudflare           | Runs the hosted transcription service                           |
+| Groq                 | Transcription in `oiper` mode                                   |
+| OpenRouter           | Formatting in `oiper` mode                                      |
+| Amazon Web Services  | Email delivery                                                  |
+| Google Analytics     | Website analytics                                               |
+| GitHub, Hugging Face | App updates and speech model downloads                          |
+
+## International transfers
+
+We and our providers process information in the United States and other countries, which may
+have different data protection laws from where you live. When we transfer personal
+information out of the EU, the UK, or Switzerland, we rely on the safeguards our providers
+offer for such transfers, such as the European Commission's Standard Contractual Clauses.
 
 ## What we do not do
 
@@ -114,5 +170,7 @@ If we change this policy we will update the effective date above and, for change
 materially affect you, notify account holders.
 
 ## Contact
+
+[COMPANY NAME], [ADDRESS], is responsible for your personal information under this policy.
 
 [support@oiper.com](mailto:support@oiper.com)
