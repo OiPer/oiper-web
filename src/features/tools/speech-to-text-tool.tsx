@@ -345,12 +345,16 @@ export function SpeechToTextTool() {
               {MODELS.find((item) => item.value === model)?.name}
             </SelectValue>
           </SelectTrigger>
-          <SelectContent position="popper" align="end" className="w-80">
+          <SelectContent
+            position="popper"
+            align="end"
+            className="w-80 [&:has([data-highlighted])_[data-state=checked]:not([data-highlighted])]:bg-transparent"
+          >
             {MODELS.map((item) => (
               <SelectItem
                 key={item.value}
                 value={item.value}
-                className="py-2 [&>span:last-child]:flex-1"
+                className="data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground py-2 pr-2 [&>span:first-child]:hidden [&>span:last-child]:flex-1"
               >
                 <div className="flex w-full flex-col gap-0.5">
                   <span className="flex items-baseline justify-between gap-4">

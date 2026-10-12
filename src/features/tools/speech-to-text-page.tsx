@@ -4,7 +4,7 @@ import { Wrapper } from '@/components/wrapper'
 import { DownloadButton } from '@/features/download/download-button'
 import { AuthNavActions } from '@/features/landing-page/components/auth-nav-actions'
 import { FooterSection } from '@/features/landing-page/components/footer-section'
-import { HOME } from '@/features/landing-page/constants/links'
+import { DOWNLOAD_URL, HOME } from '@/features/landing-page/constants/links'
 import { ogCopy } from '@/features/seo/app-pages'
 import { breadcrumbs, JsonLd, ORGANIZATION_ID } from '@/features/seo/json-ld'
 import { env } from '@/lib/env'
@@ -171,8 +171,20 @@ export function SpeechToTextPage() {
           </div>
 
           <p className="mt-6 text-sm leading-relaxed text-white/40">
-            Your audio never leaves your browser. Only the Whisper model files
-            are downloaded from Hugging Face, once, and cached on your device.
+            This is a quick way to try speech to text. Your audio never leaves
+            your browser, and the Whisper model is downloaded once and cached. A
+            browser can&apos;t use your computer&apos;s full power, so for
+            faster transcription, smart formatting and typing straight into any
+            app,{' '}
+            <NavigationLink
+              href={DOWNLOAD_URL}
+              location="speech_to_text"
+              destination="download"
+              className="text-white/70 underline underline-offset-4 hover:text-white"
+            >
+              get the free OiPer desktop app
+            </NavigationLink>
+            .
           </p>
         </Wrapper>
       </section>
