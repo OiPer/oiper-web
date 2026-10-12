@@ -84,7 +84,6 @@ export const metadata: Metadata = {
     title: ogCopy('/').title,
     description: ogCopy('/').description,
   },
-  verification: { google: env.GOOGLE_SITE_VERIFICATION },
   category: 'technology',
   formatDetection: {
     email: false,

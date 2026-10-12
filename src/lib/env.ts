@@ -45,7 +45,6 @@ const envSchema = z
         .regex(/^G-[A-Z0-9]+$/)
         .optional()
     ),
-    GOOGLE_SITE_VERIFICATION: optionalValue,
     EMAIL_TRACKING_PUBLIC_KEYS: z
       .string()
       .trim()
@@ -78,7 +77,6 @@ export const env = envSchema.parse({
   BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
   PADDLE_CLIENT_TOKEN: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
   GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
-  GOOGLE_SITE_VERIFICATION: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
   EMAIL_TRACKING_PUBLIC_KEYS:
     process.env.NEXT_PUBLIC_EMAIL_TRACKING_PUBLIC_KEYS,
 })

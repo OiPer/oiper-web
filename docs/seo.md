@@ -108,21 +108,20 @@ AI assistants mostly recommend apps that other sites mention. In one ChatGPT stu
 | Structured data | `Organization` + `WebSite` on every page. `SoftwareApplication` (live prices) + `FAQPage` on home. `TechArticle` + `BreadcrumbList` on docs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | AI assistants   | `/llms.txt`, built from the docs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | PWA             | Installable app: manifest with any and maskable icons, Apple touch icon and iOS web-app tags, five wide install screenshots, shortcuts to Download and Docs. `public/sw.js`, registered in production only. Network only: `/api`, `/auth`, `/account`, `/dev`, download redirects (page loads show the offline screen when the network fails). Cache first: hashed JS/CSS, icons, images, social cards. Every page: network first, falling back to the cached copy and then the offline page when the network fails. Pages are never served from cache first, because after a deploy cached HTML points at JS files that no longer exist. Bump `VERSION` in `sw.js` to drop old caches |
-| Analytics       | GA4 and the Search Console tag, each loaded only when its env var is set                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Analytics       | GA4, loaded only when its env var is set                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 
 ## Environment variables
 
 One variable per concern. Each environment gets its own value.
 
-| Variable                               | Production                                                | Development                        |
-| -------------------------------------- | --------------------------------------------------------- | ---------------------------------- |
-| `NEXT_PUBLIC_BASE_URL` (required)      | `https://oiper.com`                                       | `https://dev.oiper.com`            |
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID`        | `G-…` from the prod GA4 property                          | `G-…` from a separate dev property |
-| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console HTML-tag token (skip if you verify by DNS) | not needed                         |
+| Variable                          | Production                       | Development                        |
+| --------------------------------- | -------------------------------- | ---------------------------------- |
+| `NEXT_PUBLIC_BASE_URL` (required) | `https://oiper.com`              | `https://dev.oiper.com`            |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID`   | `G-…` from the prod GA4 property | `G-…` from a separate dev property |
 
 `NEXT_PUBLIC_BASE_URL` is the source of every absolute URL: canonicals, `og:url`, sitemap, `robots.txt`, structured data and `llms.txt`. Trailing slashes and surrounding spaces are stripped and the host is lowercased. A value with a path or query string fails at startup, and so does any value in production that isn't https or points at localhost. Locally, use `http://localhost:3000`.
 
-For the other two, empty means the feature is off. A malformed GA ID stops the app at startup.
+For `NEXT_PUBLIC_GA_MEASUREMENT_ID`, empty means GA is off. A malformed GA ID stops the app at startup.
 
 ## Verify after each deploy
 
