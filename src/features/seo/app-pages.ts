@@ -199,6 +199,14 @@ export const SITE_PAGES = {
       screenshot: 5,
     },
   },
+  '/alternatives': {
+    og: {
+      title: 'Compare OiPer',
+      description:
+        'Honest comparisons with Wispr Flow, Superwhisper, Dragon and other dictation apps',
+      screenshot: 1,
+    },
+  },
   '/alternatives/wispr-flow': {
     og: {
       title: 'vs Wispr Flow',

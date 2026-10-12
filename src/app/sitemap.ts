@@ -1,5 +1,6 @@
 import { docsSource } from '@/features/docs/docs-source'
 import { resourcesSource } from '@/features/docs/resources-source'
+import { ALTERNATIVES_URL } from '@/features/guides/alternatives-page'
 import { GUIDES } from '@/features/guides/guides'
 import {
   CHANGELOG_URL,
@@ -17,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     DOWNLOAD_URL,
     PRICING_URL,
     CHANGELOG_URL,
+    ALTERNATIVES_URL,
     ...Object.keys(GUIDES),
     ...docsSource.getPages().map((page) => page.url),
     ...resourcesSource.getPages().map((page) => page.url),
