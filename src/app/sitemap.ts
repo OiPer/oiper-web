@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     HOME,
     DOWNLOAD_URL,
     PRICING_URL,
+    '/tools/speech-to-text',
     CHANGELOG_URL,
     ALTERNATIVES_URL,
     ...Object.keys(GUIDES),

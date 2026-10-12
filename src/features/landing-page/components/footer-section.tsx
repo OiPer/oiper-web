@@ -42,6 +42,11 @@ const productLinks = [
   { label: 'Languages', href: ANCHOR_LANGUAGES, destination: 'languages' },
   { label: 'Pricing', href: PRICING_URL, destination: 'pricing' },
   { label: 'FAQ', href: ANCHOR_FAQ, destination: 'faq' },
+  {
+    label: 'Speech to text online',
+    href: '/tools/speech-to-text',
+    destination: 'speech_to_text',
+  },
 ]
 
 const resourceLinks = [
@@ -138,7 +143,7 @@ export function FooterSection() {
       <Wrapper className="relative pt-24 pb-12 sm:pt-32">
         <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/8 to-transparent" />
 
-        <div className="flex flex-col gap-16 xl:flex-row xl:items-start xl:justify-between">
+        <div className="flex flex-col gap-16">
           <div className="max-w-100">
             <h2 className="text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
               Ready to talk faster?
@@ -157,7 +162,7 @@ export function FooterSection() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-12 sm:grid-cols-3 sm:gap-16 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-12 sm:grid-cols-3 lg:grid-cols-5">
             <div>
               <p className="text-sm font-medium text-white/60">Product</p>
               <ul className="mt-6 space-y-3">

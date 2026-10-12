@@ -159,6 +159,14 @@ export const SITE_PAGES = {
       screenshot: 2,
     },
   },
+  '/tools/speech-to-text': {
+    og: {
+      title: 'Free Speech to Text',
+      description:
+        'Record or upload audio and get a transcript in your browser without uploading a thing',
+      screenshot: 3,
+    },
+  },
   '/pricing': {
     og: {
       title: 'OiPer Pricing',
