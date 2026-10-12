@@ -4,7 +4,12 @@ import type { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
   if (env.APP_ENV === 'development') {
-    return { rules: { userAgent: '*', disallow: '/' } }
+    return {
+      rules: [
+        { userAgent: ['Googlebot', 'Bingbot'], allow: '/' },
+        { userAgent: '*', disallow: '/' },
+      ],
+    }
   }
 
   if (env.APP_ENV === 'production') {
