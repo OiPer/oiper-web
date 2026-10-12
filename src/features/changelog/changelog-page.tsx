@@ -1,6 +1,9 @@
+import { BuildLink } from '@/features/download/build-link'
+import { getBuilds } from '@/features/download/download-page'
+import { OSIcon } from '@/features/download/os-icons'
 import { formatDate } from '@/lib/format'
 import { DocsBody, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page'
-import { ArrowDown, ArrowUp, History } from 'lucide-react'
+import { ArrowDown, ArrowUp, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import type { Release } from './github-releases'
 import { ReleaseNotes } from './release-notes'
@@ -69,13 +72,7 @@ export function ChangelogPage({
       }}
       footer={{ enabled: false }}
     >
-      <DocsTitle className="flex items-center gap-3">
-        <History
-          aria-hidden="true"
-          className="text-fd-muted-foreground size-7"
-        />
-        Changelog
-      </DocsTitle>
+      <DocsTitle>Changelog</DocsTitle>
       <DocsBody>
         {releases.map((release) => (
           <section
@@ -91,6 +88,7 @@ export function ChangelogPage({
               </time>
             </p>
             <ReleaseNotes notes={release.notes} />
+            <ReleaseDownloads release={release} />
           </section>
         ))}
 
@@ -116,5 +114,43 @@ export function ChangelogPage({
         </nav>
       </DocsBody>
     </DocsPage>
+  )
+}
+
+function ReleaseDownloads({ release }: { release: Release }) {
+  const builds = getBuilds(release)
+
+  if (builds.length === 0) return null
+
+  const platforms = [...new Set(builds.map(({ pkg }) => pkg.os))]
+
+  return (
+    <details className="group not-prose border-border mt-6 rounded-xl border">
+      <summary className="text-muted-foreground hover:text-foreground flex cursor-pointer list-none items-center gap-2 px-4 py-2.5 text-sm [&::-webkit-details-marker]:hidden">
+        <ChevronRight className="size-4 transition-transform group-open:rotate-90" />
+        <span className="flex-1">Downloads</span>
+        {platforms.map((os) => (
+          <OSIcon key={os} os={os} className="size-3.5" />
+        ))}
+      </summary>
+
+      <ul className="border-border border-t px-1 py-1">
+        {builds.map(({ pkg, asset }) => (
+          <li key={pkg.id} className="hover:bg-muted rounded-lg">
+            <BuildLink
+              pkg={pkg}
+              url={asset.url}
+              macAltUrl={
+                builds.find(
+                  (build) => build.pkg.os === 'macos' && build.pkg !== pkg
+                )?.asset.url ?? null
+              }
+              size={asset.size}
+              location="changelog"
+            />
+          </li>
+        ))}
+      </ul>
+    </details>
   )
 }

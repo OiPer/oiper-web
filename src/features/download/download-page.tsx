@@ -19,7 +19,7 @@ import { findAsset, OS_LABELS, PACKAGES, type OS } from './platforms'
 
 const OSES = Object.keys(OS_LABELS) as OS[]
 
-function getBuilds(release: Release, platform?: OS) {
+export function getBuilds(release: Release, platform?: OS) {
   const builds = PACKAGES.flatMap((pkg) => {
     const asset = findAsset(release.assets, pkg)
     return asset ? [{ pkg, asset }] : []
