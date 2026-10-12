@@ -5,6 +5,7 @@ export const RESOURCES_URL = '/resources'
 export const CHANGELOG_URL = '/resources/changelog'
 export const PRIVACY_POLICY_URL = '/resources/privacy-policy'
 export const TERMS_OF_SERVICE_URL = '/resources/terms-of-service'
+export const REFUND_POLICY_URL = '/resources/refund-policy'
 
 export const PRICING_URL = '/pricing'
 

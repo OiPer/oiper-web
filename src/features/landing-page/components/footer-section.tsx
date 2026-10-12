@@ -10,6 +10,7 @@ import {
   Github,
   Library,
   LifeBuoy,
+  ReceiptText,
   Scale,
   ShieldCheck,
   Tag,
@@ -27,6 +28,7 @@ import {
   GITHUB_REPO,
   PRICING_URL,
   PRIVACY_POLICY_URL,
+  REFUND_POLICY_URL,
   RESOURCES_URL,
   TERMS_OF_SERVICE_URL,
 } from '../constants/links'
@@ -97,6 +99,13 @@ const resourceLinks = [
     label: 'Terms',
     href: TERMS_OF_SERVICE_URL,
     destination: 'terms_of_service',
+    external: false,
+  },
+  {
+    icon: ReceiptText,
+    label: 'Refunds',
+    href: REFUND_POLICY_URL,
+    destination: 'refund_policy',
     external: false,
   },
 ]
