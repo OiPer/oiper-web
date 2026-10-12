@@ -236,11 +236,11 @@ Every event the site sends. All events also carry `location`.
 
 ### Speech to text tool
 
-| Event                                              | Location         | Details                                                                                                                    | When                                                                 |
-| -------------------------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `transcription_started` / `_completed` / `_failed` | `speech_to_text` | `source` (`microphone` `file`), `model` (`tiny` `base`); `device` (`webgpu` `wasm`) on completion; `error_type` on failure | Audio was decoded and sent to the in-browser model, or a step failed |
-| `transcript_copy_clicked`                          | `speech_to_text` | —                                                                                                                          | "Copy" under the transcript                                          |
-| `transcript_download_clicked`                      | `speech_to_text` | —                                                                                                                          | "Download .txt" under the transcript                                 |
+| Event                                              | Location         | Details                                                                                                                                             | When                                                                 |
+| -------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `transcription_started` / `_completed` / `_failed` | `speech_to_text` | `source` (`microphone` `file`), `model` (`tiny` `base` `small` `large-v3-turbo`); `device` (`webgpu` `wasm`) on completion; `error_type` on failure | Audio was decoded and sent to the in-browser model, or a step failed |
+| `transcript_copy_clicked`                          | `speech_to_text` | —                                                                                                                                                   | "Copy" under the transcript                                          |
+| `transcript_download_clicked`                      | `speech_to_text` | —                                                                                                                                                   | "Download" under the transcript                                      |
 
 ## Intentionally not tracked
 

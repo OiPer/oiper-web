@@ -38,7 +38,7 @@ export const speechToTextMetadata: Metadata = {
 const STEPS = [
   {
     title: 'Record or upload',
-    text: 'Press "Record from microphone" and speak, then press Stop. Or upload an audio or video file: MP3, WAV, M4A, OGG, WebM, FLAC or MP4 all work in modern browsers.',
+    text: 'Press "Record" and speak, then press "Done". Or upload an audio or video file: MP3, WAV, M4A, OGG, WebM, FLAC or MP4 all work in modern browsers.',
   },
   {
     title: 'Let Whisper transcribe it',
@@ -84,12 +84,12 @@ const FAQ = [
   {
     question: 'Which languages does it support?',
     answer:
-      'Whisper understands around 99 languages and detects the spoken language automatically. Accuracy is best for English and other widely spoken languages, and the Base model is more accurate than Tiny.',
+      'Whisper understands around 99 languages and detects the spoken language automatically. Accuracy is best for English and other widely spoken languages, and larger models are more accurate: Whisper Large v3 Turbo is the most accurate, Whisper Tiny the fastest.',
   },
   {
     question: 'How long can a recording be?',
     answer:
-      'There is no fixed limit. Long audio is transcribed in 30-second pieces with a progress bar. Speed depends on your device: browsers with WebGPU run much faster, while on CPU an hour of audio can take a long time.',
+      'There is no fixed limit. Long audio is transcribed in 30-second pieces. Speed depends on your device: browsers with WebGPU run much faster, while on CPU an hour of audio can take a long time.',
   },
   {
     question: 'How is this different from the OiPer desktop app?',
@@ -200,12 +200,11 @@ export function SpeechToTextPage() {
       </section>
 
       <section className="border-b border-white/6 py-24 sm:py-32">
-        <Wrapper
-          maxWidth="48rem"
-          className="flex flex-col items-center text-center"
-        >
-          <h2 className={H2_CLASS_NAME}>Want this in every app?</h2>
-          <p className="mt-5 text-base leading-relaxed text-white/50">
+        <Wrapper>
+          <h2 className={`max-w-180 ${H2_CLASS_NAME}`}>
+            Want this in every app?
+          </h2>
+          <p className="mt-5 max-w-180 text-base leading-relaxed text-white/50">
             This page is great for a single recording. If you’d rather talk than
             type all day, OiPer is a free desktop app that turns speech into
             text wherever you’re writing.
@@ -214,7 +213,7 @@ export function SpeechToTextPage() {
             {DESKTOP_FEATURES.map((item) => (
               <div key={item.title}>
                 <h3 className={H3_CLASS_NAME}>{item.title}</h3>
-                <p className={`mx-auto ${TEXT_CLASS_NAME}`}>{item.text}</p>
+                <p className={TEXT_CLASS_NAME}>{item.text}</p>
               </div>
             ))}
           </div>

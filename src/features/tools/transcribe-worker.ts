@@ -1,17 +1,19 @@
 import {
+  ModelRegistry,
   pipeline,
   Tensor,
-  WhisperTextStreamer,
   type AutomaticSpeechRecognitionOutput,
   type AutomaticSpeechRecognitionPipeline,
-  type WhisperTokenizer,
 } from '@huggingface/transformers'
 
-export type WorkerRequest = { audio: Float32Array; model: 'tiny' | 'base' }
+export type WorkerRequest = {
+  audio: Float32Array
+  model: 'tiny' | 'base' | 'small' | 'large-v3-turbo'
+}
 
 export type WorkerResponse =
   | { status: 'loading'; progress: number }
-  | { status: 'transcribing'; progress: number }
+  | { status: 'transcribing' }
   | { status: 'done'; text: string; device: 'webgpu' | 'wasm' }
   | { status: 'error'; error: string }
 
@@ -44,22 +46,31 @@ async function hasWebGPU() {
 }
 
 async function create(model: string, device: 'webgpu' | 'wasm') {
-  return await pipeline(
-    'automatic-speech-recognition',
-    `onnx-community/whisper-${model}`,
-    {
-      device,
-      dtype:
-        device === 'webgpu'
-          ? { encoder_model: 'fp32', decoder_model_merged: 'q4' }
-          : 'q8',
-      progress_callback: (info) => {
-        if (info.status === 'progress_total') {
-          post({ status: 'loading', progress: info.progress })
+  const id = `onnx-community/whisper-${model}`
+  const dtype =
+    device === 'webgpu'
+      ? {
+          encoder_model:
+            model === 'large-v3-turbo' ? ('fp16' as const) : ('fp32' as const),
+          decoder_model_merged: 'q4' as const,
         }
-      },
-    }
+      : 'q8'
+
+  const cached = await ModelRegistry.is_pipeline_cached(
+    'automatic-speech-recognition',
+    id,
+    { device, dtype }
   )
+
+  return await pipeline('automatic-speech-recognition', id, {
+    device,
+    dtype,
+    progress_callback: (info) => {
+      if (!cached && info.status === 'progress_total') {
+        post({ status: 'loading', progress: info.progress })
+      }
+    },
+  })
 }
 
 async function detect(
@@ -124,12 +135,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
     return post({ status: 'error', error: 'model_load_failed' })
   }
 
-  const size = CHUNK_S * SAMPLE_RATE
-  const jump = (CHUNK_S - 2 * STRIDE_S) * SAMPLE_RATE
-  const total = 1 + Math.ceil(Math.max(0, audio.length - size) / jump)
-  let done = 0
-
-  post({ status: 'transcribing', progress: 0 })
+  post({ status: 'transcribing' })
 
   try {
     const output = (await loaded.pipe(audio, {
@@ -137,16 +143,6 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       language: await detect(loaded.pipe, audio),
       chunk_length_s: CHUNK_S,
       stride_length_s: STRIDE_S,
-      streamer: new WhisperTextStreamer(
-        loaded.pipe.tokenizer as WhisperTokenizer,
-        {
-          callback_function: () => null,
-          on_finalize: () => {
-            done++
-            post({ status: 'transcribing', progress: (done / total) * 100 })
-          },
-        }
-      ),
     })) as AutomaticSpeechRecognitionOutput
 
     post({ status: 'done', text: output.text.trim(), device: loaded.device })

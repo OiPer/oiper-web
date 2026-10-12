@@ -1,15 +1,64 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Spinner } from '@/components/ui/spinner'
+import { Textarea } from '@/components/ui/textarea'
 import { logClick, logComplete, logError, logStart } from '@/lib/analytics'
+import { cn } from '@/lib/utils'
 import { Check, Copy, Download, Mic, Square, Upload } from 'lucide-react'
 import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 import type { WorkerRequest, WorkerResponse } from './transcribe-worker'
 
 type Source = 'microphone' | 'file'
 type Model = WorkerRequest['model']
-type Status = 'idle' | 'recording' | 'decoding' | 'loading' | 'transcribing'
+type Status = 'idle' | 'recording' | 'loading' | 'transcribing'
 
 const LOCATION = 'speech_to_text'
+
+const MODELS: {
+  value: Model
+  name: string
+  text: string
+  gpu: string
+  cpu: string
+}[] = [
+  {
+    value: 'tiny',
+    name: 'Whisper Tiny',
+    text: 'Fastest, fine for clear speech',
+    gpu: '~120 MB',
+    cpu: '~40 MB',
+  },
+  {
+    value: 'base',
+    name: 'Whisper Base',
+    text: 'Balanced speed and accuracy',
+    gpu: '~205 MB',
+    cpu: '~75 MB',
+  },
+  {
+    value: 'small',
+    name: 'Whisper Small',
+    text: 'More accurate, handles accents better',
+    gpu: '~585 MB',
+    cpu: '~250 MB',
+  },
+  {
+    value: 'large-v3-turbo',
+    name: 'Whisper Large v3 Turbo',
+    text: 'Most accurate, best on a fast computer',
+    gpu: '~1.6 GB',
+    cpu: '~1.1 GB',
+  },
+]
 
 const ERRORS: Record<string, string> = {
   unsupported_browser:
@@ -23,16 +72,9 @@ const ERRORS: Record<string, string> = {
   model_load_failed:
     "The speech model couldn't be downloaded. Check your connection and try again.",
   transcription_failed:
-    'Transcription failed. Try again, or switch to the Tiny model.',
+    'Transcription failed. Try again, or switch to Whisper Tiny.',
   unknown: 'Something went wrong. Please try again.',
 }
-
-const BUTTON_CLASS_NAME =
-  'inline-flex h-11 items-center justify-center gap-2 rounded-md px-5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40'
-
-const PRIMARY_CLASS_NAME = `${BUTTON_CLASS_NAME} bg-white text-[#0a0a0a] hover:bg-white/90`
-
-const SECONDARY_CLASS_NAME = `${BUTTON_CLASS_NAME} border border-white/10 text-white/80 hover:bg-white/5`
 
 function supported() {
   return (
@@ -69,9 +111,22 @@ export function SpeechToTextTool() {
   const [text, setText] = useState('')
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
+  const [gpu, setGpu] = useState(false)
 
   const worker = useRef<Worker | null>(null)
   const recorder = useRef<MediaRecorder | null>(null)
+  const run = useRef(0)
+
+  useEffect(() => {
+    const navigatorGpu = (
+      navigator as Navigator & { gpu?: { requestAdapter(): Promise<unknown> } }
+    ).gpu
+
+    navigatorGpu
+      ?.requestAdapter()
+      .then((adapter) => setGpu(Boolean(adapter)))
+      .catch(() => setGpu(false))
+  }, [])
 
   useEffect(() => {
     return () => {
@@ -81,6 +136,14 @@ export function SpeechToTextTool() {
   }, [])
 
   const busy = status !== 'idle'
+  const processing = status === 'loading' || status === 'transcribing'
+
+  function cancel() {
+    run.current++
+    worker.current?.terminate()
+    worker.current = null
+    setStatus('idle')
+  }
 
   function fail(source: Source, code: string) {
     setStatus('idle')
@@ -89,16 +152,21 @@ export function SpeechToTextTool() {
   }
 
   async function transcribe(blob: Blob, source: Source) {
+    const id = ++run.current
+
     setError('')
-    setStatus('decoding')
+    setStatus('transcribing')
 
     let audio: Float32Array
 
     try {
       audio = await decode(blob)
     } catch {
+      if (id !== run.current) return
       return fail(source, 'decode_failed')
     }
+
+    if (id !== run.current) return
 
     if (audio.length === 0) return fail(source, 'no_audio')
 
@@ -111,15 +179,16 @@ export function SpeechToTextTool() {
 
     logStart('transcription', LOCATION, { source, model })
     setProgress(0)
-    setStatus('loading')
 
     worker.current.onmessage = (event: MessageEvent<WorkerResponse>) => {
       const message = event.data
 
-      if (message.status === 'loading' || message.status === 'transcribing') {
-        setStatus(message.status)
+      if (message.status === 'loading') {
+        setStatus('loading')
         return setProgress(message.progress)
       }
+
+      if (message.status === 'transcribing') return setStatus('transcribing')
 
       if (message.status === 'error') return fail(source, message.error)
 
@@ -144,6 +213,8 @@ export function SpeechToTextTool() {
   }
 
   async function record() {
+    if (processing) cancel()
+
     setError('')
 
     if (
@@ -187,6 +258,7 @@ export function SpeechToTextTool() {
     event.target.value = ''
 
     if (!file) return
+    if (processing) cancel()
     if (!supported()) return fail('file', 'unsupported_browser')
 
     transcribe(file, 'file')
@@ -211,119 +283,142 @@ export function SpeechToTextTool() {
     logClick('transcript_download', LOCATION)
   }
 
-  const label = {
-    idle: '',
-    recording: 'Recording… press Stop when you’re done.',
-    decoding: 'Reading audio…',
-    loading: `Downloading the speech model (first time only)… ${Math.round(progress)}%`,
-    transcribing: `Transcribing… ${Math.round(progress)}%`,
-  }[status]
-
   return (
-    <div className="w-full rounded-xl border border-white/10 bg-white/2 p-5 text-left sm:p-8">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        {status === 'recording' ? (
-          <button
-            type="button"
-            className={PRIMARY_CLASS_NAME}
-            onClick={() => recorder.current?.stop()}
-          >
-            <Square className="size-4 fill-current" aria-hidden="true" />
-            Stop recording
-          </button>
-        ) : (
-          <button
-            type="button"
-            className={PRIMARY_CLASS_NAME}
-            disabled={busy}
-            onClick={record}
-          >
-            <Mic className="size-4" aria-hidden="true" />
-            Record from microphone
-          </button>
-        )}
-
-        <label
-          className={`${SECONDARY_CLASS_NAME} cursor-pointer has-disabled:cursor-not-allowed has-disabled:opacity-40`}
+    <div className="w-full rounded-xl border border-white/10 bg-white/2 p-4 text-left sm:p-6">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          onClick={
+            status === 'recording' ? () => recorder.current?.stop() : record
+          }
         >
-          <Upload className="size-4" aria-hidden="true" />
-          Upload audio or video
-          <input
-            type="file"
-            accept="audio/*,video/*"
-            className="sr-only"
-            disabled={busy}
-            onChange={upload}
-          />
-        </label>
+          {status === 'recording' ? (
+            <Square className="fill-current" />
+          ) : (
+            <Mic />
+          )}
 
-        <label className="flex items-center gap-2 text-sm text-white/50 sm:ml-auto">
-          Model
-          <select
-            value={model}
-            disabled={busy}
-            onChange={(event) => setModel(event.target.value as Model)}
-            className="h-11 rounded-md border border-white/10 bg-[#0a0a0a] px-3 text-white/80 disabled:opacity-40"
-          >
-            <option value="base">Base (more accurate)</option>
-            <option value="tiny">Tiny (faster)</option>
-          </select>
-        </label>
+          <span className="grid">
+            <span
+              className={cn(
+                'col-start-1 row-start-1',
+                status === 'recording' && 'invisible'
+              )}
+            >
+              Record
+            </span>
+            <span
+              className={cn(
+                'col-start-1 row-start-1',
+                status !== 'recording' && 'invisible'
+              )}
+            >
+              Done
+            </span>
+          </span>
+        </Button>
+
+        <Button
+          asChild
+          variant="outline"
+          className="cursor-pointer has-disabled:pointer-events-none has-disabled:opacity-50"
+        >
+          <label>
+            <Upload />
+            Upload file
+            <input
+              type="file"
+              accept="audio/*,video/*"
+              className="sr-only"
+              disabled={status === 'recording'}
+              onChange={upload}
+            />
+          </label>
+        </Button>
+
+        <Select
+          value={model}
+          disabled={busy}
+          onValueChange={(value) => setModel(value as Model)}
+        >
+          <SelectTrigger aria-label="Model" className="ml-auto">
+            <SelectValue>
+              {MODELS.find((item) => item.value === model)?.name}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent position="popper" align="end" className="w-80">
+            {MODELS.map((item) => (
+              <SelectItem
+                key={item.value}
+                value={item.value}
+                className="py-2 [&>span:last-child]:flex-1"
+              >
+                <div className="flex w-full flex-col gap-0.5">
+                  <span className="flex items-baseline justify-between gap-4">
+                    <span className="font-medium">{item.name}</span>
+                    <span className="text-muted-foreground text-xs tabular-nums">
+                      {gpu ? item.gpu : item.cpu}
+                    </span>
+                  </span>
+                  <span className="text-muted-foreground text-xs">
+                    {item.text}
+                  </span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      <div className="mt-5 min-h-6" aria-live="polite">
+      <div aria-live="polite">
         {error && (
-          <p role="alert" className="text-sm text-red-400">
+          <p role="alert" className="text-destructive mt-4 text-sm">
             {ERRORS[error] ?? ERRORS.unknown}
           </p>
         )}
-        {!error && busy && (
-          <div>
-            <p className="text-sm text-white/70">{label}</p>
-            {(status === 'loading' || status === 'transcribing') && (
-              <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/10">
-                <div
-                  className="h-full bg-white"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            )}
+
+        {status === 'loading' && (
+          <div className="mt-4">
+            <p className="text-muted-foreground text-sm">
+              Downloading the speech model (first time only)…{' '}
+              {Math.round(progress)}%
+            </p>
+
+            <Progress value={progress} className="mt-2 h-1" />
           </div>
         )}
       </div>
 
-      <textarea
-        value={text}
-        onChange={(event) => setText(event.target.value)}
-        placeholder="Your transcript appears here."
-        aria-label="Transcript"
-        rows={8}
-        className="mt-4 w-full resize-y rounded-md border border-white/10 bg-[#0a0a0a] p-4 text-base leading-relaxed text-white/90 placeholder:text-white/30 focus:border-white/30 focus:outline-none"
-      />
+      <div className="border-input dark:bg-input/30 focus-within:border-ring focus-within:ring-ring/50 relative mt-4 overflow-hidden rounded-lg border focus-within:ring-[3px]">
+        {processing && (
+          <div className="pointer-events-none absolute inset-x-0 top-0 bottom-11 flex items-center justify-center">
+            <Spinner className="text-muted-foreground size-6" />
+          </div>
+        )}
 
-      <div className="mt-4 flex flex-wrap gap-3">
-        <button
-          type="button"
-          className={SECONDARY_CLASS_NAME}
-          disabled={!text}
-          onClick={copy}
-        >
-          {copied ? (
-            <Check className="size-4" aria-hidden="true" />
-          ) : (
-            <Copy className="size-4" aria-hidden="true" />
+        <Textarea
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          placeholder={processing ? undefined : 'Your transcript appears here.'}
+          aria-label="Transcript"
+          readOnly={busy}
+          tabIndex={busy ? -1 : undefined}
+          className={cn(
+            'max-h-[60vh] min-h-56 resize-none rounded-none border-0 bg-transparent p-4 text-base leading-relaxed shadow-none focus-visible:ring-0 md:text-base dark:bg-transparent',
+            busy && 'pointer-events-none'
           )}
-          {copied ? 'Copied' : 'Copy'}
-        </button>
-        <button
-          type="button"
-          className={SECONDARY_CLASS_NAME}
-          disabled={!text}
-          onClick={download}
-        >
-          <Download className="size-4" aria-hidden="true" />
-          Download .txt
-        </button>
+        />
+
+        <div className="flex justify-end gap-1 border-t p-1.5">
+          <Button variant="ghost" size="sm" disabled={!text} onClick={copy}>
+            {copied ? <Check /> : <Copy />}
+            {copied ? 'Copied' : 'Copy'}
+          </Button>
+
+          <Button variant="ghost" size="sm" disabled={!text} onClick={download}>
+            <Download />
+            Download
+          </Button>
+        </div>
       </div>
     </div>
   )
