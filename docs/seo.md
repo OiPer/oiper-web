@@ -29,37 +29,62 @@ What's in place, what's left to do, and how to check it. Research baseline: 2026
 - [x] Sign-in, account and 404 pages have their own titles, descriptions and social cards
 - [x] PWA per the official Next.js guide: manifest with 192/512 icons and screenshots, theme color, hand-written `public/sw.js`, offline page
 
-### Must do
+### Done (2026-10-12, branch `seo-growth`)
 
-- [ ] Merge `seo` into `dev`, deploy, and run the checks in [Verify after each deploy](#verify-after-each-deploy)
-- [ ] **Netlify:** make `oiper.com` the primary domain and 301 `desktop.oiper.com/*` → `https://oiper.com/:splat`. Today Netlify treats `desktop.oiper.com` as primary.
-- [ ] Set the [environment variables](#environment-variables) in Netlify for prod and dev. `NEXT_PUBLIC_BASE_URL` is required: the build fails without it.
-- [ ] **Search Console:** add a Domain property for `oiper.com` (DNS TXT covers all subdomains) and submit `https://oiper.com/sitemap.xml`.
-- [ ] **Bing Webmaster Tools:** import from Search Console. ChatGPT search uses Bing's index.
-- [x] **Speed claim:** one number everywhere: "3.5x faster" than cloud APIs on the homepage, 1.5 s for 30 s of English audio in the internal docs. A benchmarks page that shows the method would back it up.
+Research behind these is in [`docs/seo-research/`](seo-research): how AI assistants pick tools ([ai-search](seo-research/ai-search.md)), Google and Bing guidance ([google-bing](seo-research/google-bing.md)), real searches and who ranks ([keywords](seo-research/keywords.md)), and where to get listed ([backlinks](seo-research/backlinks.md)).
 
-### Later: content that wins search (biggest impact)
+- [x] IndexNow key at `/c445d9414aa2aca65edc783c23768f2a.txt`; `npm run seo:indexnow` in oiper-test-suite submits every sitemap URL to Bing, Yandex and others (ChatGPT search and Copilot lean on Bing)
+- [x] Pricing cards render in the server HTML (AI crawlers don't run JavaScript, and ChatGPT checks a brand's own site for price and platforms). Not verifiable locally: confirm with the check in [Verify after each deploy](#verify-after-each-deploy)
+- [x] `/pricing`: free local, your own API key, and Pro/Max explained, with live offers in `SoftwareApplication`
+- [x] `/alternatives` hub plus comparisons with Dragon, Windows voice typing, Apple Dictation, MacWhisper, VoiceInk, Aqua Voice and Handy. Every competitor claim was checked on the competitor's own site on 2026-10-12. OpenWhispr was skipped: it matches OiPer on almost everything and is open source, so an honest page would be thin
+- [x] Topic pages: `/whisper-desktop-app`, `/offline-speech-to-text`, `/free-dictation-software`, `/bring-your-own-api-key`
+- [x] Use cases and Linux: `/use-cases/claude-code` (vs Claude Code's built-in `/voice`), `/use-cases/accessibility`, `/linux/wayland`, `/linux/ubuntu`
+- [x] `/tools/speech-to-text`: free in-browser Whisper (record or upload, nothing uploaded) aimed at "speech to text" (33k/mo US) and "audio to text" (22k/mo). Tested with a real WAV: the transcript was word for word
+- [x] Every guide shows a visible "Updated" date and `dateModified`; comparison titles carry the year
+- [x] Fixed an overclaim: the dictionary applies only in cloud and OiPer modes, never local Whisper. Every page now says so
+- [x] Footer groups guides into Guides, Compare and Use cases so every page is linked from every page
 
-Competitors rank with these page types. The guide pages live in `src/features/guides/guides.ts`; their download buttons link to `/download?platform=…`, which lists that platform's builds first.
+### Must do (you)
 
-- [x] `/alternatives/wispr-flow` and `/alternatives/superwhisper`: an honest comparison of platforms, offline use, price and speed.
-- [x] `/linux`, `/windows` and `/mac`: few polished dictation apps exist for these, and most results are GitHub repos.
-- [x] `/use-cases/coding`: dictating into VS Code, Cursor and the Claude Code terminal, using snippets and the dictionary for jargon.
-- [ ] `/benchmarks`: method, hardware and results.
+- [ ] Merge `seo-growth` into `dev`, deploy, run [Verify after each deploy](#verify-after-each-deploy), then ship to prod
+- [ ] After each **prod** deploy: `npm run seo:indexnow` in oiper-test-suite
+- [ ] **Search Console:** Domain property for `oiper.com`, submit `https://oiper.com/sitemap.xml`, then URL Inspection → Request indexing for `/`, `/pricing`, `/download`, `/windows`, `/mac`, `/linux`, `/alternatives`, `/alternatives/wispr-flow`, `/tools/speech-to-text`, `/whisper-desktop-app` (about 10 a day)
+- [ ] **Bing Webmaster Tools:** import from Search Console and turn on the AI Performance report (shows Copilot citations and the searches it ran)
+- [ ] **Cloudflare:** Security → Bots / AI Crawl Control: make sure AI crawlers are allowed (OAI-SearchBot, ChatGPT-User, PerplexityBot, Claude-SearchBot, Claude-User, GPTBot, ClaudeBot). Our robots.txt allows them, but Cloudflare can block them silently
+- [ ] **Netlify:** `desktop.oiper.com` doesn't resolve at all. Either remove it or 301 `desktop.oiper.com/*` to `https://oiper.com/:splat`
+- [ ] **Brave Search** (powers Claude's web search): submit `https://oiper.com` at search.brave.com/submit-url
+- [ ] Confirm a fact the new pages state: using your own API key needs no account and no paid plan
+- [ ] **Desktop app bug** found while writing `/linux/wayland`: on GNOME Wayland, if `wtype` is installed OiPer tries it first, it fails (GNOME doesn't support it), and there's no fallback to `dotool`/`ydotool`. Fix the fallback in `injection_linux.rs`
+- [ ] Recheck `/linux/ubuntu` once Ubuntu 26.10 ships (expected Oct 15): it describes the Myna voice typing feature as "aimed at 26.10"
 
-### Later: off-site (AI assistants recommend brands that others mention)
+### Biggest levers left (ranked)
 
-- [x] Add GitHub topics to `OiPer/desktop` (`speech-to-text`, `dictation`, `voice-typing`, `whisper`, `wispr-flow-alternative`, `tauri`) and a README with features, platforms and a link to oiper.com.
-- [x] Clean up the GitHub org: archive the unrelated `todo*` and `media-*` repos, and check that `oiper-web` is meant to be public.
-- [ ] List OiPer on Product Hunt and AlternativeTo (as an alternative to Wispr Flow, Superwhisper and Dragon).
-- [ ] Give honest answers in relevant Reddit threads (r/linux, r/software, r/ChatGPTCoding), open PRs to "awesome" dictation/Whisper lists, and post a short demo video.
-- [ ] Create X, LinkedIn and YouTube profiles and add them to `sameAs` in `src/app/layout.tsx`.
+AI assistants mostly recommend apps that other sites mention. In one ChatGPT study only 11.6% of software recommendations cited the vendor's own site, and "best X" lists made up 43.8% of cited pages. Off-site work matters more than anything else below.
+
+1. **Get into the "best dictation app" lists AI already cites:** TechCrunch (Ivan Mehta, May 2026), ZDNet's Linux dictation roundup, AssemblyAI's Wispr Flow alternatives, Zapier's dictation list, Online Tech Tips, CodePick (GitHub issue), iTechGuides ($99 listing). Lead with Linux + Wayland + offline + no account. Contacts are in [backlinks](seo-research/backlinks.md)
+2. **Sign the Windows build and notarize the Mac build.** Unsigned and unnotarized installers block the Microsoft Store and official Homebrew, trigger SmartScreen on every download site, and put reviewers off
+3. **Directories (you):** AlternativeTo as an alternative to Wispr Flow, Superwhisper, Dragon, Windows Voice Typing, VoiceInk and Handy; SaaSHub; Product Hunt launch; DevHunt, Uneed, Peerlist, Microlaunch, Fazier; There's An AI For That ($49); G2 and Capterra for real reviews
+4. **Communities (you, as the founder, openly):** Show HN, a reply in the recent Ask HN about non-cloud Wispr Flow alternatives, and honest answers in r/macapps, r/software, r/windowsapps and r/linux threads. Pitch OMG! Ubuntu, Linuxiac and 9to5Linux on Wayland support and the Ubuntu 26.10 Myna news. Reddit removes astroturfing, so only real participation works
+5. **GitHub PRs (Claude can open these with your OK once prod is live):** winget manifest, awesome-mac (Voice-to-Text), sindresorhus/awesome-whisper, awesome-tauri-apps, awesome-ai-coding-tools, Awesome-Linux-Software, danielrosehill/Awesome-Whisper-Apps; AUR `oiper-bin` and a Chocolatey package (drafted for you to publish). Flathub forbids AI-opened submissions, so that one is yours
+6. **Open-sourcing the desktop client** would unlock the strongest lists in this space (awesome-privacy, Privacy Guides, OpenAlternative, awesome-voice-typing). A product decision, noted only
+7. **A YouTube demo** (YouTube is 20–30% of AI Overview and Perplexity citations), and X, LinkedIn and YouTube profiles added to `sameAs` in `src/app/layout.tsx`
+8. **`/benchmarks` with real numbers** (original data is the most-cited content type). Needs real measurements; don't publish estimates
+9. **An About page with real people**, author bylines on guides, and checksums on `/download` (trust signals Google looks for on download sites)
+
+### Content still worth adding (from [keywords](seo-research/keywords.md))
+
+- [ ] `/windows/windows-11` (voice to text Windows 11) once `/windows` is indexed
+- [ ] `/compare/superwhisper-vs-wispr-flow` (the strongest "X vs Y" search with no OiPer in it), written as a fair three-way table
+- [ ] `/use-cases/cursor`, writing, students: only where settings or workflow differ, never a noun swap
+- [ ] 2–4 translated sections (es, de, pt-BR) by a native speaker with hreflang. Don't auto-translate 99 languages: Google's spam policy names it
+- [ ] ⚠️ Don't publish our own "best dictation apps" list ranking OiPer first: sites doing this lost Google visibility in 2026, and AI Overviews skipped the publisher 69% of the time
 
 ### Later: smaller fixes
 
-- [ ] Render the pricing cards on the server: move `useSearchParams` in `pricing-section.tsx` into a small child component.
+- [x] Render the pricing cards on the server
 - [x] `/download` shows one release: the newest of the last 10 with the most builds, or the release named by `?version=` (the latest when that version does not exist). The `/download/<platform>` links use the same release.
 - [x] `/resources/changelog?cursor=<unknown>` returns 200 with `noindex`. Intended: the root layout streams before the page can call `notFound()`, and Next marks streamed 404s `noindex`, so they are never indexed. A real 404 would need a GitHub fetch in the proxy.
+- [ ] `aggregateRating` in `SoftwareApplication` once real reviews are shown on the page (needed for star and price rich results; never copy ratings from other sites)
 
 ## What the code does now
 
@@ -98,6 +123,8 @@ curl -s https://dev.oiper.com/ | grep -o '<meta name="robots"[^>]*>'           #
 curl -s https://dev.oiper.com/robots.txt                                      # Disallow: /
 curl -s -o /dev/null -w "%{http_code}\n" https://dev.oiper.com/docs/nope      # 404
 curl -s https://oiper.com/ | grep -o 'rel="canonical" href="[^"]*"'           # https://oiper.com
+curl -s https://oiper.com/ | grep -c 'id="pricing"'                          # > 0: pricing cards are server-rendered
+curl -s https://oiper.com/sitemap.xml | grep -c '<loc>'                       # 48 or more
 curl -sI https://desktop.oiper.com/docs | grep -i location                    # 301 to oiper.com (after the Netlify change)
 ```
 
