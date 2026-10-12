@@ -114,10 +114,11 @@ AI assistants mostly recommend apps that other sites mention. In one ChatGPT stu
 
 One variable per concern. Each environment gets its own value.
 
-| Variable                          | Production                       | Development                        |
-| --------------------------------- | -------------------------------- | ---------------------------------- |
-| `NEXT_PUBLIC_BASE_URL` (required) | `https://oiper.com`              | `https://dev.oiper.com`            |
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID`   | `G-…` from the prod GA4 property | `G-…` from a separate dev property |
+| Variable                          | Production                         | Development                        |
+| --------------------------------- | ---------------------------------- | ---------------------------------- |
+| `NEXT_PUBLIC_BASE_URL` (required) | `https://oiper.com`                | `https://dev.oiper.com`            |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID`   | `G-…` from the prod GA4 property   | `G-…` from a separate dev property |
+| `GITHUB_TOKEN`                    | Read-only token, public repos only | Same token                         |
 
 `NEXT_PUBLIC_BASE_URL` is the source of every absolute URL: canonicals, `og:url`, sitemap, `robots.txt`, structured data and `llms.txt`. Trailing slashes and surrounding spaces are stripped and the host is lowercased. A value with a path or query string fails at startup, and so does any value in production that isn't https or points at localhost. Locally, use `http://localhost:3000`.
 
