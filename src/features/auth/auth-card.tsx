@@ -112,7 +112,9 @@ export function AuthCard({
       </Button>
 
       <CardContent className="space-y-5">
-        {checkout ? <div className="lg:hidden">{checkout}</div> : null}
+        {checkout ? (
+          <div className="pt-2 pb-4 lg:hidden">{checkout}</div>
+        ) : null}
         {children}
 
         {showOAuth ? (

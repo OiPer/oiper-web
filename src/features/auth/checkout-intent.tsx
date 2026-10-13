@@ -4,7 +4,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { logClick, logSelect } from '@/lib/analytics'
@@ -173,18 +172,25 @@ function intervalOptions(intent: Intent) {
   }))
 }
 
-function SkipLink(props: { intent: Intent; className?: string }) {
+function SkipText(props: { onSkip: () => void; className?: string }) {
   return (
-    <button
-      type="button"
-      onClick={props.intent.skip}
+    <span
+      role="button"
+      tabIndex={0}
+      onClick={props.onSkip}
+      onKeyDown={(event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return
+
+        event.preventDefault()
+        props.onSkip()
+      }}
       className={cn(
-        'text-xs text-white/50 underline underline-offset-4 hover:text-white',
+        'cursor-pointer underline underline-offset-4 outline-none hover:text-white focus-visible:text-white',
         props.className
       )}
     >
-      Continue without upgrading
-    </button>
+      continue without upgrading
+    </span>
   )
 }
 
@@ -226,9 +232,9 @@ function Summary({ intent }: { intent: Intent }) {
       </ul>
 
       <p className="mt-6 text-sm text-white/55">
-        Create your account, then you go straight to secure checkout.
+        Once your account is ready, you&apos;ll go straight to checkout, or{' '}
+        <SkipText onSkip={intent.skip} />.
       </p>
-      <SkipLink intent={intent} className="mt-2" />
     </div>
   )
 }
@@ -241,6 +247,50 @@ export function CheckoutSummary(props: { plans: CheckoutPlan[] }) {
   return <Summary intent={intent} />
 }
 
+function InlineMenu<T extends string>(props: {
+  label: string
+  value: T
+  options: { value: T; label: string; hint?: string }[]
+  onChange: (value: T) => void
+}) {
+  const selected = props.options.find((option) => option.value === props.value)
+
+  return (
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger
+        aria-label={props.label}
+        className="inline-flex items-center gap-0.5 border-b border-dotted border-current font-medium text-white outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+      >
+        {selected?.label}
+        <ChevronDown className="size-3.5" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="start"
+        className="min-w-48 border-white/12 bg-[#121212] text-white shadow-2xl"
+      >
+        {props.options.map((option) => (
+          <DropdownMenuItem
+            key={option.value}
+            onSelect={() => props.onChange(option.value)}
+            className="cursor-pointer gap-3 px-3 py-2"
+          >
+            <Check
+              className={cn(
+                'size-4',
+                option.value !== props.value && 'invisible'
+              )}
+            />
+            <span className="flex-1">{option.label}</span>
+            {option.hint ? (
+              <span className="text-white/55">{option.hint}</span>
+            ) : null}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 export function CheckoutLine(props: {
   plans: CheckoutPlan[]
   page: 'signin' | 'signup'
@@ -249,60 +299,43 @@ export function CheckoutLine(props: {
 
   if (!intent) return null
 
-  function label(plan: Plan, interval: Interval) {
-    return interval === 'YEARLY'
-      ? `${planDisplayName(plan)} yearly`
-      : planDisplayName(plan)
-  }
+  const save = intent.savePercent(intent.plan)
 
   return (
     <p className="text-sm leading-6 text-white/65">
       {props.page === 'signup'
         ? 'Once your account is ready'
         : 'After you sign in'}
-      , you&apos;ll check out{' '}
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger className="inline-flex items-center gap-1 border-b border-dotted border-current font-medium text-white outline-none focus-visible:ring-2 focus-visible:ring-white/40">
-          {label(intent.plan, intent.interval)} ·{' '}
-          {intent.monthlyPrice(intent.plan, intent.interval)}/month
-          <ChevronDown className="size-3.5" />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="start"
-          className="min-w-60 border-white/12 bg-[#121212] text-white shadow-2xl"
-        >
-          {PLANS.flatMap((plan) =>
-            INTERVALS.map((interval) => (
-              <DropdownMenuItem
-                key={`${plan}-${interval}`}
-                onSelect={() => intent.choose(plan, interval)}
-                className="cursor-pointer gap-3 px-3 py-2"
-              >
-                <Check
-                  className={cn(
-                    'size-4',
-                    (plan !== intent.plan || interval !== intent.interval) &&
-                      'invisible'
-                  )}
-                />
-                <span className="flex-1">{label(plan, interval)}</span>
-                <span className="text-white/55">
-                  {intent.monthlyPrice(plan, interval)}/month
-                </span>
-              </DropdownMenuItem>
-            ))
-          )}
-          <DropdownMenuSeparator className="bg-white/8" />
-          <DropdownMenuItem
-            onSelect={intent.skip}
-            className="cursor-pointer gap-3 px-3 py-2 text-white/65"
-          >
-            <span className="size-4" />
-            Skip for now
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      .
+      , you will be taken to{' '}
+      <InlineMenu
+        label="Plan"
+        value={intent.plan}
+        options={PLANS.map((plan) => ({
+          value: plan,
+          label: planDisplayName(plan),
+          hint: `${intent.monthlyPrice(plan, intent.interval)}/month`,
+        }))}
+        onChange={(plan) => intent.choose(plan, intent.interval)}
+      />{' '}
+      checkout, billed{' '}
+      <InlineMenu
+        label="Billing"
+        value={intent.interval}
+        options={[
+          { value: 'MONTHLY', label: 'monthly' },
+          {
+            value: 'YEARLY',
+            label: 'yearly',
+            hint: save > 0 ? `save ${save}%` : undefined,
+          },
+        ]}
+        onChange={(interval) => intent.choose(intent.plan, interval)}
+      />{' '}
+      at{' '}
+      <span className="whitespace-nowrap text-white">
+        {intent.monthlyPrice(intent.plan, intent.interval)}/month
+      </span>
+      , or <SkipText onSkip={intent.skip} className="text-white/50" />.
     </p>
   )
 }
