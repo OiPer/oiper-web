@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { Eye, EyeOff } from 'lucide-react'
 import type { ComponentProps, ReactNode } from 'react'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 
 export function AuthFormError(props: {
   message: string | null
@@ -55,16 +55,20 @@ export function AuthInput({
   className,
   ...props
 }: AuthInputProps) {
+  const generatedId = useId()
+  const id = props.id ?? generatedId
+
   return (
     <div
       className={cn('flex w-full flex-col gap-2', wrapperClassName)}
       data-invalid={Boolean(error)}
       data-disabled={props.disabled}
     >
-      {label ? <Label>{label}</Label> : null}
+      {label ? <Label htmlFor={id}>{label}</Label> : null}
 
       <BaseInput
         {...props}
+        id={id}
         className={cn(
           'h-9 border-white/20 bg-white/5 text-white placeholder:text-white/45',
           className
@@ -94,6 +98,8 @@ export function AuthPasswordInput({
   ...props
 }: AuthPasswordInputProps) {
   const [isVisible, setIsVisible] = useState(false)
+  const generatedId = useId()
+  const id = props.id ?? generatedId
 
   return (
     <div
@@ -101,11 +107,12 @@ export function AuthPasswordInput({
       data-invalid={Boolean(error)}
       data-disabled={props.disabled}
     >
-      {label ? <Label>{label}</Label> : null}
+      {label ? <Label htmlFor={id}>{label}</Label> : null}
 
       <div className="relative">
         <BaseInput
           {...props}
+          id={id}
           type={isVisible ? 'text' : 'password'}
           className={cn(
             'h-9 border-white/20 bg-white/5 pr-10 text-white placeholder:text-white/45',

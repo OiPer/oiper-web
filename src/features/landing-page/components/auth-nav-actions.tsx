@@ -13,17 +13,16 @@ import {
 import { Spinner } from '@/components/ui/spinner'
 import { getUserInitials, getUserLabel } from '@/features/account/utils'
 import { useAuth } from '@/features/auth/auth-context'
+import { buildAuthUrl } from '@/features/auth/auth-form-utils'
 import { DownloadButton } from '@/features/download/download-button'
 import { useHydrated } from '@/hooks/use-hydrated'
 import { logClick, logError } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 import { ChevronDown, LogOut, Settings2 } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-
-const SIGN_IN_URL = '/?auth-page=signin'
-const SIGN_UP_URL = '/?auth-page=signup'
 
 function LoadingAvatar() {
   return (
@@ -44,6 +43,7 @@ function LoadingAvatar() {
 }
 
 function SignedOutActions() {
+  const pathname = usePathname()
   const ref = useRef<HTMLDivElement>(null)
   const [menuWidth, setMenuWidth] = useState<string>()
 
@@ -57,8 +57,7 @@ function SignedOutActions() {
     <div className="flex items-center gap-3">
       <div ref={ref} className="flex items-center">
         <Link
-          href={SIGN_UP_URL}
-          scroll={false}
+          href={buildAuthUrl('signup', { callbackUrl: pathname })}
           onClick={() => logClick('signup', 'header')}
           className={cn(
             buttonVariants({ size: 'lg' }),
@@ -83,8 +82,7 @@ function SignedOutActions() {
           >
             <DropdownMenuItem asChild className="cursor-pointer">
               <Link
-                href={SIGN_IN_URL}
-                scroll={false}
+                href={buildAuthUrl('signin', { callbackUrl: pathname })}
                 onClick={() => logClick('signin', 'header')}
               >
                 Sign in

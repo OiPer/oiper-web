@@ -1,6 +1,7 @@
 'use client'
 
 import { Spinner } from '@/components/ui/spinner'
+import { buildAuthUrl } from '@/features/auth/auth-form-utils'
 import { $api } from '@/lib/api/client'
 import { env } from '@/lib/env'
 import { joinUrl } from '@/lib/url'
@@ -24,10 +25,9 @@ export default function DesktopAuthPage() {
 
   const signInUrl = useMemo(() => {
     const callbackUrl = queryString
-      ? `/auth/desktop?${queryString}`
-      : '/auth/desktop'
-    const encoded = encodeURIComponent(callbackUrl)
-    return `/auth/signin?callbackUrl=${encoded}`
+      ? `/connect/desktop?${queryString}`
+      : '/connect/desktop'
+    return buildAuthUrl('signin', { callbackUrl })
   }, [queryString])
   const sessionQuery = $api.useQuery(
     'get',
@@ -72,7 +72,7 @@ export default function DesktopAuthPage() {
 
     const continueUrl = joinUrl(
       env.OIPER_SERVER_URL,
-      '/v1/auth/desktop/continue',
+      '/v1/connect/desktop/continue',
       {
         requestId,
         callbackUrl: '/',

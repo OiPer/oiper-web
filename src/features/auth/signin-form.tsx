@@ -5,7 +5,7 @@ import { logClick, logComplete, logError, logSubmit } from '@/lib/analytics'
 import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -25,18 +25,12 @@ const signInSchema = z.object({
 
 type SignInSchema = z.infer<typeof signInSchema>
 
-type SignInFormProps = {
-  mode: 'modal' | 'page'
-}
-
-export function SignInForm({ mode }: SignInFormProps) {
-  const pathname = usePathname()
+export function SignInForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { signIn } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const currentSearch = new URLSearchParams(searchParams.toString())
-  const callbackUrl = getCallbackUrl(currentSearch)
+  const callbackUrl = getCallbackUrl(searchParams)
 
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
@@ -47,17 +41,14 @@ export function SignInForm({ mode }: SignInFormProps) {
   })
 
   const email = form.watch('email')
-  const forgotHref = buildAuthUrl({
-    mode,
-    pathname,
-    searchParams: currentSearch,
-    page: 'forgot-password',
-    additionalParams: { email },
+  const forgotHref = buildAuthUrl('forgot-password', {
+    callbackUrl: searchParams.get('callbackUrl'),
+    email,
   })
 
   async function handleSignIn(values: SignInSchema) {
     setErrorMessage(null)
-    logSubmit('signin', 'auth', { mode })
+    logSubmit('signin', 'auth')
 
     try {
       const result = await signIn({
@@ -66,34 +57,29 @@ export function SignInForm({ mode }: SignInFormProps) {
       })
 
       if ('type' in result && result.type === 'email_verification') {
-        logComplete('signin', 'auth', { mode, outcome: 'email_verification' })
+        logComplete('signin', 'auth', { outcome: 'email_verification' })
         return router.push(
-          buildAuthUrl({
-            mode,
-            pathname,
-            searchParams: currentSearch,
-            page: 'verify-email',
-            additionalParams: {
-              email: result.email,
-              pat: result.pat,
-              ...(result.evid ? { evid: result.evid } : {}),
-            },
+          buildAuthUrl('verify-email', {
+            callbackUrl: searchParams.get('callbackUrl'),
+            email: result.email,
+            pat: result.pat,
+            evid: result.evid,
           })
         )
       }
 
       if ('authenticated' in result && !result.authenticated) {
-        logError('signin', 'auth', { mode, error_type: 'not_authenticated' })
+        logError('signin', 'auth', { error_type: 'not_authenticated' })
         return setErrorMessage('Something went wrong')
       }
 
-      logComplete('signin', 'auth', { mode })
+      logComplete('signin', 'auth')
       router.push(callbackUrl)
     } catch (error) {
       const code = getAppErrorCode<'post', '/v1/auth/web/sign-in/password'>(
         error
       )
-      logError('signin', 'auth', { mode, error_type: code ?? 'unknown' })
+      logError('signin', 'auth', { error_type: code ?? 'unknown' })
 
       switch (code) {
         case 'AUTH_INVALID_CREDENTIALS':
@@ -110,7 +96,6 @@ export function SignInForm({ mode }: SignInFormProps) {
 
   return (
     <AuthCard
-      mode={mode}
       page="signin"
       title="Welcome back"
       description="Sign in to your account to continue."
@@ -134,13 +119,13 @@ export function SignInForm({ mode }: SignInFormProps) {
               href={forgotHref}
               onClick={() => logClick('forgot_password', 'auth')}
               className="text-xs text-white/65 underline underline-offset-[5px] hover:text-white"
-              scroll={false}
             >
               Forgot password?
             </Link>
           </div>
           <AuthPasswordInput
             placeholder="Password"
+            aria-label="Password"
             autoComplete="current-password"
             {...form.register('password')}
             error={form.formState.errors.password?.message}

@@ -2,6 +2,7 @@
 
 import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/features/auth/auth-context'
+import { buildAuthUrl } from '@/features/auth/auth-form-utils'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { Sidenav } from './layout'
@@ -27,9 +28,7 @@ export function AccountLayoutClientWrapper({
 
     const query = searchParams.toString()
     const callbackUrl = query ? `${pathname}?${query}` : pathname
-    router.replace(
-      `/auth/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`
-    )
+    router.replace(buildAuthUrl('signin', { callbackUrl }))
   }, [currentUser, isLoading, pathname, router, searchParams])
 
   if (isLoading || !currentUser) return <AccountLayoutLoading />

@@ -11,7 +11,7 @@ type Og = {
 type Seo = { title: string; description: string }
 
 export const APP_PAGES = {
-  '/auth/signin': {
+  '/signin': {
     seo: {
       title: 'Sign in',
       description:
@@ -24,7 +24,7 @@ export const APP_PAGES = {
       screenshot: 1,
     },
   },
-  '/auth/signup': {
+  '/signup': {
     seo: {
       title: 'Create account',
       description:
@@ -37,7 +37,7 @@ export const APP_PAGES = {
       screenshot: 4,
     },
   },
-  '/auth/forgot-password': {
+  '/forgot-password': {
     seo: {
       title: 'Reset password',
       description:
@@ -50,7 +50,7 @@ export const APP_PAGES = {
       screenshot: 1,
     },
   },
-  '/auth/verify-email': {
+  '/verify-email': {
     seo: {
       title: 'Verify your email',
       description:
@@ -63,7 +63,7 @@ export const APP_PAGES = {
       screenshot: 1,
     },
   },
-  '/auth/desktop': {
+  '/connect/desktop': {
     seo: {
       title: 'Connect OiPer Desktop',
       description:
