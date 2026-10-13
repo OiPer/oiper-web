@@ -170,7 +170,16 @@ function Pricing(props: {
     (target) => {
       setInterval(target.interval)
       document.getElementById('pricing')?.scrollIntoView()
-      if (!isLapsed) setChangePlanTarget(target)
+
+      if (!isLapsed || gift) return setChangePlanTarget(target)
+
+      const provider =
+        STRIPE_CHECKOUT_ENABLED &&
+        props.searchParams?.get('provider') === 'stripe'
+          ? 'STRIPE'
+          : 'PADDLE'
+
+      void startCheckout(provider, target.plan, target.interval)
     }
   )
 
