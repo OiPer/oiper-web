@@ -18,6 +18,8 @@ import {
 } from './auth-form-input'
 import { buildAuthUrl } from './auth-form-utils'
 
+const RESET_CALLBACK_KEY = 'oiper:reset-callback-url'
+
 const requestResetSchema = z.object({
   email: z.string().trim().email('Enter a valid email address'),
 })
@@ -68,11 +70,14 @@ export function ForgotPasswordForm() {
   const token = searchParams.get('token')
 
   function goToSignIn() {
-    router.push(
-      buildAuthUrl('signin', {
-        callbackUrl: searchParams.get('callbackUrl'),
-      })
-    )
+    let callbackUrl = searchParams.get('callbackUrl')
+
+    try {
+      callbackUrl ??= localStorage.getItem(RESET_CALLBACK_KEY)
+      localStorage.removeItem(RESET_CALLBACK_KEY)
+    } catch {}
+
+    router.push(buildAuthUrl('signin', { callbackUrl }))
   }
 
   async function handlePasswordResetRequest(
@@ -90,6 +95,12 @@ export function ForgotPasswordForm() {
 
       logComplete('password_reset_request', 'auth')
       toast.success('Password reset email sent')
+
+      const callbackUrl = searchParams.get('callbackUrl')
+
+      try {
+        if (callbackUrl) localStorage.setItem(RESET_CALLBACK_KEY, callbackUrl)
+      } catch {}
     } catch (error) {
       const code = getAppErrorCode<
         'post',
