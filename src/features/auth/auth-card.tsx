@@ -1,19 +1,9 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-
 import { logClick } from '@/lib/analytics'
-import { Github, X } from 'lucide-react'
+import { Github } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import type { PropsWithChildren, ReactNode } from 'react'
 import {
   buildAuthUrl,
@@ -74,7 +64,6 @@ export function AuthCard({
   showOAuth = true,
   checkout,
 }: AuthCardProps) {
-  const router = useRouter()
   const searchParams = useSearchParams()
 
   const footer = PAGE_FOOTER[page]
@@ -90,31 +79,14 @@ export function AuthCard({
   const githubAuthHref = buildWebAuthStartUrl(callbackUrl, 'github')
 
   return (
-    <Card className="relative w-full border-white/15 bg-black/45 text-white shadow-2xl shadow-black/30 backdrop-blur-xl">
-      <CardHeader>
-        <CardTitle className="text-lg leading-none font-bold text-white">
-          {title}
-        </CardTitle>
-        <CardDescription className="text-white/65">
-          {description}
-        </CardDescription>
-      </CardHeader>
+    <div className="relative w-full max-w-md text-white">
+      <div className="space-y-1.5">
+        <h1 className="text-lg leading-none font-bold text-white">{title}</h1>
+        <p className="text-sm text-white/65">{description}</p>
+      </div>
 
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className="absolute top-3 right-3 text-white/60 hover:bg-white/10 hover:text-white"
-        onClick={() => router.push(callbackUrl)}
-      >
-        <X className="size-4" />
-        <span className="sr-only">Close</span>
-      </Button>
-
-      <CardContent className="space-y-5">
-        {checkout ? (
-          <div className="-mt-3 mb-8 lg:hidden">{checkout}</div>
-        ) : null}
+      <div className="mt-6 space-y-5">
+        {checkout ? <div className="-mt-2.5 mb-7">{checkout}</div> : null}
         {children}
 
         {showOAuth ? (
@@ -124,7 +96,7 @@ export function AuthCard({
                 <div className="w-full border-t border-white/15" />
               </div>
               <div className="relative flex justify-center text-sm text-white/45">
-                <span className="bg-black px-3">Or continue with</span>
+                <span className="bg-[#0a0a0a] px-3">Or continue with</span>
               </div>
             </div>
 
@@ -153,20 +125,18 @@ export function AuthCard({
             </div>
           </div>
         ) : null}
-      </CardContent>
+      </div>
 
-      <CardFooter className="pt-0">
-        <p className="w-full text-center text-sm text-white/65">
-          {footer.text}{' '}
-          <Link
-            href={switchHref}
-            className="font-medium text-white underline underline-offset-4"
-            onClick={() => logClick(nextPage, 'auth')}
-          >
-            {footer.linkLabel}
-          </Link>
-        </p>
-      </CardFooter>
-    </Card>
+      <p className="mt-6 w-full text-center text-sm text-white/65">
+        {footer.text}{' '}
+        <Link
+          href={switchHref}
+          className="font-medium text-white underline underline-offset-4"
+          onClick={() => logClick(nextPage, 'auth')}
+        >
+          {footer.linkLabel}
+        </Link>
+      </p>
+    </div>
   )
 }

@@ -9,9 +9,8 @@ import {
 import { logClick, logSelect } from '@/lib/analytics'
 import { formatCurrencyFromCents, planDisplayName } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { Check, ChevronDown } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import type { ReactNode } from 'react'
 import type { CheckoutPlan } from './checkout-plans'
 
 type Plan = 'PRO' | 'MAX'
@@ -19,7 +18,6 @@ type Interval = 'MONTHLY' | 'YEARLY'
 
 const BASE = 'http://internal.invalid'
 const PLANS: Plan[] = ['PRO', 'MAX']
-const INTERVALS: Interval[] = ['MONTHLY', 'YEARLY']
 
 function useCheckoutIntent(plans: CheckoutPlan[]) {
   const pathname = usePathname()
@@ -99,77 +97,14 @@ function useCheckoutIntent(plans: CheckoutPlan[]) {
     )
   }
 
-  function billing(entryPlan: Plan, entryInterval: Interval) {
-    const entry = find(entryPlan, entryInterval)
-    if (!entry) return ''
-    if (entryInterval === 'MONTHLY') return 'Billed monthly'
-
-    return `${formatCurrencyFromCents(entry.priceAmountCents)} billed yearly`
-  }
-
   return {
     plan,
     interval,
-    selected,
     choose,
     skip,
     monthlyPrice,
     savePercent,
-    billing,
   }
-}
-
-type Intent = NonNullable<ReturnType<typeof useCheckoutIntent>>
-
-function Segmented<T extends string>(props: {
-  value: T
-  options: { value: T; label: ReactNode }[]
-  onChange: (value: T) => void
-  className?: string
-}) {
-  return (
-    <div
-      className={cn(
-        'grid auto-cols-fr grid-flow-col rounded-md border border-white/15 bg-white/5 p-0.5',
-        props.className
-      )}
-    >
-      {props.options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          aria-pressed={props.value === option.value}
-          onClick={() => props.onChange(option.value)}
-          className={cn(
-            'rounded px-3 py-1.5 text-xs font-medium whitespace-nowrap',
-            props.value === option.value
-              ? 'bg-white text-[#0a0a0a]'
-              : 'text-white/65 hover:text-white'
-          )}
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
-  )
-}
-
-function planOptions() {
-  return PLANS.map((plan) => ({ value: plan, label: planDisplayName(plan) }))
-}
-
-function intervalOptions(intent: Intent) {
-  const save = intent.savePercent(intent.plan)
-
-  return INTERVALS.map((interval) => ({
-    value: interval,
-    label:
-      interval === 'MONTHLY'
-        ? 'Monthly'
-        : save > 0
-          ? `Yearly, save ${save}%`
-          : 'Yearly',
-  }))
 }
 
 function SkipText(props: { onSkip: () => void; className?: string }) {
@@ -192,59 +127,6 @@ function SkipText(props: { onSkip: () => void; className?: string }) {
       continue without upgrading
     </span>
   )
-}
-
-function Summary({ intent }: { intent: Intent }) {
-  return (
-    <div className="w-full text-white lg:pt-2">
-      <p className="text-sm text-white/55">Your upgrade</p>
-      <h2 className="mt-2 text-3xl font-semibold tracking-tight">
-        OiPer {planDisplayName(intent.plan)}
-      </h2>
-      <p className="mt-3 text-2xl font-semibold">
-        {intent.monthlyPrice(intent.plan, intent.interval)}
-        <span className="text-sm font-normal text-white/55"> / month</span>
-      </p>
-      <p className="text-sm text-white/55">
-        {intent.billing(intent.plan, intent.interval)}
-      </p>
-
-      <div className="mt-5 grid max-w-sm gap-2">
-        <Segmented
-          value={intent.plan}
-          options={planOptions()}
-          onChange={(plan) => intent.choose(plan, intent.interval)}
-        />
-        <Segmented
-          value={intent.interval}
-          options={intervalOptions(intent)}
-          onChange={(interval) => intent.choose(intent.plan, interval)}
-        />
-      </div>
-
-      <ul className="mt-6 hidden space-y-2 lg:block">
-        {intent.selected.features.map((feature) => (
-          <li key={feature.label} className="flex gap-2 text-sm text-white/75">
-            <Check className="mt-0.5 size-4 shrink-0 text-white/55" />
-            {feature.label}
-          </li>
-        ))}
-      </ul>
-
-      <p className="mt-6 text-sm text-white/55">
-        Once your account is ready, you&apos;ll go straight to checkout, or{' '}
-        <SkipText onSkip={intent.skip} />.
-      </p>
-    </div>
-  )
-}
-
-export function CheckoutSummary(props: { plans: CheckoutPlan[] }) {
-  const intent = useCheckoutIntent(props.plans)
-
-  if (!intent) return null
-
-  return <Summary intent={intent} />
 }
 
 function InlineMenu<T extends string>(props: {
