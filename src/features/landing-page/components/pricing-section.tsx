@@ -131,9 +131,23 @@ function Pricing(props: {
     }).format(plan.priceAmountCents / 1200)
   }
 
+  function discountPercent(plan: PricingPlan) {
+    if (plan.interval !== 'YEARLY') return 0
+
+    const monthly = props.plans.find(
+      (entry) => entry.plan === plan.plan && entry.interval === 'MONTHLY'
+    )
+
+    if (!monthly) return 0
+
+    return Math.round(
+      (1 - plan.priceAmountCents / (monthly.priceAmountCents * 12)) * 100
+    )
+  }
+
   const bestYearlyPlan = props.plans
     .filter((plan) => plan.interval === 'YEARLY')
-    .sort((a, b) => b.discountPercent - a.discountPercent)[0]
+    .sort((a, b) => discountPercent(b) - discountPercent(a))[0]
 
   const subscription = subscriptionQuery.data
   const isLapsed =
@@ -367,7 +381,9 @@ function Pricing(props: {
                 })
               }}
               variant="landing"
-              yearlySavePercent={bestYearlyPlan?.discountPercent}
+              yearlySavePercent={
+                bestYearlyPlan && discountPercent(bestYearlyPlan)
+              }
             />
           </div>
         </div>
@@ -394,7 +410,7 @@ function Pricing(props: {
               displayName={pro.displayName}
               price={monthlyPrice(pro)}
               period="/ month"
-              discountPercent={pro.discountPercent}
+              discountPercent={discountPercent(pro)}
               description="Managed cloud transcription with a daily allowance."
               features={pro.features}
               featured={true}
@@ -407,7 +423,7 @@ function Pricing(props: {
               displayName={max.displayName}
               price={monthlyPrice(max)}
               period="/ month"
-              discountPercent={max.discountPercent}
+              discountPercent={discountPercent(max)}
               description="Unlimited managed cloud transcription, subject to abuse protection."
               features={max.features}
               featured={false}
