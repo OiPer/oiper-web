@@ -125,6 +125,7 @@ export function SignInForm() {
           </div>
           <AuthPasswordInput
             placeholder="Password"
+            aria-label="Password"
             autoComplete="current-password"
             {...form.register('password')}
             error={form.formState.errors.password?.message}

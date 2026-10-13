@@ -1,35 +1,20 @@
+import { buildAuthUrl } from '@/features/auth/auth-form-utils'
 import { redirect } from 'next/navigation'
 
 type AuthLoginPageProps = {
-  searchParams?: Record<string, string | string[] | undefined>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-function buildQueryString(
-  searchParams: AuthLoginPageProps['searchParams']
-): string {
-  if (!searchParams) return ''
+export default async function AuthLoginPage({
+  searchParams,
+}: AuthLoginPageProps) {
+  const params = await searchParams
 
-  const query = new URLSearchParams()
-
-  for (const [key, value] of Object.entries(searchParams)) {
-    if (typeof value === 'undefined') continue
-
-    if (Array.isArray(value)) {
-      for (const item of value) {
-        query.append(key, item)
-      }
-
-      continue
-    }
-
-    query.set(key, value)
-  }
-
-  return query.toString()
-}
-
-export default function AuthLoginPage({ searchParams }: AuthLoginPageProps) {
-  const queryString = buildQueryString(searchParams)
-  const target = queryString ? `/auth/signin?${queryString}` : '/auth/signin'
-  redirect(target)
+  redirect(
+    buildAuthUrl('signin', {
+      callbackUrl:
+        typeof params.callbackUrl === 'string' ? params.callbackUrl : null,
+      email: typeof params.email === 'string' ? params.email : null,
+    })
+  )
 }

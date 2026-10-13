@@ -179,7 +179,6 @@ export interface paths {
             parameters: {
                 query?: {
                     callbackUrl?: string;
-                    mode?: components["schemas"]["WebAuthMode"];
                     provider?: components["schemas"]["WebOAuthProvider"];
                 };
                 header?: never;
@@ -10954,11 +10953,6 @@ export interface components {
             requestId: string;
         };
         RequestId: string;
-        /**
-         * @default page
-         * @enum {string}
-         */
-        WebAuthMode: "modal" | "page";
         /**
          * @default google
          * @enum {string}
