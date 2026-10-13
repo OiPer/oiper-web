@@ -1,4 +1,4 @@
-const VERSION = 'v2'
+const VERSION = 'v3'
 const PAGES = `oiper-pages-${VERSION}`
 const ASSETS = `oiper-assets-${VERSION}`
 const PRECACHE = ['/', '/docs']
@@ -6,6 +6,8 @@ const PRECACHE = ['/', '/docs']
 const NETWORK_ONLY = [
   /^\/api\//,
   /^\/auth(\/|$)/,
+  /^\/(signin|signup|forgot-password|verify-email)(\/|$)/,
+  /^\/connect(\/|$)/,
   /^\/account(\/|$)/,
   /^\/dev(\/|$)/,
   /^\/download\/[^/]+$/,
