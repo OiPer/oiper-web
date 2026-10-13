@@ -1,11 +1,9 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-
 import { logClick } from '@/lib/analytics'
-import { Github, X } from 'lucide-react'
+import { Github } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import type { PropsWithChildren, ReactNode } from 'react'
 import {
   buildAuthUrl,
@@ -66,7 +64,6 @@ export function AuthCard({
   showOAuth = true,
   checkout,
 }: AuthCardProps) {
-  const router = useRouter()
   const searchParams = useSearchParams()
 
   const footer = PAGE_FOOTER[page]
@@ -88,19 +85,8 @@ export function AuthCard({
         <p className="text-sm text-white/65">{description}</p>
       </div>
 
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className="absolute top-0 right-0 text-white/60 hover:bg-white/10 hover:text-white"
-        onClick={() => router.push(callbackUrl)}
-      >
-        <X className="size-4" />
-        <span className="sr-only">Close</span>
-      </Button>
-
       <div className="mt-6 space-y-5">
-        {checkout ? <div>{checkout}</div> : null}
+        {checkout ? <div className="-mt-2.5 mb-7">{checkout}</div> : null}
         {children}
 
         {showOAuth ? (
