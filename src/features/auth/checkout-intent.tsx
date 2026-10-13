@@ -18,7 +18,6 @@ type Interval = 'MONTHLY' | 'YEARLY'
 
 const BASE = 'http://internal.invalid'
 const PLANS: Plan[] = ['PRO', 'MAX']
-const INTERVALS: Interval[] = ['MONTHLY', 'YEARLY']
 
 function useCheckoutIntent(plans: CheckoutPlan[]) {
   const pathname = usePathname()
