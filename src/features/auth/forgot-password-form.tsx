@@ -4,7 +4,7 @@ import { logComplete, logError, logSubmit } from '@/lib/analytics'
 import { $api } from '@/lib/api/client'
 import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -17,6 +17,8 @@ import {
   AuthSubmitButton,
 } from './auth-form-input'
 import { buildAuthUrl } from './auth-form-utils'
+
+const RESET_CALLBACK_KEY = 'oiper:reset-callback-url'
 
 const requestResetSchema = z.object({
   email: z.string().trim().email('Enter a valid email address'),
@@ -37,12 +39,7 @@ const resetWithTokenSchema = z
     }
   })
 
-type ForgotPasswordFormProps = {
-  mode: 'modal' | 'page'
-}
-
-export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
-  const pathname = usePathname()
+export function ForgotPasswordForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -54,7 +51,6 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
     'post',
     '/v1/auth/web/password-reset/confirm'
   )
-  const currentSearch = new URLSearchParams(searchParams.toString())
 
   const requestResetForm = useForm<z.infer<typeof requestResetSchema>>({
     resolver: zodResolver(requestResetSchema),
@@ -74,21 +70,21 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
   const token = searchParams.get('token')
 
   function goToSignIn() {
-    router.push(
-      buildAuthUrl({
-        mode,
-        pathname,
-        searchParams: currentSearch,
-        page: 'signin',
-      })
-    )
+    let callbackUrl = searchParams.get('callbackUrl')
+
+    try {
+      callbackUrl ??= localStorage.getItem(RESET_CALLBACK_KEY)
+      localStorage.removeItem(RESET_CALLBACK_KEY)
+    } catch {}
+
+    router.push(buildAuthUrl('signin', { callbackUrl }))
   }
 
   async function handlePasswordResetRequest(
     values: z.infer<typeof requestResetSchema>
   ) {
     setErrorMessage(null)
-    logSubmit('password_reset_request', 'auth', { mode })
+    logSubmit('password_reset_request', 'auth')
 
     try {
       await requestResetMutation.mutateAsync({
@@ -97,15 +93,20 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
         },
       })
 
-      logComplete('password_reset_request', 'auth', { mode })
+      logComplete('password_reset_request', 'auth')
       toast.success('Password reset email sent')
+
+      const callbackUrl = searchParams.get('callbackUrl')
+
+      try {
+        if (callbackUrl) localStorage.setItem(RESET_CALLBACK_KEY, callbackUrl)
+      } catch {}
     } catch (error) {
       const code = getAppErrorCode<
         'post',
         '/v1/auth/web/password-reset/request'
       >(error)
       logError('password_reset_request', 'auth', {
-        mode,
         error_type: code ?? 'unknown',
       })
       setErrorMessage("Couldn't send the reset email")
@@ -115,11 +116,10 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
   async function handlePasswordReset(
     values: z.infer<typeof resetWithTokenSchema>
   ) {
-    logSubmit('password_reset_confirm', 'auth', { mode })
+    logSubmit('password_reset_confirm', 'auth')
 
     if (!token) {
       logError('password_reset_confirm', 'auth', {
-        mode,
         error_type: 'missing_token',
       })
       return setErrorMessage('Missing reset token')
@@ -135,7 +135,7 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
         },
       })
 
-      logComplete('password_reset_confirm', 'auth', { mode })
+      logComplete('password_reset_confirm', 'auth')
       toast.success('Password updated, redirecting to sign in')
       window.setTimeout(() => goToSignIn(), 600)
     } catch (error) {
@@ -144,7 +144,6 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
         '/v1/auth/web/password-reset/confirm'
       >(error)
       logError('password_reset_confirm', 'auth', {
-        mode,
         error_type: code ?? 'unknown',
       })
 
@@ -159,7 +158,6 @@ export function ForgotPasswordForm({ mode }: ForgotPasswordFormProps) {
 
   return (
     <AuthCard
-      mode={mode}
       showOAuth={false}
       page="forgot-password"
       title={token ? 'Set new password' : 'Reset password'}

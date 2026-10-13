@@ -4,7 +4,7 @@ import { useAuth } from '@/features/auth/auth-context'
 import { logComplete, logError, logSubmit } from '@/lib/analytics'
 import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -36,18 +36,12 @@ const signUpSchema = z
 
 type SignUpSchema = z.infer<typeof signUpSchema>
 
-type SignUpFormProps = {
-  mode: 'modal' | 'page'
-}
-
-export function SignUpForm({ mode }: SignUpFormProps) {
-  const pathname = usePathname()
+export function SignUpForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { signUp } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const currentSearch = new URLSearchParams(searchParams.toString())
-  const callbackUrl = getCallbackUrl(currentSearch)
+  const callbackUrl = getCallbackUrl(searchParams)
 
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
@@ -61,7 +55,7 @@ export function SignUpForm({ mode }: SignUpFormProps) {
 
   async function handleSignUp(values: SignUpSchema) {
     setErrorMessage(null)
-    logSubmit('signup', 'auth', { mode })
+    logSubmit('signup', 'auth')
 
     try {
       const result = await signUp({
@@ -71,34 +65,29 @@ export function SignUpForm({ mode }: SignUpFormProps) {
       })
 
       if ('type' in result && result.type === 'email_verification') {
-        logComplete('signup', 'auth', { mode, outcome: 'email_verification' })
+        logComplete('signup', 'auth', { outcome: 'email_verification' })
         return router.push(
-          buildAuthUrl({
-            mode,
-            pathname,
-            searchParams: currentSearch,
-            page: 'verify-email',
-            additionalParams: {
-              email: result.email,
-              pat: result.pat,
-              ...(result.evid ? { evid: result.evid } : {}),
-            },
+          buildAuthUrl('verify-email', {
+            callbackUrl: searchParams.get('callbackUrl'),
+            email: result.email,
+            pat: result.pat,
+            evid: result.evid,
           })
         )
       }
 
       if ('authenticated' in result && !result.authenticated) {
-        logError('signup', 'auth', { mode, error_type: 'not_authenticated' })
+        logError('signup', 'auth', { error_type: 'not_authenticated' })
         return setErrorMessage('Something went wrong')
       }
 
-      logComplete('signup', 'auth', { mode })
+      logComplete('signup', 'auth')
       router.push(callbackUrl)
     } catch (error) {
       const code = getAppErrorCode<'post', '/v1/auth/web/sign-up/password'>(
         error
       )
-      logError('signup', 'auth', { mode, error_type: code ?? 'unknown' })
+      logError('signup', 'auth', { error_type: code ?? 'unknown' })
 
       switch (code) {
         case 'AUTH_EMAIL_ALREADY_EXISTS':
@@ -113,7 +102,6 @@ export function SignUpForm({ mode }: SignUpFormProps) {
 
   return (
     <AuthCard
-      mode={mode}
       page="signup"
       title="Create an account"
       description="Sign up to start using OiPer."

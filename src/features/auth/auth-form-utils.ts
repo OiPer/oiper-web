@@ -1,41 +1,9 @@
 import { env } from '@/lib/env'
 import { joinUrl } from '@/lib/url'
 
-export type AuthMode = 'modal' | 'page'
-
 export type AuthPage = 'signin' | 'signup' | 'forgot-password' | 'verify-email'
 
 export type WebAuthProvider = 'google' | 'github'
-
-function buildUrl(pathname: string, searchParams: URLSearchParams): string {
-  const query = searchParams.toString()
-  return query ? `${pathname}?${query}` : pathname
-}
-
-function cloneSearchParams(searchParams: URLSearchParams): URLSearchParams {
-  return new URLSearchParams(searchParams.toString())
-}
-
-function stripTransientAuthParams(
-  searchParams: URLSearchParams
-): URLSearchParams {
-  const next = cloneSearchParams(searchParams)
-  next.delete('code')
-  next.delete('pat')
-  next.delete('evid')
-  return next
-}
-
-function applyAdditionalParams(
-  searchParams: URLSearchParams,
-  additionalParams?: Record<string, string>
-): void {
-  if (!additionalParams) return
-
-  Object.entries(additionalParams).forEach(([key, value]) => {
-    searchParams.set(key, value)
-  })
-}
 
 const CALLBACK_URL_BASE = 'http://internal.invalid'
 
@@ -56,46 +24,26 @@ export function getCallbackUrl(searchParams: URLSearchParams): string {
   return callbackUrl
 }
 
-export function buildAuthUrl(input: {
-  mode: AuthMode
-  pathname: string
-  searchParams: URLSearchParams
-  page: AuthPage
-  additionalParams?: Record<string, string>
-}): string {
-  const next = stripTransientAuthParams(input.searchParams)
-  applyAdditionalParams(next, input.additionalParams)
+export function buildAuthUrl(
+  page: AuthPage,
+  params: Record<string, string | null | undefined> = {}
+): string {
+  const query = new URLSearchParams()
 
-  if (input.mode === 'modal') {
-    next.set('auth-page', input.page)
-    return buildUrl(input.pathname, next)
+  for (const [key, value] of Object.entries(params)) {
+    if (value) query.set(key, value)
   }
 
-  next.delete('auth-page')
-  return buildUrl(`/auth/${input.page}`, next)
+  const search = query.toString()
+  return search ? `/${page}?${search}` : `/${page}`
 }
 
-export function buildAuthReturnUrl(input: {
-  mode: AuthMode
-  pathname: string
-  searchParams: URLSearchParams
-}): string {
-  if (input.mode === 'page') return getCallbackUrl(input.searchParams)
-
-  const next = stripTransientAuthParams(input.searchParams)
-
-  next.delete('auth-page')
-  return buildUrl(input.pathname, next)
-}
-
-export function buildWebAuthStartUrl(input: {
-  callbackUrl: string
-  mode: AuthMode
+export function buildWebAuthStartUrl(
+  callbackUrl: string,
   provider: WebAuthProvider
-}): string {
+): string {
   return joinUrl(env.OIPER_SERVER_URL, '/v1/auth/web/start', {
-    callbackUrl: input.callbackUrl,
-    mode: input.mode,
-    provider: input.provider,
+    callbackUrl,
+    provider,
   })
 }

@@ -64,12 +64,7 @@ function capitalize(value: string) {
 }
 
 function authUrl(page: 'signup' | 'signin') {
-  return buildAuthUrl({
-    mode: 'modal',
-    pathname: GIFT_PATH,
-    searchParams: new URLSearchParams({ callbackUrl: GIFT_PATH }),
-    page,
-  })
+  return buildAuthUrl(page, { callbackUrl: GIFT_PATH })
 }
 
 const SPARKLES = [
