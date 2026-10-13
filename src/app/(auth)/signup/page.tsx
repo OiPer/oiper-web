@@ -6,13 +6,8 @@ import { appPageMetadata } from '@/features/seo/app-pages'
 
 export const metadata = appPageMetadata('/signup')
 
-type SignUpPageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>
-}
-
-export default async function SignUpPage({ searchParams }: SignUpPageProps) {
-  const params = await searchParams
-  const plans = await loadCheckoutPlans(params.callbackUrl)
+export default async function SignUpPage() {
+  const plans = await loadCheckoutPlans()
 
   return (
     <AuthPageShell aside={plans ? <CheckoutSummary plans={plans} /> : null}>

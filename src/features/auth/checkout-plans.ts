@@ -6,19 +6,8 @@ export type CheckoutPlan = components['schemas']['PricingPlan'] & {
   interval: 'MONTHLY' | 'YEARLY'
 }
 
-export async function loadCheckoutPlans(
-  callbackUrl: string | string[] | undefined
-): Promise<CheckoutPlan[] | null> {
-  if (typeof callbackUrl !== 'string') return null
-
+export async function loadCheckoutPlans(): Promise<CheckoutPlan[] | null> {
   try {
-    const checkout = new URL(
-      callbackUrl,
-      'http://internal.invalid'
-    ).searchParams.get('checkout')
-
-    if (checkout !== 'pro' && checkout !== 'max') return null
-
     const { data } = await api.GET('/v1/pricing')
     if (!data) return null
 
