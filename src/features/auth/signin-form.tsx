@@ -6,7 +6,7 @@ import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
@@ -25,7 +25,7 @@ const signInSchema = z.object({
 
 type SignInSchema = z.infer<typeof signInSchema>
 
-export function SignInForm() {
+export function SignInForm(props: { checkout?: ReactNode }) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { signIn } = useAuth()
@@ -96,6 +96,7 @@ export function SignInForm() {
 
   return (
     <AuthCard
+      checkout={props.checkout}
       page="signin"
       title="Welcome back"
       description="Sign in to your account to continue."

@@ -5,7 +5,7 @@ import { logComplete, logError, logSubmit } from '@/lib/analytics'
 import { getAppErrorCode } from '@/lib/api/error'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthCard } from './auth-card'
@@ -36,7 +36,7 @@ const signUpSchema = z
 
 type SignUpSchema = z.infer<typeof signUpSchema>
 
-export function SignUpForm() {
+export function SignUpForm(props: { checkout?: ReactNode }) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { signUp } = useAuth()
@@ -102,6 +102,7 @@ export function SignUpForm() {
 
   return (
     <AuthCard
+      checkout={props.checkout}
       page="signup"
       title="Create an account"
       description="Sign up to start using OiPer."
