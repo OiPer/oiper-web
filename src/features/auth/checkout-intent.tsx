@@ -272,14 +272,11 @@ function InlineMenu<T extends string>(props: {
           <DropdownMenuItem
             key={option.value}
             onSelect={() => props.onChange(option.value)}
-            className="cursor-pointer gap-3 px-3 py-2"
+            className={cn(
+              'cursor-pointer gap-3 px-2.5 py-1',
+              option.value === props.value && 'bg-accent text-accent-foreground'
+            )}
           >
-            <Check
-              className={cn(
-                'size-4',
-                option.value !== props.value && 'invisible'
-              )}
-            />
             <span className="flex-1">{option.label}</span>
             {option.hint ? (
               <span className="text-white/55">{option.hint}</span>
