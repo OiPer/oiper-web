@@ -35,7 +35,7 @@ export function buildAuthUrl(
   }
 
   const search = query.toString()
-  return search ? `/auth/${page}?${search}` : `/auth/${page}`
+  return search ? `/${page}?${search}` : `/${page}`
 }
 
 export function buildWebAuthStartUrl(

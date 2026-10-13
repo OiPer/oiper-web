@@ -15,6 +15,16 @@ const nextConfig = {
   compiler: { removeConsole: process.env.NODE_ENV === 'production' },
   devIndicators: false,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      { source: '/auth/login', destination: '/signin', permanent: true },
+      {
+        source: '/auth/:page(signin|signup|forgot-password|verify-email)',
+        destination: '/:page',
+        permanent: true,
+      },
+    ]
+  },
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },

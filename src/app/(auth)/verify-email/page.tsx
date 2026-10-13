@@ -4,7 +4,7 @@ import { EmailVerificationForm } from '@/features/auth/email-verification-form'
 import { appPageMetadata } from '@/features/seo/app-pages'
 import { redirect } from 'next/navigation'
 
-export const metadata = appPageMetadata('/auth/verify-email')
+export const metadata = appPageMetadata('/verify-email')
 
 type VerifyEmailPageProps = {
   searchParams: Promise<{
