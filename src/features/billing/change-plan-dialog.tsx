@@ -137,7 +137,12 @@ function PlanOption(props: { entry: PlanCatalogEntry; isCurrent: boolean }) {
       </span>
       <span className="flex shrink-0 items-baseline gap-2">
         <span className="text-sm font-semibold tabular-nums">
-          {formatCurrencyFromCents(props.entry.effectiveMonthlyCents)} / month
+          {formatCurrencyFromCents(
+            isYearly
+              ? props.entry.priceAmountCents / 12
+              : props.entry.priceAmountCents
+          )}{' '}
+          / month
         </span>
         {isYearly && (
           <span className="text-muted-foreground text-xs tabular-nums">

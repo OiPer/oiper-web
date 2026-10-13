@@ -95,7 +95,6 @@ export type PricingCardState = {
     price: string
     period: string
     discountPercent: number
-    discountPercentFloored: number
     description: string
     features: PricingFeature[]
     featured: boolean
@@ -108,7 +107,6 @@ const FREE_CARD = {
   price: '$0',
   period: 'Forever',
   discountPercent: 0,
-  discountPercentFloored: 0,
   description: 'Unlimited transcription on your machine, no limits, no cost.',
   features: FREE_FEATURES,
   featured: false,
@@ -119,7 +117,6 @@ const PRO_MONTHLY_CARD = {
   price: '$7.99',
   period: '/ month',
   discountPercent: 0,
-  discountPercentFloored: 0,
   description: 'Managed cloud transcription with a daily allowance.',
   features: PRO_FEATURES,
   featured: true,
@@ -127,10 +124,8 @@ const PRO_MONTHLY_CARD = {
 
 const PRO_YEARLY_CARD = {
   ...PRO_MONTHLY_CARD,
-  price: '$74.99',
-  period: '/ year',
-  discountPercent: 22,
-  discountPercentFloored: 20,
+  price: '$5.99',
+  discountPercent: 25,
 }
 
 const MAX_MONTHLY_CARD = {
@@ -138,7 +133,6 @@ const MAX_MONTHLY_CARD = {
   price: '$14.99',
   period: '/ month',
   discountPercent: 0,
-  discountPercentFloored: 0,
   description:
     'Unlimited managed cloud transcription, subject to abuse protection.',
   features: MAX_FEATURES,
@@ -147,10 +141,8 @@ const MAX_MONTHLY_CARD = {
 
 const MAX_YEARLY_CARD = {
   ...MAX_MONTHLY_CARD,
-  price: '$124.99',
-  period: '/ year',
-  discountPercent: 31,
-  discountPercentFloored: 30,
+  price: '$8.99',
+  discountPercent: 40,
 }
 
 export const PRICING_CARD_STATES: PricingCardState[] = [
@@ -506,7 +498,7 @@ export const CURRENT_PLAN_STATES: CurrentPlanCardState[] = [
       payment: {
         label: 'Next payment',
         date: 'August 15 2027',
-        amount: '$74.99',
+        amount: '$71.91',
       },
       buttons: [
         { label: 'Manage subscription', variant: 'outline' },
@@ -636,8 +628,8 @@ function FOUR_OPTIONS(
     {
       key: 'PRO-YEARLY',
       label: 'Pro · Yearly',
-      pricePerMonth: '$6.25 / month',
-      pricePerYear: '$74.99 / year',
+      pricePerMonth: '$5.99 / month',
+      pricePerYear: '$71.91 / year',
     },
     {
       key: 'MAX-MONTHLY',
@@ -647,8 +639,8 @@ function FOUR_OPTIONS(
     {
       key: 'MAX-YEARLY',
       label: 'Max · Yearly',
-      pricePerMonth: '$10.42 / month',
-      pricePerYear: '$124.99 / year',
+      pricePerMonth: '$8.99 / month',
+      pricePerYear: '$107.92 / year',
     },
   ]
 
@@ -711,9 +703,9 @@ export const CHANGE_PLAN_STATES: ChangePlanState[] = [
         {
           label: 'Charged today',
           detail: 'Prorated for the rest of this cycle',
-          value: '$117.87',
+          value: '$100.80',
         },
-        { label: 'Next payment', detail: 'January 3 2027', value: '$124.99' },
+        { label: 'Next payment', detail: 'January 3 2027', value: '$107.92' },
       ],
     },
     confirmLabel: 'Confirm change',
@@ -889,7 +881,7 @@ export const CHANGE_PLAN_STATES: ChangePlanState[] = [
         {
           label: 'First payment',
           detail: 'When your gift ends on November 9 2026',
-          value: '$74.99',
+          value: '$71.91',
         },
       ],
     },
@@ -1023,9 +1015,9 @@ export const CHANGE_PLAN_STATES: ChangePlanState[] = [
           label: 'Charged today',
           detail:
             'Prorated for the rest of this cycle — $42.00 covered by account credit',
-          value: '$75.87',
+          value: '$58.80',
         },
-        { label: 'Next payment', detail: 'January 3 2027', value: '$124.99' },
+        { label: 'Next payment', detail: 'January 3 2027', value: '$107.92' },
       ],
     },
     confirmLabel: 'Confirm change',
