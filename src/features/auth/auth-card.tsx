@@ -113,7 +113,7 @@ export function AuthCard({
 
       <CardContent className="space-y-5">
         {checkout ? (
-          <div className="-mt-4 mb-8 lg:hidden">{checkout}</div>
+          <div className="-mt-3 mb-8 lg:hidden">{checkout}</div>
         ) : null}
         {children}
 

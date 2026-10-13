@@ -266,7 +266,7 @@ function InlineMenu<T extends string>(props: {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="min-w-48 border-white/12 bg-[#121212] text-white shadow-2xl"
+        className="group min-w-36 border-white/12 bg-[#121212] text-white shadow-2xl"
       >
         {props.options.map((option) => (
           <DropdownMenuItem
@@ -274,7 +274,8 @@ function InlineMenu<T extends string>(props: {
             onSelect={() => props.onChange(option.value)}
             className={cn(
               'cursor-pointer gap-3 px-2.5 py-1',
-              option.value === props.value && 'bg-accent text-accent-foreground'
+              option.value === props.value &&
+                'bg-accent text-accent-foreground group-has-data-highlighted:not-data-highlighted:bg-transparent group-has-data-highlighted:not-data-highlighted:text-white'
             )}
           >
             <span className="flex-1">{option.label}</span>
