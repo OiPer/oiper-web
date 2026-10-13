@@ -5,9 +5,12 @@ import {
   PRIVACY_POLICY_URL,
   TERMS_OF_SERVICE_URL,
 } from '@/features/landing-page/constants/links'
-import type { PropsWithChildren } from 'react'
+import { cn } from '@/lib/utils'
+import type { PropsWithChildren, ReactNode } from 'react'
 
-export function AuthPageShell({ children }: PropsWithChildren) {
+type AuthPageShellProps = PropsWithChildren<{ aside?: ReactNode }>
+
+export function AuthPageShell({ children, aside }: AuthPageShellProps) {
   return (
     <div className="relative flex min-h-screen flex-col justify-between gap-8 bg-[#0a0a0a] px-4 text-white">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -18,8 +21,17 @@ export function AuthPageShell({ children }: PropsWithChildren) {
 
       <div
         id="oiper-auth-content"
-        className="relative mx-auto mt-16 flex w-full max-w-md justify-center sm:mt-24"
+        className={cn(
+          'relative mx-auto mt-16 flex w-full max-w-md justify-center sm:mt-24',
+          aside &&
+            'lg:grid lg:max-w-4xl lg:grid-cols-[1fr_28rem] lg:items-start lg:gap-12 lg:has-[>[data-aside]:empty]:flex lg:has-[>[data-aside]:empty]:max-w-md'
+        )}
       >
+        {aside ? (
+          <div data-aside className="hidden lg:block lg:empty:hidden">
+            {aside}
+          </div>
+        ) : null}
         {children}
       </div>
 
