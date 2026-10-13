@@ -5,33 +5,16 @@ import {
   PRIVACY_POLICY_URL,
   TERMS_OF_SERVICE_URL,
 } from '@/features/landing-page/constants/links'
-import { cn } from '@/lib/utils'
 import type { PropsWithChildren } from 'react'
 
-type AuthPageShellProps = PropsWithChildren<{
-  includeBackground?: boolean
-  mode: 'modal' | 'page'
-}>
-
-export function AuthPageShell({
-  children,
-  includeBackground = true,
-  mode,
-}: AuthPageShellProps) {
+export function AuthPageShell({ children }: PropsWithChildren) {
   return (
-    <div
-      className={cn(
-        'relative flex min-h-screen flex-col justify-between gap-8 px-4 text-white',
-        includeBackground && 'bg-[#0a0a0a]'
-      )}
-    >
-      {includeBackground ? (
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.06),transparent_42%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.04),transparent_40%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-size-[120px_120px]" />
-        </div>
-      ) : null}
+    <div className="relative flex min-h-screen flex-col justify-between gap-8 bg-[#0a0a0a] px-4 text-white">
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.06),transparent_42%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.04),transparent_40%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-size-[120px_120px]" />
+      </div>
 
       <div
         id="oiper-auth-content"
@@ -62,9 +45,6 @@ export function AuthPageShell({
           </NavigationLink>
           .
         </p>
-        {mode === 'modal' ? (
-          <p className="mt-2 text-[11px] text-white/50">Press ESC to close</p>
-        ) : null}
       </div>
     </div>
   )

@@ -15,7 +15,7 @@ import type { ReactNode } from 'react'
 type PricingPlan = components['schemas']['PricingPlan']
 
 export type CtaAction =
-  | { type: 'link'; href: string; scroll?: boolean; onClick?: () => void }
+  | { type: 'link'; href: string; onClick?: () => void }
   | { type: 'button'; onClick: () => void }
   | { type: 'download' }
 
@@ -88,7 +88,6 @@ function CtaLink(props: {
     return (
       <Link
         href={props.action.href}
-        scroll={props.action.scroll ?? true}
         className={props.className}
         onClick={props.action.onClick}
       >

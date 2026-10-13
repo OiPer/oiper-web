@@ -44,11 +44,8 @@ logClick('download', 'hero', { platform: 'windows' })
 logSelect('billing_interval', 'pricing', { interval: 'yearly' })
 // → billing_interval_selected { location: 'pricing', interval: 'yearly' }
 
-logError('signin', 'auth', {
-  mode: 'modal',
-  error_type: 'auth_invalid_credentials',
-})
-// → signin_failed { location: 'auth', mode: 'modal', error_type: 'auth_invalid_credentials' }
+logError('signin', 'auth', { error_type: 'auth_invalid_credentials' })
+// → signin_failed { location: 'auth', error_type: 'auth_invalid_credentials' }
 ```
 
 Never build an event name by hand and never call `window.gtag` directly.
@@ -96,7 +93,6 @@ Add a detail only when it carries product context GA4 can't know and that change
 | --------------------------------------------------------- | -------------------------------------------------------- |
 | `platform: 'macos_intel'`                                 | Which OiPer build was chosen                             |
 | `plan: 'pro'`, `interval: 'yearly'`, `provider: 'paddle'` | Which offer drove the upgrade                            |
-| `mode: 'modal'`                                           | Whether auth happened in the modal or on the full page   |
 | `error_type: 'auth_email_already_exists'`                 | Why the journey broke                                    |
 | `outcome: 'email_verification'`                           | Which branch a successful action took                    |
 | `destination: 'docs'`                                     | Where a navigation link leads                            |
@@ -181,20 +177,20 @@ Every event the site sends. All events also carry `location`.
 
 ### Sign in and sign up
 
-| Event                                                         | Location           | Details                                                                                                                                          | When                                                      |
-| ------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
-| `signup_clicked`                                              | `header` `auth`    | —                                                                                                                                                | "Sign up" in the header or the auth card switch link      |
-| `signin_clicked`                                              | `header` `auth`    | —                                                                                                                                                | "Sign in" in the header menu or the auth card switch link |
-| `oauth_clicked`                                               | `auth`             | `provider`: `google` `github`, `mode`                                                                                                            | "Continue with" Google or GitHub                          |
-| `forgot_password_clicked`                                     | `auth`             | —                                                                                                                                                | "Forgot password?"                                        |
-| `signin_submitted` / `signin_completed` / `signin_failed`     | `auth`             | `mode`, `outcome` (`email_verification`), `error_type` (`auth_invalid_credentials` `auth_auth_method_not_allowed` `not_authenticated` `unknown`) | Sign-in form                                              |
-| `signup_submitted` / `signup_completed` / `signup_failed`     | `auth`             | `mode`, `outcome` (`email_verification`), `error_type` (`auth_email_already_exists` `auth_password_policy_failed` `not_authenticated` `unknown`) | Sign-up form                                              |
-| `password_reset_request_submitted` / `_completed` / `_failed` | `auth`             | `mode`, `error_type`                                                                                                                             | "Send reset email" form                                   |
-| `password_reset_request_completed` / `_failed`                | `security`         | `error_type`                                                                                                                                     | "Send reset email" on the account security page           |
-| `password_reset_confirm_submitted` / `_completed` / `_failed` | `auth`             | `mode`, `error_type` (`missing_token` `auth_request_rejected` `unknown`)                                                                         | Set-new-password form                                     |
-| `email_verification_submitted` / `_completed` / `_failed`     | `auth`             | `mode`, `error_type` (`auth_invalid_verification_code` `not_authenticated` `unknown`)                                                            | Verification code form                                    |
-| `verification_resend_completed` / `_failed`                   | `auth`             | `mode`, `outcome` (`sent` `already_verified`), `error_type` (`no_verification_id` `unknown`)                                                     | "Resend code"                                             |
-| `signout_clicked` / `signout_failed`                          | `header` `account` | `error_type`                                                                                                                                     | "Sign out"                                                |
+| Event                                                         | Location           | Details                                                                                                                                  | When                                                      |
+| ------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `signup_clicked`                                              | `header` `auth`    | —                                                                                                                                        | "Sign up" in the header or the auth card switch link      |
+| `signin_clicked`                                              | `header` `auth`    | —                                                                                                                                        | "Sign in" in the header menu or the auth card switch link |
+| `oauth_clicked`                                               | `auth`             | `provider`: `google` `github`                                                                                                            | "Continue with" Google or GitHub                          |
+| `forgot_password_clicked`                                     | `auth`             | —                                                                                                                                        | "Forgot password?"                                        |
+| `signin_submitted` / `signin_completed` / `signin_failed`     | `auth`             | `outcome` (`email_verification`), `error_type` (`auth_invalid_credentials` `auth_auth_method_not_allowed` `not_authenticated` `unknown`) | Sign-in form                                              |
+| `signup_submitted` / `signup_completed` / `signup_failed`     | `auth`             | `outcome` (`email_verification`), `error_type` (`auth_email_already_exists` `auth_password_policy_failed` `not_authenticated` `unknown`) | Sign-up form                                              |
+| `password_reset_request_submitted` / `_completed` / `_failed` | `auth`             | `error_type`                                                                                                                             | "Send reset email" form                                   |
+| `password_reset_request_completed` / `_failed`                | `security`         | `error_type`                                                                                                                             | "Send reset email" on the account security page           |
+| `password_reset_confirm_submitted` / `_completed` / `_failed` | `auth`             | `error_type` (`missing_token` `auth_request_rejected` `unknown`)                                                                         | Set-new-password form                                     |
+| `email_verification_submitted` / `_completed` / `_failed`     | `auth`             | `error_type` (`auth_invalid_verification_code` `not_authenticated` `unknown`)                                                            | Verification code form                                    |
+| `verification_resend_completed` / `_failed`                   | `auth`             | `outcome` (`sent` `already_verified`), `error_type` (`no_verification_id` `unknown`)                                                     | "Resend code"                                             |
+| `signout_clicked` / `signout_failed`                          | `header` `account` | `error_type`                                                                                                                             | "Sign out"                                                |
 
 ### Pricing, checkout and plans
 

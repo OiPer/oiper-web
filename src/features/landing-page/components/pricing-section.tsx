@@ -179,17 +179,12 @@ function Pricing(props: {
     checkoutInterval: 'monthly' | 'yearly',
     provider: 'paddle' | 'stripe'
   ) {
-    return buildAuthUrl({
-      mode: 'modal',
-      pathname,
-      searchParams: new URLSearchParams(props.searchParams?.toString()),
-      page: 'signup',
-      additionalParams: {
-        checkout,
-        interval: checkoutInterval,
-        ...(provider === 'stripe' ? { provider: 'stripe' } : {}),
-      },
-    })
+    const params = new URLSearchParams(props.searchParams?.toString())
+    params.set('checkout', checkout)
+    params.set('interval', checkoutInterval)
+    if (provider === 'stripe') params.set('provider', 'stripe')
+
+    return buildAuthUrl('signup', { callbackUrl: `${pathname}?${params}` })
   }
 
   function trackUpgrade(
@@ -237,7 +232,6 @@ function Pricing(props: {
       : {
           type: 'link',
           href: signupCta(checkoutSlug, intervalParam, 'stripe'),
-          scroll: false,
           onClick: () => trackUpgrade(cardPlan, 'stripe'),
         }
 
@@ -271,7 +265,6 @@ function Pricing(props: {
         : {
             type: 'link',
             href: signupCta(checkoutSlug, intervalParam, 'paddle'),
-            scroll: false,
             onClick: () => trackUpgrade(cardPlan, 'paddle'),
           }
 

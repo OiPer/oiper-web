@@ -15,10 +15,6 @@ import { AuthCard } from './auth-card'
 import { AuthFormError, AuthInput, AuthSubmitButton } from './auth-form-input'
 import { getCallbackUrl } from './auth-form-utils'
 
-type VerificationFormProps = {
-  mode: 'modal' | 'page'
-}
-
 const emailVerificationSchema = z.object({
   otp: z
     .string()
@@ -29,14 +25,13 @@ const emailVerificationSchema = z.object({
 
 type EmailVerificationForm = z.infer<typeof emailVerificationSchema>
 
-export function EmailVerificationForm({ mode }: VerificationFormProps) {
+export function EmailVerificationForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { resendVerification, verifyEmail } = useAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isResending, setIsResending] = useState(false)
-  const currentSearch = new URLSearchParams(searchParams.toString())
-  const callbackUrl = getCallbackUrl(currentSearch)
+  const callbackUrl = getCallbackUrl(searchParams)
 
   const pendingAuthenticationToken = searchParams.get('pat')
   const email = searchParams.get('email')
@@ -56,7 +51,7 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
 
   async function handleEmailVerification(values: EmailVerificationForm) {
     setErrorMessage(null)
-    logSubmit('email_verification', 'auth', { mode })
+    logSubmit('email_verification', 'auth')
 
     try {
       const session = await verifyEmail({
@@ -66,18 +61,16 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
 
       if (!session.authenticated) {
         logError('email_verification', 'auth', {
-          mode,
           error_type: 'not_authenticated',
         })
         return setErrorMessage('Unable to verify email')
       }
 
-      logComplete('email_verification', 'auth', { mode })
+      logComplete('email_verification', 'auth')
       router.push(callbackUrl)
     } catch (error) {
       const code = getAppErrorCode<'post', '/v1/auth/web/verify-email'>(error)
       logError('email_verification', 'auth', {
-        mode,
         error_type: code ?? 'unknown',
       })
 
@@ -97,7 +90,6 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
     try {
       if (!emailVerificationId) {
         logError('verification_resend', 'auth', {
-          mode,
           error_type: 'no_verification_id',
         })
         return toast.info('Restart sign-in to get a new code')
@@ -105,7 +97,6 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
 
       const response = await resendVerification({ evid: emailVerificationId })
       logComplete('verification_resend', 'auth', {
-        mode,
         outcome: response.alreadyVerified ? 'already_verified' : 'sent',
       })
 
@@ -115,7 +106,7 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
 
       if (!response.alreadyVerified) toast.success('Verification code sent')
     } catch {
-      logError('verification_resend', 'auth', { mode, error_type: 'unknown' })
+      logError('verification_resend', 'auth', { error_type: 'unknown' })
       setErrorMessage("Couldn't resend the code")
     } finally {
       setIsResending(false)
@@ -124,7 +115,6 @@ export function EmailVerificationForm({ mode }: VerificationFormProps) {
 
   return (
     <AuthCard
-      mode={mode}
       page="signup"
       title="Verify your email"
       description="Enter the code we emailed to finish signing you in."

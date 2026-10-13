@@ -6,8 +6,8 @@ export const metadata = appPageMetadata('/auth/signin')
 
 export default function SignInPage() {
   return (
-    <AuthPageShell mode="page">
-      <SignInForm mode="page" />
+    <AuthPageShell>
+      <SignInForm />
     </AuthPageShell>
   )
 }

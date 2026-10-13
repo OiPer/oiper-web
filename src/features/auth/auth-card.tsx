@@ -13,12 +13,12 @@ import {
 import { logClick } from '@/lib/analytics'
 import { Github, X } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import type { PropsWithChildren } from 'react'
 import {
-  buildAuthReturnUrl,
   buildAuthUrl,
   buildWebAuthStartUrl,
+  getCallbackUrl,
 } from './auth-form-utils'
 
 function GoogleIcon() {
@@ -60,7 +60,6 @@ type AuthPageName = keyof typeof PAGE_SWITCH
 
 type AuthCardProps = PropsWithChildren<{
   page: AuthPageName
-  mode: 'modal' | 'page'
   title: string
   description: string
   showOAuth?: boolean
@@ -68,42 +67,25 @@ type AuthCardProps = PropsWithChildren<{
 
 export function AuthCard({
   page,
-  mode,
   title,
   description,
   children,
   showOAuth = true,
 }: AuthCardProps) {
-  const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
 
   const footer = PAGE_FOOTER[page]
   const nextPage = PAGE_SWITCH[page]
-  const currentSearch = new URLSearchParams(searchParams.toString())
+  const callbackUrl = getCallbackUrl(searchParams)
 
-  const switchHref = buildAuthUrl({
-    mode,
-    pathname,
-    searchParams: currentSearch,
-    page: nextPage,
+  const switchHref = buildAuthUrl(nextPage, {
+    callbackUrl: searchParams.get('callbackUrl'),
+    email: searchParams.get('email'),
   })
 
-  const returnHref = buildAuthReturnUrl({
-    mode,
-    pathname,
-    searchParams: currentSearch,
-  })
-  const googleAuthHref = buildWebAuthStartUrl({
-    callbackUrl: returnHref,
-    mode,
-    provider: 'google',
-  })
-  const githubAuthHref = buildWebAuthStartUrl({
-    callbackUrl: returnHref,
-    mode,
-    provider: 'github',
-  })
+  const googleAuthHref = buildWebAuthStartUrl(callbackUrl, 'google')
+  const githubAuthHref = buildWebAuthStartUrl(callbackUrl, 'github')
 
   return (
     <Card className="relative w-full border-white/15 bg-black/45 text-white shadow-2xl shadow-black/30 backdrop-blur-xl">
@@ -121,14 +103,7 @@ export function AuthCard({
         variant="ghost"
         size="icon"
         className="absolute top-3 right-3 text-white/60 hover:bg-white/10 hover:text-white"
-        onClick={() => {
-          if (mode === 'modal') {
-            router.replace(returnHref, { scroll: false })
-            return
-          }
-
-          router.push(returnHref)
-        }}
+        onClick={() => router.push(callbackUrl)}
       >
         <X className="size-4" />
         <span className="sr-only">Close</span>
@@ -152,7 +127,7 @@ export function AuthCard({
               <a
                 href={googleAuthHref}
                 onClick={() =>
-                  logClick('oauth', 'auth', { provider: 'google', mode })
+                  logClick('oauth', 'auth', { provider: 'google' })
                 }
                 className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:border-white/40 hover:bg-white/10"
               >
@@ -163,7 +138,7 @@ export function AuthCard({
               <a
                 href={githubAuthHref}
                 onClick={() =>
-                  logClick('oauth', 'auth', { provider: 'github', mode })
+                  logClick('oauth', 'auth', { provider: 'github' })
                 }
                 className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:border-white/40 hover:bg-white/10"
               >
@@ -181,7 +156,6 @@ export function AuthCard({
           <Link
             href={switchHref}
             className="font-medium text-white underline underline-offset-4"
-            scroll={false}
             onClick={() => logClick(nextPage, 'auth')}
           >
             {footer.linkLabel}

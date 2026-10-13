@@ -22,8 +22,8 @@ export default async function VerifyEmailPage({
   }
 
   return (
-    <AuthPageShell mode="page">
-      <EmailVerificationForm mode="page" />
+    <AuthPageShell>
+      <EmailVerificationForm />
     </AuthPageShell>
   )
 }

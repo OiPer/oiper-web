@@ -6,8 +6,8 @@ export const metadata = appPageMetadata('/auth/forgot-password')
 
 export default function ForgotPasswordPage() {
   return (
-    <AuthPageShell mode="page">
-      <ForgotPasswordForm mode="page" />
+    <AuthPageShell>
+      <ForgotPasswordForm />
     </AuthPageShell>
   )
 }
