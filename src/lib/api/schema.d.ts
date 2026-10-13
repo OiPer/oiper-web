@@ -11351,9 +11351,6 @@ export interface components {
             interval: "MONTHLY" | "YEARLY" | null;
             displayName: string;
             priceAmountCents: number;
-            effectiveMonthlyCents: number;
-            discountPercent: number;
-            discountPercentFloored: number;
             features: components["schemas"]["PricingFeature"][];
         };
         PricingFeature: {
