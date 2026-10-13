@@ -13,14 +13,11 @@ type SignUpPageProps = {
 export default async function SignUpPage({ searchParams }: SignUpPageProps) {
   const params = await searchParams
   const plans = await loadCheckoutPlans(params.callbackUrl)
-  const variant = Number(params.proto ?? 1)
 
   return (
     <AuthPageShell aside={plans ? <CheckoutSummary plans={plans} /> : null}>
       <SignUpForm
-        checkout={
-          plans ? <CheckoutLine plans={plans} variant={variant} /> : null
-        }
+        checkout={plans ? <CheckoutLine plans={plans} page="signup" /> : null}
       />
     </AuthPageShell>
   )
