@@ -25,8 +25,8 @@ export default function DesktopAuthPage() {
 
   const signInUrl = useMemo(() => {
     const callbackUrl = queryString
-      ? `/auth/desktop?${queryString}`
-      : '/auth/desktop'
+      ? `/connect/desktop?${queryString}`
+      : '/connect/desktop'
     return buildAuthUrl('signin', { callbackUrl })
   }, [queryString])
   const sessionQuery = $api.useQuery(
@@ -72,7 +72,7 @@ export default function DesktopAuthPage() {
 
     const continueUrl = joinUrl(
       env.OIPER_SERVER_URL,
-      '/v1/auth/desktop/continue',
+      '/v1/connect/desktop/continue',
       {
         requestId,
         callbackUrl: '/',

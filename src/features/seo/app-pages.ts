@@ -63,7 +63,7 @@ export const APP_PAGES = {
       screenshot: 1,
     },
   },
-  '/auth/desktop': {
+  '/connect/desktop': {
     seo: {
       title: 'Connect OiPer Desktop',
       description:

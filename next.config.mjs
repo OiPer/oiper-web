@@ -19,6 +19,11 @@ const nextConfig = {
     return [
       { source: '/auth/login', destination: '/signin', permanent: true },
       {
+        source: '/auth/desktop',
+        destination: '/connect/desktop',
+        permanent: true,
+      },
+      {
         source: '/auth/:page(signin|signup|forgot-password|verify-email)',
         destination: '/:page',
         permanent: true,
