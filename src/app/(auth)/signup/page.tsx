@@ -1,5 +1,5 @@
 import { AuthPageShell } from '@/features/auth/auth-page-shell'
-import { CheckoutIntent } from '@/features/auth/checkout-intent'
+import { CheckoutLine, CheckoutSummary } from '@/features/auth/checkout-intent'
 import { loadCheckoutPlans } from '@/features/auth/checkout-plans'
 import { SignUpForm } from '@/features/auth/signup-form'
 import { appPageMetadata } from '@/features/seo/app-pages'
@@ -16,11 +16,12 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
   const variant = Number(params.proto ?? 1)
 
   return (
-    <AuthPageShell
-      split={variant === 3}
-      aside={plans ? <CheckoutIntent plans={plans} variant={variant} /> : null}
-    >
-      <SignUpForm />
+    <AuthPageShell aside={plans ? <CheckoutSummary plans={plans} /> : null}>
+      <SignUpForm
+        checkout={
+          plans ? <CheckoutLine plans={plans} variant={variant} /> : null
+        }
+      />
     </AuthPageShell>
   )
 }

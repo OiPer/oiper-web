@@ -14,7 +14,7 @@ import { logClick } from '@/lib/analytics'
 import { Github, X } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import type { PropsWithChildren } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
 import {
   buildAuthUrl,
   buildWebAuthStartUrl,
@@ -63,6 +63,7 @@ type AuthCardProps = PropsWithChildren<{
   title: string
   description: string
   showOAuth?: boolean
+  checkout?: ReactNode
 }>
 
 export function AuthCard({
@@ -71,6 +72,7 @@ export function AuthCard({
   description,
   children,
   showOAuth = true,
+  checkout,
 }: AuthCardProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -110,6 +112,7 @@ export function AuthCard({
       </Button>
 
       <CardContent className="space-y-5">
+        {checkout ? <div className="lg:hidden">{checkout}</div> : null}
         {children}
 
         {showOAuth ? (

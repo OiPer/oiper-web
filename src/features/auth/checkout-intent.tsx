@@ -3,9 +3,9 @@
 import { logClick, logSelect } from '@/lib/analytics'
 import { formatCurrencyFromCents, planDisplayName } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { Check } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import type { CheckoutPlan } from './checkout-plans'
 
 type Plan = 'PRO' | 'MAX'
@@ -181,97 +181,7 @@ function SkipLink(props: { intent: Intent; className?: string }) {
   )
 }
 
-const PANEL =
-  'w-full rounded-xl border border-white/15 bg-black/45 text-white shadow-2xl shadow-black/30 backdrop-blur-xl'
-
-function SummaryCard({ intent }: { intent: Intent }) {
-  return (
-    <div className={cn(PANEL, 'space-y-4 p-5')}>
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs text-white/55">
-            After you sign up, you go straight to checkout
-          </p>
-          <p className="mt-1 text-base font-semibold">
-            OiPer {planDisplayName(intent.plan)}
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-base font-semibold">
-            {intent.monthlyPrice(intent.plan, intent.interval)}
-            <span className="text-xs font-normal text-white/55"> / month</span>
-          </p>
-          <p className="text-xs text-white/55">
-            {intent.billing(intent.plan, intent.interval)}
-          </p>
-        </div>
-      </div>
-
-      <div className="grid gap-2 sm:grid-cols-[2fr_3fr]">
-        <Segmented
-          value={intent.plan}
-          options={planOptions()}
-          onChange={(plan) => intent.choose(plan, intent.interval)}
-        />
-        <Segmented
-          value={intent.interval}
-          options={intervalOptions(intent)}
-          onChange={(interval) => intent.choose(intent.plan, interval)}
-        />
-      </div>
-
-      <SkipLink intent={intent} />
-    </div>
-  )
-}
-
-function AttachedStrip({ intent }: { intent: Intent }) {
-  const [isEditing, setIsEditing] = useState(false)
-
-  return (
-    <div
-      className={cn(PANEL, '-mb-4 rounded-b-none border-b-0 px-5 pt-4 pb-7')}
-    >
-      <div className="flex items-center justify-between gap-4 text-sm">
-        <p>
-          <span className="text-white/55">Checkout next: </span>
-          <span className="font-medium">
-            {planDisplayName(intent.plan)},{' '}
-            {intent.interval === 'MONTHLY' ? 'monthly' : 'yearly'} ·{' '}
-            {intent.monthlyPrice(intent.plan, intent.interval)}/mo
-          </span>
-        </p>
-        <button
-          type="button"
-          onClick={() => setIsEditing((value) => !value)}
-          className="shrink-0 text-xs text-white/65 underline underline-offset-4 hover:text-white"
-        >
-          {isEditing ? 'Done' : 'Change'}
-        </button>
-      </div>
-
-      {isEditing ? (
-        <div className="mt-3 space-y-3">
-          <div className="grid gap-2 sm:grid-cols-[2fr_3fr]">
-            <Segmented
-              value={intent.plan}
-              options={planOptions()}
-              onChange={(plan) => intent.choose(plan, intent.interval)}
-            />
-            <Segmented
-              value={intent.interval}
-              options={intervalOptions(intent)}
-              onChange={(interval) => intent.choose(intent.plan, interval)}
-            />
-          </div>
-          <SkipLink intent={intent} />
-        </div>
-      ) : null}
-    </div>
-  )
-}
-
-function OrderSummary({ intent }: { intent: Intent }) {
+function Summary({ intent }: { intent: Intent }) {
   return (
     <div className="w-full text-white lg:pt-2">
       <p className="text-sm text-white/55">Your upgrade</p>
@@ -316,108 +226,151 @@ function OrderSummary({ intent }: { intent: Intent }) {
   )
 }
 
-function PlanTiles({ intent }: { intent: Intent }) {
-  return (
-    <div className="w-full space-y-3 text-white">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-white/65">Choose your plan</p>
-        <Segmented
-          value={intent.interval}
-          options={intervalOptions(intent)}
-          onChange={(interval) => intent.choose(intent.plan, interval)}
-        />
-      </div>
+export function CheckoutSummary(props: { plans: CheckoutPlan[] }) {
+  const intent = useCheckoutIntent(props.plans)
 
-      <div className="grid grid-cols-2 gap-3">
-        {PLANS.map((plan) => (
-          <button
-            key={plan}
-            type="button"
-            aria-pressed={intent.plan === plan}
-            onClick={() => intent.choose(plan, intent.interval)}
-            className={cn(
-              PANEL,
-              'p-4 text-left',
-              intent.plan === plan
-                ? 'border-white/70'
-                : 'text-white/70 hover:border-white/30'
-            )}
+  if (!intent) return null
+
+  return <Summary intent={intent} />
+}
+
+function InlineSelect<T extends string>(props: {
+  label: string
+  value: T
+  options: { value: T; label: string }[]
+  onChange: (value: T) => void
+}) {
+  return (
+    <span className="relative inline-block border-b border-dotted border-current font-medium text-white">
+      <select
+        aria-label={props.label}
+        value={props.value}
+        onChange={(event) => props.onChange(event.target.value as T)}
+        className="field-sizing-content cursor-pointer appearance-none bg-transparent pr-4 outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+      >
+        {props.options.map((option) => (
+          <option
+            key={option.value}
+            value={option.value}
+            className="bg-[#121212] text-white"
           >
-            <span className="flex items-center justify-between">
-              <span className="text-sm font-semibold">
-                {planDisplayName(plan)}
-              </span>
-              {intent.plan === plan ? <Check className="size-4" /> : null}
-            </span>
-            <span className="mt-2 block text-lg font-semibold">
-              {intent.monthlyPrice(plan, intent.interval)}
-              <span className="text-xs font-normal text-white/55">
-                {' '}
-                / month
-              </span>
-            </span>
-          </button>
+            {option.label}
+          </option>
         ))}
-      </div>
-
-      <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-white/55">
-          Checkout opens right after you sign up
-        </p>
-        <SkipLink intent={intent} />
-      </div>
-    </div>
+      </select>
+      <ChevronDown className="pointer-events-none absolute top-1/2 right-0 size-3.5 -translate-y-1/2" />
+    </span>
   )
 }
 
-function InlineSentence({ intent }: { intent: Intent }) {
-  const selectClassName =
-    'cursor-pointer appearance-none rounded border border-white/20 bg-white/5 px-1.5 py-0.5 font-medium text-white hover:border-white/40'
+function PlanSelect({ intent }: { intent: Intent }) {
+  return (
+    <InlineSelect
+      label="Plan"
+      value={intent.plan}
+      options={planOptions()}
+      onChange={(plan) => intent.choose(plan, intent.interval)}
+    />
+  )
+}
+
+function IntervalSelect({ intent }: { intent: Intent }) {
+  return (
+    <InlineSelect
+      label="Billing"
+      value={intent.interval}
+      options={[
+        { value: 'MONTHLY', label: 'monthly' },
+        { value: 'YEARLY', label: 'yearly' },
+      ]}
+      onChange={(interval) => intent.choose(intent.plan, interval)}
+    />
+  )
+}
+
+const LINE = 'text-sm leading-6 text-white/65'
+
+function LineSentence({ intent }: { intent: Intent }) {
+  return (
+    <p className={LINE}>
+      After signing up you go to checkout for <PlanSelect intent={intent} />{' '}
+      billed <IntervalSelect intent={intent} />.
+    </p>
+  )
+}
+
+function LinePrice({ intent }: { intent: Intent }) {
+  return (
+    <p className={LINE}>
+      Then checkout: <PlanSelect intent={intent} />,{' '}
+      <IntervalSelect intent={intent} /> ·{' '}
+      <span className="whitespace-nowrap text-white">
+        {intent.monthlyPrice(intent.plan, intent.interval)}/mo
+      </span>
+    </p>
+  )
+}
+
+function LineSingle({ intent }: { intent: Intent }) {
+  const options = PLANS.flatMap((plan) =>
+    INTERVALS.map((interval) => ({
+      value: `${plan}:${interval}`,
+      label: `${planDisplayName(plan)}, ${interval === 'MONTHLY' ? 'monthly' : 'yearly'} at ${intent.monthlyPrice(plan, interval)}/mo`,
+    }))
+  )
 
   return (
-    <div className="w-full text-center text-sm leading-7 text-white/70">
-      <p>
-        Checkout after sign-up:{' '}
-        <select
-          aria-label="Plan"
-          value={intent.plan}
-          onChange={(event) =>
-            intent.choose(event.target.value as Plan, intent.interval)
-          }
-          className={selectClassName}
-        >
-          {PLANS.map((plan) => (
-            <option key={plan} value={plan} className="bg-[#121212]">
-              {planDisplayName(plan)}
-            </option>
-          ))}
-        </select>{' '}
-        <select
-          aria-label="Billing"
-          value={intent.interval}
-          onChange={(event) =>
-            intent.choose(intent.plan, event.target.value as Interval)
-          }
-          className={selectClassName}
-        >
-          <option value="MONTHLY" className="bg-[#121212]">
-            Monthly
-          </option>
-          <option value="YEARLY" className="bg-[#121212]">
-            Yearly
-          </option>
-        </select>{' '}
-        ·{' '}
-        <span className="font-medium whitespace-nowrap text-white">
-          {intent.monthlyPrice(intent.plan, intent.interval)}/month
-        </span>
-      </p>
-      <SkipLink intent={intent} />
+    <p className={LINE}>
+      You continue to{' '}
+      <InlineSelect
+        label="Plan"
+        value={`${intent.plan}:${intent.interval}` as string}
+        options={[...options, { value: 'skip', label: 'no plan for now' }]}
+        onChange={(value) => {
+          if (value === 'skip') return intent.skip()
+
+          const [plan, interval] = value.split(':') as [Plan, Interval]
+          intent.choose(plan, interval)
+        }}
+      />{' '}
+      checkout after signing up.
+    </p>
+  )
+}
+
+function LineSkip({ intent }: { intent: Intent }) {
+  return (
+    <p className={LINE}>
+      Upgrading to <PlanSelect intent={intent} />{' '}
+      <IntervalSelect intent={intent} /> next.{' '}
+      <button
+        type="button"
+        onClick={intent.skip}
+        className="text-white/50 underline underline-offset-4 hover:text-white"
+      >
+        Not now
+      </button>
+    </p>
+  )
+}
+
+function LineRow({ intent }: { intent: Intent }) {
+  return (
+    <div className="flex items-center justify-between gap-3 border-y border-white/10 py-2.5 text-sm text-white/65">
+      <span>
+        <PlanSelect intent={intent} /> <IntervalSelect intent={intent} />
+      </span>
+      <span className="whitespace-nowrap">
+        <span className="text-white">
+          {intent.monthlyPrice(intent.plan, intent.interval)}
+        </span>{' '}
+        / month
+      </span>
     </div>
   )
 }
 
-export function CheckoutIntent(props: {
+export function CheckoutLine(props: {
   plans: CheckoutPlan[]
   variant: number
 }) {
@@ -427,14 +380,14 @@ export function CheckoutIntent(props: {
 
   switch (props.variant) {
     case 2:
-      return <AttachedStrip intent={intent} />
+      return <LinePrice intent={intent} />
     case 3:
-      return <OrderSummary intent={intent} />
+      return <LineSingle intent={intent} />
     case 4:
-      return <PlanTiles intent={intent} />
+      return <LineSkip intent={intent} />
     case 5:
-      return <InlineSentence intent={intent} />
+      return <LineRow intent={intent} />
     default:
-      return <SummaryCard intent={intent} />
+      return <LineSentence intent={intent} />
   }
 }

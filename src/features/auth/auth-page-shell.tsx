@@ -8,12 +8,9 @@ import {
 import { cn } from '@/lib/utils'
 import type { PropsWithChildren, ReactNode } from 'react'
 
-type AuthPageShellProps = PropsWithChildren<{
-  aside?: ReactNode
-  split?: boolean
-}>
+type AuthPageShellProps = PropsWithChildren<{ aside?: ReactNode }>
 
-export function AuthPageShell({ children, aside, split }: AuthPageShellProps) {
+export function AuthPageShell({ children, aside }: AuthPageShellProps) {
   return (
     <div className="relative flex min-h-screen flex-col justify-between gap-8 bg-[#0a0a0a] px-4 text-white">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -26,13 +23,15 @@ export function AuthPageShell({ children, aside, split }: AuthPageShellProps) {
         id="oiper-auth-content"
         className={cn(
           'relative mx-auto mt-16 flex w-full max-w-md justify-center sm:mt-24',
-          aside && 'flex-col gap-4',
           aside &&
-            split &&
-            'max-w-4xl lg:grid lg:grid-cols-[1fr_28rem] lg:items-start lg:gap-12'
+            'lg:grid lg:max-w-4xl lg:grid-cols-[1fr_28rem] lg:items-start lg:gap-12 lg:has-[>[data-aside]:empty]:flex lg:has-[>[data-aside]:empty]:max-w-md'
         )}
       >
-        {aside}
+        {aside ? (
+          <div data-aside className="hidden lg:block lg:empty:hidden">
+            {aside}
+          </div>
+        ) : null}
         {children}
       </div>
 
