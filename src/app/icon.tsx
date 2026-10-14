@@ -1,4 +1,4 @@
-import { OiPerLogoBackground } from '@oiper/logo'
+import { OiPerLogoBackground } from '@oiper/brand'
 import { ImageResponse } from 'next/og'
 
 const sizes = [192, 512]

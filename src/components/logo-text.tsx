@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { OiPerLogo } from '@oiper/logo'
+import { OiPerLogo } from '@oiper/brand'
 import { Lemonada } from 'next/font/google'
 import { ComponentProps } from 'react'
 

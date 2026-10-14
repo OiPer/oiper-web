@@ -1,7 +1,7 @@
 import * as React from 'react'
 globalThis.React = React
 
-import { OiPerLogo } from '@oiper/logo'
+import { OiPerLogo } from '@oiper/brand'
 import fs from 'fs'
 import path from 'path'
 import { renderToStaticMarkup } from 'react-dom/server'
