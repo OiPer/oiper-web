@@ -19,7 +19,7 @@
     "@gsap/react": "^2.1.2",
     "@hookform/resolvers": "^5.2.2",
     "@huggingface/transformers": "^4.3.1",
-    "@oiper/logo": "^0.0.1",
+    "@oiper/brand": "^0.0.1",
     "@paddle/paddle-js": "^1.6.4",
     "@tanstack/react-query": "^5.101.4",
     "@tanstack/react-table": "^8.21.3",

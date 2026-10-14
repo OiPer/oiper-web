@@ -1,4 +1,4 @@
-import { OiPerLogo } from '@oiper/logo'
+import { OiPerLogo } from '@oiper/brand'
 import { ImageResponse } from 'next/og'
 
 export const size = {

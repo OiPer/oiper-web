@@ -4,7 +4,7 @@ import { NavigationLink } from '@/components/navigation-link'
 import { DownloadButton } from '@/features/download/download-button'
 import { GUIDES } from '@/features/guides/guides'
 import { SubscribeForm } from '@/features/notifications/subscribe-form'
-import { OiPerLogoBackground } from '@oiper/logo'
+import { OiPerLogoBackground } from '@oiper/brand'
 import {
   BookOpen,
   Github,
