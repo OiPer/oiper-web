@@ -7,16 +7,16 @@ import { OG_SIZE, ogCopy } from './app-pages'
 export async function ogImage(path: string, eyebrow: string) {
   const { title, description, screenshot } = ogCopy(path)
   function png(file: string) {
-    return readFile(join(process.cwd(), file)).then(
+    return readFile(join(process.cwd(), 'public', file)).then(
       (b) => `data:image/png;base64,${b.toString('base64')}`
     )
   }
 
   const [hero, windows, macos, linux] = await Promise.all([
-    png(`public/hero-${screenshot}.png`),
-    png('public/logo/platform-windows-white.png'),
-    png('public/logo/platform-macos-white.png'),
-    png('public/logo/platform-linux-white.png'),
+    png(`hero-${screenshot}.png`),
+    png('logo/platform-windows-white.png'),
+    png('logo/platform-macos-white.png'),
+    png('logo/platform-linux-white.png'),
   ])
 
   return new ImageResponse(
