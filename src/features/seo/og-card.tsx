@@ -6,16 +6,26 @@ import { OG_SIZE, ogCopy } from './app-pages'
 
 export async function ogImage(path: string, eyebrow: string) {
   const { title, description, screenshot } = ogCopy(path)
-  const file = await readFile(
-    join(process.cwd(), `public/hero-${screenshot}.png`)
-  )
+  function png(file: string) {
+    return readFile(join(process.cwd(), file)).then(
+      (b) => `data:image/png;base64,${b.toString('base64')}`
+    )
+  }
+
+  const [hero, windows, macos, linux] = await Promise.all([
+    png(`public/hero-${screenshot}.png`),
+    png('public/logo/platform-windows-white.png'),
+    png('public/logo/platform-macos-white.png'),
+    png('public/logo/platform-linux-white.png'),
+  ])
 
   return new ImageResponse(
     <OgCard
       eyebrow={eyebrow}
       title={title}
       description={description}
-      screenshot={`data:image/png;base64,${file.toString('base64')}`}
+      screenshot={hero}
+      platformLogos={{ windows, macos, linux }}
     />,
     OG_SIZE
   )
@@ -26,6 +36,7 @@ function OgCard(props: {
   title: string
   description: string
   screenshot: string
+  platformLogos: { windows: string; macos: string; linux: string }
 }) {
   return (
     <div
@@ -86,16 +97,40 @@ function OgCard(props: {
           </div>
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            gap: 28,
-            fontSize: 24,
-            color: 'rgba(255,255,255,0.45)',
-          }}
-        >
-          <div>oiper.com</div>
-          <div>Windows · macOS · Linux</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img
+              src={props.platformLogos.windows}
+              alt="Windows"
+              width={34}
+              height={34}
+            />
+            <div style={{ fontSize: 26, color: 'rgba(255,255,255,0.6)' }}>
+              Windows
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img
+              src={props.platformLogos.macos}
+              alt="macOS"
+              width={34}
+              height={34}
+            />
+            <div style={{ fontSize: 26, color: 'rgba(255,255,255,0.6)' }}>
+              macOS
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img
+              src={props.platformLogos.linux}
+              alt="Linux"
+              width={34}
+              height={34}
+            />
+            <div style={{ fontSize: 26, color: 'rgba(255,255,255,0.6)' }}>
+              Linux
+            </div>
+          </div>
         </div>
       </div>
 
