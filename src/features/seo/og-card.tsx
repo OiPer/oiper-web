@@ -1,4 +1,4 @@
-import { OiPerLogo } from '@oiper/brand'
+import { OiPerLogoText } from '@oiper/brand'
 import { ImageResponse } from 'next/og'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -62,8 +62,7 @@ function OgCard(props: {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-          <OiPerLogo width={56} height={56} />
-          <div style={{ fontSize: 40, letterSpacing: -1 }}>OiPer</div>
+          <OiPerLogoText brandColor="#FFFFFF" width={225} height={56} />
           <div
             style={{
               marginLeft: 8,
