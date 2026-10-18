@@ -124,7 +124,7 @@ export function EmailVerificationForm() {
     >
       <form
         onSubmit={form.handleSubmit(handleEmailVerification)}
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-6"
       >
         <div className="rounded-lg border border-white/15 bg-white/5 p-4">
           <p className="text-sm text-white/80">
