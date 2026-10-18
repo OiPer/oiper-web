@@ -95,7 +95,7 @@ export function SignUpForm(props: { checkout?: ReactNode }) {
 
       switch (code) {
         case 'AUTH_EMAIL_ALREADY_EXISTS':
-          return setErrorMessage('An account already exists with this email')
+          return form.setError('email', { message: 'Account already exists' })
         case 'AUTH_PASSWORD_POLICY_FAILED':
           return form.setError('password', {
             message: getPasswordPolicyMessage(error),
