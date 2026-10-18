@@ -83,7 +83,7 @@ export function SignInForm(props: { checkout?: ReactNode }) {
 
       switch (code) {
         case 'AUTH_INVALID_CREDENTIALS':
-          return setErrorMessage('Invalid credentials')
+          return setErrorMessage('Incorrect email or password')
         case 'AUTH_AUTH_METHOD_NOT_ALLOWED':
           return setErrorMessage(
             'This account must sign in with a different method'

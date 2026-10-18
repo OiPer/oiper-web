@@ -77,6 +77,8 @@ export function EmailVerificationForm() {
       switch (code) {
         case 'AUTH_INVALID_VERIFICATION_CODE':
           return setErrorMessage('Invalid verification code')
+        case 'AUTH_REQUEST_REJECTED':
+          return setErrorMessage('Verification expired, sign in again')
         default:
           return setErrorMessage('Something went wrong')
       }
@@ -122,7 +124,7 @@ export function EmailVerificationForm() {
     >
       <form
         onSubmit={form.handleSubmit(handleEmailVerification)}
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-6"
       >
         <div className="rounded-lg border border-white/15 bg-white/5 p-4">
           <p className="text-sm text-white/80">

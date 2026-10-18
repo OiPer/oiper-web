@@ -15,24 +15,17 @@ import {
   AuthPasswordInput,
   AuthSubmitButton,
 } from './auth-form-input'
-import { buildAuthUrl, getCallbackUrl } from './auth-form-utils'
+import {
+  buildAuthUrl,
+  getCallbackUrl,
+  getPasswordPolicyMessage,
+} from './auth-form-utils'
 
-const signUpSchema = z
-  .object({
-    name: z.string().trim().min(1, 'Name is required'),
-    email: z.string().trim().email('Enter a valid email address'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string().min(1, 'Confirm password is required'),
-  })
-  .superRefine((values, context) => {
-    if (values.confirmPassword && values.password !== values.confirmPassword) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Passwords do not match',
-        path: ['confirmPassword'],
-      })
-    }
-  })
+const signUpSchema = z.object({
+  name: z.string().trim().min(1, 'Name is required'),
+  email: z.string().trim().email('Enter a valid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+})
 
 type SignUpSchema = z.infer<typeof signUpSchema>
 
@@ -49,7 +42,6 @@ export function SignUpForm(props: { checkout?: ReactNode }) {
       name: '',
       email: searchParams.get('email') ?? '',
       password: '',
-      confirmPassword: '',
     },
   })
 
@@ -91,9 +83,11 @@ export function SignUpForm(props: { checkout?: ReactNode }) {
 
       switch (code) {
         case 'AUTH_EMAIL_ALREADY_EXISTS':
-          return setErrorMessage('An account already exists with this email')
+          return form.setError('email', { message: 'Account already exists' })
         case 'AUTH_PASSWORD_POLICY_FAILED':
-          return setErrorMessage('Password does not meet requirements')
+          return form.setError('password', {
+            message: getPasswordPolicyMessage(error),
+          })
         default:
           return setErrorMessage('Something went wrong')
       }
@@ -132,13 +126,6 @@ export function SignUpForm(props: { checkout?: ReactNode }) {
           autoComplete="new-password"
           {...form.register('password')}
           error={form.formState.errors.password?.message}
-        />
-
-        <AuthPasswordInput
-          label="Confirm password"
-          autoComplete="new-password"
-          {...form.register('confirmPassword')}
-          error={form.formState.errors.confirmPassword?.message}
         />
 
         <AuthFormError message={errorMessage} />
