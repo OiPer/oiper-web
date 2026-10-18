@@ -16,7 +16,7 @@ import {
   AuthPasswordInput,
   AuthSubmitButton,
 } from './auth-form-input'
-import { buildAuthUrl } from './auth-form-utils'
+import { buildAuthUrl, getPasswordPolicyMessage } from './auth-form-utils'
 
 const RESET_CALLBACK_KEY = 'oiper:reset-callback-url'
 
@@ -24,20 +24,9 @@ const requestResetSchema = z.object({
   email: z.string().trim().email('Enter a valid email address'),
 })
 
-const resetWithTokenSchema = z
-  .object({
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string().min(1, 'Confirm password is required'),
-  })
-  .superRefine((values, context) => {
-    if (values.confirmPassword && values.password !== values.confirmPassword) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Passwords do not match',
-        path: ['confirmPassword'],
-      })
-    }
-  })
+const resetWithTokenSchema = z.object({
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+})
 
 export function ForgotPasswordForm() {
   const searchParams = useSearchParams()
@@ -63,7 +52,6 @@ export function ForgotPasswordForm() {
     resolver: zodResolver(resetWithTokenSchema),
     defaultValues: {
       password: '',
-      confirmPassword: '',
     },
   })
 
@@ -150,6 +138,10 @@ export function ForgotPasswordForm() {
       switch (code) {
         case 'AUTH_REQUEST_REJECTED':
           return setErrorMessage('Invalid or expired reset link')
+        case 'AUTH_PASSWORD_POLICY_FAILED':
+          return resetWithTokenForm.setError('password', {
+            message: getPasswordPolicyMessage(error),
+          })
         default:
           return setErrorMessage('Something went wrong')
       }
@@ -170,7 +162,7 @@ export function ForgotPasswordForm() {
       {!token ? (
         <form
           onSubmit={requestResetForm.handleSubmit(handlePasswordResetRequest)}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-6"
         >
           <AuthInput
             type="email"
@@ -192,20 +184,13 @@ export function ForgotPasswordForm() {
       ) : (
         <form
           onSubmit={resetWithTokenForm.handleSubmit(handlePasswordReset)}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-6"
         >
           <AuthPasswordInput
             label="New password"
             autoComplete="new-password"
             {...resetWithTokenForm.register('password')}
             error={resetWithTokenForm.formState.errors.password?.message}
-          />
-
-          <AuthPasswordInput
-            label="Confirm new password"
-            autoComplete="new-password"
-            {...resetWithTokenForm.register('confirmPassword')}
-            error={resetWithTokenForm.formState.errors.confirmPassword?.message}
           />
 
           <AuthSubmitButton

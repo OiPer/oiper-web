@@ -1,3 +1,4 @@
+import { isAppErrorEnvelope } from '@/lib/api/error'
 import { env } from '@/lib/env'
 import { joinUrl } from '@/lib/url'
 
@@ -36,6 +37,45 @@ export function buildAuthUrl(
 
   const search = query.toString()
   return search ? `/${page}?${search}` : `/${page}`
+}
+
+const CHARACTER_MESSAGES: Record<string, string> = {
+  lowercase: 'Add a lowercase letter',
+  uppercase: 'Add an uppercase letter',
+  number: 'Add a number',
+  symbol: 'Add a symbol',
+}
+
+export function getPasswordPolicyMessage(error: unknown): string {
+  const details = isAppErrorEnvelope(error) ? error.error.details : null
+  const violation = (details ?? {}) as {
+    reason?: string
+    minimumLength?: number
+    maximumLength?: number
+    characterType?: string
+  }
+
+  switch (violation.reason) {
+    case 'too_short':
+      return violation.minimumLength
+        ? `Use at least ${violation.minimumLength} characters`
+        : 'Password is too short'
+    case 'too_long':
+      return violation.maximumLength
+        ? `Use ${violation.maximumLength} characters or fewer`
+        : 'Password is too long'
+    case 'missing_character':
+      return (
+        CHARACTER_MESSAGES[violation.characterType ?? ''] ??
+        'Add letters, numbers, and symbols'
+      )
+    case 'breached':
+      return 'Password found in a data breach'
+    case 'too_weak':
+      return 'Password is too easy to guess'
+    default:
+      return 'Choose a different password'
+  }
 }
 
 export function buildWebAuthStartUrl(
