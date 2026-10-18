@@ -16,7 +16,7 @@ import {
   AuthPasswordInput,
   AuthSubmitButton,
 } from './auth-form-input'
-import { buildAuthUrl } from './auth-form-utils'
+import { buildAuthUrl, getPasswordPolicyMessage } from './auth-form-utils'
 
 const RESET_CALLBACK_KEY = 'oiper:reset-callback-url'
 
@@ -150,6 +150,10 @@ export function ForgotPasswordForm() {
       switch (code) {
         case 'AUTH_REQUEST_REJECTED':
           return setErrorMessage('Invalid or expired reset link')
+        case 'AUTH_PASSWORD_POLICY_FAILED':
+          return resetWithTokenForm.setError('password', {
+            message: getPasswordPolicyMessage(error),
+          })
         default:
           return setErrorMessage('Something went wrong')
       }

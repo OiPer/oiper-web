@@ -15,7 +15,11 @@ import {
   AuthPasswordInput,
   AuthSubmitButton,
 } from './auth-form-input'
-import { buildAuthUrl, getCallbackUrl } from './auth-form-utils'
+import {
+  buildAuthUrl,
+  getCallbackUrl,
+  getPasswordPolicyMessage,
+} from './auth-form-utils'
 
 const signUpSchema = z
   .object({
@@ -93,7 +97,9 @@ export function SignUpForm(props: { checkout?: ReactNode }) {
         case 'AUTH_EMAIL_ALREADY_EXISTS':
           return setErrorMessage('An account already exists with this email')
         case 'AUTH_PASSWORD_POLICY_FAILED':
-          return setErrorMessage('Password does not meet requirements')
+          return form.setError('password', {
+            message: getPasswordPolicyMessage(error),
+          })
         default:
           return setErrorMessage('Something went wrong')
       }
