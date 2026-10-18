@@ -24,20 +24,9 @@ const requestResetSchema = z.object({
   email: z.string().trim().email('Enter a valid email address'),
 })
 
-const resetWithTokenSchema = z
-  .object({
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string().min(1, 'Confirm password is required'),
-  })
-  .superRefine((values, context) => {
-    if (values.confirmPassword && values.password !== values.confirmPassword) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Passwords do not match',
-        path: ['confirmPassword'],
-      })
-    }
-  })
+const resetWithTokenSchema = z.object({
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+})
 
 export function ForgotPasswordForm() {
   const searchParams = useSearchParams()
@@ -63,7 +52,6 @@ export function ForgotPasswordForm() {
     resolver: zodResolver(resetWithTokenSchema),
     defaultValues: {
       password: '',
-      confirmPassword: '',
     },
   })
 
@@ -203,13 +191,6 @@ export function ForgotPasswordForm() {
             autoComplete="new-password"
             {...resetWithTokenForm.register('password')}
             error={resetWithTokenForm.formState.errors.password?.message}
-          />
-
-          <AuthPasswordInput
-            label="Confirm new password"
-            autoComplete="new-password"
-            {...resetWithTokenForm.register('confirmPassword')}
-            error={resetWithTokenForm.formState.errors.confirmPassword?.message}
           />
 
           <AuthSubmitButton
