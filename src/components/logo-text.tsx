@@ -1,24 +1,11 @@
 import { cn } from '@/lib/utils'
-import { OiPerLogo } from '@oiper/brand'
-import { Lemonada } from 'next/font/google'
+import { OiPerLogoText as BrandLogoText } from '@oiper/brand'
 import { ComponentProps } from 'react'
-
-export const FONT_LEMONADA = Lemonada({
-  subsets: ['latin'],
-  weight: ['300'],
-  variable: '--next-font-lemonada',
-})
 
 export function OiPerLogoText({ className, ...props }: ComponentProps<'span'>) {
   return (
-    <span className={cn('flex items-center gap-2', className)} {...props}>
-      <OiPerLogo className="block size-[1em]" />
-      <span
-        className="block overflow-hidden text-[.85em] leading-none!"
-        style={{ fontFamily: FONT_LEMONADA.style.fontFamily }}
-      >
-        OiPer
-      </span>
+    <span className={cn('flex items-center', className)} {...props}>
+      <BrandLogoText className="block h-[1em] w-auto" />
     </span>
   )
 }
