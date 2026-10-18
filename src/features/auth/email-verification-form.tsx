@@ -77,6 +77,8 @@ export function EmailVerificationForm() {
       switch (code) {
         case 'AUTH_INVALID_VERIFICATION_CODE':
           return setErrorMessage('Invalid verification code')
+        case 'AUTH_REQUEST_REJECTED':
+          return setErrorMessage('Verification expired, sign in again')
         default:
           return setErrorMessage('Something went wrong')
       }
