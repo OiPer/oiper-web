@@ -162,7 +162,7 @@ export function ForgotPasswordForm() {
       {!token ? (
         <form
           onSubmit={requestResetForm.handleSubmit(handlePasswordResetRequest)}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-6"
         >
           <AuthInput
             type="email"
@@ -184,7 +184,7 @@ export function ForgotPasswordForm() {
       ) : (
         <form
           onSubmit={resetWithTokenForm.handleSubmit(handlePasswordReset)}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-6"
         >
           <AuthPasswordInput
             label="New password"
