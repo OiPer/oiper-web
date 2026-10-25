@@ -31,7 +31,7 @@ export default async function Page() {
       : plan.displayName,
     price: (plan.priceAmountCents / 100).toFixed(2),
     priceCurrency: 'USD',
-    url: joinUrl(env.BASE_URL, '/#pricing'),
+    url: joinUrl(env.WEB_URL, '/#pricing'),
   }))
 
   return (
@@ -45,11 +45,11 @@ export default async function Page() {
               name: 'OiPer',
               description:
                 'Hold a hotkey, speak, and your words appear in any app. OiPer runs locally by default on Windows, macOS and Linux, and the app is free forever.',
-              url: joinUrl(env.BASE_URL),
-              downloadUrl: joinUrl(env.BASE_URL, DOWNLOAD_URL),
-              image: joinUrl(env.BASE_URL, '/opengraph-image'),
+              url: joinUrl(env.WEB_URL),
+              downloadUrl: joinUrl(env.WEB_URL, DOWNLOAD_URL),
+              image: joinUrl(env.WEB_URL, '/opengraph-image'),
               screenshot: [1, 2, 3, 4, 5].map((index) =>
-                joinUrl(env.BASE_URL, `/hero-${index}.png`)
+                joinUrl(env.WEB_URL, `/hero-${index}.png`)
               ),
               softwareVersion: version,
               applicationCategory: 'UtilitiesApplication',

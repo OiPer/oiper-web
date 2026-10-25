@@ -71,7 +71,7 @@ export default function DesktopAuthPage() {
     setState({ status: 'continuing' })
 
     const continueUrl = joinUrl(
-      env.OIPER_SERVER_URL,
+      env.SERVER_URL,
       '/v1/connect/desktop/continue',
       {
         requestId,

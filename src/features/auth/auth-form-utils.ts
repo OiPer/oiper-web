@@ -82,7 +82,7 @@ export function buildWebAuthStartUrl(
   callbackUrl: string,
   provider: WebAuthProvider
 ): string {
-  return joinUrl(env.OIPER_SERVER_URL, '/v1/auth/web/start', {
+  return joinUrl(env.SERVER_URL, '/v1/auth/web/start', {
     callbackUrl,
     provider,
   })

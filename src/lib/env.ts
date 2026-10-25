@@ -36,8 +36,8 @@ const envSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'production']),
     APP_ENV: z.enum(['development', 'production']),
-    OIPER_SERVER_URL: productionSafeUrl,
-    BASE_URL: baseUrl,
+    SERVER_URL: productionSafeUrl,
+    WEB_URL: baseUrl,
     PADDLE_CLIENT_TOKEN: z.string().trim().min(1),
     GA_MEASUREMENT_ID: optionalValue.pipe(
       z
@@ -45,7 +45,7 @@ const envSchema = z
         .regex(/^G-[A-Z0-9]+$/)
         .optional()
     ),
-    EMAIL_TRACKING_PUBLIC_KEYS: z
+    EMAIL_SIGNING_PUBLIC_KEYS: z
       .string()
       .trim()
       .regex(
@@ -73,10 +73,9 @@ const envSchema = z
 export const env = envSchema.parse({
   NODE_ENV: process.env.NODE_ENV,
   APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
-  OIPER_SERVER_URL: process.env.NEXT_PUBLIC_OIPER_SERVER_URL,
-  BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+  SERVER_URL: process.env.NEXT_PUBLIC_SERVER_URL,
+  WEB_URL: process.env.NEXT_PUBLIC_WEB_URL,
   PADDLE_CLIENT_TOKEN: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
   GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
-  EMAIL_TRACKING_PUBLIC_KEYS:
-    process.env.NEXT_PUBLIC_EMAIL_TRACKING_PUBLIC_KEYS,
+  EMAIL_SIGNING_PUBLIC_KEYS: process.env.NEXT_PUBLIC_EMAIL_SIGNING_PUBLIC_KEYS,
 })

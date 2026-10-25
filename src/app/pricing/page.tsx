@@ -46,7 +46,7 @@ export default async function Page() {
       : plan.displayName,
     price: (plan.priceAmountCents / 100).toFixed(2),
     priceCurrency: 'USD',
-    url: joinUrl(env.BASE_URL, PRICING_URL),
+    url: joinUrl(env.WEB_URL, PRICING_URL),
   }))
 
   return (
@@ -62,7 +62,7 @@ export default async function Page() {
               '@type': 'SoftwareApplication',
               '@id': SOFTWARE_ID,
               name: 'OiPer',
-              url: joinUrl(env.BASE_URL),
+              url: joinUrl(env.WEB_URL),
               applicationCategory: 'UtilitiesApplication',
               operatingSystem: 'Windows, macOS, Linux',
               publisher: { '@id': ORGANIZATION_ID },

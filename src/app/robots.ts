@@ -14,7 +14,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: ['/api', '/dev', '/download/'],
       },
-      sitemap: joinUrl(env.BASE_URL, '/sitemap.xml'),
+      sitemap: joinUrl(env.WEB_URL, '/sitemap.xml'),
     }
   }
 

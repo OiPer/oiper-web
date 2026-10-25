@@ -4,7 +4,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import openapiTS, { astToString } from 'openapi-typescript'
 
-const SERVER_BASE_URL = joinUrl(env.OIPER_SERVER_URL, '/openapi.json')
+const SERVER_BASE_URL = joinUrl(env.SERVER_URL, '/openapi.json')
 const outputPath = path.resolve('src/lib/api/schema.d.ts')
 
 async function main() {

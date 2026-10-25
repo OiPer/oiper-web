@@ -30,7 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ]
 
   return pages.map((page) => ({
-    url: joinUrl(env.BASE_URL, page.path),
+    url: joinUrl(env.WEB_URL, page.path),
     lastModified: page.lastModified,
   }))
 }

@@ -104,7 +104,7 @@ const TEXT_CLASS_NAME =
   'mt-2 max-w-180 text-sm leading-relaxed text-white/50 sm:text-base'
 
 export function SpeechToTextPage() {
-  const url = joinUrl(env.BASE_URL, PATH)
+  const url = joinUrl(env.WEB_URL, PATH)
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#0a0a0a] text-pretty text-white">

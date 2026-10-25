@@ -11,7 +11,7 @@ const LINK_PATTERN = /^[a-z0-9_]{1,64}$/
 
 async function emailTrackingPublicKey(header: JWSHeaderParameters) {
   const key = header.kid
-    ? env.EMAIL_TRACKING_PUBLIC_KEYS.get(header.kid)
+    ? env.EMAIL_SIGNING_PUBLIC_KEYS.get(header.kid)
     : undefined
 
   if (!key) throw new Error(`Unknown email tracking key id ${header.kid}`)
