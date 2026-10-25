@@ -49,7 +49,7 @@ export default function Page() {
                 '@type': 'ListItem',
                 position: index + 1,
                 name: guide.heading,
-                url: joinUrl(env.BASE_URL, path),
+                url: joinUrl(env.WEB_URL, path),
               })),
             },
           ],

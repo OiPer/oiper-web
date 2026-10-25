@@ -23,7 +23,7 @@ export async function GET() {
     })
   }
 
-  const url = joinUrl(env.BASE_URL, CHANGELOG_URL)
+  const url = joinUrl(env.WEB_URL, CHANGELOG_URL)
 
   const items = releases.map((release) => {
     const link = `${url}#${release.anchor}`

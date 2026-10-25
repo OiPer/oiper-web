@@ -1,9 +1,9 @@
 import { env } from '@/lib/env'
 import { joinUrl } from '@/lib/url'
 
-export const ORGANIZATION_ID = joinUrl(env.BASE_URL, '/#organization')
-export const WEBSITE_ID = joinUrl(env.BASE_URL, '/#website')
-export const SOFTWARE_ID = joinUrl(env.BASE_URL, '/#software')
+export const ORGANIZATION_ID = joinUrl(env.WEB_URL, '/#organization')
+export const WEBSITE_ID = joinUrl(env.WEB_URL, '/#website')
+export const SOFTWARE_ID = joinUrl(env.WEB_URL, '/#software')
 
 export function breadcrumbs(items: { name: string; path: string }[]) {
   return {
@@ -12,7 +12,7 @@ export function breadcrumbs(items: { name: string; path: string }[]) {
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: joinUrl(env.BASE_URL, item.path),
+      item: joinUrl(env.WEB_URL, item.path),
     })),
   }
 }
