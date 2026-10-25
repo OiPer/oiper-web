@@ -7,7 +7,7 @@ import { joinUrl } from '@/lib/url'
 export const dynamic = 'force-static'
 
 function link(page: ReturnType<typeof docsSource.getPages>[number]) {
-  return `- [${page.data.title}](${joinUrl(env.BASE_URL, page.url)}): ${page.data.description}`
+  return `- [${page.data.title}](${joinUrl(env.WEB_URL, page.url)}): ${page.data.description}`
 }
 
 export function GET() {
@@ -24,18 +24,18 @@ export function GET() {
     '',
     '## Product',
     '',
-    `- [Home](${joinUrl(env.BASE_URL)}): Features, privacy, languages, and pricing.`,
-    `- [Download](${joinUrl(env.BASE_URL, '/download')}): Installers for Windows, macOS (Apple Silicon and Intel) and Linux (AppImage, .deb, .rpm).`,
-    `- [Pricing](${joinUrl(env.BASE_URL, '/pricing')}): Free unlimited local transcription, your own API key at no extra cost, or Pro and Max plans for hosted models.`,
-    `- [Alternatives](${joinUrl(env.BASE_URL, '/alternatives')}): Honest comparisons with other dictation apps, including where each one is the better fit.`,
-    `- [Free speech to text](${joinUrl(env.BASE_URL, '/tools/speech-to-text')}): Record or upload audio and transcribe it with Whisper inside the browser; audio is never uploaded.`,
-    `- [Changelog](${joinUrl(env.BASE_URL, '/resources/changelog')}): Every desktop release, newest first.`,
+    `- [Home](${joinUrl(env.WEB_URL)}): Features, privacy, languages, and pricing.`,
+    `- [Download](${joinUrl(env.WEB_URL, '/download')}): Installers for Windows, macOS (Apple Silicon and Intel) and Linux (AppImage, .deb, .rpm).`,
+    `- [Pricing](${joinUrl(env.WEB_URL, '/pricing')}): Free unlimited local transcription, your own API key at no extra cost, or Pro and Max plans for hosted models.`,
+    `- [Alternatives](${joinUrl(env.WEB_URL, '/alternatives')}): Honest comparisons with other dictation apps, including where each one is the better fit.`,
+    `- [Free speech to text](${joinUrl(env.WEB_URL, '/tools/speech-to-text')}): Record or upload audio and transcribe it with Whisper inside the browser; audio is never uploaded.`,
+    `- [Changelog](${joinUrl(env.WEB_URL, '/resources/changelog')}): Every desktop release, newest first.`,
     '',
     '## Guides',
     '',
     ...Object.entries(GUIDES).map(
       ([path, guide]) =>
-        `- [${guide.heading}](${joinUrl(env.BASE_URL, path)}): ${guide.description}`
+        `- [${guide.heading}](${joinUrl(env.WEB_URL, path)}): ${guide.description}`
     ),
     '',
     '## Documentation',

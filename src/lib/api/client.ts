@@ -4,7 +4,7 @@ import createClient from 'openapi-fetch'
 import createQueryClient from 'openapi-react-query'
 
 export const api = createClient<paths>({
-  baseUrl: env.OIPER_SERVER_URL,
+  baseUrl: env.SERVER_URL,
   credentials: 'include',
 })
 

@@ -39,7 +39,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(env.BASE_URL),
+  metadataBase: new URL(env.WEB_URL),
   applicationName: 'OiPer',
   appleWebApp: {
     capable: true,
@@ -105,8 +105,8 @@ export default function Layout({ children }: PropsWithChildren) {
                 '@type': 'Organization',
                 '@id': ORGANIZATION_ID,
                 name: 'OiPer',
-                url: joinUrl(env.BASE_URL),
-                logo: joinUrl(env.BASE_URL, '/icon/512'),
+                url: joinUrl(env.WEB_URL),
+                logo: joinUrl(env.WEB_URL, '/icon/512'),
                 email: 'support@oiper.com',
                 sameAs: ['https://github.com/OiPer'],
               },
@@ -114,7 +114,7 @@ export default function Layout({ children }: PropsWithChildren) {
                 '@type': 'WebSite',
                 '@id': WEBSITE_ID,
                 name: 'OiPer',
-                url: joinUrl(env.BASE_URL),
+                url: joinUrl(env.WEB_URL),
                 publisher: { '@id': ORGANIZATION_ID },
               },
             ],

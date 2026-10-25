@@ -170,11 +170,11 @@ export function GuidePage({ path }: { path: GuidePath }) {
           '@graph': [
             {
               '@type': 'WebPage',
-              '@id': joinUrl(env.BASE_URL, path),
+              '@id': joinUrl(env.WEB_URL, path),
               name: guide.heading,
               description: guide.description,
-              url: joinUrl(env.BASE_URL, path),
-              image: joinUrl(env.BASE_URL, path, 'opengraph-image'),
+              url: joinUrl(env.WEB_URL, path),
+              image: joinUrl(env.WEB_URL, path, 'opengraph-image'),
               inLanguage: 'en',
               dateModified: guide.updated,
               isPartOf: { '@id': WEBSITE_ID },
