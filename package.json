@@ -93,8 +93,5 @@
   "overrides": {
     "react": "*",
     "react-dom": "*"
-  },
-  "volta": {
-    "node": "24.15.0"
   }
 }
