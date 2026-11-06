@@ -139,16 +139,7 @@ function VersionRow({
                 key={pkg.id}
                 className="hover:bg-muted before:via-border relative rounded-xl before:absolute before:inset-x-4 before:top-0 before:h-px before:bg-linear-to-r before:from-transparent before:to-transparent first:before:hidden hover:before:opacity-0 [li:hover+&]:before:opacity-0"
               >
-                <BuildLink
-                  pkg={pkg}
-                  url={asset.url}
-                  macAltUrl={
-                    builds.find(
-                      (build) => build.pkg.os === 'macos' && build.pkg !== pkg
-                    )?.asset.url ?? null
-                  }
-                  size={asset.size}
-                />
+                <BuildLink pkg={pkg} url={asset.url} size={asset.size} />
               </li>
             ))}
           </ul>

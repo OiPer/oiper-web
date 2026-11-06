@@ -7,7 +7,6 @@ import { QueryProvider } from '@/components/providers/query-provider'
 import { Toaster } from '@/components/ui/sonner'
 import { AuthProvider } from '@/features/auth/auth-context'
 import { DetectOSScript } from '@/features/download/download-button'
-import { MacDownloadDialog } from '@/features/download/mac-download-dialog'
 import { EmailClickReporter } from '@/features/notifications/email-click-reporter'
 import { ServiceWorker } from '@/features/pwa/service-worker'
 import { ogCopy } from '@/features/seo/app-pages'
@@ -131,7 +130,6 @@ export default function Layout({ children }: PropsWithChildren) {
             <AuthProvider>
               <Suspense fallback={null}>{children}</Suspense>
 
-              <MacDownloadDialog />
               <ServiceWorker />
               <EmailClickReporter />
               <Toaster richColors />

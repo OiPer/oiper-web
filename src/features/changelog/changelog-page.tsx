@@ -154,11 +154,6 @@ function ReleaseDownloads({ release }: { release: Release }) {
             <BuildLink
               pkg={pkg}
               url={asset.url}
-              macAltUrl={
-                builds.find(
-                  (build) => build.pkg.os === 'macos' && build.pkg !== pkg
-                )?.asset.url ?? null
-              }
               size={asset.size}
               location="changelog"
             />
