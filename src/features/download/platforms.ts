@@ -88,7 +88,9 @@ export function detectPackage(
 }
 
 export function countBuilds(release: { assets: { name: string }[] }) {
-  return PACKAGES.filter((pkg) => findAsset(release.assets, pkg)).length
+  return PACKAGES.filter(
+    (pkg) => pkg.id !== 'macos-intel' && findAsset(release.assets, pkg)
+  ).length
 }
 
 export function pickDownloadRelease<
