@@ -5,7 +5,7 @@ import { formatFileSize } from '@/lib/format'
 import { Download } from 'lucide-react'
 import { Fragment } from 'react'
 import { OSIcon } from './os-icons'
-import { macDownloadProps, OS_LABELS, type Package } from './platforms'
+import { OS_LABELS, type Package } from './platforms'
 
 export function Separator() {
   return (
@@ -16,20 +16,17 @@ export function Separator() {
 export function BuildLink({
   pkg,
   url,
-  macAltUrl,
   size,
   location = 'download_section',
 }: {
   pkg: Package
   url: string
-  macAltUrl: string | null
   size: number
   location?: string
 }) {
   return (
     <a
       href={url}
-      {...macDownloadProps(pkg.id, macAltUrl)}
       className="group/build flex items-center gap-4 px-4 py-3.5"
       onClick={() => logClick('download', location, { platform: pkg.id })}
     >

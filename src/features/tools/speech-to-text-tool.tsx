@@ -148,7 +148,7 @@ export function SpeechToTextTool() {
   function fail(source: Source, code: string) {
     setStatus('idle')
     setError(code)
-    logError('transcription', LOCATION, { source, error_type: code })
+    logError('transcription', LOCATION, { input: source, error_type: code })
   }
 
   async function transcribe(blob: Blob, source: Source) {
@@ -177,7 +177,7 @@ export function SpeechToTextTool() {
       )
     }
 
-    logStart('transcription', LOCATION, { source, model })
+    logStart('transcription', LOCATION, { input: source, model })
     setProgress(0)
 
     worker.current.onmessage = (event: MessageEvent<WorkerResponse>) => {
@@ -196,7 +196,7 @@ export function SpeechToTextTool() {
         setText(message.text)
         setStatus('idle')
         logComplete('transcription', LOCATION, {
-          source,
+          input: source,
           model,
           device: message.device,
         })

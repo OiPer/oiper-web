@@ -9,7 +9,6 @@ import { Fragment } from 'react'
 import { OSIcon } from './os-icons'
 import {
   detectPackage,
-  macDownloadProps,
   OS_LABELS,
   PACKAGES,
   type OS,
@@ -104,7 +103,6 @@ export function DownloadButton({
     return (
       <a
         href={`${DOWNLOAD_URL}/${platform}`}
-        {...macDownloadProps(platform)}
         className={buttonClassName}
         onClick={() => logClick('download', location, { platform })}
       >
@@ -134,7 +132,6 @@ export function DownloadButton({
           <span key={id} className={cn('hidden', visibleWhen)}>
             <a
               href={`${DOWNLOAD_URL}/${id}`}
-              {...macDownloadProps(id)}
               aria-label={compact ? label : undefined}
               className={buttonClassName}
               onClick={() => logClick('download', location, { platform: id })}
@@ -183,7 +180,6 @@ export function OtherDownloads({
             <Fragment key={other.id}>
               <a
                 href={`${DOWNLOAD_URL}/${other.id}`}
-                {...macDownloadProps(other.id)}
                 className={linkClassName}
                 onClick={() =>
                   logClick('download', location, { platform: other.id })

@@ -1,5 +1,3 @@
-import { DOWNLOAD_URL } from '@/features/landing-page/constants/links'
-
 export type OS = 'windows' | 'macos' | 'linux'
 
 export const OS_LABELS: Record<OS, string> = {
@@ -89,19 +87,10 @@ export function detectPackage(
   return null
 }
 
-export function macDownloadProps(id: Package['id'], altUrl?: string | null) {
-  if (id !== 'macos' && id !== 'macos-intel') return {}
-
-  const alt = id === 'macos' ? 'macos-intel' : 'macos'
-  return {
-    'data-mac-build': id,
-    'data-mac-alt':
-      altUrl === undefined ? `${DOWNLOAD_URL}/${alt}` : (altUrl ?? undefined),
-  }
-}
-
 export function countBuilds(release: { assets: { name: string }[] }) {
-  return PACKAGES.filter((pkg) => findAsset(release.assets, pkg)).length
+  return PACKAGES.filter(
+    (pkg) => pkg.id !== 'macos-intel' && findAsset(release.assets, pkg)
+  ).length
 }
 
 export function pickDownloadRelease<

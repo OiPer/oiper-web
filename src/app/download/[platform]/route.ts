@@ -18,8 +18,16 @@ export async function GET(
   if (!pkg) return NextResponse.redirect(fallback)
 
   try {
-    const release = pickDownloadRelease(await getRecentReleases())
-    const asset = release && findAsset(release.assets, pkg)
+    const releases = await getRecentReleases()
+    const release = pickDownloadRelease(releases)
+
+    const asset =
+      (release && findAsset(release.assets, pkg)) ??
+      releases
+        .filter((item) => !item.prerelease)
+        .map((item) => findAsset(item.assets, pkg))
+        .find((item) => item !== undefined)
+
     return NextResponse.redirect(asset ? asset.url : fallback)
   } catch {
     return NextResponse.redirect(fallback)
