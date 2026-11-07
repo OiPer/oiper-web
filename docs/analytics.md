@@ -104,6 +104,7 @@ Add a detail only when it carries product context GA4 can't know and that change
 | `email`, `name`, user ids, tokens                    | Private, never sent                           |
 | Raw error messages or anything the user typed        | May contain personal data; use a code instead |
 | Timestamps, random ids, full URLs with query strings | Dynamic and noisy                             |
+| `source`, `medium`, `campaign`, `term`, `content`    | GA4 reads them as the visit's traffic source  |
 
 `platform` always means the **OiPer download target** (`windows`, `macos`, `macos_intel`, `linux`, `linux_deb`, `linux_rpm`), never the visitor's operating system.
 
@@ -231,11 +232,11 @@ Every event the site sends. All events also carry `location`.
 
 ### Speech to text tool
 
-| Event                                              | Location         | Details                                                                                                                                             | When                                                                 |
-| -------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `transcription_started` / `_completed` / `_failed` | `speech_to_text` | `source` (`microphone` `file`), `model` (`tiny` `base` `small` `large-v3-turbo`); `device` (`webgpu` `wasm`) on completion; `error_type` on failure | Audio was decoded and sent to the in-browser model, or a step failed |
-| `transcript_copy_clicked`                          | `speech_to_text` | —                                                                                                                                                   | "Copy" under the transcript                                          |
-| `transcript_download_clicked`                      | `speech_to_text` | —                                                                                                                                                   | "Download" under the transcript                                      |
+| Event                                              | Location         | Details                                                                                                                                            | When                                                                 |
+| -------------------------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `transcription_started` / `_completed` / `_failed` | `speech_to_text` | `input` (`microphone` `file`), `model` (`tiny` `base` `small` `large-v3-turbo`); `device` (`webgpu` `wasm`) on completion; `error_type` on failure | Audio was decoded and sent to the in-browser model, or a step failed |
+| `transcript_copy_clicked`                          | `speech_to_text` | —                                                                                                                                                  | "Copy" under the transcript                                          |
+| `transcript_download_clicked`                      | `speech_to_text` | —                                                                                                                                                  | "Download" under the transcript                                      |
 
 ## Intentionally not tracked
 
